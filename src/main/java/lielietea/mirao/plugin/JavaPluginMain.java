@@ -56,15 +56,8 @@ public final class JavaPluginMain extends JavaPlugin {
                     );
                 }
 
-                int bound = 12;
-                String message = event.getMessage().contentToString();
-                if (Dice.isDiceCommand(bound,message)){
-                    event.getSubject().sendMessage(new MessageChainBuilder()
-                            .append("你骰出的点数是")
-                            .append(Dice.getResultString(bound))
-                            .build()
-                    );
-                }
+
+                Dice.roll(event);
 
                 ////////////////////////////抄来的但是没有测试成功
                 if (event.getMessage().contentToString().startsWith("复读")) {

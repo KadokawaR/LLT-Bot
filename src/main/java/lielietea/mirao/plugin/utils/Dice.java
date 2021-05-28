@@ -17,11 +17,21 @@ public class Dice {
         return new StringBuilder("/dice").append(bound).toString().equals(input);
     }
 
-    public static void roll(GroupMessageEvent event, int bound){
+    public static void check(GroupMessageEvent event, int bound){
         String message = event.getMessage().contentToString();
         if(isDiceCommand(bound,message)){
-            event.getSubject().sendMessage(getResultString(bound));
+            event.getSubject().sendMessage(new MessageChainBuilder()
+                    .append("您掷出的点数是")
+                    .append(getResultString(bound))
+                    .build()            
+            );
         }
+    }
+
+    public static void roll(GroupMessageEvent event){
+        Dice.check(event,6);
+        Dice.check(event,12);
+        Dice.check(event,20);
     }
 
 }
