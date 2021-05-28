@@ -1,6 +1,5 @@
-package lielietea.mirao.plugin.utils;
+package lielietea.mirai.plugin.utils;
 
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
@@ -17,18 +16,18 @@ public class Dice {
         return new StringBuilder("/dice").append(bound).toString().equals(input);
     }
 
-    public static void check(GroupMessageEvent event, int bound){
+    public static void check(MessageEvent event, int bound){
         String message = event.getMessage().contentToString();
         if(isDiceCommand(bound,message)){
             event.getSubject().sendMessage(new MessageChainBuilder()
                     .append("您掷出的点数是")
                     .append(getResultString(bound))
-                    .build()            
+                    .build()
             );
         }
     }
 
-    public static void roll(GroupMessageEvent event){
+    public static void roll(MessageEvent event){
         Dice.check(event,6);
         Dice.check(event,12);
         Dice.check(event,20);
