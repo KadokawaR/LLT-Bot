@@ -1,4 +1,0 @@
-org/example/mirai/plugin/JavaPluginMain.java
- org.example.mirai.plugin.JavaPluginMain
-org/example/mirai/plugin/dice.java
- org.example.mirai.plugin.dice
