@@ -1,7 +1,8 @@
-package lielietea.mirao.plugin;
+package lielietea.mirai.plugin;
 
 
-import lielietea.mirao.plugin.utils.Dice;
+import lielietea.mirai.plugin.utils.Dice;
+import lielietea.mirai.plugin.utils.Echo;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
@@ -58,11 +59,8 @@ public final class JavaPluginMain extends JavaPlugin {
 
 
                 Dice.roll(event);
-
+                Echo.sendAll(event);
                 ////////////////////////////抄来的但是没有测试成功
-                if (event.getMessage().contentToString().startsWith("复读")) {
-                    event.getSubject().sendMessage(event.getMessage().contentToString().substring(2).stripLeading());
-                }
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送

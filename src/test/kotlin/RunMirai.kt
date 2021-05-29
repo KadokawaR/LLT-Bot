@@ -1,6 +1,6 @@
 package org.example.mirai.plugin
 
-import lielietea.mirao.plugin.JavaPluginMain
+import lielietea.mirai.plugin.JavaPluginMain
 import net.mamoe.mirai.alsoLogin
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.enable
