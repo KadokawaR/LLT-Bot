@@ -1,9 +1,7 @@
 package lielietea.mirai.plugin;
 
 
-import lielietea.mirai.plugin.utils.Dice;
-import lielietea.mirai.plugin.utils.DrinkWhat;
-import lielietea.mirai.plugin.utils.Echo;
+import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
@@ -43,27 +41,15 @@ public final class JavaPluginMain extends JavaPlugin {
             long groupNumber = 578984285;//监听烈烈茶测试群
             if (event.getGroup().getId() == groupNumber) { //仅在此群测试
                 if (event.getSender().getId() == 459405942) { //川川的QQ
-                    event.getSubject().sendMessage(new MessageChainBuilder()
-                            .append(new QuoteReply(event.getMessage()))//回复
-                            .append(event.getSender().getNameCard())//群名片
-                            .append("\n")
-                            .append(event.getSender().getNick())//昵称
-                            .append("\n")
-                            .append(event.getSender().getSpecialTitle())//特殊头衔
-                            .append("\n")
-                            .append("you just said:\n'")
-                            .append(event.getMessage())//复读
-                            .append("'")
-                            .build()
-                    );
+                    event.getSubject().sendMessage("老唐最帅！");
                 }
 
 
                 Dice.roll(event);
                 Echo.sendAll(event);
                 DrinkWhat.createDrink(event);
-
-
+                Repeat.check(event);
+                Console.sayHello(event);
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送
