@@ -18,6 +18,13 @@ public class Echo {
             "嘴巴放干净点"
     ));
 
+    static ArrayList<String> byebye_array = new ArrayList<String>(Arrays.asList(
+            "886",
+            "再见！",
+            "Bye!",
+            "下次再见"
+    ));
+
     public static void sendSentence(MessageEvent event, String word, String sentence){
         int result = event.getMessage().contentToString().indexOf(word);
         if (result != -1){
@@ -35,12 +42,16 @@ public class Echo {
         switch(word){
             case "overwatch":
             case "Overwatch":
+            case "守望先锋":
                 return Overwatch_array;
             case "motherfucker":
             case "草泥马":
             case "操你妈":
             case "日你妈":
                 return motherfucker_array;
+            case "下线":
+            case "88":
+                return byebye_array;
         }
         return (ArrayList<String>)null;
     }
@@ -56,9 +67,12 @@ public class Echo {
     public static void sendAll(MessageEvent event){
         send(event, "overwatch");
         send(event, "Overwatch");
+        send(event, "守望先锋");
         send(event, "motherfucker");
         send(event, "草泥马");
         send(event, "操你妈");
         send(event, "日你妈");
+        send(event, "下线");
+        send(event, "88");
     }
 }
