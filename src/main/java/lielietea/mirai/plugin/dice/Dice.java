@@ -15,8 +15,9 @@ import java.util.regex.Pattern;
 
 /**
  * 以下为骰子操作方法演示
+ * 如果不进行任何设置，该骰子是一个标准的六面骰
  * <p>{@code
- * List<Integer> reult = New Dice().setBound(10)
+ * List<Integer> result = New Dice().setBound(10)
  *                       .setRepeat(10)
  *                       .roll()
  *                       .toList();\
