@@ -2,13 +2,16 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.utils.*;
+import lielietea.mirai.plugin.dice.CommonDice;
+import lielietea.mirai.plugin.utils.Dice;
+import lielietea.mirai.plugin.utils.DrinkWhat;
+import lielietea.mirai.plugin.utils.Echo;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
 
 /*
 使用java请把
@@ -44,8 +47,16 @@ public final class JavaPluginMain extends JavaPlugin {
                     event.getSubject().sendMessage("老唐最帅！");
                 }
 
-
                 Dice.roll(event);
+
+                if(CommonDice.check(event)){
+                    event.getSubject().sendMessage(new MessageChainBuilder()
+                            .append("人类毁灭了")
+                            .build());
+                    CommonDice.executeDiceCommandFromGroup(event);
+                }
+
+
                 Echo.sendAll(event);
                 DrinkWhat.createDrink(event);
                 Repeat.check(event);
