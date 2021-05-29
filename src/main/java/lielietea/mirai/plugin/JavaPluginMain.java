@@ -2,6 +2,7 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.utils.Dice;
+import lielietea.mirai.plugin.utils.DrinkWhat;
 import lielietea.mirai.plugin.utils.Echo;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -60,7 +61,9 @@ public final class JavaPluginMain extends JavaPlugin {
 
                 Dice.roll(event);
                 Echo.sendAll(event);
-                ////////////////////////////抄来的但是没有测试成功
+                DrinkWhat.createDrink(event);
+
+
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送
@@ -75,6 +78,8 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
             //监听好友消息
             getLogger().info(event.getMessage().contentToString());
+
+
             long yourQQNumber = 340865180;
             if (event.getSender().getId() == yourQQNumber) {
                 event.getSubject().sendMessage(new MessageChainBuilder()
@@ -85,6 +90,10 @@ public final class JavaPluginMain extends JavaPlugin {
                         .build()
                 );
             }
+
+            Dice.roll(event);
+            Echo.sendAll(event);
+            DrinkWhat.createDrink(event);
         });
     }
 }
