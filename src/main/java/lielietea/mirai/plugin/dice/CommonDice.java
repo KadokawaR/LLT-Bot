@@ -116,7 +116,6 @@ public class CommonDice {
         broadcastGroup.sendMessage(buildMessage());
     }
 
-     * @return 检查结果
 
     MessageChain buildMessage(){
         MessageChainBuilder message = new MessageChainBuilder();
