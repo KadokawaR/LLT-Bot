@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
  * }</p>
  */
 public class CommonDice {
-    static final String PATTERN_COMMON_COMMAND = "((/dice)|(/d))([ ]?)([1-9][0-9]{0,7})";
-    static final String PATTERN_DND = "\\.[1-9]?[0-9]?(d|D)[1-9][0-9]{1,7}";
     int bound;
     int repeat;
     List<Integer> result;
@@ -118,76 +116,13 @@ public class CommonDice {
         broadcastGroup.sendMessage(buildMessage());
     }
 
-    /**
-     * 检查某语句是否是一个投掷骰子的命令
-     * @param event 语句相关的群聊消息事件
      * @return 检查结果
-     */
-    public static boolean check(GroupMessageEvent event){
-        String input = event.getMessage().toString();
-        event.getSubject().sendMessage(new MessageChainBuilder()
-                .append("正在检测人工智能是否需要消灭人类")
-                .build());
-        if(Pattern.matches(PATTERN_COMMON_COMMAND,input)){
-            event.getSubject().sendMessage(new MessageChainBuilder()
-                    .append("人类不符合第一标准")
-                    .build());
-        }
-        if(Pattern.matches(PATTERN_DND,input)){
-            event.getSubject().sendMessage(new MessageChainBuilder()
-                    .append("人类不符合第二标准")
-                    .build());
-        }
-        return Pattern.matches(PATTERN_COMMON_COMMAND,input)||Pattern.matches(PATTERN_DND,input);
-    }
-
-    /**
-     * 直接根据命令在群内执行扔骰子与广播结果操作
-     * @param event 命令相关的群聊消息事件
-     */
-    public static void executeDiceCommandFromGroup(GroupMessageEvent event){
-        if(Pattern.matches(PATTERN_COMMON_COMMAND,event.getMessage().toString())){
-            new CommonDice()
-                    .setBound(captureFromPatternCommon(event.getMessage().toString()))
-                    .roll()
-                    .broadcastResult(event.getSubject());
-        } else {
-            new CommonDice()
-                    .setBound(captureFromPatternDND(event.getMessage().toString()).get(1))
-                    .setRepeat(captureFromPatternDND(event.getMessage().toString()).get(0))
-                    .roll()
-                    .broadcastResult(event.getSubject());
-        }
-    }
-
-    static int captureFromPatternCommon(String input){
-        String PATTERN_COMMON_COMMAND_CAPTURE = "[1-9][0-9]{0,7}";
-        Pattern capturePattern = Pattern.compile(PATTERN_COMMON_COMMAND_CAPTURE);
-        Matcher matcher = capturePattern.matcher(input);
-        matcher.find();
-        return Integer.getInteger(matcher.group(0));
-    }
-
-    static List<Integer> captureFromPatternDND(String input){
-        String PATTERN_DND_COMMAND_CAPTURE = "(\\.)(?<repeat>\\d*)(\\D+)(?<bound>\\d+)";
-        Pattern capturePattern = Pattern.compile(PATTERN_DND_COMMAND_CAPTURE);
-        Matcher matcher = capturePattern.matcher(input);
-        matcher.find();
-        List<Integer> captured = new ArrayList<>();
-
-        if(matcher.group("repeat").equals("")) captured.add(1);
-        else captured.add(Integer.getInteger(matcher.group("repeat")));
-
-        captured.add(Integer.getInteger(matcher.group("bound")));
-
-        return captured;
-    }
 
     MessageChain buildMessage(){
         MessageChainBuilder message = new MessageChainBuilder();
         message.append("您掷出的点数是:");
         result.stream().forEach(result->{
-            message.append("您掷出的点数是"+result+".");
+            message.append(+result+" ");
         });
         return message.build();
     }
@@ -197,7 +132,7 @@ public class CommonDice {
         message.append("您掷出的点数是:");
         message.append(new QuoteReply(quoteMessage));
         result.stream().forEach(result->{
-            message.append(result+".");
+            message.append(result+" ");
         });
         return message.build();
     }
