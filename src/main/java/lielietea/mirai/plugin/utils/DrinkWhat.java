@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DrinkWhat {
+
     static ArrayList<String> tea_array = new ArrayList<String>(Arrays.asList(
             "铁观音奶茶",
             "大红袍奶茶",
@@ -56,8 +57,7 @@ public class DrinkWhat {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);//获得当前时间
         long qqid = event.getSender().getId();
         long fullDate = year+month*10000+date*1000000+hour*100000000L;//用时间和小时构成一个10位数
-        long getFixedRandomNum = fullDate*1000000L/qqid;//日期除以QQ号
-        long getSixNum = getFixedRandomNum % 1000000L;//获得这个数的最后六位
+        long getSixNum = fullDate*1000000L/qqid % 1000000L;//除以QQ号之后获得这个数的最后六位
         long firstTwoNum = getSixNum / 10000;
         long middleTwoNum = (getSixNum % 10000) / 100;
         long lastTwoNum = getSixNum % 100; //获得这个数的三组两位数；
