@@ -55,7 +55,7 @@ public class DrinkWhat {
         int date = calendar.get(Calendar.DATE);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);//获得当前时间
         long qqid = event.getSender().getId();
-        long fullDate = year* 100000L +month*10000+date*100+hour;//用时间和小时构成一个10位数
+        long fullDate = year+month*10000+date*1000000+hour*100000000L;//用时间和小时构成一个10位数
         long getFixedRandomNum = fullDate*1000000L/qqid;//日期除以QQ号
         long getSixNum = getFixedRandomNum % 1000000L;//获得这个数的最后六位
         long firstTwoNum = getSixNum / 10000;
