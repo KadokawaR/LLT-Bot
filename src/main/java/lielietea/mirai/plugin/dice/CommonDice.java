@@ -2,14 +2,12 @@ package lielietea.mirai.plugin.dice;
 
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -20,27 +18,27 @@ import java.util.regex.Pattern;
  * List<Integer> result = New Dice().setBound(10)
  *                       .setRepeat(10)
  *                       .roll()
- *                       .toList();\
+ *                       .toList();
  * }</p>
  */
-public class Dice {
+public class CommonDice {
     int bound;
     int repeat;
     List<Integer> result;
 
-    public Dice() {
+    public CommonDice() {
         this.bound = 6;
         this.repeat = 1;
         result = new ArrayList<>();
     }
 
-    public Dice(int bound) {
+    public CommonDice(int bound) {
         this.bound = bound;
         this.repeat = 1;
         result = new ArrayList<>();
     }
 
-    public Dice(int bound,int repeat) {
+    public CommonDice(int bound, int repeat) {
         this.bound = bound;
         this.repeat = repeat;
         result = new ArrayList<>();
@@ -51,7 +49,7 @@ public class Dice {
      * @param bound 骰子最大骰出数
      * @return 该骰子本身
      */
-    Dice setBound(int bound){
+    public CommonDice setBound(int bound){
         this.bound = bound;
         return this;
     }
@@ -61,7 +59,7 @@ public class Dice {
      * @param repeat 投掷次数
      * @return 该骰子本身
      */
-    Dice setRepeat(int repeat){
+    public CommonDice setRepeat(int repeat){
         this.repeat = repeat;
         return this;
     }
@@ -71,7 +69,7 @@ public class Dice {
      * <p>在进行最终操作前，必须扔骰子</p>
      * @return 该骰子本身
      */
-    Dice roll(){
+    public CommonDice roll(){
         if(!result.isEmpty()) result = new ArrayList<>();
         for(int i=0;i<repeat;i++){
             result.add(new Random(System.nanoTime()).nextInt(bound)+1);
@@ -84,7 +82,7 @@ public class Dice {
      * <p>这是一个最终操作</p>
      * @return 一个包含了投掷结果的ArrayList
      */
-    List<Integer> toList(){
+    public List<Integer> toList(){
         return result;
     }
 
@@ -93,7 +91,7 @@ public class Dice {
      * <p>这是一个最终操作</p>
      * @param directMessageTarget 私聊对象
      */
-    void privatelyInfoResult(Friend directMessageTarget){
+    public void privatelyInfoResult(Friend directMessageTarget){
         directMessageTarget.sendMessage(buildMessage());
     }
 
@@ -103,7 +101,7 @@ public class Dice {
      * @param quoteMessage 被引用的消息
      * @param broadcastGroup 广播对象
      */
-    void broadcastResultByQuote(MessageChain quoteMessage,Group broadcastGroup){
+    public void broadcastResultByQuote(MessageChain quoteMessage,Group broadcastGroup){
         broadcastGroup.sendMessage(buildMessage(quoteMessage));
     }
 
@@ -112,7 +110,7 @@ public class Dice {
      * <p>这是一个最终操作</p>
      * @param broadcastGroup 广播对象
      */
-    void broadcastResult(Group broadcastGroup){
+    public void broadcastResult(Group broadcastGroup){
         broadcastGroup.sendMessage(buildMessage());
     }
 
