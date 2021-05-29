@@ -82,13 +82,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
             long yourQQNumber = 340865180;
             if (event.getSender().getId() == yourQQNumber) {
-                event.getSubject().sendMessage(new MessageChainBuilder()
-                        .append(new QuoteReply(event.getMessage()))
-                        .append("Hi, you just said: '")
-                        .append(event.getMessage())
-                        .append("'")
-                        .build()
-                );
+                event.getSubject().sendMessage("老唐最帅！");
             }
 
             Dice.roll(event);
