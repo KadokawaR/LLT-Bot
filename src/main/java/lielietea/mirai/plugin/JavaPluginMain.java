@@ -9,6 +9,7 @@ import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
+import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 
@@ -38,6 +39,9 @@ public final class JavaPluginMain extends JavaPlugin {
         getLogger().info("日志");
 
         Repeater repeater = new Repeater();
+
+        EventChannel channel = GlobalEventChannel.INSTANCE.filter(ev -> ev instanceof BotEvent && ((BotEvent) ev).bot.id == 123456); // 筛选来自某一个 Bot 的事件
+
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             event.getBot().getGroup(578984285).sendMessage("老子来了");

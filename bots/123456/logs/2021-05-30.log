@@ -1,8 +1,0 @@
-[0m2021-05-30 23:39:27 V/Net 123456: No BdhSession cache[0m
-[0m2021-05-30 23:39:27 V/Net 123456: No server list cached.[0m
-[92m2021-05-30 23:39:27 I/Net 123456: Connected to server 183.232.94.44:80[0m
-[0m2021-05-30 23:39:27 V/Net 123456: Send: wtlogin.login[0m
-[0m2021-05-30 23:39:27 V/Net 123456: Recv: LoginPacketResponse.Captcha.Slider[0m
-[92m2021-05-30 23:39:27 I/Net 123456: Connected to server 183.232.94.44:80[0m
-[0m2021-05-30 23:39:27 V/Net 123456: Send: wtlogin.login[0m
-[0m2021-05-30 23:39:27 V/Net 123456: Recv: LoginPacketResponse.Captcha.Slider[0m
