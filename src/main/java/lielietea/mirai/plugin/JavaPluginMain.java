@@ -4,9 +4,9 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
 
@@ -34,24 +34,6 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        
-
-
-
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
-          event.getBot().getGroup(578984285).sendMessage("老子来了");
-        });
-
-        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, event -> {
-            event.accept(); //自动通过好友请求
-        });
-
-        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> {
-            event.getBot().getFriend(event.getFriend().getId()).sendMessage(
-                    "你好，这是QQ机器人自动发送的验证消息"
-            );
-        });
-
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             //监听群消息
             getLogger().info(event.getMessage().contentToString());
@@ -67,6 +49,7 @@ public final class JavaPluginMain extends JavaPlugin {
                 Echo.sendAll(event);
                 DrinkWhat.createDrink(event);
                 Repeat.check(event);
+                Console.sayHello(event);
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送
