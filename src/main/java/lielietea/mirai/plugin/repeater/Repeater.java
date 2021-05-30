@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.repeater;
 
+import lielietea.mirai.plugin.utils.UserUtils;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 public class Repeater {
@@ -17,7 +18,7 @@ public class Repeater {
      * @return <code>true</code> 需要复读 <code>false</code> 无需复读
      */
     public boolean handleMessage(GroupMessageEvent event){
-        if(content.equals(event.getMessage().contentToString()) && !isBot(event.getSender().getId())){
+        if(content.equals(event.getMessage().contentToString()) && !UserUtils.isBot(event.getSender().getId())){
             count++;
         } else {
             count=0;
@@ -30,10 +31,5 @@ public class Repeater {
             return true;
         }
         return false;
-    }
-
-    static boolean isBot(Long senderID){
-        Long bot_1 = 2955808839L;
-        return senderID == bot_1;
     }
 }
