@@ -1,16 +1,16 @@
 package lielietea.mirai.plugin;
 
 
+import lielietea.mirai.plugin.autoreply.AutoReplyManager;
 import lielietea.mirai.plugin.dice.DiceHelper;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.repeater.Repeater;
+import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
 
 /*
 使用java请把
@@ -26,6 +26,7 @@ build.gradle.kts里改依赖库和插件版本
 
 public final class JavaPluginMain extends JavaPlugin {
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
+
     private JavaPluginMain() {
         super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.0")
                 .info("LieLieTea QQ Group Bot")
@@ -36,12 +37,10 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        
-
-
+        Repeater repeater = new Repeater();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
-          event.getBot().getGroup(578984285).sendMessage("老子来了");
+            event.getBot().getGroup(578984285).sendMessage("老子来了");
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, event -> {
@@ -64,9 +63,33 @@ public final class JavaPluginMain extends JavaPlugin {
                     event.getSubject().sendMessage("老唐最帅！");
                 }
 
-                DrinkPicker.getPersonalizedHourlyDrink(event);
-                DiceHelper.executeDiceCommandFromGroup(event);
+                //扔骰子
+                if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
+                    DiceHelper.executeDiceCommandFromGroup(event);
+                }
 
+                //点饮料
+                if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
+                    DrinkPicker.getPersonalizedHourlyDrink(event);
+                }
+
+                Echo.sendAll(event);
+
+                //复读
+                RepeaterManager.getInstance().handleMessage(event);
+
+                //自动回复
+                AutoReplyManager.handleMessage(event);
+                //因为还没有测试AutoReplyManager 所以这个我还没删除
+                Echo.sendAll(event);
+
+                if (event.getMessage().contentToString().equals("hi")) {
+                    //群内发送
+                    event.getSubject().sendMessage("hi");
+                    //向发送者私聊发送消息
+                    event.getSender().sendMessage("hi");
+                    //不继续处理
+                }
                 //////////////////////////////////////////////////////////////
             }
         });
@@ -75,14 +98,25 @@ public final class JavaPluginMain extends JavaPlugin {
             getLogger().info(event.getMessage().contentToString());
 
 
-            long yourQQNumber = 2955808839L;
+            long yourQQNumber = 340865180;
             if (event.getSender().getId() == yourQQNumber) {
                 event.getSubject().sendMessage("老唐最帅！");
             }
 
-            //Dice.roll(event);
-            //Echo.sendAll(event);
-            //DrinkWhat.createDrink(event);
+            //扔骰子
+            if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
+                DiceHelper.executeDiceCommandFromFriend(event);
+            }
+
+            //点饮料
+            if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
+                DrinkPicker.getPersonalizedHourlyDrink(event);
+            }
+
+            //自动回复
+            AutoReplyManager.handleMessage(event);
+            //因为还没有测试AutoReplyManager 所以这个我还没删除
+            Echo.sendAll(event);
         });
     }
 }

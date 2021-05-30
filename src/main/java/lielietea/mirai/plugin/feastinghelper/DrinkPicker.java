@@ -57,10 +57,8 @@ public class DrinkPicker {
      * @param event 接收饮品消息的事件
      */
     public static void getPersonalizedHourlyDrink(MessageEvent event){
-        if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
-            String drink = mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
-            serveDrink(event, drink);
-        }
+        String drink = mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
+        serveDrink(event,drink);
     }
 
     static int[] pickPersonalizedHourlyIngredients(Long qqID){

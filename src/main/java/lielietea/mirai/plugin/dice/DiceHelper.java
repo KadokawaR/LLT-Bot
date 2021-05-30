@@ -22,14 +22,13 @@ public class DiceHelper {
      * @param event 命令相关的群聊消息事件
      */
     public static void executeDiceCommandFromGroup(GroupMessageEvent event){
-        //if(Pattern.matches(PATTERN_COMMON_COMMAND,event.getMessage().contentToString())){
-        if(MessageChecker.isRollDice(event.getMessage().contentToString())){
+        if(Pattern.matches(PATTERN_COMMON_COMMAND,event.getMessage().contentToString())){
             new CommonDice()
                     .setBound(captureFromPatternCommon(event.getMessage().contentToString()))
                     .roll()
                     .broadcastResult(event.getSubject());
         } else {
-            if(MessageChecker.isRollDice(event.getMessage().contentToString())){
+            if(Pattern.matches(PATTERN_DND,event.getMessage().contentToString())){
                 new CommonDice()
                         .setBound(captureFromPatternDND(event.getMessage().contentToString()).get(1))
                         .setRepeat(captureFromPatternDND(event.getMessage().contentToString()).get(0))
@@ -49,13 +48,13 @@ public class DiceHelper {
      * @param event 命令相关的好友消息事件
      */
     public static void executeDiceCommandFromFriend(FriendMessageEvent event){
-        if(MessageChecker.isRollDice(event.getMessage().contentToString())){
+        if(Pattern.matches(PATTERN_COMMON_COMMAND,event.getMessage().contentToString())){
             new CommonDice()
                     .setBound(captureFromPatternCommon(event.getMessage().contentToString()))
                     .roll()
                     .privatelyInfoResult(event.getSender());
         } else {
-            if(MessageChecker.isRollDice(event.getMessage().contentToString())){
+            if(Pattern.matches(PATTERN_DND,event.getMessage().contentToString())){
                 new CommonDice()
                         .setBound(captureFromPatternDND(event.getMessage().contentToString()).get(1))
                         .setRepeat(captureFromPatternDND(event.getMessage().contentToString()).get(0))

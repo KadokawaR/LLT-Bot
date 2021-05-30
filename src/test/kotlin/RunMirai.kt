@@ -1,5 +1,6 @@
 package org.example.mirai.plugin
 
+
 import lielietea.mirai.plugin.JavaPluginMain
 import net.mamoe.mirai.alsoLogin
 import net.mamoe.mirai.console.MiraiConsole
@@ -18,7 +19,7 @@ suspend fun main() {
     JavaPluginMain.INSTANCE.enable()
 
     //下面填机器人信息
-    val bot = MiraiConsole.addBot(123456, "123456") {
+    val bot = MiraiConsole.addBot(340865180, "jiaochuanlie123") {
         fileBasedDeviceInfo()
     }.alsoLogin()
 
