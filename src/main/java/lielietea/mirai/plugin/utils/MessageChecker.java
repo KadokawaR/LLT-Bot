@@ -21,6 +21,34 @@ public class MessageChecker {
             "\\.([1-9]\\d{0,2})(d|D)[1-9][0-9]{1,7}",
             "\\.(d|D)[1-9][0-9]{1,7}"
     ));
+    static ArrayList<String> talkOverwatchPatterns = new ArrayList<>(Arrays.asList(
+            "overwatch",
+            "Overwatch",
+            "守望先锋",
+            "守望屁股",
+            "玩ow",
+            "打ow",
+            "玩OW",
+            "打OW",
+            "玩屁股",
+            "打屁股"
+    ));
+    static ArrayList<String> goodbyePatterns = new ArrayList<>(Arrays.asList(
+            "下了",
+            "下线",
+            "88",
+            "byebye",
+            "再见"
+    ));
+    static ArrayList<String> dirtyWordPatterns = new ArrayList<>(Arrays.asList(
+            "motherfucker",
+            "草泥马",
+            "操你妈",
+            "日你妈",
+            "你妈死了",
+            "尼玛死了",
+            "nmsl"
+    ));
 
     /**
      * 检查某语句是否是一个需要饮料的命令
@@ -44,6 +72,48 @@ public class MessageChecker {
     public static boolean isRollDice(String input){
         for(String pattern: rollDicePatterns){
             if(Pattern.matches(pattern,input)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查某语句是否是一个提到守望先锋的句子
+     * @param input 被检查语句
+     * @return <code>true</code> 是一个提到守望先锋的句子 <code>false</code> 不是一个提到守望先锋的句子
+     */
+    public static boolean isTalkOverwatch(String input){
+        for(String pattern: talkOverwatchPatterns){
+            if(Pattern.matches(".*"+pattern+".*",input)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查某语句是否是告别
+     * @param input 被检查语句
+     * @return <code>true</code> 是告别 <code>false</code> 不是告别
+     */
+    public static boolean isGoodbye(String input){
+        for(String pattern: goodbyePatterns){
+            if(Pattern.matches(".*"+pattern+".*",input)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查某语句是否是某种脏话
+     * @param input 被检查语句
+     * @return <code>true</code> 是某种脏话 <code>false</code> 不是某种脏话
+     */
+    public static boolean isDirtyWord(String input){
+        for(String pattern: dirtyWordPatterns){
+            if(Pattern.matches(".*"+pattern+".*",input)){
                 return true;
             }
         }
