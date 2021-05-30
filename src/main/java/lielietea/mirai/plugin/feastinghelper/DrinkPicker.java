@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.utils;
+package lielietea.mirai.plugin.feastinghelper;
 
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-@Deprecated
-public class DrinkWhat {
+/**
+ * 一个类似于”今天吃什么“的类
+ *
+ * <p>用{@link DrinkPicker#getPersonalizedHourlyDrink(MessageEvent)}来获取根据用户而变化的Hourly Random Drink</p>
+ */
+public class DrinkPicker {
 
-    //我还没测试DrinkPicker
-    //没账号测试
-    //所以这个我先没删
-    static ArrayList<String> tea_array = new ArrayList<String>(Arrays.asList(
+    static ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
             "铁观音奶茶",
             "大红袍奶茶",
             "四季奶青",
@@ -25,7 +26,7 @@ public class DrinkWhat {
             "巧克力奶昔"
     ));
 
-    static ArrayList<String> boba_array = new ArrayList<String>(Arrays.asList(
+    static ArrayList<String> topping = new ArrayList<>(Arrays.asList(
             "加珍珠",
             "加波霸",
             "加布丁",
@@ -38,7 +39,7 @@ public class DrinkWhat {
             "加咖啡冻"
     ));
 
-    static ArrayList<String> sugar_array = new ArrayList<String>(Arrays.asList(
+    static ArrayList<String> sugarLevel = new ArrayList<>(Arrays.asList(
             "全糖",
             "半糖",
             "三分糖",
@@ -50,49 +51,40 @@ public class DrinkWhat {
             "不额外加糖"
     ));
 
-    int[] randomTea = new int[3];
+    /**
+     * 获取每小时变化的，根据用户而不同的随机饮品
+     * @param event 接收饮品消息的事件
+     */
+    public static void getPersonalizedHourlyDrink(MessageEvent event){
+        String drink = mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
+        serveDrink(event,drink);
+    }
 
-    public static int[] setRandomTea(MessageEvent event){
+    static int[] pickPersonalizedHourlyIngredients(Long qqID){
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int date = calendar.get(Calendar.DATE);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);//获得当前时间
-        long qqid = event.getSender().getId();
         long fullDate = year+month*10000+date*1000000+hour*100000000L;//用时间和小时构成一个10位数
-        long getSixNum = fullDate*1000000L/qqid % 1000000L;//除以QQ号之后获得这个数的最后六位
+        long getSixNum = fullDate*1000000L/qqID % 1000000L;//除以QQ号之后获得这个数的最后六位
         long firstTwoNum = getSixNum / 10000;
         long middleTwoNum = (getSixNum % 10000) / 100;
         long lastTwoNum = getSixNum % 100; //获得这个数的三组两位数；
 
         int[] randomTea = new int[3]; //定义返回数组
-        randomTea[0] = Math.toIntExact(firstTwoNum % tea_array.size());
-        randomTea[1] = Math.toIntExact(middleTwoNum % boba_array.size());
-        randomTea[2] = Math.toIntExact(lastTwoNum % sugar_array.size());
+        randomTea[0] = Math.toIntExact(firstTwoNum % drinkBase.size());
+        randomTea[1] = Math.toIntExact(middleTwoNum % topping.size());
+        randomTea[2] = Math.toIntExact(lastTwoNum % sugarLevel.size());
         return randomTea;
     }
 
-    public static String mixDrink(int[] randomTea){
-        String result = tea_array.get(randomTea[0])+boba_array.get(randomTea[1])+sugar_array.get(randomTea[2]);
+    static String mixDrink(int[] randomTea){
+        String result = drinkBase.get(randomTea[0])+topping.get(randomTea[1])+sugarLevel.get(randomTea[2]);
         return result;
     }
 
-    public static void sendDrink(MessageEvent event, String word){
-        int result = event.getMessage().contentToString().indexOf(word);
-        if (result != -1){
-            event.getSubject().sendMessage(mixDrink(setRandomTea(event)));
-        }
+    static void serveDrink(MessageEvent event,String drink){
+        event.getSubject().sendMessage("您的饮品是 "+drink);
     }
-
-    public static void createDrink(MessageEvent event){
-        sendDrink(event, "喝点什么");
-        sendDrink(event, "奶茶");
-        sendDrink(event, "喝什么");
-        sendDrink(event, "喝了什么");
-        sendDrink(event, "有点渴");
-        sendDrink(event, "好渴");
-        sendDrink(event, "来一杯");
-    }
-
-
 }
