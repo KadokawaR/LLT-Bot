@@ -2,6 +2,7 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.dice.DiceHelper;
+import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
 import lielietea.mirai.plugin.repeat.StandardRepeater;
 import lielietea.mirai.plugin.utils.*;
 import lielietea.mirai.plugin.utils.DrinkWhat;
@@ -49,11 +50,19 @@ public final class JavaPluginMain extends JavaPlugin {
                 }
 
                 //扔骰子
-                if(DiceHelper.check(event.getMessage().contentToString())){
+                if(MessageChecker.isRollDice(event.getMessage().contentToString())){
                     DiceHelper.executeDiceCommandFromGroup(event);
                 }
 
+                //点饮料
+                if(MessageChecker.isNeedDrink(event.getMessage().contentToString())){
+                    DrinkPicker.getPersonalizedHourlyDrink(event);
+                }
+
                 Echo.sendAll(event);
+                //我还没测试DrinkPicker
+                //没账号测试
+                //所以这个我先没删
                 DrinkWhat.createDrink(event);
 
                 //临时改一下复读功能，只能单群用
@@ -82,11 +91,19 @@ public final class JavaPluginMain extends JavaPlugin {
             }
 
             //扔骰子
-            if(DiceHelper.check(event.getMessage().contentToString())){
+            if(MessageChecker.isRollDice(event.getMessage().contentToString())){
                 DiceHelper.executeDiceCommandFromFriend(event);
             }
 
+            //点饮料
+            if(MessageChecker.isNeedDrink(event.getMessage().contentToString())){
+                DrinkPicker.getPersonalizedHourlyDrink(event);
+            }
+
             Echo.sendAll(event);
+            //我还没测试DrinkPicker
+            //没账号测试
+            //所以这个我先没删
             DrinkWhat.createDrink(event);
         });
     }

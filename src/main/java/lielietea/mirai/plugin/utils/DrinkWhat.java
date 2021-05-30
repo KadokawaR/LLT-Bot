@@ -5,10 +5,13 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 
+@Deprecated
 public class DrinkWhat {
 
+    //我还没测试DrinkPicker
+    //没账号测试
+    //所以这个我先没删
     static ArrayList<String> tea_array = new ArrayList<String>(Arrays.asList(
             "铁观音奶茶",
             "大红袍奶茶",

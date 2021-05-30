@@ -15,16 +15,6 @@ public class DiceHelper {
     static final String PATTERN_COMMON_COMMAND = "(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})";
     static final String PATTERN_DND = "\\.([1-9]\\d{0,2})(d|D)[1-9][0-9]{1,7}";
     static final String PATTERN_DND_SINGLE_ROLL = "\\.(d|D)[1-9][0-9]{1,7}";
-    /**
-     * 检查某语句是否是一个投掷骰子的命令
-     * @param input 被检查的语句
-     * @return 检查结果
-     */
-    public static boolean check(String input){
-        return Pattern.matches(PATTERN_COMMON_COMMAND,input)
-                ||Pattern.matches(PATTERN_DND,input)
-                ||Pattern.matches(PATTERN_DND_SINGLE_ROLL,input);
-    }
 
     /**
      * 直接根据命令在群内执行扔骰子动作与广播结果操作
