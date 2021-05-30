@@ -7,13 +7,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 /**
- * 该类会创建唯一一个{@link DrinkPicker}对象
+ * 一个类似于”今天吃什么“的类
  *
- * <p>用{@link DrinkPicker#getInstance()}获取唯一的对象</p>
+ * <p>用{@link DrinkPicker#getPersonalizedHourlyDrink(MessageEvent)}来获取根据用户而变化的Hourly Random Drink</p>
  */
 public class DrinkPicker {
 
-    static DrinkPicker instance = new DrinkPicker();
     static ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
             "铁观音奶茶",
             "大红袍奶茶",
@@ -51,21 +50,6 @@ public class DrinkPicker {
             "少少少糖",
             "不额外加糖"
     ));
-
-    //让构造函数为 private，这样该类就不会被实例化
-
-    /**
-     * 这样写这个类就不会被实例化啦
-     */
-    DrinkPicker(){}
-
-    /**
-     * 获取唯一可用的对象
-     * @return 不用解释了吧
-     */
-    public static DrinkPicker getInstance(){
-        return instance;
-    }
 
     /**
      * 获取每小时变化的，根据用户而不同的随机饮品
