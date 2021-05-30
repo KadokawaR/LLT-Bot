@@ -1,6 +1,9 @@
 package lielietea.mirai.plugin;
 
 
+import lielietea.mirai.plugin.dice.DiceHelper;
+import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.repeat.StandardRepeater;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -62,19 +65,11 @@ public final class JavaPluginMain extends JavaPlugin {
                     event.getSubject().sendMessage("老唐最帅！");
                 }
 
+                DrinkPicker.getPersonalizedHourlyDrink(event);
+                DiceHelper.executeDiceCommandFromGroup(event);
 
-                Dice.roll(event);
-                Echo.sendAll(event);
-                DrinkWhat.createDrink(event);
-                Repeat.check(event);
-
-                if (event.getMessage().contentToString().equals("hi")) {
-                    //群内发送
-                    event.getSubject().sendMessage("hi");
-                    //向发送者私聊发送消息
-                    event.getSender().sendMessage("hi");
-                    //不继续处理
-                }
+                StandardRepeater repeater = new StandardRepeater();
+                repeater.check(event);
                 //////////////////////////////////////////////////////////////
             }
         });
@@ -83,14 +78,14 @@ public final class JavaPluginMain extends JavaPlugin {
             getLogger().info(event.getMessage().contentToString());
 
 
-            long yourQQNumber = 340865180;
+            long yourQQNumber = 2955808839L;
             if (event.getSender().getId() == yourQQNumber) {
                 event.getSubject().sendMessage("老唐最帅！");
             }
 
-            Dice.roll(event);
-            Echo.sendAll(event);
-            DrinkWhat.createDrink(event);
+            //Dice.roll(event);
+            //Echo.sendAll(event);
+            //DrinkWhat.createDrink(event);
         });
     }
 }

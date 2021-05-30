@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.feastinghelper;
 
+import lielietea.mirai.plugin.utils.MessageChecker;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;
@@ -56,8 +57,10 @@ public class DrinkPicker {
      * @param event 接收饮品消息的事件
      */
     public static void getPersonalizedHourlyDrink(MessageEvent event){
-        String drink = mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
-        serveDrink(event,drink);
+        if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
+            String drink = mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
+            serveDrink(event, drink);
+        }
     }
 
     static int[] pickPersonalizedHourlyIngredients(Long qqID){
@@ -80,8 +83,7 @@ public class DrinkPicker {
     }
 
     static String mixDrink(int[] randomTea){
-        String result = drinkBase.get(randomTea[0])+topping.get(randomTea[1])+sugarLevel.get(randomTea[2]);
-        return result;
+        return drinkBase.get(randomTea[0])+topping.get(randomTea[1])+sugarLevel.get(randomTea[2]);
     }
 
     static void serveDrink(MessageEvent event,String drink){

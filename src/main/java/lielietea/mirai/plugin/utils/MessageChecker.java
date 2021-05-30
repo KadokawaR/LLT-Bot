@@ -49,4 +49,20 @@ public class MessageChecker {
         }
         return false;
     }
+
+    /**
+     * 检查某语句是否是一个 X 的命令
+     * 更为普适的字段检测
+     * @param input 被检查语句
+     * @return 检查结果
+     */
+    public static boolean isWhat(ArrayList<String> WhatPatterns,String input){
+        for(String pattern: WhatPatterns){
+            if(Pattern.matches(pattern,input)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
