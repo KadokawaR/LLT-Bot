@@ -25,7 +25,7 @@ public class MessageChecker {
     /**
      * 检查某语句是否是一个需要饮料的命令
      * @param input 被检查语句
-     * @return 检查结果
+     * @return <code>true</code> 是一个需要饮料的命令 <code>false</code> 不是一个需要饮料的命令
      */
     public static boolean isNeedDrink(String input){
         for(String pattern: needDrinkPatterns){
@@ -39,7 +39,7 @@ public class MessageChecker {
     /**
      * 检查某语句是否是一个投掷骰子的命令
      * @param input 被检查语句
-     * @return 检查结果
+     * @return <code>true</code> 是一个投掷骰子的命令 <code>false</code> 不是一个投掷骰子的命令
      */
     public static boolean isRollDice(String input){
         for(String pattern: rollDicePatterns){

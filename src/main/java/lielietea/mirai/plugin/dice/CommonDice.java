@@ -16,12 +16,12 @@ import java.util.Random;
  *
  * <p>如果不进行任何设置，该骰子是一个标准的六面骰</p>
  *
- * <p>{@code
+ * <p><code>
  * List<Integer> result = New Dice().setBound(10)
  *                       .setRepeat(10)
  *                       .roll()
  *                       .toList();
- * }</p>
+ * </code>
  */
 public class CommonDice {
     int bound;

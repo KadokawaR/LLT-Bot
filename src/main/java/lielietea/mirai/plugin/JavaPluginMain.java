@@ -1,14 +1,15 @@
 package lielietea.mirai.plugin;
 
 
+import lielietea.mirai.plugin.dice.DiceHelper;
+import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.repeater.Repeater;
+import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
 
 /*
 使用java请把
@@ -34,9 +35,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        
-
-
+        Repeater repeater = new Repeater();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
           event.getBot().getGroup(578984285).sendMessage("老子来了");
@@ -62,11 +61,21 @@ public final class JavaPluginMain extends JavaPlugin {
                     event.getSubject().sendMessage("老唐最帅！");
                 }
 
+                //扔骰子
+                if(MessageChecker.isRollDice(event.getMessage().contentToString())){
+                    DiceHelper.executeDiceCommandFromGroup(event);
+                }
 
-                Dice.roll(event);
+                //点饮料
+                if(MessageChecker.isNeedDrink(event.getMessage().contentToString())){
+                    DrinkPicker.getPersonalizedHourlyDrink(event);
+                }
+
                 Echo.sendAll(event);
-                DrinkWhat.createDrink(event);
-                Repeat.check(event);
+
+                //复读
+                RepeaterManager.getInstance().handleMessage(event);
+
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送
@@ -88,9 +97,17 @@ public final class JavaPluginMain extends JavaPlugin {
                 event.getSubject().sendMessage("老唐最帅！");
             }
 
-            Dice.roll(event);
+            //扔骰子
+            if(MessageChecker.isRollDice(event.getMessage().contentToString())){
+                DiceHelper.executeDiceCommandFromFriend(event);
+            }
+
+            //点饮料
+            if(MessageChecker.isNeedDrink(event.getMessage().contentToString())){
+                DrinkPicker.getPersonalizedHourlyDrink(event);
+            }
+
             Echo.sendAll(event);
-            DrinkWhat.createDrink(event);
         });
     }
 }
