@@ -3,7 +3,6 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.dice.DiceHelper;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
-import lielietea.mirai.plugin.repeat.StandardRepeater;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -68,8 +67,6 @@ public final class JavaPluginMain extends JavaPlugin {
                 DrinkPicker.getPersonalizedHourlyDrink(event);
                 DiceHelper.executeDiceCommandFromGroup(event);
 
-                StandardRepeater repeater = new StandardRepeater();
-                repeater.check(event);
                 //////////////////////////////////////////////////////////////
             }
         });

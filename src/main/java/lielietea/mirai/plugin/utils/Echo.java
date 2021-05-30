@@ -5,6 +5,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Deprecated
 public class Echo {
     static ArrayList<String> Overwatch_array = new ArrayList<String>(Arrays.asList(
             "狗都不玩",
