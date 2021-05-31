@@ -6,13 +6,13 @@ import net.mamoe.mirai.event.events.MessageEvent;
 public class AutoReplyManager {
     public static void handleMessage(MessageEvent event){
         if(MessageChecker.isTalkOverwatch(event.getMessage().contentToString())){
-            AutoAntiOverwatch.reply(event);
+            AntiOverwatch.reply(event);
         }
         if(MessageChecker.isDirtyWord(event.getMessage().contentToString())){
-            AutoAntiDirtyWords.reply(event);
+            AntiDirtyWords.reply(event);
         }
         if(MessageChecker.isGoodbye(event.getMessage().contentToString())){
-            AutoSayGoodbye.reply(event);
+            SayGoodbye.reply(event);
         }
     }
 }

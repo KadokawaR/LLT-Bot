@@ -75,15 +75,11 @@ public final class JavaPluginMain extends JavaPlugin {
                     DrinkPicker.getPersonalizedHourlyDrink(event);
                 }
 
-                Echo.sendAll(event);
-
                 //复读
                 RepeaterManager.getInstance().handleMessage(event);
 
                 //自动回复
                 AutoReplyManager.handleMessage(event);
-                //因为还没有测试AutoReplyManager 所以这个我还没删除
-                Echo.sendAll(event);
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送
@@ -117,8 +113,8 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //自动回复
             AutoReplyManager.handleMessage(event);
-            //因为还没有测试AutoReplyManager 所以这个我还没删除
-            Echo.sendAll(event);
+
+
         });
     }
 }
