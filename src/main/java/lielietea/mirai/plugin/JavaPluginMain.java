@@ -4,6 +4,7 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.autoreply.AutoReplyManager;
 import lielietea.mirai.plugin.dice.DiceHelper;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.listener.SetChannel;
 import lielietea.mirai.plugin.repeater.Repeater;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
@@ -41,6 +42,8 @@ public final class JavaPluginMain extends JavaPlugin {
         Repeater repeater = new Repeater();
         // 筛选来自某一个 Bot 的事件
 
+        EventChannel channel2 = GlobalEventChannel.INSTANCE.filter(ev -> ev instanceof BotEvent && ((BotEvent) ev).getBot().getId() == 123456); // 筛选来自某一个 Bot 的事件
+        EventChannel channel3 = SetChannel.set(123456);
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             event.getBot().getGroup(578984285).sendMessage("老子来了");
         });
