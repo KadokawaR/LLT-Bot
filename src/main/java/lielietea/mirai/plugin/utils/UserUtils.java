@@ -10,8 +10,8 @@ public class UserUtils {
      * @param senderID 发言账号ID
      * @return <code>true</code> 是Bot本身 <code>false</code> 不是Bot本身
      */
-    public static boolean isBot(Long senderID){
-        Long bot_1 = 2955808839L;
+    public static boolean isBot(long senderID){
+        long bot_1 = 2955808839L;
         return senderID == bot_1;
     }
 }

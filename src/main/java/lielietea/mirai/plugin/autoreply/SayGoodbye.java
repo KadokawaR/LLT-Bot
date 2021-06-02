@@ -5,7 +5,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class SayGoodbye {
+class SayGoodbye {
     //这里是权重树哦
     static TreeMap<Double,String> weightedReply = new TreeMap<Double,String>(){
         {

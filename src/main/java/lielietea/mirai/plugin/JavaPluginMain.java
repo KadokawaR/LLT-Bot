@@ -2,14 +2,13 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.autoreply.AutoReplyManager;
-import lielietea.mirai.plugin.dice.DiceHelper;
+import lielietea.mirai.plugin.dice.DiceCommandHandler;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
 import lielietea.mirai.plugin.repeater.Repeater;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 
@@ -67,7 +66,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
                 //扔骰子
                 if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
-                    DiceHelper.executeDiceCommandFromGroup(event);
+                    DiceCommandHandler.executeDiceCommandFromGroup(event);
                 }
 
                 //点饮料
@@ -88,7 +87,7 @@ public final class JavaPluginMain extends JavaPlugin {
                     event.getSender().sendMessage("hi");
                     //不继续处理
                 }
-                //////////////////////////////////////////////////////////////
+
             }
         });
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
@@ -103,7 +102,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //扔骰子
             if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
-                DiceHelper.executeDiceCommandFromFriend(event);
+                DiceCommandHandler.executeDiceCommandFromFriend(event);
             }
 
             //点饮料
@@ -113,7 +112,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //自动回复
             AutoReplyManager.handleMessage(event);
-
 
         });
     }

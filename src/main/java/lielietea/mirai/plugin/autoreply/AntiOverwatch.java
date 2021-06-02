@@ -4,7 +4,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
 
-public class AntiOverwatch {
+class AntiOverwatch {
     //这里是权重树哦
     static TreeMap<Double,String> weightedReply = new TreeMap<Double,String>(){
         {

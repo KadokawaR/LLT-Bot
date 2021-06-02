@@ -61,7 +61,7 @@ public class DrinkPicker {
         serveDrink(event,drink);
     }
 
-    static int[] pickPersonalizedHourlyIngredients(Long qqID){
+    static int[] pickPersonalizedHourlyIngredients(long qqID){
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
