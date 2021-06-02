@@ -23,7 +23,7 @@ public class BombCardSessionManager {
     public BombCardSessionManager getInstance(){
         return INSTANCE;
     }
-    
+
     void clearSession(){
         isActive=false;
         cardDrawn=0;
