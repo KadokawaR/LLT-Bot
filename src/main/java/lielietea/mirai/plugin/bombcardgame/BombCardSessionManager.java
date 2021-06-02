@@ -10,15 +10,24 @@ public class BombCardSessionManager {
     Map<CardColorType,CardHolder> cardStacks; //用来存取已抽牌信息
     Map<SpecialNoticeType, List<Long>> noticeData;//用来存储哪些玩家已经被特殊提示过
 
-    public int getDrawnCardSumByColor(String color,long qqID){
-        return 0;
+    public int getDrawnCardSumByColor(CardColorType color,long qqID){
+        if(cardStacks.containsKey(color)){
+            return cardStacks.get(color).getDrawnCardSum(qqID);
+        } else {
+            return 0;
+        }
     }
 
     public boolean isDrawnCardInAllColor(long qqID){
-        return true;
+        int w,b,r;
+        w = getDrawnCardSumByColor(CardColorType.WHITE,qqID);
+        b = getDrawnCardSumByColor(CardColorType.BLACK,qqID);
+        r = getDrawnCardSumByColor(CardColorType.RED,qqID);
+        if(w>0&&b>0&&r>0) return true;
+        else return false;
     }
 
-    enum CardColorType{ //牌色
+    public enum CardColorType{ //牌色
         WHITE,
         BLACK,
         RED
