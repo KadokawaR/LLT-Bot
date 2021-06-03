@@ -59,11 +59,11 @@ public final class JavaPluginMain extends JavaPlugin {
             getLogger().info(event.getMessage().contentToString());
 
             long groupNumber = 578984285;//监听烈烈茶测试群
-            if (event.getGroup().getId() == groupNumber) { //仅在此群测试
-                if (event.getSender().getId() == 459405942) { //川川的QQ
-                    event.getSubject().sendMessage("老唐最帅！");
-                }
+            if (IDChecker.isThisQQMember(event,groupNumber,459405942)) { //川川的QQ
+                event.getSubject().sendMessage("老唐最帅！");
+            }
 
+            if (IDChecker.isThisQQGroup(event,groupNumber)){
                 //扔骰子
                 if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
                     DiceCommandHandler.executeDiceCommandFromGroup(event);
@@ -87,6 +87,7 @@ public final class JavaPluginMain extends JavaPlugin {
                     event.getSender().sendMessage("hi");
                     //不继续处理
                 }
+
 
             }
         });
