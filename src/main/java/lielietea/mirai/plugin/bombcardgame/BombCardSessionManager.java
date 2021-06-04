@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.bombcardgame;
 
+import net.mamoe.mirai.contact.PermissionDeniedException;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
@@ -15,6 +16,7 @@ public class BombCardSessionManager {
             "牌堆填充中，请稍等一会儿"));
     static int GAME_SESSION_LENGTH_IN_SECONDS = 180;
     static int GAME_SESSION_COOLDOWN_IN_SECONDS = 15;
+    static int PLAYER_DEATH_MUTE_TIME_IN_SECONDS = 60;
     static Random rand = new Random();
     //权重树
     static TreeMap<Double,Card.CardType> weightedCardTypeExceptBombCard = new TreeMap<Double,Card.CardType>(){
@@ -45,7 +47,7 @@ public class BombCardSessionManager {
     }
 
     public synchronized void handleGameSession(GroupMessageEvent event){
-        //游戏在冷却中时无法进行操作
+        //游戏在冷却中时无法进行操作，提示玩家信息
         if(isGameInCoolDown()){
             event.getGroup().sendMessage(new MessageChainBuilder()
                     .append(new QuoteReply(event.getMessage()))
@@ -53,10 +55,10 @@ public class BombCardSessionManager {
                     .build());
         }
         else{
-            //如果游戏没有初始化，或者刚脱离冷却
+            //如果游戏没有初始化，或者刚脱离冷却，那么进行初始化，再处理抽牌流程
             if(isGameInactive()) startNewSession(event);
 
-            //如果游戏已经在进行中
+            //如果游戏已经在进行中，那么直接处理抽牌流程
             else handleDrawCard(event);
         }
     }
@@ -99,11 +101,12 @@ public class BombCardSessionManager {
     //处理抽牌流程
     void handleDrawCard(GroupMessageEvent event){
         //随机生成一张牌
+        boolean isBombCard = isBombCard();
         Card.CardType type = randomlyGenerateCardType();
         Card newlyDrawnCard = new Card(event.getSender().getId(),
                 event.getGroup().getId(),
                 BombCardSession.INSTANCE.cardDrawn,
-                ContentGenerator.getRandomContent(type),
+                ContentGenerator.getRandomContent(type,isBombCard),
                 type);
 
         //将牌加入牌堆
@@ -112,16 +115,17 @@ public class BombCardSessionManager {
         //广播抽牌结果
         broadcastDrawCardResult(event,newlyDrawnCard);
 
-        //处理是否触发相关特殊提示
+        //检测是否有触发特殊提示。如果触发特殊提示，处理数据并进行广播
         handleSpecialNotice(event);
 
-        //如果该牌是炸弹牌
-        if(newlyDrawnCard.cardType == Card.CardType.BOMB){
+        //如果该牌是炸弹牌，那么处理炸弹牌事件，广播游戏结果并结束本局
+        if(isBombCard){
+            handleBombCardEvent(event,new VictimPair(event.getSender().getId(),event.getGroup().getId()));
             broadcastGameResult();
             endCurrentSession();
 
         }
-        //如果这张牌是最后一张牌
+        //如果这张牌是最后一张牌，那么广播游戏结果并结束本局
         else if(BombCardSession.INSTANCE.cardDrawn >= BombCardSession.MAXIMUM_CARDS_DRAWN){
             broadcastGameResult();
             endCurrentSession();
@@ -130,23 +134,38 @@ public class BombCardSessionManager {
 
     }
 
+    //决定是否是炸弹牌
+    boolean isBombCard(){
+        return 1d/BombCardSession.MAXIMUM_CARDS_DRAWN < Math.random();
+    }
+
     //生成牌类型
     Card.CardType randomlyGenerateCardType(){
-        //先决定是否生成炸弹牌
-        if(1d/BombCardSession.MAXIMUM_CARDS_DRAWN < Math.random()){
-            return Card.CardType.BOMB;
-        }
-        //如果不生成炸弹牌，再按权重生成其他牌
-        else {
-            double randomWeight = weightedCardTypeExceptBombCard.lastKey() * Math.random();
-            SortedMap<Double, Card.CardType> tailMap = weightedCardTypeExceptBombCard.tailMap(randomWeight, false);
-            return weightedCardTypeExceptBombCard.get(tailMap.firstKey());
+        double randomWeight = weightedCardTypeExceptBombCard.lastKey() * Math.random();
+        SortedMap<Double, Card.CardType> tailMap = weightedCardTypeExceptBombCard.tailMap(randomWeight, false);
+        return weightedCardTypeExceptBombCard.get(tailMap.firstKey());
+    }
+
+    //处理炸弹牌事件
+    void handleBombCardEvent(GroupMessageEvent event, VictimPair source){
+        //获取炸弹牌受害者列表
+        Set<VictimPair> victimList = BombCardSession.INSTANCE.cardStack.getBombCardVictim();
+        for(VictimPair victimPair : victimList){
+            //禁言所有死亡玩家
+            try{
+                event.getBot().getGroup(victimPair.groupID).get(victimPair.qqID).mute(PLAYER_DEATH_MUTE_TIME_IN_SECONDS);
+            }catch(PermissionDeniedException e){
+                //这里是不是应该加Logger?
+            }
         }
     }
 
     //广播抽牌结果
     void broadcastDrawCardResult(GroupMessageEvent event,Card card){
-
+        event.getGroup().sendMessage(new MessageChainBuilder()
+                .append(new QuoteReply(event.getMessage()))
+                .append(card.cardContent)
+                .build());
     }
 
     //广播游戏结果

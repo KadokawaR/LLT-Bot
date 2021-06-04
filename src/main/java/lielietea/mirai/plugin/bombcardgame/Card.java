@@ -58,8 +58,7 @@ class Card implements Comparable<Card> {
         MOTTO,
         EFFECT,
         BOMB_CARD_GAME_BACKGROUND,
-        AUTHORS_WORDS,
-        BOMB
+        AUTHORS_WORDS
     }
 
 }
