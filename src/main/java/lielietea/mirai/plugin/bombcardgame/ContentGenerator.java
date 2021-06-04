@@ -8,7 +8,7 @@ class ContentGenerator {
      * @param isBombCard 是否为炸弹牌
      * @return 牌面内容
      */
-    public String getRandomContent(BombCardSessionManager.CardColorType color,boolean isBombCard){
-        return "test-content & isBombCard:" + isBombCard;
+    public String getRandomContent(Card.CardType color, boolean isBombCard){
+        return "test-content "+ color +" = isBombCard: " + isBombCard;
     }
 }

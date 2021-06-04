@@ -5,7 +5,7 @@ import java.util.List;
 
 //还没写完！
 class CardHolder {
-    List<CardDrawn> cardStack;
+    List<Card> cardStack;
 
     public CardHolder(){
         cardStack = new ArrayList<>();
@@ -15,7 +15,7 @@ class CardHolder {
      * 向该牌堆中添加一张被抽过的牌
      * @param card 被添加的牌
      */
-    public void addCard(CardDrawn card){
+    public void addCard(Card card){
         cardStack.add(card);
     }
 
@@ -26,10 +26,14 @@ class CardHolder {
      */
     public int getDrawnCardSum(long qqID){
         int temp = 0;
-        for(CardDrawn card : cardStack){
+        for(Card card : cardStack){
             if(card.qqID==qqID) temp++;
         }
         return temp;
+    }
+
+    public void clearStack(){
+        cardStack.clear();
     }
 
     /**
@@ -39,7 +43,7 @@ class CardHolder {
      */
     public boolean isDrawnCardInDifferentGroup(long qqID){
         long temp = 0;
-        for(CardDrawn card : cardStack){
+        for(Card card : cardStack){
             if(card.qqID==qqID) {
                 if(temp==0){
                     temp = card.groupID;

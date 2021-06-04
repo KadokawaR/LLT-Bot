@@ -2,6 +2,7 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.autoreply.AutoReplyManager;
+import lielietea.mirai.plugin.bombcardgame.BombCardSessionManager;
 import lielietea.mirai.plugin.dice.DiceCommandHandler;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
 import lielietea.mirai.plugin.repeater.Repeater;
@@ -79,6 +80,13 @@ public final class JavaPluginMain extends JavaPlugin {
 
                 //自动回复
                 AutoReplyManager.handleMessage(event);
+
+                //炸弹卡牌
+                /*
+                if(MessageChecker.isBoobCardGame(event.getMessage().contentToString())){
+                    BombCardSessionManager.getInstance().handleGameSession(event);
+                }
+                 */
 
                 if (event.getMessage().contentToString().equals("hi")) {
                     //群内发送

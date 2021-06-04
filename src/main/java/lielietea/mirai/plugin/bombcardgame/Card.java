@@ -2,19 +2,19 @@ package lielietea.mirai.plugin.bombcardgame;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
-class CardDrawn implements Comparable<CardDrawn> {
+class Card implements Comparable<Card> {
     public long qqID;
     public long groupID;
     public int sequence;
     public String cardContent;
+    public CardType cardType;
 
-    public CardDrawn(long qqID, long groupID, int sequence, String cardContent) {
+    public Card(long qqID, long groupID, int sequence, String cardContent, CardType cardType) {
         this.qqID = qqID;
         this.groupID = groupID;
         this.sequence = sequence;
         this.cardContent = cardContent;
+        this.cardType = cardType;
     }
 
     /**
@@ -24,7 +24,7 @@ class CardDrawn implements Comparable<CardDrawn> {
      * @return 不用我们管，这个是排序方法调用的
      */
     @Override
-    public int compareTo(@NotNull CardDrawn o) {
+    public int compareTo(@NotNull Card o) {
         if(groupID>o.groupID) return 1;
         else if(groupID<o.groupID) return -1;
         else{
@@ -36,6 +36,12 @@ class CardDrawn implements Comparable<CardDrawn> {
             }
         }
 
+    }
+
+    public enum CardType { //牌色
+        WHITE,
+        BLACK,
+        RED
     }
 
     @Override
