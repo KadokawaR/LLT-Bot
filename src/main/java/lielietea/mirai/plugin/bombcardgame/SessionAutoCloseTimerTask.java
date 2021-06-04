@@ -18,11 +18,10 @@ public class SessionAutoCloseTimerTask extends TimerTask {
         if(BombCardSession.INSTANCE.sessionStatus == BombCardSession.SessionStatus.ACTIVE && BombCardSession.INSTANCE.sessionID == sessionID){
             BombCardSession.INSTANCE.sessionStatus = BombCardSession.SessionStatus.COOLDOWN;
             BombCardSession.INSTANCE.clearSession();
+
+            //设置另外一个计时器，让游戏可以脱离冷却状态
+            Timer timer = new Timer();
+            timer.schedule(new SessionFinishCooldownTimerTask(sessionID), plannedCooldownTimeInSecond * 1000);
         }
-
-        //设置另外一个计时器，让游戏可以脱离冷却状态
-        Timer timer = new Timer();
-        timer.schedule(new SessionFinishCooldownTimerTask(sessionID), plannedCooldownTimeInSecond * 1000);
-
     }
 }

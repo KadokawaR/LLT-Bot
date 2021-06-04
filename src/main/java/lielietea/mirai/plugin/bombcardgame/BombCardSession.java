@@ -10,20 +10,25 @@ class BombCardSession {
     SessionStatus sessionStatus; //游戏状态
     String sessionID; //某局游戏的ID
     int cardDrawn; //保存已抽牌数
-    CardHolder cardStacks; //保存已抽牌信息
+    CardHolder cardStack; //保存已抽牌信息
     Map<SpecialNoticeType, List<Long>> noticeData;//保存哪些玩家已经被特殊提示过
     public static BombCardSession INSTANCE = new BombCardSession();
 
     BombCardSession(){
         sessionStatus=SessionStatus.INACTIVE;
         cardDrawn=0;
-        cardStacks = new CardHolder();
+        cardStack = new CardHolder();
         noticeData = new HashMap<>();
+    }
+
+    void addCardToStack(Card card){
+        cardStack.addCard(card);
+        cardDrawn++;
     }
 
     void clearSession(){
         cardDrawn=0;
-        cardStacks.clearStack();
+        cardStack.clearStack();
         noticeData.clear();
     }
 

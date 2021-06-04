@@ -38,19 +38,28 @@ class Card implements Comparable<Card> {
 
     }
 
-    public enum CardType { //牌色
-        WHITE,
-        BLACK,
-        RED
-    }
-
     @Override
     public String toString() {
-        return "CardDrawn{" +
+        return "Card{" +
                 "qqID=" + qqID +
                 ", groupID=" + groupID +
                 ", sequence=" + sequence +
                 ", cardContent='" + cardContent + '\'' +
+                ", cardType=" + cardType +
                 '}';
     }
+
+    public enum CardType { //牌类型
+        PLACE,
+        SCENE,
+        RACE,
+        COMMON_OBJECT,
+        SPECIAL_OBJECT,
+        MOTTO,
+        EFFECT,
+        BOMB_CARD_GAME_BACKGROUND,
+        AUTHORS_WORDS,
+        BOMB
+    }
+
 }
