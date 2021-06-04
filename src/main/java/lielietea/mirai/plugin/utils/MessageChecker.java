@@ -1,7 +1,6 @@
 package lielietea.mirai.plugin.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -81,6 +80,17 @@ public class MessageChecker {
     }
 
     /**
+     * 检查某语句是否含有脏话的命令
+     * @param input 被检查语句
+     * @return 检查结果
+     */
+
+    public static boolean isBoobCardGame(String input){
+        if(input.equals("/bc")) return true;
+        else return false;
+    }
+
+    /**
      * 检查某语句是否是一个 X 的命令
      * 更为普适的字段检测
      * @param patternIn 匹配模式
@@ -88,7 +98,7 @@ public class MessageChecker {
      * @return
      */
 
-    public static boolean generalCheck(ArrayList<Pattern> patternIn,String input){
+    public static boolean generalRegCommandCheck(ArrayList<Pattern> patternIn,String input){
         for(Pattern pattern: patternIn){
             if(pattern.matcher(input).matches()){
                 return true;

@@ -88,8 +88,8 @@ class CommonDice {
 
     MessageChain buildMessage(MessageChain quoteMessage){
         MessageChainBuilder message = new MessageChainBuilder();
-        message.append("您掷出的点数是:");
         message.append(new QuoteReply(quoteMessage));
+        message.append("您掷出的点数是:");
         result.stream().forEach(result->{
             message.append(result+" ");
         });
