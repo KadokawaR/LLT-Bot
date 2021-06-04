@@ -19,7 +19,7 @@ dependencies{
     //runtimeOnly("net.mamoe:mirai-login-solver-selenium:1.0-dev-15")
 
     //需要用Gson来创建Json持久化数据，就用下面这个
-    //implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.code.gson:gson:2.8.7")
 }
 
 java {
