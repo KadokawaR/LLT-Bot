@@ -50,12 +50,12 @@ class CardHolder {
     }
 
     //获取炸弹牌受害者列表
-    public Set<VictimPair> getBombCardVictim(){
-        Set<VictimPair> victimList = new HashSet<>();
+    public Set<GroupMemberInfoPair> getBombCardVictim(){
+        Set<GroupMemberInfoPair> victimList = new HashSet<>();
         Card.CardType victimCardType = cardStack.get(cardStack.size()-1).cardType;
         List<Card> victimCardStack = cardStack.stream().filter(card -> card.cardType==victimCardType).collect(Collectors.toList());
         for(Card victimCard: victimCardStack){
-            victimList.add(new VictimPair(victimCard.qqID,victimCard.groupID));
+            victimList.add(new GroupMemberInfoPair(victimCard.qqID,victimCard.groupID));
         }
         return victimList;
     }
