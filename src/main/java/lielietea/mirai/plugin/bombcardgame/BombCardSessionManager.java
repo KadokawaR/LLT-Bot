@@ -120,7 +120,7 @@ public class BombCardSessionManager {
 
         //如果该牌是炸弹牌，那么处理炸弹牌事件，广播游戏结果并结束本局
         if(isBombCard){
-            handleBombCardEvent(event,new VictimPair(event.getSender().getId(),event.getGroup().getId()));
+            handleBombCardEvent(event,new GroupMemberInfoPair(event.getSender().getId(),event.getGroup().getId()));
             broadcastGameResult();
             endCurrentSession();
 
@@ -147,13 +147,13 @@ public class BombCardSessionManager {
     }
 
     //处理炸弹牌事件
-    void handleBombCardEvent(GroupMessageEvent event, VictimPair source){
+    void handleBombCardEvent(GroupMessageEvent event, GroupMemberInfoPair source){
         //获取炸弹牌受害者列表
-        Set<VictimPair> victimList = BombCardSession.INSTANCE.cardStack.getBombCardVictim();
-        for(VictimPair victimPair : victimList){
+        Set<GroupMemberInfoPair> victimList = BombCardSession.INSTANCE.cardStack.getBombCardVictim();
+        for(GroupMemberInfoPair groupMemberInfoPair : victimList){
             //禁言所有死亡玩家
             try{
-                event.getBot().getGroup(victimPair.groupID).get(victimPair.qqID).mute(PLAYER_DEATH_MUTE_TIME_IN_SECONDS);
+                event.getBot().getGroup(groupMemberInfoPair.groupID).get(groupMemberInfoPair.qqID).mute(PLAYER_DEATH_MUTE_TIME_IN_SECONDS);
             }catch(PermissionDeniedException e){
                 //这里是不是应该加Logger?
             }

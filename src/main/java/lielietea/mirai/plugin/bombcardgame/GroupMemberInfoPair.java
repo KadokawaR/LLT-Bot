@@ -3,11 +3,11 @@ package lielietea.mirai.plugin.bombcardgame;
 import java.util.Objects;
 
 //用于传递炸弹牌受害者信息
-class VictimPair{
+class GroupMemberInfoPair {
     public long qqID;
     public long groupID;
 
-    public VictimPair(long qqID, long groupID) {
+    public GroupMemberInfoPair(long qqID, long groupID) {
         this.qqID = qqID;
         this.groupID = groupID;
     }
@@ -16,8 +16,8 @@ class VictimPair{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof VictimPair)) return false;
-        VictimPair that = (VictimPair) o;
+        if (!(o instanceof GroupMemberInfoPair)) return false;
+        GroupMemberInfoPair that = (GroupMemberInfoPair) o;
         return qqID == that.qqID && groupID == that.groupID;
     }
 
