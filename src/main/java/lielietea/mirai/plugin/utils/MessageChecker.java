@@ -91,6 +91,21 @@ public class MessageChecker {
     }
 
     /**
+     * 检查某语句是否含有脏话的命令
+     * @param input 被检查语句
+     * @return 检查结果
+     */
+
+    public static boolean isHeroLines(String input){
+        for(Pattern pattern: heroLinesPatterns){
+            if(pattern.matcher(input).matches()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 检查某语句是否是一个 X 的命令
      * 更为普适的字段检测
      * @param patternIn 匹配模式
@@ -139,7 +154,7 @@ public class MessageChecker {
                     "overwatch",
                     "Overwatch",
                     "守望先锋",
-                    "(玩|打)((OW)|(屁股)|(ow))"
+                    "(玩|打)((OW)|(ow))"
                     ));
             for(String content:contents){
                 talkOverwatchPatterns.add(Pattern.compile(".*"+content+".*"));
@@ -167,6 +182,18 @@ public class MessageChecker {
             ));
             for(String content:contents){
                 rollDicePatterns.add(Pattern.compile(content));
+            }
+        }
+    };
+
+    static ArrayList<Pattern> heroLinesPatterns = new ArrayList<Pattern>() {
+        {
+            ArrayList<String> contents = new ArrayList<>(List.of(
+                    "/大招",
+                    "/英雄不朽"
+            ));
+            for(String content:contents){
+                heroLinesPatterns.add(Pattern.compile(content));
             }
         }
     };

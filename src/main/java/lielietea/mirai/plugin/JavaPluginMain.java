@@ -5,6 +5,7 @@ import lielietea.mirai.plugin.autoreply.AutoReplyManager;
 import lielietea.mirai.plugin.bombcardgame.BombCardSessionManager;
 import lielietea.mirai.plugin.dice.DiceCommandHandler;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.overwatch.HeroLines;
 import lielietea.mirai.plugin.repeater.Repeater;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
@@ -59,6 +60,14 @@ public final class JavaPluginMain extends JavaPlugin {
             //监听群消息
             getLogger().info(event.getMessage().contentToString());
 
+            //test if IDChecker is crashed
+            DiceCommandHandler.executeDiceCommandFromGroup(event);
+            HeroLines.sendHeroLines(event);
+            DrinkPicker.getPersonalizedHourlyDrink(event);
+            RepeaterManager.getInstance().handleMessage(event);
+            AutoReplyManager.handleMessage(event);
+
+
             long groupNumber = 578984285;//监听烈烈茶测试群
             if (IDChecker.isThisQQMember(event,groupNumber,459405942)) { //川川的QQ
                 event.getSubject().sendMessage("老唐最帅！");
@@ -68,6 +77,11 @@ public final class JavaPluginMain extends JavaPlugin {
                 //扔骰子
                 if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
                     DiceCommandHandler.executeDiceCommandFromGroup(event);
+                }
+
+                //召唤屁股
+                if (MessageChecker.isHeroLines(event.getMessage().contentToString())) {
+                    HeroLines.sendHeroLines(event);
                 }
 
                 //点饮料
