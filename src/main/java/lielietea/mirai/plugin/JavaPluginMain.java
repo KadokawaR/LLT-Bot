@@ -61,6 +61,7 @@ public final class JavaPluginMain extends JavaPlugin {
             getLogger().info(event.getMessage().contentToString());
 
             //test if IDChecker is crashed
+            //test result: HeroLines and DrinkPicker do well, while others not.
             DiceCommandHandler.executeDiceCommandFromGroup(event);
             HeroLines.sendHeroLines(event);
             DrinkPicker.getPersonalizedHourlyDrink(event);
