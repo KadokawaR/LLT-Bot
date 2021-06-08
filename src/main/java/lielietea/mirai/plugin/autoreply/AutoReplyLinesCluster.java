@@ -8,7 +8,6 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -34,9 +33,7 @@ class AutoReplyLinesCluster {
             //反序列化
             Gson gson = new Gson();
             INSTANCE = gson.fromJson(readable,AutoReplyLinesCluster.class);
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch(IOException e){
             e.printStackTrace();
         }
 
@@ -69,6 +66,15 @@ class AutoReplyLinesCluster {
     //回复消息
     public static void reply(MessageEvent event, ReplyType type){
         event.getSubject().sendMessage(pickReply(type));
+    }
+
+    @Override
+    public String toString() {
+        return "AutoReplyLinesCluster{" +
+                "goodbyeReplyLines=" + goodbyeReplyLines +
+                ", antiDirtyWordsReplyLines=" + antiDirtyWordsReplyLines +
+                ", antiOverwatchGameReplyLines=" + antiOverwatchGameReplyLines +
+                '}';
     }
 
     //回复的类型
