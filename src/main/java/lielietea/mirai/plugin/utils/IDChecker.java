@@ -16,4 +16,10 @@ public class IDChecker {
     public static boolean isThisQQMember(GroupMessageEvent event, long groupID, long qqID) {
         return isThisQQGroup(event, groupID) && isThisQQID(event, qqID);
     }
+
+    public static boolean isBot(MessageEvent event){
+        long senderID = event.getSender().getId();
+        long bot_1 = event.getBot().getId();
+        return senderID == bot_1;
+    }
 }

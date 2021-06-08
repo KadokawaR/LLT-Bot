@@ -1,5 +1,4 @@
 package lielietea.mirai.plugin.overwatch;
-import lielietea.mirai.plugin.utils.MessageChecker;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;

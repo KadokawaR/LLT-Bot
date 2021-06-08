@@ -1,0 +1,16 @@
+{
+  "goodbyeReplyLines": {
+    "1.0": "886",
+    "2.0": "再见！",
+    "3.0": "Bye!",
+    "4.0": "下次再见"
+  },
+  "antiDirtyWordsReplyLines": {
+    "1.0": "Watch your language!",
+    "2.0": "嘴巴放干净点！"
+  },
+  "antiOverwatchGameReplyLines": {
+    "3.0": "狗都不玩",
+    "4.0": "不会吧不会吧不会真的有人还在玩吧？"
+  }
+}

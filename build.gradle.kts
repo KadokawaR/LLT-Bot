@@ -20,6 +20,7 @@ dependencies{
 
     //需要用Gson来创建Json持久化数据，就用下面这个
     implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.guava:guava:30.1.1-jre")
 }
 
 java {
