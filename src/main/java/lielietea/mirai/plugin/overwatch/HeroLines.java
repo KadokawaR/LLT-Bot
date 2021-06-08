@@ -3,11 +3,12 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
-
+@Deprecated
 public class HeroLines {
-    static ArrayList<String> allHeroVoiceLines = new ArrayList<>(Arrays.asList(
+    static List<String> allHeroVoiceLines = new ArrayList<>(Arrays.asList(
             //Ana
             "释放你的怒火吧！","纳米激素已注入！","你被强化了！快上！","纳米激素已注射。把敌人全干掉吧！",
             //Baptiste
@@ -19,13 +20,13 @@ public class HeroLines {
             //Mercy
             "英雄不朽！","我的奴仆是不死的！","Heroes never die!","Til Valhalla!",
             //Moira
-            "听从我的意志！",
+            "听从我的意志！","屈服于我",
             //Zenyatta
-            "遁入智瞳","感受宁静",
+            "遁入智瞳","感受宁静","遁入虚无",
             //Ashe
             "鲍勃，别傻愣着！","快冲上去，鲍勃！",
             //Bastion
-            "堡垒说得对",
+            "堡垒说得对","Do Do Do Do!",
             //Doomfist
             "毁！天！灭！地！！！","铁！拳！强！攻！！！",
             //Echo

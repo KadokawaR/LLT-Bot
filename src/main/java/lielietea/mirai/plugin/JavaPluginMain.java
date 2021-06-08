@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.bombcardgame.BombCardSessionManager;
 import lielietea.mirai.plugin.dice.DiceCommandHandler;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
 import lielietea.mirai.plugin.overwatch.HeroLines;
+import lielietea.mirai.plugin.overwatch.HeroLinesManager;
 import lielietea.mirai.plugin.repeater.Repeater;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
@@ -72,9 +73,12 @@ public final class JavaPluginMain extends JavaPlugin {
                 }
 
                 //召唤屁股
+                HeroLinesManager.handleMessage(event);
+                /* 旧写法 @Deprecated
                 if (MessageChecker.isHeroLines(event.getMessage().contentToString())) {
                     HeroLines.sendHeroLines(event);
                 }
+                 */
 
                 //点饮料
                 if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
