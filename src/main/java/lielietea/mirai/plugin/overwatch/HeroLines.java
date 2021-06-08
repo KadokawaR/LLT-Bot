@@ -3,11 +3,12 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 
 public class HeroLines {
-    static ArrayList<String> allHeroVoiceLines = new ArrayList<>(Arrays.asList(
+    static List<String> allHeroVoiceLines = new ArrayList<>(Arrays.asList(
             //Ana
             "释放你的怒火吧！","纳米激素已注入！","你被强化了！快上！","纳米激素已注射。把敌人全干掉吧！",
             //Baptiste
@@ -78,6 +79,6 @@ public class HeroLines {
         Random random=new Random();
         return allHeroVoiceLines.get(random.nextInt(allHeroVoiceLines.size()));
     }
-
+    
     public static void sendHeroLines(MessageEvent event){ event.getSubject().sendMessage(pickLines()); }
 }
