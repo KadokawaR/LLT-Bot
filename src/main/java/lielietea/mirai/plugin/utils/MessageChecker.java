@@ -183,7 +183,7 @@ public class MessageChecker {
      * 更为普适的字段检测
      * @param patternIn 匹配模式
      * @param input 被检查语句
-     * @return
+     * @return 检查结果
      */
 
     public static boolean generalRegCommandCheck(ArrayList<Pattern> patternIn,String input){

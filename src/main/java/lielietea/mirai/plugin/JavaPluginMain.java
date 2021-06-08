@@ -60,15 +60,6 @@ public final class JavaPluginMain extends JavaPlugin {
             //监听群消息
             getLogger().info(event.getMessage().contentToString());
 
-            //test if IDChecker is crashed
-            //test result: HeroLines and DrinkPicker do well, while others not.
-            DiceCommandHandler.executeDiceCommandFromGroup(event);
-            HeroLines.sendHeroLines(event);
-            DrinkPicker.getPersonalizedHourlyDrink(event);
-            RepeaterManager.getInstance().handleMessage(event);
-            AutoReplyManager.handleMessage(event);
-
-
             long groupNumber = 578984285;//监听烈烈茶测试群
             if (IDChecker.isThisQQMember(event,groupNumber,459405942)) { //川川的QQ
                 event.getSubject().sendMessage("老唐最帅！");
