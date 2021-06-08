@@ -16,7 +16,7 @@ public class MessageChecker {
                     "好渴",
                     "来一杯"));
             for(String content:contents){
-                needDrinkPatterns.add(Pattern.compile(".*"+content+".*"));
+                this.add(Pattern.compile(".*"+content+".*"));
             }
         }
     };
@@ -27,7 +27,7 @@ public class MessageChecker {
                     "我走了",
                     "拜拜"));
             for(String content:contents){
-                sayGoodbyePatterns.add(Pattern.compile(".*"+content+".*"));
+                this.add(Pattern.compile(".*"+content+".*"));
             }
         }
     };
@@ -40,7 +40,7 @@ public class MessageChecker {
                     "(玩|打)((OW)|(ow))"
             ));
             for(String content:contents){
-                talkOverwatchPatterns.add(Pattern.compile(".*"+content+".*"));
+                this.add(Pattern.compile(".*"+content+".*"));
             }
         }
     };
@@ -52,7 +52,7 @@ public class MessageChecker {
                     "fuck you"
             ));
             for(String content:contents){
-                dirtyWordsPatterns.add(Pattern.compile(".*"+content+".*"));
+                this.add(Pattern.compile(".*"+content+".*"));
             }
         }
     };
@@ -64,7 +64,7 @@ public class MessageChecker {
                     "\\.(d|D)[1-9][0-9]{1,7}"
             ));
             for(String content:contents){
-                rollDicePatterns.add(Pattern.compile(content));
+                this.add(Pattern.compile(content));
             }
         }
     };
@@ -76,7 +76,7 @@ public class MessageChecker {
                     "/英雄不朽"
             ));
             for(String content:contents){
-                heroLinesPatterns.add(Pattern.compile(content));
+                this.add(Pattern.compile(content));
             }
         }
     };
