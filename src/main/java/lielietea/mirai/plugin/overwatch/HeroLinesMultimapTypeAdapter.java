@@ -3,7 +3,6 @@ package lielietea.mirai.plugin.overwatch;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.gson.*;
-import lielietea.mirai.plugin.autoreply.Hero;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

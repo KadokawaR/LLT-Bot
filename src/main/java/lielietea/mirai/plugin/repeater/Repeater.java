@@ -1,24 +1,23 @@
 package lielietea.mirai.plugin.repeater;
 
-import lielietea.mirai.plugin.utils.IDChecker;
+import lielietea.mirai.plugin.utils.idchecker.BotChecker;
+import lielietea.mirai.plugin.utils.idchecker.IIdentityChecker;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
-public class Repeater {
+class Repeater {
+    IIdentityChecker<GroupMessageEvent> botChecker;
     String content;
     int count;
 
     public Repeater(){
+        botChecker = new BotChecker();
         this.content = "";
         count = 0;
     }
 
-    /**
-     * 处理消息，并根据情况进行复读
-     * @param event 群消息事件
-     * @return <code>true</code> 需要复读 <code>false</code> 无需复读
-     */
+    //处理消息，并根据情况进行复读
     public boolean handleMessage(GroupMessageEvent event){
-        if(content.equals(event.getMessage().contentToString()) && !IDChecker.isBot(event)){
+        if(content.equals(event.getMessage().contentToString()) && botChecker.checkIdentity(event)){
             count++;
         } else {
             count=0;
