@@ -1,13 +1,13 @@
 package lielietea.mirai.plugin.autoreply;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -17,21 +17,28 @@ class AutoReplyLinesCluster {
     TreeMap<Double,String> antiDirtyWordsReplyLines;
     TreeMap<Double,String> antiOverwatchGameReplyLines;
 
-    static AutoReplyLinesCluster INSTANCE = new AutoReplyLinesCluster();
+    static Gson gson = new Gson();
+    static AutoReplyLinesCluster INSTANCE;
 
-    AutoReplyLinesCluster(){
-        loadReplyLinesFromPreset();
+    static String DEFAULT_AUTOREPLY_JSON_PATH = "src/main/resources/autoreply.json";
+
+    static {
+        try {
+            INSTANCE = gson.fromJson(Files.newReader(new File(DEFAULT_AUTOREPLY_JSON_PATH), Charsets.UTF_8), AutoReplyLinesCluster.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
+
+    AutoReplyLinesCluster(){};
 
     public static void loadReplyLinesFromPreset(){
         try{
             //读取文件
-            File file = new File("src/main/resources/autoreply.json");
+            File file = new File(DEFAULT_AUTOREPLY_JSON_PATH);
             BufferedReader readable = Files.newReader(file, Charsets.UTF_8);
-            String jsonString = CharStreams.toString(readable);
 
             //反序列化
-            Gson gson = new Gson();
             INSTANCE = gson.fromJson(readable,AutoReplyLinesCluster.class);
         } catch(IOException e){
             e.printStackTrace();

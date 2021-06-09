@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class MessageChecker {
-    static List<Pattern> needDrinkPatterns = new ArrayList<Pattern>() {
+    static List<Pattern> needDrinkPatterns = new ArrayList<>() {
         {
             List<String> contents = new ArrayList<>(List.of(
                     "喝点什么",
@@ -20,7 +20,7 @@ public class MessageChecker {
             }
         }
     };
-    static List<Pattern> sayGoodbyePatterns = new ArrayList<Pattern>() {
+    static List<Pattern> sayGoodbyePatterns = new ArrayList<>() {
         {
             List<String> contents = new ArrayList<>(List.of(
                     "下线了",
@@ -31,7 +31,7 @@ public class MessageChecker {
             }
         }
     };
-    static List<Pattern> talkOverwatchPatterns = new ArrayList<Pattern>() {
+    static List<Pattern> talkOverwatchPatterns = new ArrayList<>() {
         {
             List<String> contents = new ArrayList<>(List.of(
                     "overwatch",
@@ -44,7 +44,7 @@ public class MessageChecker {
             }
         }
     };
-    static List<Pattern> dirtyWordsPatterns = new ArrayList<Pattern>() {
+    static List<Pattern> dirtyWordsPatterns = new ArrayList<>() {
         {
             List<String> contents = new ArrayList<>(List.of(
                     "(日|干|操|艹|草|滚)(你|尼|泥)(妈|马|麻)",
@@ -56,7 +56,7 @@ public class MessageChecker {
             }
         }
     };
-    static List<Pattern> rollDicePatterns = new ArrayList<Pattern>() {
+    static List<Pattern> rollDicePatterns = new ArrayList<>() {
         {
             List<String> contents = new ArrayList<>(List.of(
                     "(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})",
@@ -69,7 +69,7 @@ public class MessageChecker {
         }
     };
 
-    static List<Pattern> heroLinesPatterns = new ArrayList<Pattern>() {
+    static List<Pattern> heroLinesPatterns = new ArrayList<>() {
         {
             List<String> contents = new ArrayList<>(List.of(
                     "/大招",

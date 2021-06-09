@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RepeaterManager {
-
-    static RepeaterManager instance = new RepeaterManager();
     Map<Long,Repeater> repeaterMap= new HashMap<>();
+
+    static RepeaterManager INSTANCE = new RepeaterManager();
 
     RepeaterManager(){}
 
     public static RepeaterManager getInstance(){
-        return instance;
+        return INSTANCE;
     }
 
     /**

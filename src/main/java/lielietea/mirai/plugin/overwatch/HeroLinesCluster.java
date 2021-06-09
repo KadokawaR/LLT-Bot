@@ -2,43 +2,50 @@ package lielietea.mirai.plugin.overwatch;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lielietea.mirai.plugin.autoreply.Hero;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Random;
 
-public class HeroLinesCluster {
+class HeroLinesCluster {
     Multimap<Hero,String> ultimateAbilityHeroLines;
     Multimap<Hero,String> commonHeroLines;
 
-    static HeroLinesCluster INSTANCE = new HeroLinesCluster();
+    static Gson gson = new GsonBuilder().registerTypeAdapter(Multimap.class,new HeroLinesMultimapTypeAdapter()).setPrettyPrinting().create();
     static Random rand = new Random();
+    static HeroLinesCluster INSTANCE;
+
+    static String DEFAULT_HEROLINES_JSON_PATH = "src/main/resources/herolines.json";
+
+    static {
+        try {
+            INSTANCE = gson.fromJson(Files.newReader(new File(DEFAULT_HEROLINES_JSON_PATH), Charsets.UTF_8), HeroLinesCluster.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    HeroLinesCluster(){};
 
     public static HeroLinesCluster getInstance(){
         return INSTANCE;
     }
 
-    HeroLinesCluster(){
-        loadReplyLinesFromPreset();
-    }
-
-    public static void loadReplyLinesFromPreset(){
+    //重载默认herolines.json
+    public static void reloadReplyLinesFromPreset(){
         try{
             //读取文件
-            File file = new File("src/main/resources/herolines.json");
+            File file = new File(DEFAULT_HEROLINES_JSON_PATH);
             BufferedReader readable = Files.newReader(file, Charsets.UTF_8);
-            String jsonString = CharStreams.toString(readable);
 
             //反序列化
-            Gson gson = new GsonBuilder().registerTypeAdapter(Multimap.class,new HeroLinesMultimapTypeAdapter()).setPrettyPrinting().create();
             INSTANCE = gson.fromJson(readable, HeroLinesCluster.class);
         } catch(IOException e){
             e.printStackTrace();

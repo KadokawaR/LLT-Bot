@@ -2,23 +2,18 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.autoreply.AutoReplyManager;
-import lielietea.mirai.plugin.bombcardgame.BombCardSessionManager;
 import lielietea.mirai.plugin.dice.DiceCommandHandler;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
-import lielietea.mirai.plugin.overwatch.HeroLines;
 import lielietea.mirai.plugin.overwatch.HeroLinesManager;
-import lielietea.mirai.plugin.repeater.Repeater;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
+import lielietea.mirai.plugin.utils.idchecker.AccountChecker;
+import lielietea.mirai.plugin.utils.idchecker.BotChecker;
+import lielietea.mirai.plugin.utils.idchecker.GroupChecker;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
-
-import java.util.Collections;
-import java.util.List;
 
 /*
 使用java请把
@@ -35,6 +30,12 @@ build.gradle.kts里改依赖库和插件版本
 public final class JavaPluginMain extends JavaPlugin {
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
 
+    //检查器，确保目前只处理来自Bot测试群的消息
+    static final GroupChecker testGroupChekcer = new GroupChecker(578984285L);
+
+    //给老唐的特殊待遇
+    static final AccountChecker kawaaharaChecker = new AccountChecker(459405942L);
+
     private JavaPluginMain() {
         super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.0")
                 .info("LieLieTea QQ Group Bot")
@@ -45,11 +46,13 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        Repeater repeater = new Repeater();
-        // 筛选来自某一个 Bot 的事件
-
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             event.getBot().getGroup(578984285).sendMessage("老子来了");
+            BotChecker.addBotToBotList(event.getBot().getId());
+        });
+
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotOfflineEvent.class, event -> {
+            BotChecker.removeBotFromBotList(event.getBot().getId());
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, event -> {
@@ -65,12 +68,12 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             //监听群消息
             getLogger().info(event.getMessage().contentToString());
-            long groupNumber = 578984285;//监听烈烈茶测试群
-            if (IDChecker.isThisQQMember(event,groupNumber,459405942)) { //川川的QQ
+
+            if (testGroupChekcer.checkIdentity(event) && kawaaharaChecker.checkIdentity(event)) {   //一点点VIP待遇
                 event.getSubject().sendMessage("老唐最帅！");
             }
 
-            if (IDChecker.isThisQQGroup(event,groupNumber)){
+            if (testGroupChekcer.checkIdentity(event)){
                 //扔骰子
                 if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
                     DiceCommandHandler.executeDiceCommandFromGroup(event);
@@ -78,11 +81,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
                 //召唤屁股
                 HeroLinesManager.handleMessage(event);
-                /* 旧写法 @Deprecated
-                if (MessageChecker.isHeroLines(event.getMessage().contentToString())) {
-                    HeroLines.sendHeroLines(event);
-                }
-                 */
 
                 //点饮料
                 if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
@@ -118,9 +116,8 @@ public final class JavaPluginMain extends JavaPlugin {
             getLogger().info(event.getMessage().contentToString());
 
 
-            long yourQQNumber = 340865180;
-            if (event.getSender().getId() == yourQQNumber) {
-                event.getSubject().sendMessage("老唐最帅！");
+            if (kawaaharaChecker.checkIdentity(event)) {
+                event.getSubject().sendMessage("老唐最帅！");    //一点点VIP待遇
             }
 
             //扔骰子
