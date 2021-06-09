@@ -12,8 +12,13 @@ import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
+
+import java.util.Collections;
+import java.util.List;
 
 /*
 使用java请把
@@ -60,7 +65,6 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             //监听群消息
             getLogger().info(event.getMessage().contentToString());
-
             long groupNumber = 578984285;//监听烈烈茶测试群
             if (IDChecker.isThisQQMember(event,groupNumber,459405942)) { //川川的QQ
                 event.getSubject().sendMessage("老唐最帅！");
