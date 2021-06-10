@@ -1,11 +1,11 @@
 package lielietea.mirai.plugin.repeater;
 
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
-import lielietea.mirai.plugin.utils.idchecker.IIdentityChecker;
+import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 class Repeater {
-    IIdentityChecker<GroupMessageEvent> botChecker;
+    IdentityChecker<GroupMessageEvent> botChecker;
     String content;
     int count;
 

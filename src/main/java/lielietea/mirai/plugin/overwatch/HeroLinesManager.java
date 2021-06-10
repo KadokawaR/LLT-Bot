@@ -1,15 +1,16 @@
 package lielietea.mirai.plugin.overwatch;
 
 
-import lielietea.mirai.plugin.utils.MessageChecker;
+import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
+import lielietea.mirai.plugin.utils.messagematcher.RequestDrinkMessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 
 public class HeroLinesManager {
+    static MessageMatcher<MessageEvent> requestHeroLineMater = new RequestDrinkMessageMatcher();
+
     public static void handleMessage(MessageEvent event){
-        //我先按照在主类里的临时写一个哈
-        //要加啥功能就改就是了
-        if(MessageChecker.isHeroLines(event.getMessage().contentToString())){
+        if(requestHeroLineMater.matches(event)){
             HeroLinesCluster.reply(event);
         }
     }

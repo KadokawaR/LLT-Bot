@@ -1,19 +1,26 @@
 package lielietea.mirai.plugin.autoreply;
 
 
-import lielietea.mirai.plugin.utils.MessageChecker;
+import lielietea.mirai.plugin.utils.messagematcher.DirtyWordMessageMatcher;
+import lielietea.mirai.plugin.utils.messagematcher.GoodbyeMessageMatcher;
+import lielietea.mirai.plugin.utils.messagematcher.MentionOverwatchMessageMatcher;
+import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 
 public class AutoReplyManager {
+    static MessageMatcher<MessageEvent> overwatchMater = new MentionOverwatchMessageMatcher();
+    static MessageMatcher<MessageEvent> dirtyWordMater = new DirtyWordMessageMatcher();
+    static MessageMatcher<MessageEvent> goodbyeMatcher = new GoodbyeMessageMatcher();
+
     public static void handleMessage(MessageEvent event){
-        if(MessageChecker.isTalkOverwatch(event.getMessage().contentToString())){
+        if(overwatchMater.matches(event)){
             AutoReplyLinesCluster.reply(event, AutoReplyLinesCluster.ReplyType.ANTI_OVERWATCH_GAME);
         }
-        if(MessageChecker.isDirtyWord(event.getMessage().contentToString())){
+        if(dirtyWordMater.matches(event)){
             AutoReplyLinesCluster.reply(event, AutoReplyLinesCluster.ReplyType.ANTI_DIRTY_WORDS);
         }
-        if(MessageChecker.isGoodbye(event.getMessage().contentToString())){
+        if(goodbyeMatcher.matches(event)){
             AutoReplyLinesCluster.reply(event, AutoReplyLinesCluster.ReplyType.GOODBYE);
         }
     }

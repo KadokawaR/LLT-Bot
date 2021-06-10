@@ -22,7 +22,7 @@ class HeroLinesCluster {
     static Random rand = new Random();
     static HeroLinesCluster INSTANCE;
 
-    static String DEFAULT_HEROLINES_JSON_PATH = "src/main/resources/herolines.json";
+    static String DEFAULT_HEROLINES_JSON_PATH = "src/main/resources/cluster/herolines.json";
 
     static {
         try {

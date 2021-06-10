@@ -2,11 +2,11 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.autoreply.AutoReplyManager;
-import lielietea.mirai.plugin.dice.DiceCommandHandler;
+import lielietea.mirai.plugin.autoreply.Greeting;
+import lielietea.mirai.plugin.dice.DiceCommandManager;
 import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
 import lielietea.mirai.plugin.overwatch.HeroLinesManager;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
-import lielietea.mirai.plugin.utils.*;
 import lielietea.mirai.plugin.utils.idchecker.AccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupChecker;
@@ -32,7 +32,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
     //检查器，确保目前只处理来自Bot测试群的消息
     static final GroupChecker testGroupChekcer = new GroupChecker(578984285L);
-
     //给老唐的特殊待遇
     static final AccountChecker kawaaharaChecker = new AccountChecker(459405942L);
 
@@ -75,17 +74,13 @@ public final class JavaPluginMain extends JavaPlugin {
 
             if (testGroupChekcer.checkIdentity(event)){
                 //扔骰子
-                if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
-                    DiceCommandHandler.executeDiceCommandFromGroup(event);
-                }
+                DiceCommandManager.handleMessage(event);
 
                 //召唤屁股
                 HeroLinesManager.handleMessage(event);
 
                 //点饮料
-                if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
-                    DrinkPicker.getPersonalizedHourlyDrink(event);
-                }
+                DrinkPicker.handleMessage(event);
 
                 //复读
                 RepeaterManager.getInstance().handleMessage(event);
@@ -93,20 +88,8 @@ public final class JavaPluginMain extends JavaPlugin {
                 //自动回复
                 AutoReplyManager.handleMessage(event);
 
-                //炸弹卡牌
-                /*
-                if(MessageChecker.isBoobCardGame(event.getMessage().contentToString())){
-                    BombCardSessionManager.getInstance().handleGameSession(event);
-                }
-                 */
-
-                if (event.getMessage().contentToString().equals("hi")) {
-                    //群内发送
-                    event.getSubject().sendMessage("hi");
-                    //向发送者私聊发送消息
-                    event.getSender().sendMessage("hi");
-                    //不继续处理
-                }
+                //打招呼,要有礼貌
+                Greeting.handleMessage(event);
 
 
             }
@@ -121,14 +104,10 @@ public final class JavaPluginMain extends JavaPlugin {
             }
 
             //扔骰子
-            if (MessageChecker.isRollDice(event.getMessage().contentToString())) {
-                DiceCommandHandler.executeDiceCommandFromFriend(event);
-            }
+            DiceCommandManager.handleMessage(event);
 
             //点饮料
-            if (MessageChecker.isNeedDrink(event.getMessage().contentToString())) {
-                DrinkPicker.getPersonalizedHourlyDrink(event);
-            }
+            DrinkPicker.handleMessage(event);
 
             //自动回复
             AutoReplyManager.handleMessage(event);

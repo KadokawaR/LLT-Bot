@@ -3,7 +3,7 @@ package lielietea.mirai.plugin.dice;
 /**
  * 这个类用来获取各类骰子
  */
-public class DiceManager {
+public class DiceFactory {
     public static CommonDice getCommonDice(){
         return CommonDice.getInstance(6,1);
     }

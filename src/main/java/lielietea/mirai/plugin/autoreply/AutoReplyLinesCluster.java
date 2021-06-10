@@ -20,7 +20,7 @@ class AutoReplyLinesCluster {
     static Gson gson = new Gson();
     static AutoReplyLinesCluster INSTANCE;
 
-    static String DEFAULT_AUTOREPLY_JSON_PATH = "src/main/resources/autoreply.json";
+    static String DEFAULT_AUTOREPLY_JSON_PATH = "src/main/resources/cluster/autoreply.json";
 
     static {
         try {

@@ -106,7 +106,8 @@ public class BombCardSessionManager {
         Card newlyDrawnCard = new Card(event.getSender().getId(),
                 event.getGroup().getId(),
                 BombCardSession.INSTANCE.cardDrawn,
-                ContentGenerator.getRandomContent(type,isBombCard),
+                //ContentGenerator.getRandomContent(type,isBombCard)
+                "",
                 type);
 
         //将牌加入牌堆

@@ -17,12 +17,7 @@ class Card implements Comparable<Card> {
         this.cardType = cardType;
     }
 
-    /**
-     * 排序依据的顺序是QQ群号->QQ号->抽牌顺序
-     *
-     * @param o 不用我们管，这个是排序方法调用的
-     * @return 不用我们管，这个是排序方法调用的
-     */
+
     @Override
     public int compareTo(@NotNull Card o) {
         if(groupID>o.groupID) return 1;

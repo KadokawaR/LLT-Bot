@@ -5,7 +5,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 /**
  * 检测某条消息是否由某个账号发出
  */
-public class AccountChecker implements IIdentityChecker<MessageEvent>{
+public class AccountChecker implements IdentityChecker<MessageEvent> {
     long targetQQID;
 
     public AccountChecker(long targetQQID){
