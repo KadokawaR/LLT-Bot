@@ -13,8 +13,8 @@ import java.util.Random;
 
 
 class CommonDice {
-    int bound;
-    int repeat;
+    final int bound;
+    final int repeat;
     List<Integer> result;
 
     CommonDice(int bound, int repeat) {
@@ -80,9 +80,7 @@ class CommonDice {
     MessageChain buildMessage(){
         MessageChainBuilder message = new MessageChainBuilder();
         message.append("您掷出的点数是:");
-        result.stream().forEach(result->{
-            message.append(+result+" ");
-        });
+        result.forEach(result-> message.append(String.valueOf(+result)).append(" "));
         return message.build();
     }
 
@@ -90,9 +88,7 @@ class CommonDice {
         MessageChainBuilder message = new MessageChainBuilder();
         message.append(new QuoteReply(quoteMessage));
         message.append("您掷出的点数是:");
-        result.stream().forEach(result->{
-            message.append(result+" ");
-        });
+        result.forEach(result-> message.append(String.valueOf(result)).append(" "));
         return message.build();
     }
 

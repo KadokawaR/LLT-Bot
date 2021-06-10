@@ -50,19 +50,14 @@ public final class JavaPluginMain extends JavaPlugin {
             BotChecker.addBotToBotList(event.getBot().getId());
         });
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotOfflineEvent.class, event -> {
-            BotChecker.removeBotFromBotList(event.getBot().getId());
-        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotOfflineEvent.class, event -> BotChecker.removeBotFromBotList(event.getBot().getId()));
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, event -> {
-            event.accept(); //自动通过好友请求
-        });
+        //自动通过好友请求
+        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, NewFriendRequestEvent::accept);
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> {
-            event.getBot().getFriend(event.getFriend().getId()).sendMessage(
-                    "你好，这是QQ机器人自动发送的验证消息"
-            );
-        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> event.getBot().getFriend(event.getFriend().getId()).sendMessage(
+                "你好，这是QQ机器人自动发送的验证消息"
+        ));
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             //监听群消息

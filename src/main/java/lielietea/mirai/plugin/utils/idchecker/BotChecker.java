@@ -9,7 +9,7 @@ import java.util.List;
  * 检测某条群消息是否是由Bot发出的
  */
 public class BotChecker implements IdentityChecker<GroupMessageEvent> {
-    static List<Long> botList = new ArrayList<>();
+    static final List<Long> botList = new ArrayList<>();
 
     @Override
     public boolean checkIdentity(GroupMessageEvent event) {

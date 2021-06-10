@@ -9,7 +9,7 @@ import java.util.List;
  * 检测某个账号是否为管理员
  */
 public class AdministrativeAccountChecker implements IdentityChecker<MessageEvent> {
-    static List<Long> adminList = new ArrayList<>(List.of(
+    static final List<Long> adminList = new ArrayList<>(List.of(
             2955808839L,
             1811905537L
     ));

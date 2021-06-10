@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GoodbyeMessageMatcher implements MessageMatcher<MessageEvent>{
-    static List<Pattern> regPattern = new ArrayList<>();
+    static final List<Pattern> regPattern = new ArrayList<>();
 
     static{
         {

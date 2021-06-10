@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class MentionOverwatchMessageMatcher implements MessageMatcher<MessageEvent>{
-    static List<Pattern> regPattern = new ArrayList<>();
+    static final List<Pattern> regPattern = new ArrayList<>();
 
     static{
         {
-            regPattern.add(Pattern.compile(".*"+"(O|o)verwatch"+".*"));
+            regPattern.add(Pattern.compile(".*"+"([Oo])verwatch"+".*"));
             regPattern.add(Pattern.compile(".*"+"守望((先锋)|(屁股))"+".*"));
-            regPattern.add(Pattern.compile(".*"+"(玩|打)((OW)|(ow))"+".*"));
+            regPattern.add(Pattern.compile(".*"+"([玩打])((OW)|(ow))"+".*"));
         }
     }
 

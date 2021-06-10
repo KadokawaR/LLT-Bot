@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
  */
 public class DiceCommandManager {
     static final Pattern PATTERN_COMMON_COMMAND = Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})");
-    static final Pattern PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})(d|D)[1-9][0-9]{1,7}");
-    static final Pattern PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.(d|D)[1-9][0-9]{1,7}");
+    static final Pattern PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])[1-9][0-9]{1,7}");
+    static final Pattern PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])[1-9][0-9]{1,7}");
     static final Pattern CAPTURE_PATTERN_COMMON_COMMAND = Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})");
-    static final Pattern CAPTURE_PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})(d|D)([1-9]\\d{0,7})");
-    static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.(d|D)([1-9][0-9]{1,7})");
+    static final Pattern CAPTURE_PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])([1-9]\\d{0,7})");
+    static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])([1-9][0-9]{1,7})");
 
     static final MessageMatcher<MessageEvent> requestRollingDiceMatcher = new DiceMessageMatcher();
 
@@ -68,12 +68,14 @@ public class DiceCommandManager {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     static int captureFromPatternCommon(String input){
         Matcher matcher = CAPTURE_PATTERN_COMMON_COMMAND.matcher(input);
         matcher.find();
-        return Integer.valueOf(matcher.group(2));
+        return Integer.parseInt(matcher.group(2));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     static List<Integer> captureFromPatternDND(String input){
         Matcher matcher = CAPTURE_PATTERN_DND.matcher(input);
         matcher.find();
@@ -85,9 +87,10 @@ public class DiceCommandManager {
         return captured;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     static int captureFromPatternDNDSingleRoll(String input){
         Matcher matcher = CAPTURE_PATTERN_DND_SINGLE_ROLL.matcher(input);
         matcher.find();
-        return Integer.valueOf(matcher.group(2));
+        return Integer.parseInt(matcher.group(2));
     }
 }

@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class DiceMessageMatcher implements MessageMatcher<MessageEvent>{
-    static List<Pattern> regPattern = new ArrayList<>();
+    static final List<Pattern> regPattern = new ArrayList<>();
 
     static{
         {
             regPattern.add(Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})"));
-            regPattern.add(Pattern.compile("\\.([1-9]\\d{0,2})(d|D)[1-9][0-9]{1,7}"));
-            regPattern.add(Pattern.compile("\\.(d|D)[1-9][0-9]{1,7}"));
+            regPattern.add(Pattern.compile("\\.([1-9]\\d{0,2})([dD])[1-9][0-9]{1,7}"));
+            regPattern.add(Pattern.compile("\\.([dD])[1-9][0-9]{1,7}"));
         }
     }
 

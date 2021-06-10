@@ -9,9 +9,9 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 
 public class AutoReplyManager {
-    static MessageMatcher<MessageEvent> overwatchMater = new MentionOverwatchMessageMatcher();
-    static MessageMatcher<MessageEvent> dirtyWordMater = new DirtyWordMessageMatcher();
-    static MessageMatcher<MessageEvent> goodbyeMatcher = new GoodbyeMessageMatcher();
+    static final MessageMatcher<MessageEvent> overwatchMater = new MentionOverwatchMessageMatcher();
+    static final MessageMatcher<MessageEvent> dirtyWordMater = new DirtyWordMessageMatcher();
+    static final MessageMatcher<MessageEvent> goodbyeMatcher = new GoodbyeMessageMatcher();
 
     public static void handleMessage(MessageEvent event){
         if(overwatchMater.matches(event)){

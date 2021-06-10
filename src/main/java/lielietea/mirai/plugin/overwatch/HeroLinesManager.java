@@ -7,7 +7,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 
 public class HeroLinesManager {
-    static MessageMatcher<MessageEvent> requestHeroLineMater = new RequestDrinkMessageMatcher();
+    static final MessageMatcher<MessageEvent> requestHeroLineMater = new RequestDrinkMessageMatcher();
 
     public static void handleMessage(MessageEvent event){
         if(requestHeroLineMater.matches(event)){

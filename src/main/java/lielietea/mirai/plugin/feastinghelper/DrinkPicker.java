@@ -2,8 +2,6 @@ package lielietea.mirai.plugin.feastinghelper;
 
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.RequestDrinkMessageMatcher;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;
@@ -19,7 +17,7 @@ public class DrinkPicker {
 
     static final MessageMatcher<MessageEvent> requestDrinkMatcher = new RequestDrinkMessageMatcher();
 
-    static ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
             "铁观音奶茶",
             "大红袍奶茶",
             "四季奶青",
@@ -32,7 +30,7 @@ public class DrinkPicker {
             "巧克力奶昔"
     ));
 
-    static ArrayList<String> topping = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> topping = new ArrayList<>(Arrays.asList(
             "加珍珠",
             "加波霸",
             "加布丁",
@@ -45,7 +43,7 @@ public class DrinkPicker {
             "加咖啡冻"
     ));
 
-    static ArrayList<String> sugarLevel = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> sugarLevel = new ArrayList<>(Arrays.asList(
             "全糖",
             "半糖",
             "三分糖",

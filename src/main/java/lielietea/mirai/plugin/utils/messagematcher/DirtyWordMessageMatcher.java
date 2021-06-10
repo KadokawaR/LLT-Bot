@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class DirtyWordMessageMatcher implements MessageMatcher<MessageEvent>{
-    static List<Pattern> regPattern = new ArrayList<>();
+    static final List<Pattern> regPattern = new ArrayList<>();
 
     static{
         {
-            regPattern.add(Pattern.compile(".*"+"(日|干|操|艹|草|滚)(你|尼|泥)(妈|马|麻)"+".*"));
-            regPattern.add(Pattern.compile(".*"+"(M|m)otherfucker"+".*"));
-            regPattern.add(Pattern.compile(".*"+"(F|f)uck (Y|y)ou"+".*"));
+            regPattern.add(Pattern.compile(".*"+"([日干操艹草滚])([你尼泥])([妈马麻])"+".*"));
+            regPattern.add(Pattern.compile(".*"+"([Mm])otherfucker"+".*"));
+            regPattern.add(Pattern.compile(".*"+"([Ff])uck ([Yy])ou"+".*"));
         }
     }
 
