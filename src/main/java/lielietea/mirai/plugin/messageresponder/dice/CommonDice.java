@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.dice;
+package lielietea.mirai.plugin.messageresponder.dice;
 
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;

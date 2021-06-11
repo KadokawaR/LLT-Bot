@@ -1,11 +1,11 @@
 package lielietea.mirai.plugin;
 
 
-import lielietea.mirai.plugin.autoreply.AutoReplyManager;
-import lielietea.mirai.plugin.autoreply.Greeting;
-import lielietea.mirai.plugin.dice.DiceCommandManager;
-import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
-import lielietea.mirai.plugin.overwatch.HeroLinesManager;
+import lielietea.mirai.plugin.messageresponder.autoreply.AutoReplyManager;
+import lielietea.mirai.plugin.messageresponder.autoreply.Greeting;
+import lielietea.mirai.plugin.messageresponder.dice.DiceCommandManager;
+import lielietea.mirai.plugin.messageresponder.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesManager;
 import lielietea.mirai.plugin.repeater.RepeaterManager;
 import lielietea.mirai.plugin.utils.idchecker.AccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;

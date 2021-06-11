@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.dice;
+package lielietea.mirai.plugin.messageresponder.dice;
 
 import lielietea.mirai.plugin.utils.messagematcher.DiceMessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;

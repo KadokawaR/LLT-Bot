@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.autoreply;
+package lielietea.mirai.plugin.messageresponder.autoreply;
 
 
 import lielietea.mirai.plugin.utils.messagematcher.DirtyWordMessageMatcher;
