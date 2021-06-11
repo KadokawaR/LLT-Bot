@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.dice;
+package lielietea.mirai.plugin.dice;
 
 /**
  * 这个类用来获取各类骰子

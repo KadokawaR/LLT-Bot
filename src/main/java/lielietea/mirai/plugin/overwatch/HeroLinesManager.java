@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.overwatch;
+package lielietea.mirai.plugin.overwatch;
 
 
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;

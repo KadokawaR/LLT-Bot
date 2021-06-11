@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.overwatch;
+package lielietea.mirai.plugin.overwatch;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;

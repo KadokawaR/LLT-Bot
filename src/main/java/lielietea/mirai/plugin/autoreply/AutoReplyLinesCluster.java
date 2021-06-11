@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.autoreply;
+package lielietea.mirai.plugin.autoreply;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;

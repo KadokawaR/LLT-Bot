@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.autoreply;
+package lielietea.mirai.plugin.autoreply;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
