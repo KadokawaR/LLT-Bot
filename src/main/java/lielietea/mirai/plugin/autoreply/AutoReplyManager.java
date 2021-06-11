@@ -7,7 +7,6 @@ import lielietea.mirai.plugin.utils.messagematcher.MentionOverwatchMessageMatche
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 
-
 public class AutoReplyManager {
     static final MessageMatcher<MessageEvent> overwatchMater = new MentionOverwatchMessageMatcher();
     static final MessageMatcher<MessageEvent> dirtyWordMater = new DirtyWordMessageMatcher();
