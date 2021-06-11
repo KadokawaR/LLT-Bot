@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RepeaterManager {
-    Map<Long,Repeater> repeaterMap= new HashMap<>();
+    final Map<Long,Repeater> repeaterMap= new HashMap<>();
 
-    static RepeaterManager INSTANCE = new RepeaterManager();
+    static final RepeaterManager INSTANCE = new RepeaterManager();
 
     RepeaterManager(){}
 
@@ -19,14 +19,13 @@ public class RepeaterManager {
     /**
      * 根据不同的群调用不同的复读器的{@link Repeater#handleMessage(GroupMessageEvent)}
      * @param event 群消息事件
-     * @return <code>true</code> 需要复读 <code>false</code> 无需复读
      */
-    public boolean handleMessage(GroupMessageEvent event){
+    public void handleMessage(GroupMessageEvent event){
         if(repeaterMap.containsKey(event.getGroup().getId())){
-            return repeaterMap.get(event.getGroup().getId()).handleMessage(event);
+            repeaterMap.get(event.getGroup().getId()).handleMessage(event);
         } else {
             repeaterMap.put(event.getGroup().getId(),new Repeater());
-            return repeaterMap.get(event.getGroup().getId()).handleMessage(event);
+            repeaterMap.get(event.getGroup().getId()).handleMessage(event);
         }
     }
 

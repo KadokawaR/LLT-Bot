@@ -17,10 +17,10 @@ class AutoReplyLinesCluster {
     TreeMap<Double,String> antiDirtyWordsReplyLines;
     TreeMap<Double,String> antiOverwatchGameReplyLines;
 
-    static Gson gson = new Gson();
+    static final Gson gson = new Gson();
     static AutoReplyLinesCluster INSTANCE;
 
-    static String DEFAULT_AUTOREPLY_JSON_PATH = "src/main/resources/autoreply.json";
+    static final String DEFAULT_AUTOREPLY_JSON_PATH = "src/main/resources/cluster/autoreply.json";
 
     static {
         try {
@@ -30,7 +30,7 @@ class AutoReplyLinesCluster {
         }
     }
 
-    AutoReplyLinesCluster(){};
+    AutoReplyLinesCluster(){}
 
     public static void loadReplyLinesFromPreset(){
         try{

@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.feastinghelper;
 
-import lielietea.mirai.plugin.utils.MessageChecker;
+import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
+import lielietea.mirai.plugin.utils.messagematcher.RequestDrinkMessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;
@@ -14,7 +15,9 @@ import java.util.Calendar;
  */
 public class DrinkPicker {
 
-    static ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
+    static final MessageMatcher<MessageEvent> requestDrinkMatcher = new RequestDrinkMessageMatcher();
+
+    static final ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
             "铁观音奶茶",
             "大红袍奶茶",
             "四季奶青",
@@ -27,7 +30,7 @@ public class DrinkPicker {
             "巧克力奶昔"
     ));
 
-    static ArrayList<String> topping = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> topping = new ArrayList<>(Arrays.asList(
             "加珍珠",
             "加波霸",
             "加布丁",
@@ -40,7 +43,7 @@ public class DrinkPicker {
             "加咖啡冻"
     ));
 
-    static ArrayList<String> sugarLevel = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> sugarLevel = new ArrayList<>(Arrays.asList(
             "全糖",
             "半糖",
             "三分糖",
@@ -52,11 +55,15 @@ public class DrinkPicker {
             "不额外加糖"
     ));
 
-    /**
-     * 获取每小时变化的，根据用户而不同的随机饮品
-     * @param event 接收饮品消息的事件
-     */
-    public static void getPersonalizedHourlyDrink(MessageEvent event){
+
+    public static void handleMessage(MessageEvent event){
+        if(requestDrinkMatcher.matches(event)){
+            getPersonalizedHourlyDrink(event);
+        }
+    }
+
+    //获取每小时变化的，根据用户而不同的随机饮品
+    static void getPersonalizedHourlyDrink(MessageEvent event){
         String drink = mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
         serveDrink(event,drink);
     }

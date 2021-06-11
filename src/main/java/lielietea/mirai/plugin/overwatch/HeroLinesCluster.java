@@ -18,11 +18,12 @@ class HeroLinesCluster {
     Multimap<Hero,String> ultimateAbilityHeroLines;
     Multimap<Hero,String> commonHeroLines;
 
-    static Gson gson = new GsonBuilder().registerTypeAdapter(Multimap.class,new HeroLinesMultimapTypeAdapter()).setPrettyPrinting().create();
-    static Random rand = new Random();
+    @SuppressWarnings("rawtypes")
+    static final Gson gson = new GsonBuilder().registerTypeAdapter(Multimap.class,new HeroLinesMultimapTypeAdapter()).setPrettyPrinting().create();
+    static final Random rand = new Random();
     static HeroLinesCluster INSTANCE;
 
-    static String DEFAULT_HEROLINES_JSON_PATH = "src/main/resources/herolines.json";
+    static final String DEFAULT_HEROLINES_JSON_PATH = "src/main/resources/cluster/herolines.json";
 
     static {
         try {
@@ -32,7 +33,7 @@ class HeroLinesCluster {
         }
     }
 
-    HeroLinesCluster(){};
+    HeroLinesCluster(){}
 
     public static HeroLinesCluster getInstance(){
         return INSTANCE;
@@ -57,15 +58,13 @@ class HeroLinesCluster {
     static String pickUltimateAbilityHeroLineByRandomHero() {
         Hero randomHero = Hero.values()[rand.nextInt(Hero.values().length)];
         Collection<String> lines = INSTANCE.ultimateAbilityHeroLines.get(randomHero);
-        String line = (String) lines.toArray()[rand.nextInt(lines.size())];
-        return line;
+        return (String) lines.toArray()[rand.nextInt(lines.size())];
     }
 
     //随机挑选某位英雄的大招台词
     static String pickUltimateAbilityHeroLine(Hero hero){
         Collection<String> lines = INSTANCE.ultimateAbilityHeroLines.get(hero);
-        String line = (String) lines.toArray()[rand.nextInt(lines.size())];
-        return line;
+        return (String) lines.toArray()[rand.nextInt(lines.size())];
     }
 
 
