@@ -18,6 +18,7 @@ class HeroLinesCluster {
     Multimap<Hero,String> ultimateAbilityHeroLines;
     Multimap<Hero,String> commonHeroLines;
 
+    @SuppressWarnings("rawtypes")
     static final Gson gson = new GsonBuilder().registerTypeAdapter(Multimap.class,new HeroLinesMultimapTypeAdapter()).setPrettyPrinting().create();
     static final Random rand = new Random();
     static HeroLinesCluster INSTANCE;

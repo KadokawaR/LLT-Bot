@@ -15,6 +15,8 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 
+import java.util.Optional;
+
 /*
 使用java请把
 src/main/resources/META-INF.services/net.mamoe.mirai.console.plugin.jvm.JvmPlugin
@@ -46,7 +48,7 @@ public final class JavaPluginMain extends JavaPlugin {
         getLogger().info("日志");
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
-            event.getBot().getGroup(578984285).sendMessage("老子来了");
+            Optional.ofNullable(event.getBot().getGroup(578984285)).ifPresent(group->group.sendMessage("老子来了"));
             BotChecker.addBotToBotList(event.getBot().getId());
         });
 
@@ -55,9 +57,9 @@ public final class JavaPluginMain extends JavaPlugin {
         //自动通过好友请求
         GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, NewFriendRequestEvent::accept);
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> event.getBot().getFriend(event.getFriend().getId()).sendMessage(
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> Optional.ofNullable(event.getBot().getFriend(event.getFriend().getId())).ifPresent(friend->friend.sendMessage(
                 "你好，这是QQ机器人自动发送的验证消息"
-        ));
+        )));
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             //监听群消息
