@@ -1,8 +1,6 @@
 package lielietea.mirai.plugin.messageresponder.overwatch;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -11,6 +9,7 @@ import java.io.*;
 import java.util.Collection;
 import java.util.Random;
 
+@SuppressWarnings("ConstantConditions")
 class HeroLinesCluster {
     Multimap<Hero,String> ultimateAbilityHeroLines;
     Multimap<Hero,String> commonHeroLines;

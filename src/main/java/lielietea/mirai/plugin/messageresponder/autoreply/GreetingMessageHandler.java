@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.messageresponder.autoreply;
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class GreetingMessageHandler implements MessageHandler<GroupMessageEvent>
     public boolean handleMessage(GroupMessageEvent event){
         if(event.getMessage().contentToString().equals("hi")){
             //群内发送
-            ((GroupMessageEvent)event).getGroup().sendMessage("hi");
+            event.getGroup().sendMessage("hi");
             //向发送者私聊发送消息
             event.getSender().sendMessage("hi");
             return true;

@@ -3,13 +3,14 @@ package lielietea.mirai.plugin.utils.idchecker;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * 检测某个账号是否为管理员
  */
 public class AdministrativeAccountChecker implements IdentityChecker<MessageEvent> {
-    static final List<Long> adminList = new ArrayList<>(List.of(
+    static final List<Long> adminList = new ArrayList<>(Arrays.asList(
             2955808839L,
             1811905537L
     ));

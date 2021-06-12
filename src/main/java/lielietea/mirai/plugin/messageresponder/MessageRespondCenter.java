@@ -17,12 +17,12 @@ import java.util.List;
  * <p>所有回复处理器(也就是不同功能的回复模组)，都需要实现 {@link MessageHandler} 接口，并在使用{@link #register(MessageHandler)} 进行注册。推荐在 {@link #ini()} 方法内进行注册</p>
  */
 public class MessageRespondCenter {
-    static List<MessageHandler<MessageEvent>> groupMessageHandlers = new ArrayList<>();
-    static List<MessageHandler<MessageEvent>> groupTempMessageHandlers = new ArrayList<>();
-    static List<MessageHandler<MessageEvent>> friendMessageHandlers = new ArrayList<>();
-    static List<MessageHandler<MessageEvent>> strangerMessageHandlers = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> groupMessageHandlers = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> groupTempMessageHandlers = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> friendMessageHandlers = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> strangerMessageHandlers = new ArrayList<>();
 
-    static MessageRespondCenter INSTANCE = new MessageRespondCenter();
+    static final MessageRespondCenter INSTANCE = new MessageRespondCenter();
 
     public static MessageRespondCenter getINSTANCE() {
         return INSTANCE;

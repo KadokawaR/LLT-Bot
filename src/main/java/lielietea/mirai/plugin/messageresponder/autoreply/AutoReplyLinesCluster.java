@@ -1,7 +1,5 @@
 package lielietea.mirai.plugin.messageresponder.autoreply;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -9,6 +7,7 @@ import java.io.*;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+@SuppressWarnings("ConstantConditions")
 class AutoReplyLinesCluster {
     TreeMap<Double,String> goodbyeReplyLines;
     TreeMap<Double,String> antiDirtyWordsReplyLines;
@@ -22,7 +21,7 @@ class AutoReplyLinesCluster {
 
     static {
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        BufferedReader br =new BufferedReader(new InputStreamReader(is));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
@@ -30,7 +29,7 @@ class AutoReplyLinesCluster {
 
     public static void loadReplyLinesFromPreset(){
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        BufferedReader br =new BufferedReader(new InputStreamReader(is));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
