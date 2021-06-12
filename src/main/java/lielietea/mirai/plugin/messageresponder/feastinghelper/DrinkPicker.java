@@ -1,21 +1,26 @@
-package lielietea.mirai.plugin.feastinghelper;
+package lielietea.mirai.plugin.messageresponder.feastinghelper;
 
+import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.RequestDrinkMessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * 一个类似于”今天吃什么“的类
  *
  * <p>用{@link DrinkPicker#getPersonalizedHourlyDrink(MessageEvent)}来获取根据用户而变化的Hourly Random Drink</p>
  */
-public class DrinkPicker {
+public class DrinkPicker implements MessageHandler<MessageEvent> {
 
     static final MessageMatcher<MessageEvent> requestDrinkMatcher = new RequestDrinkMessageMatcher();
+
+    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
 
     static final ArrayList<String> drinkBase = new ArrayList<>(Arrays.asList(
             "铁观音奶茶",
@@ -56,10 +61,19 @@ public class DrinkPicker {
     ));
 
 
-    public static void handleMessage(MessageEvent event){
+    @Override
+    public boolean handleMessage(MessageEvent event){
         if(requestDrinkMatcher.matches(event)){
             getPersonalizedHourlyDrink(event);
+            return true;
         }
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public List<MessageType> types() {
+        return type;
     }
 
     //获取每小时变化的，根据用户而不同的随机饮品

@@ -1,12 +1,16 @@
-package lielietea.mirai.plugin.dice;
+package lielietea.mirai.plugin.messageresponder.dice;
 
+import lielietea.mirai.plugin.messageresponder.MessageHandler;
+import lielietea.mirai.plugin.utils.dice.DiceFactory;
 import lielietea.mirai.plugin.utils.messagematcher.DiceMessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * 这个类用来处理骰子相关消息
  */
-public class DiceCommandManager {
+public class DiceMessageHandler implements MessageHandler<MessageEvent> {
     static final Pattern PATTERN_COMMON_COMMAND = Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})");
     static final Pattern PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])[1-9][0-9]{1,7}");
     static final Pattern PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])[1-9][0-9]{1,7}");
@@ -22,15 +26,29 @@ public class DiceCommandManager {
     static final Pattern CAPTURE_PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])([1-9]\\d{0,7})");
     static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])([1-9][0-9]{1,7})");
 
+    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+
     static final MessageMatcher<MessageEvent> requestRollingDiceMatcher = new DiceMessageMatcher();
 
-    public static void handleMessage(MessageEvent event){
+    @Override
+    public boolean handleMessage(MessageEvent event){
         if(requestRollingDiceMatcher.matches(event)){
-            if(event instanceof GroupMessageEvent)
+            if(event instanceof GroupMessageEvent){
                 executeDiceCommandFromGroup((GroupMessageEvent) event);
-            else if(event instanceof FriendMessageEvent)
+                return true;
+            }
+            else if(event instanceof FriendMessageEvent) {
                 executeDiceCommandFromFriend((FriendMessageEvent) event);
+                return true;
+            }
         }
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public List<MessageType> types() {
+        return type;
     }
 
     //直接根据命令在群内执行扔骰子动作与广播结果操作

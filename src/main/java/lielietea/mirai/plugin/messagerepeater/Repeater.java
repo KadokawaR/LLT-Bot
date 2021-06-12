@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.repeater;
+package lielietea.mirai.plugin.messagerepeater;
 
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;

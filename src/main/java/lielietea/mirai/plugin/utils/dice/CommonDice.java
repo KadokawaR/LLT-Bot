@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.dice;
+package lielietea.mirai.plugin.utils.dice;
 
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
@@ -12,7 +12,7 @@ import java.util.Random;
 
 
 
-class CommonDice {
+public class CommonDice {
     final int bound;
     final int repeat;
     List<Integer> result;

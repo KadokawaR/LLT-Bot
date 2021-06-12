@@ -23,17 +23,13 @@ dependencies{
     //需要用Gson来创建Json持久化数据，就用下面这个
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.guava:guava:30.1.1-jre")
+    implementation("junit:junit:4.13.1")
 
     //annotationProcessor("com.google.auto.service:auto-service:1.0")
     //implementation("com.google.auto.service:auto-service:1.0")
 
     // https://mvnrepository.com/artifact/org.reflections/reflections
-    implementation("org.reflections:reflections:0.9.12")
-
-    //用于JUnit单元测试
-    //https://junit.org/junit5/docs/current/user-guide/
-    testImplementation(platform("org.junit:junit-bom:5.7.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    // implementation("org.reflections:reflections:0.9.12")
 }
 
 tasks.test {

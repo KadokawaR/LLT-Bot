@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.overwatch;
+package lielietea.mirai.plugin.messageresponder.overwatch;
 
 public enum Hero {
     ANA,

@@ -1,14 +1,11 @@
-package lielietea.mirai.plugin.autoreply;
+package lielietea.mirai.plugin.messageresponder.autoreply;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -20,30 +17,21 @@ class AutoReplyLinesCluster {
     static final Gson gson = new Gson();
     static AutoReplyLinesCluster INSTANCE;
 
-    static final String DEFAULT_AUTOREPLY_JSON_PATH = "src/main/resources/cluster/autoreply.json";
+    static final String DEFAULT_AUTOREPLY_JSON_PATH = "/cluster/autoreply.json";
+
 
     static {
-        try {
-            INSTANCE = gson.fromJson(Files.newReader(new File(DEFAULT_AUTOREPLY_JSON_PATH), Charsets.UTF_8), AutoReplyLinesCluster.class);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+        BufferedReader br =new BufferedReader(new InputStreamReader(is));
+        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
     AutoReplyLinesCluster(){}
 
     public static void loadReplyLinesFromPreset(){
-        try{
-            //读取文件
-            File file = new File(DEFAULT_AUTOREPLY_JSON_PATH);
-            BufferedReader readable = Files.newReader(file, Charsets.UTF_8);
-
-            //反序列化
-            INSTANCE = gson.fromJson(readable,AutoReplyLinesCluster.class);
-        } catch(IOException e){
-            e.printStackTrace();
-        }
-
+        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+        BufferedReader br =new BufferedReader(new InputStreamReader(is));
+        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
     public static AutoReplyLinesCluster getInstance(){

@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.repeater;
+package lielietea.mirai.plugin.messagerepeater;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 

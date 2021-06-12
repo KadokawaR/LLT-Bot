@@ -1,12 +1,8 @@
 package lielietea.mirai.plugin;
 
 
-import lielietea.mirai.plugin.autoreply.AutoReplyManager;
-import lielietea.mirai.plugin.autoreply.Greeting;
-import lielietea.mirai.plugin.dice.DiceCommandManager;
-import lielietea.mirai.plugin.feastinghelper.DrinkPicker;
-import lielietea.mirai.plugin.overwatch.HeroLinesManager;
-import lielietea.mirai.plugin.repeater.RepeaterManager;
+import lielietea.mirai.plugin.messagerepeater.RepeaterManager;
+import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.utils.idchecker.AccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupChecker;
@@ -47,6 +43,8 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
+        MessageRespondCenter.getINSTANCE().ini();
+
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(578984285)).ifPresent(group->group.sendMessage("老子来了"));
             BotChecker.addBotToBotList(event.getBot().getId());
@@ -62,52 +60,29 @@ public final class JavaPluginMain extends JavaPlugin {
         )));
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
-            //监听群消息
-            getLogger().info(event.getMessage().contentToString());
 
             if (testGroupChekcer.checkIdentity(event) && kawaaharaChecker.checkIdentity(event)) {   //一点点VIP待遇
                 event.getSubject().sendMessage("老唐最帅！");
             }
 
             if (testGroupChekcer.checkIdentity(event)){
-                //扔骰子
-                DiceCommandManager.handleMessage(event);
+                //处理所有需要回复的消息
+                //包括自动打招呼，关键词触发，指令
+                MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
 
-                //召唤屁股
-                HeroLinesManager.handleMessage(event);
-
-                //点饮料
-                DrinkPicker.handleMessage(event);
-
-                //复读
+                //复读功能
                 RepeaterManager.getInstance().handleMessage(event);
-
-                //自动回复
-                AutoReplyManager.handleMessage(event);
-
-                //打招呼,要有礼貌
-                Greeting.handleMessage(event);
-
-
             }
         });
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
-            //监听好友消息
-            getLogger().info(event.getMessage().contentToString());
 
 
             if (kawaaharaChecker.checkIdentity(event)) {
                 event.getSubject().sendMessage("老唐最帅！");    //一点点VIP待遇
             }
-
-            //扔骰子
-            DiceCommandManager.handleMessage(event);
-
-            //点饮料
-            DrinkPicker.handleMessage(event);
-
-            //自动回复
-            AutoReplyManager.handleMessage(event);
+            //处理所有需要回复的消息
+            //包括自动打招呼，关键词触发，指令
+            MessageRespondCenter.getINSTANCE().handleFrinedMessageEvent(event);
 
         });
     }
