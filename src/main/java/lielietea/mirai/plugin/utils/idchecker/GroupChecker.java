@@ -14,6 +14,6 @@ public class GroupChecker implements IdentityChecker<GroupMessageEvent> {
 
     @Override
     public boolean checkIdentity(GroupMessageEvent event) {
-        return false;
+        return this.targetGroupID == event.getGroup().getId();
     }
 }
