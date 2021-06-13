@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.messageresponder.autoreply;
 
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
+import lielietea.mirai.plugin.messageresponder.Reloadable;
 import lielietea.mirai.plugin.utils.messagematcher.DirtyWordMessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.GoodbyeMessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.MentionOverwatchMessageMatcher;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AutoReplyMessageHandler implements MessageHandler<MessageEvent> {
+public class AutoReplyMessageHandler implements MessageHandler<MessageEvent>, Reloadable {
     static final MessageMatcher<MessageEvent> overwatchMater = new MentionOverwatchMessageMatcher();
     static final MessageMatcher<MessageEvent> dirtyWordMater = new DirtyWordMessageMatcher();
     static final MessageMatcher<MessageEvent> goodbyeMatcher = new GoodbyeMessageMatcher();
@@ -45,10 +46,10 @@ public class AutoReplyMessageHandler implements MessageHandler<MessageEvent> {
     }
 
 
-    /**
-     * 从默认配置中重载台词
-     */
-    public static void reloadReplyLinesFromPreset(){
+    @Override
+    public void reload() {
+        //目前只能从默认json重载
+        //更多功能还需要编辑
         AutoReplyLinesCluster.loadReplyLinesFromPreset();
     }
 }

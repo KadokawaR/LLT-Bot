@@ -6,7 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * 回复处理器接口
+ * 回复处理器接口，如果要让 {@link MessageRespondCenter} 对回复处理器进行托管，那么必须实现该类并注册
+ *
+ * <p>如果实现该接口同时实现 {@link Reloadable} 接口，那么 {@link MessageRespondCenter} 可以在需要时重载回复处理器的配置</p>
+ *
  * @param <T> 必须继承自MessageEvent
  */
 public interface MessageHandler<T extends MessageEvent> {
