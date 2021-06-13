@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.messageresponder.feastinghelper;
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
-import lielietea.mirai.plugin.utils.messagematcher.RequestDrinkMessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +17,7 @@ import java.util.List;
  */
 public class DrinkPicker implements MessageHandler<MessageEvent> {
 
-    static final MessageMatcher<MessageEvent> requestDrinkMatcher = new RequestDrinkMessageMatcher();
+    final MessageMatcher<MessageEvent> requestDrinkMatcher;
 
     static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
 
@@ -59,6 +58,10 @@ public class DrinkPicker implements MessageHandler<MessageEvent> {
             "少少少糖",
             "不额外加糖"
     ));
+
+    public DrinkPicker(MessageMatcher<MessageEvent> requestDrinkMatcher) {
+        this.requestDrinkMatcher = requestDrinkMatcher;
+    }
 
 
     @Override

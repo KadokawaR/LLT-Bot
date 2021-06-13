@@ -5,7 +5,9 @@ import lielietea.mirai.plugin.messageresponder.autoreply.AutoReplyMessageHandler
 import lielietea.mirai.plugin.messageresponder.autoreply.GreetingMessageHandler;
 import lielietea.mirai.plugin.messageresponder.dice.DiceMessageHandler;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinnerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler;
+import lielietea.mirai.plugin.utils.messagematcher.*;
 import net.mamoe.mirai.event.events.*;
 
 import java.util.ArrayList;
@@ -86,11 +88,12 @@ public class MessageRespondCenter {
      * 初始化该管理器类。必须在插件启动时调用。
      */
     public void ini(){
-        register(new AutoReplyMessageHandler());
+        register(new AutoReplyMessageHandler(new MentionOverwatchMessageMatcher(),new DirtyWordMessageMatcher(),new GoodbyeMessageMatcher()));
         register(new GreetingMessageHandler());
         register(new DiceMessageHandler());
-        register(new DrinkPicker());
-        register(new HeroLinesMessageHandler());
+        register(new DrinkPicker(new RequestDrinkMessageMatcher()));
+        register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
+        register(new LotteryWinnerMessageHandler(new LotteryWinnerMessageMatcher(),new LotteryBummerMessageMatcher(),new LotteryC4MessageMatcher()));
     }
 
     /**

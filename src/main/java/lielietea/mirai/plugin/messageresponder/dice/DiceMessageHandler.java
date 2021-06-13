@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.messageresponder.dice;
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import lielietea.mirai.plugin.utils.dice.DiceFactory;
-import lielietea.mirai.plugin.utils.messagematcher.DiceMessageMatcher;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -19,6 +18,7 @@ import java.util.regex.Pattern;
  * 这个类用来处理骰子相关消息
  */
 public class DiceMessageHandler implements MessageHandler<MessageEvent> {
+    static final List<Pattern> regPattern = new ArrayList<>();
     static final Pattern PATTERN_COMMON_COMMAND = Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})");
     static final Pattern PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])[1-9][0-9]{1,7}");
     static final Pattern PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])[1-9][0-9]{1,7}");
@@ -26,19 +26,33 @@ public class DiceMessageHandler implements MessageHandler<MessageEvent> {
     static final Pattern CAPTURE_PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])([1-9]\\d{0,7})");
     static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])([1-9][0-9]{1,7})");
 
-    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+    static{
+        {
+            regPattern.add(Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})"));
+            regPattern.add(Pattern.compile("\\.([1-9]\\d{0,2})([dD])[1-9][0-9]{1,7}"));
+            regPattern.add(Pattern.compile("\\.([dD])[1-9][0-9]{1,7}"));
+        }
+    }
 
-    static final MessageMatcher<MessageEvent> requestRollingDiceMatcher = new DiceMessageMatcher();
+    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
 
     @Override
     public boolean handleMessage(MessageEvent event){
-        if(requestRollingDiceMatcher.matches(event)){
+        if(messagePatternMatches(event)){
             if(event instanceof GroupMessageEvent){
                 executeDiceCommandFromGroup((GroupMessageEvent) event);
                 return true;
             }
             else if(event instanceof FriendMessageEvent) {
                 executeDiceCommandFromFriend((FriendMessageEvent) event);
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean messagePatternMatches(MessageEvent event) {
+        for(Pattern pattern: regPattern){
+            if(pattern.matcher(event.getMessage().contentToString()).matches()){
                 return true;
             }
         }

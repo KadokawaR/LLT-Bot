@@ -57,11 +57,13 @@ class HeroLinesCluster {
 
     //回复消息
     public static void reply(MessageEvent event){
+        //我们还没有加入英雄的普通台词，目前默认回复大招台词
         event.getSubject().sendMessage(pickUltimateAbilityHeroLineByRandomHero());
     }
 
     //根据选择英雄来回复消息
     public static void reply(MessageEvent event, Hero hero){
+        //我们还没有加入英雄的普通台词，目前默认回复大招台词
         event.getSubject().sendMessage(pickUltimateAbilityHeroLine(hero));
     }
 
