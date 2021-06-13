@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class LotteryWinner{
-    static Timer timer = new Timer();
+    static Timer timer = new Timer(true);
     static Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
 
     static{
