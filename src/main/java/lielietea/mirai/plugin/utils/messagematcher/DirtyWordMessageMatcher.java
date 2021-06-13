@@ -14,6 +14,7 @@ public class DirtyWordMessageMatcher implements MessageMatcher<MessageEvent>{
             regPattern.add(Pattern.compile(".*"+"([日干操艹草滚])([你尼泥])([妈马麻])"+".*"));
             regPattern.add(Pattern.compile(".*"+"([Mm])otherfucker"+".*"));
             regPattern.add(Pattern.compile(".*"+"([Ff])uck ([Yy])ou"+".*"));
+            regPattern.add(Pattern.compile(".*"+"([Ff])uck"+".*"));
         }
     }
 
