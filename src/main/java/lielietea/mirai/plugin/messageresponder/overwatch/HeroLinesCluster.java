@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Random;
 
@@ -22,13 +23,9 @@ class HeroLinesCluster {
     static final String DEFAULT_HEROLINES_JSON_PATH = "/cluster/herolines.json";
 
     static {
-        try{
-            InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
-            BufferedReader br =new BufferedReader(new InputStreamReader(is,"UTF-8"));
-            INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
+        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
     }
 
     HeroLinesCluster(){}
@@ -39,13 +36,9 @@ class HeroLinesCluster {
 
     //重载默认herolines.json
     public static void reloadReplyLinesFromPreset(){
-        try{
-            InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
-            BufferedReader br =new BufferedReader(new InputStreamReader(is,"UTF-8"));
-            INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
+        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
     }
 
     //随机挑选大招台词

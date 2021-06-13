@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -20,25 +21,17 @@ class AutoReplyLinesCluster {
 
 
     static {
-        try {
-            InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-            INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
     AutoReplyLinesCluster(){}
 
     public static void loadReplyLinesFromPreset(){
-        try {
-            InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-            INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
     public static AutoReplyLinesCluster getInstance(){
