@@ -22,9 +22,13 @@ class HeroLinesCluster {
     static final String DEFAULT_HEROLINES_JSON_PATH = "/cluster/herolines.json";
 
     static {
-        InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
-        BufferedReader br =new BufferedReader(new InputStreamReader(is));
-        INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
+        try{
+            InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
+            BufferedReader br =new BufferedReader(new InputStreamReader(is,"UTF-8"));
+            INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     HeroLinesCluster(){}
@@ -35,9 +39,13 @@ class HeroLinesCluster {
 
     //重载默认herolines.json
     public static void reloadReplyLinesFromPreset(){
-        InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
-        BufferedReader br =new BufferedReader(new InputStreamReader(is));
-        INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
+        try{
+            InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
+            BufferedReader br =new BufferedReader(new InputStreamReader(is,"UTF-8"));
+            INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     //随机挑选大招台词

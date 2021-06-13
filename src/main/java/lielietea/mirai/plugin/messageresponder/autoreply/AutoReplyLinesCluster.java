@@ -20,17 +20,25 @@ class AutoReplyLinesCluster {
 
 
     static {
-        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
+        try {
+            InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+            INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     AutoReplyLinesCluster(){}
 
     public static void loadReplyLinesFromPreset(){
-        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
+        try {
+            InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+            INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     public static AutoReplyLinesCluster getInstance(){
