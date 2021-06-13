@@ -24,7 +24,7 @@ public class AdminTools {
         final List<Long> adminList = new ArrayList<>(Arrays.asList(
                 2955808839L,
                 1811905537L,
-                459405942
+                459405942L
         ));
         for(Long qqID : adminList){
             if(qqID == event.getSender().getId()) return true;
