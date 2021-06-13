@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -21,7 +22,7 @@ class AutoReplyLinesCluster {
 
     static {
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
@@ -29,7 +30,7 @@ class AutoReplyLinesCluster {
 
     public static void loadReplyLinesFromPreset(){
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 

@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Random;
 
@@ -23,7 +24,7 @@ class HeroLinesCluster {
 
     static {
         InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
-        BufferedReader br =new BufferedReader(new InputStreamReader(is));
+        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
     }
 
@@ -36,7 +37,7 @@ class HeroLinesCluster {
     //重载默认herolines.json
     public static void reloadReplyLinesFromPreset(){
         InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
-        BufferedReader br =new BufferedReader(new InputStreamReader(is));
+        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
     }
 
