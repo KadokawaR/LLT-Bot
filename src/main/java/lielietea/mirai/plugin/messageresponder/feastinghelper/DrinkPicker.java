@@ -31,7 +31,18 @@ public class DrinkPicker implements MessageHandler<MessageEvent> {
             "多肉莓莓",
             "芝芝莓莓",
             "草莓奶昔",
-            "巧克力奶昔"
+            "巧克力奶昔",
+            "幽兰拿铁",
+            "四季春茶",
+            "乌龙奶茶",
+            "抹茶鲜牛乳",
+            "奶绿",
+            "冻顶乌龙茶",
+            "茉莉绿茶",
+            "红茶玛奇朵",
+            "阿华田",
+            "红茶拿铁",
+            "绿茶拿铁"
     ));
 
     static final ArrayList<String> topping = new ArrayList<>(Arrays.asList(
@@ -44,7 +55,8 @@ public class DrinkPicker implements MessageHandler<MessageEvent> {
             "加椰果",
             "加红豆",
             "加三兄弟",
-            "加咖啡冻"
+            "加咖啡冻",
+            "加冰激凌"
     ));
 
     static final ArrayList<String> sugarLevel = new ArrayList<>(Arrays.asList(
