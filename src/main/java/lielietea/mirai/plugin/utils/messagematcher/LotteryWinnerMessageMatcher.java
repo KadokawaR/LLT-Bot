@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class LotteryWinnerMessageMatcher implements MessageMatcher<MessageEvent>{
-    static final Pattern regPattern = Pattern.compile("((/[Ww]inner)|([oO]k [Ww]inner))|(/(([Ll]otter)|(乐透)|(彩票)))");
+    static final Pattern regPattern = Pattern.compile("((/[Ww]inner)|([oO]k [Ww]inner))|(/(([Ll]ottery)|(乐透)|(彩票)))");
 
 
     @Override
