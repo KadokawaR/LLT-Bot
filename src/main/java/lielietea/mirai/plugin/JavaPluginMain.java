@@ -105,6 +105,10 @@ public final class JavaPluginMain extends JavaPlugin {
             if (event.getMessage().contentToString().contains("/group")) {
                 AdminTools.getGroupList(event);
             }
+
+            if (event.getMessage().contentToString().contains("/friend")) {
+                AdminTools.getFriendList(event);
+            }
         });
     }
 }
