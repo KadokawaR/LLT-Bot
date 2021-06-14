@@ -81,6 +81,9 @@ public class LotteryWinner{
     }
 
     public static void okC4(GroupMessageEvent event){
+        if(!c4ActivationFlags.containsKey(event.getGroup().getId())){
+            c4ActivationFlags.put(event.getGroup().getId(),false);
+        }
         if (!c4ActivationFlags.get(event.getGroup().getId())){
             List<NormalMember> candidates = new ArrayList<>(event.getGroup().getMembers());
 

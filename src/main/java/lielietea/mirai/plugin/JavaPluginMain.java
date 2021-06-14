@@ -3,12 +3,11 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.messagerepeater.RepeaterManager;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
-import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinner;
-import lielietea.mirai.plugin.utils.admintools.AdminTools;
+import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.utils.idchecker.AccountChecker;
-import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupChecker;
+import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.MemberPermission;
@@ -31,11 +30,6 @@ build.gradle.kts里改依赖库和插件版本
 
 public final class JavaPluginMain extends JavaPlugin {
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
-
-    //检查器，确保目前只处理来自Bot测试群的消息
-    static final GroupChecker testGroupChekcer = new GroupChecker(578984285L);
-    //给老唐的特殊待遇
-    static final AccountChecker kawaharaChecker = new AccountChecker(459405942L);
 
     private JavaPluginMain() {
         super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.0")
@@ -85,10 +79,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
-            if (testGroupChekcer.checkIdentity(event) && kawaharaChecker.checkIdentity(event)) {   //一点点VIP待遇
-                event.getSubject().sendMessage("老唐最帅！");
-            }
-
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
             MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
@@ -96,17 +86,17 @@ public final class JavaPluginMain extends JavaPlugin {
             //复读功能
             RepeaterManager.getInstance().handleMessage(event);
 
-            //指定群的特殊功能
-            //if (testGroupChekcer.checkIdentity(event)){}
+            //VIP待遇
+            GrandVIPServiceDepartment.handleMessage(event);
+
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
-            if (kawaharaChecker.checkIdentity(event)) {
-                event.getSubject().sendMessage("老唐最帅！");    //一点点VIP待遇
-            }
+
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
             MessageRespondCenter.getINSTANCE().handleFrinedMessageEvent(event);
+
             //临时的 管理员账号输入”/group“获得bot所在的所有群的详细列表
             //由于AdministrativeAccountChecker里面的非static方法我调用不了 我临时在AdminTools中写了个
             //潜在崩溃可能：Mirai支持的单条消息长度为5000字，如果超过可能要分消息

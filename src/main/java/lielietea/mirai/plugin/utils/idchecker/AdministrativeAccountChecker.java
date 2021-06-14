@@ -12,7 +12,8 @@ import java.util.List;
 public class AdministrativeAccountChecker implements IdentityChecker<MessageEvent> {
     static final List<Long> adminList = new ArrayList<>(Arrays.asList(
             2955808839L,
-            1811905537L
+            1811905537L,
+            459405942L
     ));
 
     @Override
