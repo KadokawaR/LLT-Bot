@@ -7,13 +7,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class LotteryC4MessageMatcher implements MessageMatcher<MessageEvent>{
-    static final Pattern regPattern = Pattern.compile("/[Cc]4");
+    static final Pattern regPattern = Pattern.compile("(/[Cc]4)|([oO][kK] [Cc]4)");
 
     @Override
     public boolean matches(MessageEvent event) {
-        if(regPattern.matcher(event.getMessage().contentToString()).matches()){
-            return true;
-        }
-        return false;
+        return regPattern.matcher(event.getMessage().contentToString()).matches();
     }
 }

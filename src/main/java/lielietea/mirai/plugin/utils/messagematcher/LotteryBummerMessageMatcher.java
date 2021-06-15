@@ -7,15 +7,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class LotteryBummerMessageMatcher implements MessageMatcher<MessageEvent>{
-    static final Pattern regPattern = Pattern.compile("(/[Bb]ummer)|([oO]k [Bb]ummer)");
+    static final Pattern regPattern = Pattern.compile("(/[Bb]ummer)|([oO][kK] [Bb]ummer)");
 
 
     @Override
     public boolean matches(MessageEvent event) {
-        if(regPattern.matcher(event.getMessage().contentToString()).matches()){
-            return true;
-        }
-        return false;
+        return regPattern.matcher(event.getMessage().contentToString()).matches();
     }
 
 }
