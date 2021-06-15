@@ -4,7 +4,9 @@ package lielietea.mirai.plugin.messageresponder;
 import lielietea.mirai.plugin.messageresponder.autoreply.AutoReplyMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.GreetingMessageHandler;
 import lielietea.mirai.plugin.messageresponder.dice.DiceMessageHandler;
-import lielietea.mirai.plugin.messageresponder.feastinghelper.DrinkPicker;
+import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.MealPicker;
+import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.PizzaPicker;
+import lielietea.mirai.plugin.messageresponder.feastinghelper.drinkpicker.DrinkPicker;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinnerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.*;
@@ -91,9 +93,11 @@ public class MessageRespondCenter {
         register(new AutoReplyMessageHandler(new MentionOverwatchMessageMatcher(),new DirtyWordMessageMatcher(),new GoodbyeMessageMatcher()));
         register(new GreetingMessageHandler());
         register(new DiceMessageHandler());
-        register(new DrinkPicker(new RequestDrinkMessageMatcher()));
         register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
         register(new LotteryWinnerMessageHandler(new LotteryWinnerMessageMatcher(),new LotteryBummerMessageMatcher(),new LotteryC4MessageMatcher()));
+        register(new DrinkPicker(new DrinkPickerMessageMatcher()));
+        register(new MealPicker(new MealPickerMessageMatcher()));
+        register(new PizzaPicker(new PizzaPickerMessageMatcher()));
     }
 
     /**

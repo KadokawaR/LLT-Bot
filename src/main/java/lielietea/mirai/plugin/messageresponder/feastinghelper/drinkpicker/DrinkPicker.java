@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.feastinghelper;
+package lielietea.mirai.plugin.messageresponder.feastinghelper.drinkpicker;
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;

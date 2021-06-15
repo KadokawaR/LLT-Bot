@@ -1,12 +1,10 @@
 package lielietea.mirai.plugin;
 
 
-import lielietea.mirai.plugin.messagerepeater.RepeaterManager;
+
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.utils.idchecker.AccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
-import lielietea.mirai.plugin.utils.idchecker.GroupChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -82,9 +80,6 @@ public final class JavaPluginMain extends JavaPlugin {
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
             MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
-
-            //复读功能
-            RepeaterManager.getInstance().handleMessage(event);
 
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);

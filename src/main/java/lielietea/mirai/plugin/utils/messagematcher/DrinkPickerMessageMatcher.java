@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class RequestDrinkMessageMatcher implements MessageMatcher<MessageEvent>{
+public class DrinkPickerMessageMatcher implements MessageMatcher<MessageEvent>{
     static final List<Pattern> regPattern = new ArrayList<>();
 
     static{
