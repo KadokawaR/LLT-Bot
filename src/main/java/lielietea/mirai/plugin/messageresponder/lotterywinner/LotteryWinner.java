@@ -66,7 +66,7 @@ public class LotteryWinner{
                     event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n" +
                             event.getSender().getNick() + "尝试随机极限一换一。他成功把自己换出去了！");
                 }
-                else if (!(senderPermissionChecker(event))) {
+                else if ((senderPermissionChecker(event))) {
                     //如果发送者是管理员，那么提示
                     event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n管理员" +
                             event.getSender().getNick() + "随机带走了" + victim.getNick());
