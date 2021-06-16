@@ -5,6 +5,7 @@ import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.AtAll;
+import net.mamoe.mirai.message.data.PlainText;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -68,12 +69,16 @@ public class LotteryWinner{
                 }
                 else if ((senderPermissionChecker(event))) {
                     //如果发送者是管理员，那么提示
-                    event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n管理员" +
-                            event.getSender().getNick() + "随机带走了" + victim.getNick());
+                    event.getGroup().sendMessage( new PlainText("Ok Bummer! " + victim.getNick() + "\n管理员")
+                            .plus(new At(event.getSender().getId()))
+                            .plus(new PlainText(" 随机带走了 "))
+                            .plus(new At(victim.getId())));
                 } else {
                     //如果发送者不是管理员，那么提示
-                    event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n" +
-                            event.getSender().getNick() + "以自己为代价随机带走了" + victim.getNick());
+                    event.getGroup().sendMessage( new PlainText("Ok Bummer! " + victim.getNick() + "\n")
+                            .plus(new At(event.getSender().getId()))
+                            .plus(new PlainText(" 以自己为代价随机带走了 "))
+                            .plus(new At(victim.getId())));
                 }
             }
         } else {
@@ -105,9 +110,9 @@ public class LotteryWinner{
                 c4ActivationFlags.put(event.getGroup().getId(),false);
             }
             if (!c4ActivationFlags.get(event.getGroup().getId())){
-                List<NormalMember> candidates = new ArrayList<>(event.getGroup().getMembers());
+                double ratio = 1D/event.getGroup().getMembers().size();
 
-                if (candidates.get(rand.nextInt(candidates.size())).getPermission().equals(MemberPermission.OWNER)){
+                if (rand.nextDouble()<ratio){
                     //禁言全群
                     try {
                         event.getGroup().getSettings().setMuteAll(true);
