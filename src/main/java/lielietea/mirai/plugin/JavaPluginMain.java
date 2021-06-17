@@ -4,7 +4,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.messageresponder.getsomedogs.OkDoggie;
+import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
@@ -85,9 +85,6 @@ public final class JavaPluginMain extends JavaPlugin {
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
 
-            //测试中的 Ok Doggie 功能
-            OkDoggie.sendDoggie(event);
-
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
@@ -108,8 +105,11 @@ public final class JavaPluginMain extends JavaPlugin {
             if (event.getMessage().contentToString().contains("/friend")) {
                 AdminTools.getFriendList(event);
             }
-
-            OkDoggie.sendDoggie(event);
         });
+    }
+
+    @Override
+    public void onDisable(){
+        MessageRespondCenter.getINSTANCE().close();
     }
 }

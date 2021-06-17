@@ -7,6 +7,7 @@ import lielietea.mirai.plugin.messageresponder.dice.DiceMessageHandler;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.MealPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.PizzaPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.drinkpicker.DrinkPicker;
+import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinnerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.*;
@@ -26,6 +27,7 @@ public class MessageRespondCenter {
     static final List<MessageHandler<MessageEvent>> friendMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> strangerMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> reloadable = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> closeRequired = new ArrayList<>();
 
     static final MessageRespondCenter INSTANCE = new MessageRespondCenter();
 
@@ -84,6 +86,7 @@ public class MessageRespondCenter {
         if(handler.types().contains(MessageHandler.MessageType.STRANGER)) strangerMessageHandlers.add((MessageHandler<MessageEvent>) handler);
         if(handler.types().contains(MessageHandler.MessageType.TEMP)) groupTempMessageHandlers.add((MessageHandler<MessageEvent>) handler);
         if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
+        if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
     }
 
     /**
@@ -98,6 +101,8 @@ public class MessageRespondCenter {
         register(new DrinkPicker(new DrinkPickerMessageMatcher()));
         register(new MealPicker(new MealPickerMessageMatcher()));
         register(new PizzaPicker(new PizzaPickerMessageMatcher()));
+        //on test
+        register(new DogImage());
     }
 
     /**
@@ -106,6 +111,15 @@ public class MessageRespondCenter {
     public void reload(){
         for(MessageHandler<MessageEvent> reloadable:reloadable){
             ((Reloadable) reloadable).reload();
+        }
+    }
+
+    /**
+     * 实现了 {@link CloseRequiredHandler} 的回复处理器，可用此方法完成关闭Mirai时的收尾工作
+     */
+    public void close(){
+        for(MessageHandler<MessageEvent> closing : closeRequired){
+            ((CloseRequiredHandler) closing).onclose();
         }
     }
 

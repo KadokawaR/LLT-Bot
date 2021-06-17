@@ -34,6 +34,14 @@ public class ImageURLResolver {
             }
             return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonPrimitive().toString()));
         }
+        else if(source==Source.RADNOM_GOD){
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonObject().getAsJsonPrimitive("url").toString()));
+        }
         //获得来自place.dog的狗，默认尺寸为300x200
         else{
             return Optional.of(new URL("https://place.dog/300/200"));
@@ -43,6 +51,7 @@ public class ImageURLResolver {
     public enum Source {
         DOG_CEO,
         SHIBA_ONLINE,
+        RADNOM_GOD,
         PLACE_DOG
 
     }
