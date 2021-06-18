@@ -41,6 +41,7 @@ LieLieTea-Bot 基于 [Mirai](https://github.com/mamoe/mirai) 由 @MarbelGateKeep
 ##功能列表
 ###Admin Tools
 `管理` `管理权限`
+
 用来获取有关 Bot 的数据的工具。Bot通过QQ号检测是否是管理员账号发送的消息。
 
 目前进度：只实现了`/group`和`/friend`返回Bot所在的群信息和好友信息。
