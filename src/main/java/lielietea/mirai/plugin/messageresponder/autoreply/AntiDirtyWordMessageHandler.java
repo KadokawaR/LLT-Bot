@@ -11,41 +11,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AutoReplyMessageHandler implements MessageHandler<MessageEvent>, Reloadable {
+public class AntiDirtyWordMessageHandler implements MessageHandler<MessageEvent>, Reloadable {
     static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
 
-    final MessageMatcher<MessageEvent> overwatchMatcher;
-    final MessageMatcher<MessageEvent> dirtyWordMatcher;
-    final MessageMatcher<MessageEvent> goodbyeMatcher;
 
-    public AutoReplyMessageHandler(MessageMatcher<MessageEvent> overwatchMatcher, MessageMatcher<MessageEvent> dirtyWordMatcher, MessageMatcher<MessageEvent> goodbyeMatcher) {
-        this.overwatchMatcher = overwatchMatcher;
+    final MessageMatcher<MessageEvent> dirtyWordMatcher;
+
+    public AntiDirtyWordMessageHandler(MessageMatcher<MessageEvent> dirtyWordMatcher) {
         this.dirtyWordMatcher = dirtyWordMatcher;
-        this.goodbyeMatcher = goodbyeMatcher;
     }
 
     public boolean handleMessage(MessageEvent event){
-        if(overwatchMatcher.matches(event)){
-            AutoReplyLinesCluster.reply(event, AutoReplyLinesCluster.ReplyType.ANTI_OVERWATCH_GAME);
-            return true;
-        }
-        else if(dirtyWordMatcher.matches(event)){
+        if(dirtyWordMatcher.matches(event)){
             AutoReplyLinesCluster.reply(event, AutoReplyLinesCluster.ReplyType.ANTI_DIRTY_WORDS);
             return true;
         }
-        else if(goodbyeMatcher.matches(event)){
-            AutoReplyLinesCluster.reply(event, AutoReplyLinesCluster.ReplyType.GOODBYE);
-            return true;
-        }
-        else{
-            return false;
-        }
+        return false;
     }
 
     @NotNull
     @Override
     public List<MessageType> types() {
         return type;
+    }
+
+    @Override
+    public String getName() {
+        return "自动回复：反脏话";
     }
 
 

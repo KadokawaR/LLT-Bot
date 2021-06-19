@@ -84,11 +84,23 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         return getHusky(event) || getShiba(event) || getRandomDog(event);
     }
 
+    @Override
+    public String getName() {
+        return "OK Doggie";
+    }
+
+    @Override
+    public boolean isOnBeta() {
+        return true;
+    }
+
     @NotNull
     @Override
     public List<MessageType> types() {
         return type;
     }
+
+
 
     @Override
     public void onclose() {

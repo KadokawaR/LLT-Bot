@@ -8,7 +8,7 @@
 + 功能列表
 
 ##简介
-LieLieTea-Bot 基于 [Mirai](https://github.com/mamoe/mirai) 由 @MarbelGateKeeper 开发（和我基本没啥事），虽然有一定争议但是还是号称是为简体中文兽人社群（Mandarin-spoken Furry Community）服务的。
+LieLieTea-Bot 基于 [Mirai](https://github.com/mamoe/mirai) 开发，虽然有一定争议但是还是号称是为简体中文兽人社群（Mandarin-spoken Furry Community）服务的。
 ###有关Mirai
 时至今日我们依旧不知道Mirai为什么没有跑路，总之就是用了。Mirai的 [开发文档](https://docs.mirai.mamoe.net/) 虽然写的对初学者很不友好但是得看。
 

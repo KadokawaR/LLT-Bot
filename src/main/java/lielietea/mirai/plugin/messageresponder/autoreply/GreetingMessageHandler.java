@@ -18,7 +18,7 @@ public class GreetingMessageHandler implements MessageHandler<GroupMessageEvent>
             //群内发送
             event.getGroup().sendMessage("hi");
             //向发送者私聊发送消息
-            event.getSender().sendMessage("hi");
+            //event.getSender().sendMessage("hi");
             return true;
         }
         return false;
@@ -28,5 +28,10 @@ public class GreetingMessageHandler implements MessageHandler<GroupMessageEvent>
     @Override
     public List<MessageType> types() {
         return type;
+    }
+
+    @Override
+    public String getName() {
+        return "自动回复：打招呼";
     }
 }

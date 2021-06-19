@@ -10,21 +10,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LotteryWinnerMessageHandler implements MessageHandler<GroupMessageEvent> {
+public class LotteryC4MessageHandler implements MessageHandler<GroupMessageEvent> {
 
-    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
+    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP_PERMISSION_REQUIRED));
 
-    final MessageMatcher<MessageEvent> lotteryWinnerMatcher;
+    final MessageMatcher<MessageEvent> lotteryC4rMatcher;
 
-    public LotteryWinnerMessageHandler(MessageMatcher<MessageEvent> lotteryWinnerMatcher) {
-        this.lotteryWinnerMatcher = lotteryWinnerMatcher;
+    public LotteryC4MessageHandler(MessageMatcher<MessageEvent> lotteryC4rMatcher) {
+        this.lotteryC4rMatcher = lotteryC4rMatcher;
     }
 
 
     @Override
     public boolean handleMessage(GroupMessageEvent event) {
-        if(lotteryWinnerMatcher.matches(event)){
-            LotteryMachine.okWinner(event);
+        if(lotteryC4rMatcher.matches(event)){
+            LotteryMachine.okC4(event);
             return true;
         }
         return false;
@@ -38,6 +38,6 @@ public class LotteryWinnerMessageHandler implements MessageHandler<GroupMessageE
 
     @Override
     public String getName() {
-        return "彩票：Winner";
+        return "\"彩票：C4\"";
     }
 }

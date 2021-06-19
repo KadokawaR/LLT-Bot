@@ -65,6 +65,11 @@ public class DiceMessageHandler implements MessageHandler<MessageEvent> {
         return type;
     }
 
+    @Override
+    public String getName() {
+        return "骰子";
+    }
+
     //直接根据命令在群内执行扔骰子动作与广播结果操作
     static void executeDiceCommandFromGroup(GroupMessageEvent event){
         if(PATTERN_COMMON_COMMAND.matcher(event.getMessage().contentToString()).matches()){

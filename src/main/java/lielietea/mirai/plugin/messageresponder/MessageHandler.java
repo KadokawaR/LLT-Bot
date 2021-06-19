@@ -3,7 +3,9 @@ package lielietea.mirai.plugin.messageresponder;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 回复处理器接口，如果要让 {@link MessageRespondCenter} 对回复处理器进行托管，那么必须实现该类并注册
@@ -29,8 +31,30 @@ public interface MessageHandler<T extends MessageEvent> {
     @NotNull
     List<MessageType> types();
 
+    /**
+     * 返回该回复处理器的UUID
+     * @return UUID
+     */
+    default UUID getUUID(){
+        return UUID.nameUUIDFromBytes(this.getName().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * 返回该回复处理器所代表的功能的名字
+     * @return 功能名字
+     */
+    String getName();
+
+    /**
+     * 该回复处理器是否是测试特性
+     * @return 如果是测试特性，那么返回true
+     */
+    default boolean isOnBeta(){
+        return false;
+    }
 
     enum MessageType{
+        GROUP_PERMISSION_REQUIRED,
         GROUP,
         FRIEND,
         STRANGER,

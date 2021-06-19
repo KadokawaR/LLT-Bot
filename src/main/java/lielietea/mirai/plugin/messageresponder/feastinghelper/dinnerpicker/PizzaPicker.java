@@ -15,7 +15,7 @@ import java.util.List;
  * 一个类似于”今天吃什么“的类
  * 会给用户推送随机加入3-10种配料的披萨
  */
-public class PizzaPicker implements MessageHandler<MessageEvent>, Reloadable {
+public class PizzaPicker implements MessageHandler<MessageEvent> {
 
     final MessageMatcher<MessageEvent> requestPizzaMatcher;
 
@@ -42,7 +42,8 @@ public class PizzaPicker implements MessageHandler<MessageEvent>, Reloadable {
     }
 
     @Override
-    public void reload() {
-        //等待补全
+    public String getName() {
+        return "OK Pizza";
     }
+
 }

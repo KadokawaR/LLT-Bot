@@ -1,13 +1,17 @@
 package lielietea.mirai.plugin.messageresponder;
 
 
-import lielietea.mirai.plugin.messageresponder.autoreply.AutoReplyMessageHandler;
+import lielietea.mirai.plugin.messageresponder.autoreply.AntiDirtyWordMessageHandler;
+import lielietea.mirai.plugin.messageresponder.autoreply.AntiOverwatchMessageHandler;
+import lielietea.mirai.plugin.messageresponder.autoreply.GoodbyeMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.GreetingMessageHandler;
 import lielietea.mirai.plugin.messageresponder.dice.DiceMessageHandler;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.MealPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.PizzaPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.drinkpicker.DrinkPicker;
 import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
+import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryBummerMessageHandler;
+import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryC4MessageHandler;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinnerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.*;
@@ -93,11 +97,15 @@ public class MessageRespondCenter {
      * 初始化该管理器类。必须在插件启动时调用。
      */
     public void ini(){
-        register(new AutoReplyMessageHandler(new MentionOverwatchMessageMatcher(),new DirtyWordMessageMatcher(),new GoodbyeMessageMatcher()));
+        register(new GoodbyeMessageHandler(new GoodbyeMessageMatcher()));
+        register(new AntiOverwatchMessageHandler(new MentionOverwatchMessageMatcher()));
+        register(new AntiDirtyWordMessageHandler(new DirtyWordMessageMatcher()));
         register(new GreetingMessageHandler());
         register(new DiceMessageHandler());
         register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
-        register(new LotteryWinnerMessageHandler(new LotteryWinnerMessageMatcher(),new LotteryBummerMessageMatcher(),new LotteryC4MessageMatcher()));
+        register(new LotteryWinnerMessageHandler(new LotteryWinnerMessageMatcher()));
+        register(new LotteryBummerMessageHandler(new LotteryBummerMessageMatcher()));
+        register(new LotteryC4MessageHandler(new LotteryC4MessageMatcher()));
         register(new DrinkPicker(new DrinkPickerMessageMatcher()));
         register(new MealPicker(new MealPickerMessageMatcher()));
         register(new PizzaPicker(new PizzaPickerMessageMatcher()));

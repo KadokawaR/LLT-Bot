@@ -4,14 +4,13 @@ import lielietea.mirai.plugin.utils.Notice;
 import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.AtAll;
 import net.mamoe.mirai.message.data.PlainText;
 
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class LotteryWinner{
+public class LotteryMachine {
     static Timer timer = new Timer(true);
     static Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
     static Random rand = new Random();
@@ -31,7 +30,7 @@ public class LotteryWinner{
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                LotteryWinner.c4ActivationFlags.clear();
+                LotteryMachine.c4ActivationFlags.clear();
             }
         },
                 date,
