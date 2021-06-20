@@ -15,6 +15,7 @@ import java.util.List;
  *
  * <p>用{@link DrinkPicker#getPersonalizedHourlyDrink(MessageEvent)}来获取根据用户而变化的Hourly Random Drink</p>
  */
+
 public class DrinkPicker implements MessageHandler<MessageEvent> {
 
     final MessageMatcher<MessageEvent> requestDrinkMatcher;
@@ -118,6 +119,11 @@ public class DrinkPicker implements MessageHandler<MessageEvent> {
     @Override
     public List<MessageType> types() {
         return type;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 
     //获取每小时变化的，根据用户而不同的随机饮品

@@ -37,6 +37,11 @@ public class HeroLinesMessageHandler implements MessageHandler<GroupMessageEvent
         return type;
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
+
 
     @Override
     public void reload() {
