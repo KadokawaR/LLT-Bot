@@ -13,6 +13,7 @@ import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryBummerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryC4MessageHandler;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinnerMessageHandler;
+import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.*;
 import net.mamoe.mirai.event.events.*;
@@ -27,11 +28,13 @@ import java.util.List;
  */
 public class MessageRespondCenter {
     static final List<MessageHandler<MessageEvent>> groupMessageHandlers = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> groupPermissionRequiredMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> groupTempMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> friendMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> strangerMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> reloadable = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> closeRequired = new ArrayList<>();
+    static final List<MessageHandler<MessageEvent>> betaFeature = new ArrayList<>();
 
     static final MessageRespondCenter INSTANCE = new MessageRespondCenter();
 
@@ -44,8 +47,27 @@ public class MessageRespondCenter {
      * @param event 群消息事件
      */
     public void handleGroupMessageEvent(MessageEvent event){
-        for(MessageHandler<MessageEvent> handler:groupMessageHandlers){
-            if(handler.handleMessage(event)) break;
+        boolean handled = false;
+        if(true/*此处还未修改完成，需要implement Group Permission Config*/){
+            for(MessageHandler<MessageEvent> handler:groupPermissionRequiredMessageHandlers){
+                if(handler.handleMessage(event)) {
+                    handled = true;
+                    break;
+                }
+            }
+        }
+        if(!handled){
+            for(MessageHandler<MessageEvent> handler:groupMessageHandlers){
+                if(handler.handleMessage(event)){
+                    handled = true;
+                    break;
+                }
+            }
+        }
+        if(!handled/*此处还未修改完成，需要implement Group Beta Config*/){
+            for(MessageHandler<MessageEvent> handler:betaFeature){
+                if(handler.handleMessage(event)) break;
+            }
         }
     }
 
@@ -85,30 +107,36 @@ public class MessageRespondCenter {
      */
     @SuppressWarnings("unchecked")
     public void register(MessageHandler<? extends MessageEvent> handler){
-        if(handler.types().contains(MessageHandler.MessageType.GROUP)) groupMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler.types().contains(MessageHandler.MessageType.FRIEND)) friendMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler.types().contains(MessageHandler.MessageType.STRANGER)) strangerMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler.types().contains(MessageHandler.MessageType.TEMP)) groupTempMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
-        if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
+        if(handler.isOnBeta()) betaFeature.add((MessageHandler<MessageEvent>) handler);
+        else{
+            if(handler.types().contains(MessageHandler.MessageType.GROUP)) groupMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+            if(handler.types().contains(MessageHandler.MessageType.GROUP_PERMISSION_REQUIRED)) groupPermissionRequiredMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+            if(handler.types().contains(MessageHandler.MessageType.FRIEND)) friendMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+            if(handler.types().contains(MessageHandler.MessageType.STRANGER)) strangerMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+            if(handler.types().contains(MessageHandler.MessageType.TEMP)) groupTempMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+            if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
+            if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
+        }
     }
 
     /**
      * 初始化该管理器类。必须在插件启动时调用。
      */
     public void ini(){
-        register(new GoodbyeMessageHandler(new GoodbyeMessageMatcher()));
-        register(new AntiOverwatchMessageHandler(new MentionOverwatchMessageMatcher()));
-        register(new AntiDirtyWordMessageHandler(new DirtyWordMessageMatcher()));
-        register(new GreetingMessageHandler());
-        register(new DiceMessageHandler());
-        register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
         register(new LotteryWinnerMessageHandler(new LotteryWinnerMessageMatcher()));
         register(new LotteryBummerMessageHandler(new LotteryBummerMessageMatcher()));
         register(new LotteryC4MessageHandler(new LotteryC4MessageMatcher()));
         register(new DrinkPicker(new DrinkPickerMessageMatcher()));
         register(new MealPicker(new MealPickerMessageMatcher()));
         register(new PizzaPicker(new PizzaPickerMessageMatcher()));
+        register(new FortuneTeller());
+        register(new DiceMessageHandler());
+        register(new GoodbyeMessageHandler(new GoodbyeMessageMatcher()));
+        register(new AntiOverwatchMessageHandler(new MentionOverwatchMessageMatcher()));
+        register(new AntiDirtyWordMessageHandler(new DirtyWordMessageMatcher()));
+        register(new GreetingMessageHandler());
+        register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
+
         //on test
         register(new DogImage());
     }

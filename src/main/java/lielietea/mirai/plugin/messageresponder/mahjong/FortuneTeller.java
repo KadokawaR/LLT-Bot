@@ -1,18 +1,19 @@
 package lielietea.mirai.plugin.messageresponder.mahjong;
 
+import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.utils.ExternalResource;
+import org.jetbrains.annotations.NotNull;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 
-public class FortuneTeller {
+public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
+
+    static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
 
     public static int getMahjongOfTheDay(MessageEvent event){
         //获取当日幸运数字
@@ -91,18 +92,33 @@ public class FortuneTeller {
 
 
     public static void Mahjong(MessageEvent event){
+
+    }
+
+    @Override
+    public boolean handleMessage(GroupMessageEvent event) {
         if ((event.getMessage().contentToString().equals("麻将")) || (event.getMessage().contentToString().contains("求签"))){
             final String MAHJONG_PIC_PATH = "/pics/mahjong/"+getMahjong(getMahjongOfTheDay(event))+".png";
-            InputStream img = FortuneTeller.class.getResourceAsStream(MAHJONG_PIC_PATH);
-            assert img != null;
-            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
-            //不确定这边使用完之后要不要手动关闭流？
-            try {
-                img.close();
+            try (InputStream img = FortuneTeller.class.getResourceAsStream(MAHJONG_PIC_PATH)) {
+                assert img != null;
+                event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
             } catch (IOException e) {
                 e.printStackTrace();
             }
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
+            return true;
         }
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public List<MessageType> types() {
+        return type;
+    }
+
+    @Override
+    public String getName() {
+        return "麻将占卜";
     }
 }

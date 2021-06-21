@@ -9,16 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHandler {
-    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
 
     ExecutorService executor;
 
