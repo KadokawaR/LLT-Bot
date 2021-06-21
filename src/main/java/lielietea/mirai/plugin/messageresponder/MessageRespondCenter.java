@@ -9,6 +9,7 @@ import lielietea.mirai.plugin.messageresponder.dice.DiceMessageHandler;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.MealPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.PizzaPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.drinkpicker.DrinkPicker;
+import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryBummerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryC4MessageHandler;
@@ -109,6 +110,7 @@ public class MessageRespondCenter {
      * 初始化该管理器类。必须在插件启动时调用。
      */
     public void ini(){
+        register(new FursonaPunk());
         register(new LotteryWinnerMessageHandler(new LotteryWinnerMessageMatcher()));
         register(new LotteryBummerMessageHandler(new LotteryBummerMessageMatcher()));
         register(new LotteryC4MessageHandler(new LotteryC4MessageMatcher()));
@@ -123,7 +125,7 @@ public class MessageRespondCenter {
         register(new GreetingMessageHandler());
         register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
 
-        //on test
+        //Beta Feature
         register(new DogImage());
     }
 

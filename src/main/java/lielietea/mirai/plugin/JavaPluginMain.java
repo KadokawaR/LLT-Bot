@@ -4,9 +4,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.messageresponder.fursona.FuckFurries;
-import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
-import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
+import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
@@ -86,9 +84,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
-
-            //test for fursona
-            FuckFurries.fuck(event);
 
         });
 

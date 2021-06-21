@@ -1,29 +1,49 @@
 package lielietea.mirai.plugin.messageresponder.fursona;
 
 import com.google.gson.Gson;
+import lielietea.mirai.plugin.messageresponder.MessageHandler;
+import lielietea.mirai.plugin.messageresponder.Reloadable;
 import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-public class FuckFurries {
-    enum wordType{
-        Species,Era,Location,Reason,Action,Color,Adjective1,Adjective2,Tops,Bottoms,Suits,Hats,Bags,Items
-    }
+public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadable {
+    static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
+    static Fursona fursonaComponents;
 
-
-    public static Fursona getFursonaJson(){
+    static{
         final String FURSONA_PATH = "/cluster/fursona.json";
         InputStream is = FortuneTeller.class.getResourceAsStream(FURSONA_PATH);
         assert is != null;
         BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         Gson gson = new Gson();
-        return gson.fromJson(br, Fursona.class);
+        fursonaComponents = gson.fromJson(br, Fursona.class);
+    }
+
+    @Override
+    public boolean handleMessage(GroupMessageEvent event) {
+        if(event.getMessage().contentToString().endsWith("兽设")||(event.getMessage().contentToString().startsWith("兽设"))){
+            event.getSubject().sendMessage(new At(event.getSender().getId()).plus(createFurryFucker(fursonaComponents,event)));
+            return true;
+        }
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public List<MessageType> types() {
+        return type;
+    }
+
+    @Override
+    public String getName() {
+        return "Fursonapunk";
     }
 
     //先是全身和上下分装的判定，(全身size) : (上半身size+下半身size)。
@@ -32,7 +52,7 @@ public class FuckFurries {
 
     //30%概率什么都不戴
 
-    public static String getRandomHats(Fursona furfur, Random random){
+    static String getRandomHats(Fursona furfur, Random random){
         boolean isWearingHats = (random.nextInt(10)<7);
         boolean isHats = (random.nextInt(furfur.Hats.length+furfur.Bags.length)<furfur.Hats.length);
         if (isWearingHats){
@@ -48,7 +68,7 @@ public class FuckFurries {
         }
     }
 
-    public static String getRandomClothes(Fursona furfur,Random random){
+    static String getRandomClothes(Fursona furfur,Random random){
         boolean isNaked = (random.nextInt(25)<1);
         boolean topNaked = (random.nextInt(10)<3);
         boolean bottomNaked = (random.nextInt(10)<4);
@@ -89,7 +109,7 @@ public class FuckFurries {
     //13,13,13,13,13,7,7,7,3,3,(8)分配给剩下的物种
     //json里面存储的是剩下的物种
 
-    public static String getSpecies(Fursona furfur,Random random){
+    static String getSpecies(Fursona furfur,Random random){
         int speciesRandom = random.nextInt(100);
         String species = "";
         if(speciesRandom<13){
@@ -200,7 +220,7 @@ public class FuckFurries {
     //因为[孟姜女哭塌了长城]，[计划着去殖民英仙座]的，戴着[黑色][针织帽]，
     //身穿[ADJ1][ADJ2非常暴露]的[灰色][西装大衣]，手握[茶颜悦色]的[彩虹色][狐狸]兽人。
 
-    public static String createFurryFucker(Fursona furfur, MessageEvent event){
+    static String createFurryFucker(Fursona furfur, MessageEvent event){
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
@@ -220,10 +240,19 @@ public class FuckFurries {
         String items = furfur.Items[random.nextInt(furfur.Items.length)];
         return "的兽设是：在"+era+"的"+location+"，"+reason1+"。因为"+reason2+'，'+action+"的，"+getRandomHats(furfur,random)+getRandomClothes(furfur,random)+"手握"+items+"的"+getSpecies(furfur,random)+"兽人。";
     }
-    
-    public static void fuck(MessageEvent event){
-        if(event.getMessage().contentToString().endsWith("兽设")||(event.getMessage().contentToString().startsWith("兽设"))){
-            event.getSubject().sendMessage(new At(event.getSender().getId()).plus(createFurryFucker(getFursonaJson(),event)));
-        }
+
+    @Override
+    public void reload() {
+        final String FURSONA_PATH = "/cluster/fursona.json";
+        InputStream is = FortuneTeller.class.getResourceAsStream(FURSONA_PATH);
+        assert is != null;
+        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        Gson gson = new Gson();
+        fursonaComponents = gson.fromJson(br, Fursona.class);
     }
+
+    enum wordType{
+        Species,Era,Location,Reason,Action,Color,Adjective1,Adjective2,Tops,Bottoms,Suits,Hats,Bags,Items
+    }
+
 }
