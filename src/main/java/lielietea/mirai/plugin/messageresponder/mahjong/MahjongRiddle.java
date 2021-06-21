@@ -149,7 +149,7 @@ public class MahjongRiddle {
     public static void riddleStart(GroupMessageEvent event){
         String[] narrowAnswer = getRandomTiles(answerNum);
         String[] transformedAnswer = transformAnswer(answerNum);
-        
+
         if(!riddleResetFlags.containsKey(event.getGroup().getId())){
             riddleResetFlags.put(event.getGroup().getId(),rf);
         }
