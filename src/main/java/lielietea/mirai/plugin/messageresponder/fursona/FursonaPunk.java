@@ -28,7 +28,7 @@ public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadabl
 
     @Override
     public boolean handleMessage(GroupMessageEvent event) {
-        if(event.getMessage().contentToString().contains("兽设"))){
+        if(event.getMessage().contentToString().contains("兽设")){
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(createFurryFucker(fursonaComponents,event)));
             return true;
         }
@@ -251,6 +251,7 @@ public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadabl
         fursonaComponents = gson.fromJson(br, Fursona.class);
     }
 
-    enum wordType{
-        Species,Era,Location,Reason,Action,Color,Adjective1,Adjective2,Tops,Bottoms,Suits,Hats,Bags,Items
+    enum wordType {
+        Species, Era, Location, Reason, Action, Color, Adjective1, Adjective2, Tops, Bottoms, Suits, Hats, Bags, Items
+    }
 }
