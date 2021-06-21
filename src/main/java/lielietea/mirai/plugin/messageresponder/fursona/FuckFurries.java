@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.messageresponder.fursona;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.At;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -41,11 +42,11 @@ public class FuckFurries {
                 return "戴着"+furfur.Hats[random.nextInt(furfur.Hats.length)]+"，";
             }
             else{
-                return "背着"+furfur.Hats[random.nextInt(furfur.Hats.length)]+"，";
+                return "背着"+furfur.Bags[random.nextInt(furfur.Bags.length)]+"，";
             }
         }
         else{
-            return null;
+            return "";
         }
     }
 
@@ -224,7 +225,7 @@ public class FuckFurries {
 
     public static void fuck(MessageEvent event){
         if(event.getMessage().contentToString().endsWith("兽设")||(event.getMessage().contentToString().startsWith("兽设"))){
-            event.getSubject().sendMessage(createFurryFucker(getFursonaJson(),event));
+            event.getSubject().sendMessage(new At(event.getSender().getId()).plus(createFurryFucker(getFursonaJson(),event)));
         }
     }
 }
