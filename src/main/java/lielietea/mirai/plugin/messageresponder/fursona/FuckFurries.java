@@ -26,8 +26,6 @@ public class FuckFurries {
         return gson.fromJson(br, Fursona.class);
     }
 
-
-
     //先是全身和上下分装的判定，(全身size) : (上半身size+下半身size)。
     //然后上半身size有30%的概率是赤裸上身，下半身有40%没穿任何东西。然后再在词库里随机抽取。
     //全身有4%的概率什么都不穿，就算一开始不是轮到全身size也是有可能什么都不穿的（上下半身分开的6%）。
@@ -218,11 +216,11 @@ public class FuckFurries {
         String reason2 =  furfur.Reason[random2];
         String action = furfur.Action[random.nextInt(furfur.Action.length)];
         String adj1 = furfur.Adjective1[random.nextInt(furfur.Adjective1.length)];
-        String adj2 = furfur.Adjective1[random.nextInt(furfur.Adjective2.length)];
+        String adj2 = furfur.Adjective2[random.nextInt(furfur.Adjective2.length)];
         String items = furfur.Items[random.nextInt(furfur.Items.length)];
         return "的兽设是：在"+era+"的"+location+"，"+reason1+"。因为"+reason2+'，'+action+"的，"+getRandomHats(furfur,random)+getRandomClothes(furfur,random)+"手握"+items+"的"+getSpecies(furfur,random)+"兽人。";
     }
-
+    
     public static void fuck(MessageEvent event){
         if(event.getMessage().contentToString().endsWith("兽设")||(event.getMessage().contentToString().startsWith("兽设"))){
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(createFurryFucker(getFursonaJson(),event)));

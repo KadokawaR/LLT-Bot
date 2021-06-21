@@ -90,11 +90,6 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
         return "\n今天的占卜麻将牌是: "+getMahjong(mahjongOfTheDay)+"\n运势是: "+MahjongSay.luck.get(mahjongNumero)+"\n"+MahjongSay.saying.get(mahjongNumero);
     }
 
-
-    public static void Mahjong(MessageEvent event){
-
-    }
-
     @Override
     public boolean handleMessage(GroupMessageEvent event) {
         if ((event.getMessage().contentToString().equals("麻将")) || (event.getMessage().contentToString().contains("求签"))){
