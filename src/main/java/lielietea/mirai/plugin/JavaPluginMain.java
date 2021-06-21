@@ -5,6 +5,7 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
+import lielietea.mirai.plugin.messageresponder.mahjong.MahjongRiddle;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
@@ -13,6 +14,7 @@ import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /*
@@ -85,6 +87,13 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
+
+            //test for image
+            try {
+                MahjongRiddle.sendTileImage(event);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         });
 
