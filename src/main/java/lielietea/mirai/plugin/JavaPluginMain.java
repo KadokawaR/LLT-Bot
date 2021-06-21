@@ -64,6 +64,7 @@ public final class JavaPluginMain extends JavaPlugin {
             event.getGroup().sendMessage("你好，这里是烈烈茶店长七筒。");
         });
 
+
         //Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event ->{
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER)||(event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))){

@@ -54,10 +54,10 @@ public class LotteryMachine {
             //禁言倒霉蛋
             //顺便把发送者禁言了
             try {
-                victim.mute(300);
+                victim.mute(120);
                 //如果发送者不是管理员，那么发送者也将被禁言
                 if(!(senderPermissionChecker(event)))
-                    event.getSender().mute(300);
+                    event.getSender().mute(120);
             } catch (PermissionDeniedException e) {
                 e.printStackTrace();
                 Logger.getGlobal().warning("禁言失败，没有管理员权限！");
@@ -109,7 +109,7 @@ public class LotteryMachine {
                 c4ActivationFlags.put(event.getGroup().getId(),false);
             }
             if (!c4ActivationFlags.get(event.getGroup().getId())){
-                double ratio = 1D/event.getGroup().getMembers().size();
+                double ratio = 1D/Math.sqrt(event.getGroup().getMembers().size());
 
                 if (rand.nextDouble()<ratio){
                     //禁言全群
@@ -125,7 +125,7 @@ public class LotteryMachine {
                         c4ActivationFlags.put(event.getGroup().getId(),true);
                     }
 
-                    //设置10分钟后解禁
+                    //设置5分钟后解禁
                     timer.schedule(new TimerTask() {
                         public void run() {
                             try {
@@ -135,7 +135,7 @@ public class LotteryMachine {
                                 Logger.getGlobal().warning("解除全群禁言失败，没有管理员权限！");
                             }
                         }
-                    }, 600000);
+                    }, 300000);
 
                 }
                 else{
