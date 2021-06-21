@@ -87,9 +87,6 @@ public final class JavaPluginMain extends JavaPlugin {
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
 
-            //test for Mahjong
-            FortuneTeller.Mahjong(event);
-
             //test for fursona
             FuckFurries.fuck(event);
 
@@ -113,9 +110,6 @@ public final class JavaPluginMain extends JavaPlugin {
             if (event.getMessage().contentToString().contains("/friend")) {
                 AdminTools.getFriendList(event);
             }
-
-            //test for Mahjong
-            FortuneTeller.Mahjong(event);
 
         });
     }
