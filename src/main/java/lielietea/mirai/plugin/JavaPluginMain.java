@@ -4,6 +4,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
+import lielietea.mirai.plugin.messageresponder.fursona.FuckFurries;
 import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
 import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
@@ -88,6 +89,9 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //test for Mahjong
             FortuneTeller.Mahjong(event);
+
+            //test for fursona
+            FuckFurries.fuck(event);
 
         });
 
