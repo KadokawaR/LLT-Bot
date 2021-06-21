@@ -12,10 +12,6 @@ import java.util.List;
 import java.util.Random;
 
 public class FuckFurries {
-    enum wordType{
-        Species,Era,Location,Reason,Action,Color,Adjective1,Adjective2,Tops,Bottoms,Suits,Hats,Bags,Items
-    }
-
 
     public static Fursona getFursonaJson(){
         final String FURSONA_PATH = "/cluster/fursona.json";
@@ -37,10 +33,10 @@ public class FuckFurries {
         boolean isHats = (random.nextInt(furfur.Hats.length+furfur.Bags.length)<furfur.Hats.length);
         if (isWearingHats){
             if (isHats){
-                return "戴着"+furfur.Hats[random.nextInt(furfur.Hats.length)]+"，";
+                return "戴着"+furfur.Adjective1[random.nextInt(furfur.Adjective1.length)] +"的"+furfur.Hats[random.nextInt(furfur.Hats.length)]+"，";
             }
             else{
-                return "背着"+furfur.Bags[random.nextInt(furfur.Bags.length)]+"，";
+                return "背着"+furfur.Adjective1[random.nextInt(furfur.Adjective1.length)] +"的"+furfur.Bags[random.nextInt(furfur.Bags.length)]+"，";
             }
         }
         else{
@@ -58,18 +54,18 @@ public class FuckFurries {
             return "全身一丝不挂的，";
         }
         if (isSuits) {
-            randomClothes = "身穿" + furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Suits[random.nextInt(furfur.Suits.length)] + "，";
+            randomClothes = "身穿" + furfur.Adjective1[random.nextInt(furfur.Adjective1.length)] +"的"+furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Suits[random.nextInt(furfur.Suits.length)] + "，";
         }
         else{
             if (topNaked) {
                 randomClothes = "赤裸上身，";
             } else {
-                randomClothes = "身穿" + furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Tops[random.nextInt(furfur.Tops.length)] + "，";
+                randomClothes = "身穿" + furfur.Adjective1[random.nextInt(furfur.Adjective1.length)] +"的"+furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Tops[random.nextInt(furfur.Tops.length)] + "，";
             }
             if (bottomNaked) {
                 randomClothes = randomClothes + "下半身一丝不挂，";
             } else {
-                randomClothes = randomClothes + "腿穿" + furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Bottoms[random.nextInt(furfur.Bottoms.length)] + "，";
+                randomClothes = randomClothes + "腿穿" + furfur.Adjective1[random.nextInt(furfur.Adjective1.length)] +"的"+furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Bottoms[random.nextInt(furfur.Bottoms.length)] + "，";
             }
         }
         return randomClothes;
