@@ -71,7 +71,7 @@ public class FuckFurries {
             if (bottomNaked) {
                 randomClothes = randomClothes + "下半身一丝不挂，";
             } else {
-                randomClothes = randomClothes + "腿穿" + furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Tops[random.nextInt(furfur.Tops.length)] + "，";
+                randomClothes = randomClothes + "腿穿" + furfur.Color[random.nextInt(furfur.Color.length)] + furfur.Bottoms[random.nextInt(furfur.Bottoms.length)] + "，";
             }
         }
         return randomClothes;
