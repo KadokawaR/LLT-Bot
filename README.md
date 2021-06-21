@@ -1,8 +1,9 @@
-# LLT-Bot
+# LieLieTea Bot
 A MilkTea Flavored Chat Bot.
 
 ![GitHub](https://img.shields.io/github/license/yhluk/LLT-Bot)
+![](https://img.shields.io/badge/version-dev-red)
 
-##简介
+##  简介
 LLT-Bot (LieLieTea-Bot) 是一个用于服务简体中文 Furry 社群的 QQ 机器人项目。
 

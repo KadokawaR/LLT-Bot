@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 public class AdminTools {
 
-    static IdentityChecker<MessageEvent> administrativeAccountChecker = new AdministrativeAccountChecker();
+    static final IdentityChecker<MessageEvent> administrativeAccountChecker = new AdministrativeAccountChecker();
 
     static String addGroupInfo(Iterator<Group> listIter,String allGroupInfo){
         Group next = listIter.next();

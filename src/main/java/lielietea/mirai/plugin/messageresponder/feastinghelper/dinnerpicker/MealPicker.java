@@ -1,7 +1,6 @@
 package lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker;
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
-import lielietea.mirai.plugin.messageresponder.Reloadable;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;

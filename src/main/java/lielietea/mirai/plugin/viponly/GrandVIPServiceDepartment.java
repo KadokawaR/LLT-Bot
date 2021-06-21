@@ -6,9 +6,9 @@ import net.mamoe.mirai.message.data.At;
 import java.util.*;
 
 public class GrandVIPServiceDepartment {
-    static Timer timer = new Timer(true);
-    static Map<VIP,Boolean> greetedFlags = new HashMap<>();
-    static Random random = new Random();
+    static final Timer timer = new Timer(true);
+    static final Map<VIP,Boolean> greetedFlags = new HashMap<>();
+    static final Random random = new Random();
 
     static final ArrayList<String> greetingKADOKAWA_normal = new ArrayList<>(Arrays.asList(
             "大哥你来啦，想喝点啥？",

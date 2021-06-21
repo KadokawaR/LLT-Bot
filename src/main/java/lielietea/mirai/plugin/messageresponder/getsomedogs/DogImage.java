@@ -26,7 +26,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
 
     static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
 
-    ExecutorService executor;
+    final ExecutorService executor;
 
     public DogImage() {
         this.executor = Executors.newCachedThreadPool();

@@ -10,11 +10,11 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 public class FoodCluster {
-    List<String> foods;
-    List<String> foodsWithoutPizza;
+    final List<String> foods;
+    final List<String> foodsWithoutPizza;
 
     static final String DEFAULT_FOOD_TEXT = "/THUOCL/THUOCL_food.txt";
-    static Random rand = new Random();
+    static final Random rand = new Random();
 
     public FoodCluster() {
         foods = new ArrayList<>();
@@ -42,7 +42,7 @@ public class FoodCluster {
         }
     }
 
-    static FoodCluster INSTANCE = new FoodCluster();
+    static final FoodCluster INSTANCE = new FoodCluster();
 
     public static FoodCluster getINSTANCE() {
         return INSTANCE;

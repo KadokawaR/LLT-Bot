@@ -2,8 +2,6 @@ package lielietea.mirai.plugin.utils.messagematcher;
 
 import net.mamoe.mirai.event.events.MessageEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class LotteryC4MessageMatcher implements MessageMatcher<MessageEvent>{
