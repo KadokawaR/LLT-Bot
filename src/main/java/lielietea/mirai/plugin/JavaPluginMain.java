@@ -4,7 +4,6 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;

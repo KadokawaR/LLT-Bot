@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MahjongSay {
-    static ArrayList<String> luck = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> luck = new ArrayList<>(Arrays.asList(
             "大凶",//一筒
             "末吉",
             "吉",
@@ -48,7 +48,7 @@ public class MahjongSay {
             "大吉",
             "中吉" //菊
     ));
-    static ArrayList<String> saying = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> saying = new ArrayList<>(Arrays.asList(
             "别出门了，今天注意安全。",//一筒
             "是吉是凶并不清楚，暂定为吉！",
             "还算不错！",

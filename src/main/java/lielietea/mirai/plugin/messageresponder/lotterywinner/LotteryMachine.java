@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class LotteryMachine {
-    static Timer timer = new Timer(true);
-    static Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
-    static Random rand = new Random();
+    static final Timer timer = new Timer(true);
+    static final Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
+    static final Random rand = new Random();
 
     static{
         //每日6点定时清空C4触发标记
