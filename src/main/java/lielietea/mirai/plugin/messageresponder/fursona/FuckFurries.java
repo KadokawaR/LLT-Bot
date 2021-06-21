@@ -218,13 +218,14 @@ public class FuckFurries {
         String reason2 =  furfur.Reason[random2];
         String action = furfur.Action[random.nextInt(furfur.Action.length)];
         String adj1 = furfur.Adjective1[random.nextInt(furfur.Adjective1.length)];
-        String adj2 = furfur.Adjective1[random.nextInt(furfur.Adjective2.length)];
+        String adj2 = furfur.Adjective2[random.nextInt(furfur.Adjective2.length)];
         String items = furfur.Items[random.nextInt(furfur.Items.length)];
         return "的兽设是：在"+era+"的"+location+"，"+reason1+"。因为"+reason2+'，'+action+"的，"+getRandomHats(furfur,random)+getRandomClothes(furfur,random)+"手握"+items+"的"+getSpecies(furfur,random)+"兽人。";
     }
 
     public static void fuck(MessageEvent event){
-        if(event.getMessage().contentToString().endsWith("兽设")||(event.getMessage().contentToString().startsWith("兽设"))){
+        //if(event.getMessage().contentToString().endsWith("兽设")||(event.getMessage().contentToString().startsWith("兽设"))){
+        if(event.getMessage().contentToString().contains("兽设")){
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(createFurryFucker(getFursonaJson(),event)));
         }
     }
