@@ -28,13 +28,11 @@ import java.util.List;
  */
 public class MessageRespondCenter {
     static final List<MessageHandler<MessageEvent>> groupMessageHandlers = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> groupPermissionRequiredMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> groupTempMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> friendMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> strangerMessageHandlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> reloadable = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> closeRequired = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> betaFeature = new ArrayList<>();
 
     static final MessageRespondCenter INSTANCE = new MessageRespondCenter();
 
@@ -47,27 +45,19 @@ public class MessageRespondCenter {
      * @param event 群消息事件
      */
     public void handleGroupMessageEvent(MessageEvent event){
-        boolean handled = false;
-        if(true/*此处还未修改完成，需要implement Group Permission Config*/){
-            for(MessageHandler<MessageEvent> handler:groupPermissionRequiredMessageHandlers){
-                if(handler.handleMessage(event)) {
-                    handled = true;
-                    break;
-                }
+        for(MessageHandler<MessageEvent> handler:groupMessageHandlers) {
+            if(handler.isOnBeta()){
+                if(true/*这里缺个Group Config的判断*/)
+                    if (handler.handleMessage(event))
+                        break;
             }
-        }
-        if(!handled){
-            for(MessageHandler<MessageEvent> handler:groupMessageHandlers){
-                if(handler.handleMessage(event)){
-                    handled = true;
-                    break;
-                }
+            else if(handler.isPermissionRequired()){
+                if(true/*这里缺个Group Config的判断*/)
+                    if (handler.handleMessage(event))
+                        break;
             }
-        }
-        if(!handled/*此处还未修改完成，需要implement Group Beta Config*/){
-            for(MessageHandler<MessageEvent> handler:betaFeature){
-                if(handler.handleMessage(event)) break;
-            }
+            else if (handler.handleMessage(event))
+                break;
         }
     }
 
@@ -107,16 +97,12 @@ public class MessageRespondCenter {
      */
     @SuppressWarnings("unchecked")
     public void register(MessageHandler<? extends MessageEvent> handler){
-        if(handler.isOnBeta()) betaFeature.add((MessageHandler<MessageEvent>) handler);
-        else{
-            if(handler.types().contains(MessageHandler.MessageType.GROUP)) groupMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-            if(handler.types().contains(MessageHandler.MessageType.GROUP_PERMISSION_REQUIRED)) groupPermissionRequiredMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-            if(handler.types().contains(MessageHandler.MessageType.FRIEND)) friendMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-            if(handler.types().contains(MessageHandler.MessageType.STRANGER)) strangerMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-            if(handler.types().contains(MessageHandler.MessageType.TEMP)) groupTempMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-            if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
-            if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
-        }
+        if(handler.types().contains(MessageHandler.MessageType.GROUP)) groupMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+        if(handler.types().contains(MessageHandler.MessageType.FRIEND)) friendMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+        if(handler.types().contains(MessageHandler.MessageType.STRANGER)) strangerMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+        if(handler.types().contains(MessageHandler.MessageType.TEMP)) groupTempMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+        if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
+        if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
     }
 
     /**

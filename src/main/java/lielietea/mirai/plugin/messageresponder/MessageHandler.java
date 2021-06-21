@@ -46,15 +46,24 @@ public interface MessageHandler<T extends MessageEvent> {
     String getName();
 
     /**
-     * 该回复处理器是否是测试特性
+     * 该回复处理器是否是测试特性？
+     * 仅支持处理群消息事件
      * @return 如果是测试特性，那么返回true
      */
     default boolean isOnBeta(){
         return false;
     }
 
+    /**
+     * 该回复处理器是否需要管理员权限？
+     * 仅支持处理群消息事件
+     * @return 如果需要权限，那么返回true
+     */
+    default boolean isPermissionRequired() {
+        return false;
+    }
+
     enum MessageType{
-        GROUP_PERMISSION_REQUIRED,
         GROUP,
         FRIEND,
         STRANGER,

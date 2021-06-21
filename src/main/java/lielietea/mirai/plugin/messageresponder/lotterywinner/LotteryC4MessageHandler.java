@@ -12,7 +12,7 @@ import java.util.List;
 
 public class LotteryC4MessageHandler implements MessageHandler<GroupMessageEvent> {
 
-    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP_PERMISSION_REQUIRED));
+    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
 
     final MessageMatcher<MessageEvent> lotteryC4rMatcher;
 
@@ -40,4 +40,11 @@ public class LotteryC4MessageHandler implements MessageHandler<GroupMessageEvent
     public String getName() {
         return "\"彩票：C4\"";
     }
+
+    @Override
+    public boolean isPermissionRequired() {
+        return true;
+    }
+
+
 }

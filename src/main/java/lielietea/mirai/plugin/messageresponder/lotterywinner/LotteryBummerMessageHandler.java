@@ -12,7 +12,7 @@ import java.util.List;
 
 public class LotteryBummerMessageHandler implements MessageHandler<GroupMessageEvent> {
 
-    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP_PERMISSION_REQUIRED));
+    static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
 
     final MessageMatcher<MessageEvent> lotteryBummerMatcher;
 
@@ -39,5 +39,10 @@ public class LotteryBummerMessageHandler implements MessageHandler<GroupMessageE
     @Override
     public String getName() {
         return "彩票：Bummer";
+    }
+
+    @Override
+    public boolean isPermissionRequired() {
+        return true;
     }
 }
