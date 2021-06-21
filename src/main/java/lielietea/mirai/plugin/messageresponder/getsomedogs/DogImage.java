@@ -15,6 +15,15 @@ import java.util.concurrent.Executors;
 
 
 public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHandler {
+    static class ImageSource{
+        static String DOG_CEO_RANDOM = "https://dog.ceo/api/breeds/image/random";
+        static String DOG_CEO_SHIBA = "https://dog.ceo/api/breed/shiba/images/random";
+        static String DOG_CEO_HUSKY = "https://dog.ceo/api/breed/husky/images/random";
+        static String SHIBE_ONLINE = "https://shibe.online/api/shibes";
+        static String RANDOM_DOG = "https://random.dog/woof.json";
+        static String PLACE_DOG = "https://place.dog/300/200";
+    }
+
     static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
 
     ExecutorService executor;

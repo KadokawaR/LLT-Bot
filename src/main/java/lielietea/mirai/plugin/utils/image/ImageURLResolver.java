@@ -20,19 +20,19 @@ public class ImageURLResolver {
                 sb.append(line);
             }
             JsonObject jsonObject = JsonParser.parseString(sb.toString()).getAsJsonObject();
-            if(jsonObject.getAsJsonObject("status").getAsString().equals("success")){
+            if(jsonObject.getAsJsonPrimitive("status").getAsString().equals("success")){
                 return Optional.of(new URL(jsonObject.getAsJsonPrimitive("message").toString()));
             }
             return Optional.empty();
         }
         //获得来自shiba.online的狗
-        else if(source==Source.SHIBA_ONLINE){
+        else if(source==Source.SHIBE_ONLINE){
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonPrimitive().toString()));
+            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonArray().get(0).toString()));
         }
         else if(source==Source.RADNOM_GOD){
             StringBuilder sb = new StringBuilder();
@@ -50,9 +50,13 @@ public class ImageURLResolver {
 
     public enum Source {
         DOG_CEO,
-        SHIBA_ONLINE,
+        //https://dog.ceo/
+        SHIBE_ONLINE,
+        //https://shibe.online/
         RADNOM_GOD,
+        //https://random.dog/
         PLACE_DOG
+        //https://place.dog/
 
     }
 }
