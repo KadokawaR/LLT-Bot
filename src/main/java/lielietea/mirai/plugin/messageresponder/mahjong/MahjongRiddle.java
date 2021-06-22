@@ -1,10 +1,7 @@
 package lielietea.mirai.plugin.messageresponder.mahjong;
 
-import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryMachine;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.MessageChain;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -17,15 +14,14 @@ public class MahjongRiddle {
 
     static Random rand = new Random();
 
-    static class riddleFactor{
+    static class RiddleFactor {
         int[] answerNum;
         boolean[] isGuessed;
+        int id;
     }
 
-    static riddleFactor rf = new riddleFactor();
-
     static Timer timer = new Timer(true);
-    static Map<Long,riddleFactor> riddleResetFlags = new HashMap<>();
+    static Map<Long, RiddleFactor> riddleSessionHolder = new HashMap<>();
 
 
     //生成小于124的若干个随机数，用于生成麻将牌
@@ -105,7 +101,7 @@ public class MahjongRiddle {
     }
 
     //如果猜中了则改变rf里面的boolean数组
-    public static riddleFactor setIsGuessed(riddleFactor rf, GroupMessageEvent event){
+    public static RiddleFactor setIsGuessed(RiddleFactor rf, GroupMessageEvent event){
         String[] answer = transformAnswer(rf.answerNum);
         for(int i = 0; i< rf.answerNum.length;i++){
             if (event.getMessage().contentToString().contains(answer[i])){
@@ -163,47 +159,36 @@ public class MahjongRiddle {
         if (event.getMessage().contentToString().contains("麻将测试")) {
             event.getSubject().sendMessage("麻将测试开始了");
             //检测是否有该群的flag，如果没有则重新生成并在180s之后清空
-            if (!riddleResetFlags.containsKey(event.getGroup().getId())) {
+            if (!riddleSessionHolder.containsKey(event.getGroup().getId())) {
 
+                RiddleFactor rf = new RiddleFactor();
                 rf.answerNum = getRandomNum(RIDDLE_LENGTH);
                 rf.isGuessed = new boolean[RIDDLE_LENGTH];
-                riddleResetFlags.put(event.getGroup().getId(), rf);;
+                int sessionId = rand.nextInt(10086);
+                rf.id = sessionId;
+
+                riddleSessionHolder.put(event.getGroup().getId(), rf);;
                 BufferedImage img = getTileImage(displayAnswer(rf.isGuessed, transformAnswer(rf.answerNum)));
                 sendTileImage(img, event);
 
-                //每180s清空谜语重置标记
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-
-                        if (!isAllTrue(riddleResetFlags.get(event.getGroup().getId()).isGuessed)) {
-                            try {
-                                event.getSubject().sendMessage("公布答案:");
-                                BufferedImage imgAnswer = getTileImage(resolveRandomTiles(rf.answerNum));
-                                sendTileImage(imgAnswer, event);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        riddleResetFlags.remove(event.getGroup().getId());
-                    }
-                }, 180 * 1000);
+                //180s清空谜语重置标记
+                timer.schedule(new EndSessionTimerTask(sessionId,event), 180 * 1000);
             }
         }
 
-        if (isMahjongTile(event)&&riddleResetFlags.containsKey(event.getGroup().getId())) {
-            setIsGuessed(rf, event);
-            if (gotAnswer(rf.answerNum, event)) {
+        if (isMahjongTile(event) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
+            setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event);
+            if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {
                 event.getSubject().sendMessage("中了!");
-                BufferedImage img = getTileImage(displayAnswer(rf.isGuessed, resolveRandomTiles(rf.answerNum)));
+                BufferedImage img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
                 sendTileImage(img, event);
             }
 
 
             //检测这次结束之后是否全中，全中了则删除该flag
-            if (isAllTrue(riddleResetFlags.get(event.getGroup().getId()).isGuessed)) {
+            if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
                 event.getSubject().sendMessage("恭喜猜中！");
-                MahjongRiddle.riddleResetFlags.remove(event.getGroup().getId());
+                MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
             }
         }
     }
