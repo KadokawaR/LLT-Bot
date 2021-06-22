@@ -2,6 +2,7 @@ package lielietea.mirai.plugin;
 
 
 
+import lielietea.mirai.plugin.admintools.BroadcastSystem;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
@@ -116,6 +117,8 @@ public final class JavaPluginMain extends JavaPlugin {
             if (event.getMessage().contentToString().contains("/friend")) {
                 AdminTools.getFriendList(event);
             }
+
+            BroadcastSystem.testSendToGroup(event);
 
         });
     }
