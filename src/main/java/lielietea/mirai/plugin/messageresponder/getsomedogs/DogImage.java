@@ -38,7 +38,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         if (event.getMessage().contentToString().contains("Shiba")) {
             this.executor.submit(() -> {
                 try {
-                    Optional<URL> url = ImageURLResolver.resolve("https://dog.ceo/api/breed/shiba/images/random", ImageURLResolver.Source.DOG_CEO);
+                    Optional<URL> url = ImageURLResolver.resolve(ImageSource.DOG_CEO_SHIBA, ImageURLResolver.Source.DOG_CEO);
                     url.ifPresent(url1 -> ImageSender.sendImageFromURL(event.getSubject(), url1));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -55,7 +55,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         if (event.getMessage().contentToString().contains("Husky")) {
             this.executor.submit(() -> {
                 try {
-                    Optional<URL> url = ImageURLResolver.resolve("https://dog.ceo/api/breed/husky/images/random", ImageURLResolver.Source.DOG_CEO);
+                    Optional<URL> url = ImageURLResolver.resolve(ImageSource.DOG_CEO_HUSKY, ImageURLResolver.Source.DOG_CEO);
                     url.ifPresent(url1 -> ImageSender.sendImageFromURL(event.getSubject(), url1));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -72,7 +72,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         if (event.getMessage().contentToString().contains("Dog")) {
             this.executor.submit(() -> {
                 try {
-                    Optional<URL> url = ImageURLResolver.resolve("https://dog.ceo/api/breeds/image/random", ImageURLResolver.Source.DOG_CEO);
+                    Optional<URL> url = ImageURLResolver.resolve(ImageSource.DOG_CEO_RANDOM, ImageURLResolver.Source.DOG_CEO);
                     url.ifPresent(url1 -> ImageSender.sendImageFromURL(event.getSubject(), url1));
                 } catch (IOException e) {
                     e.printStackTrace();
