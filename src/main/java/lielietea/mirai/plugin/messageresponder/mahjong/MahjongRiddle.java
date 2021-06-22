@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.messageresponder.mahjong;
 
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.message.data.At;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -23,13 +24,15 @@ public class MahjongRiddle {
     static Timer timer = new Timer(true);
     static Map<Long, RiddleFactor> riddleSessionHolder = new HashMap<>();
 
+    static ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
+            "一","二","三","四","五","六","七","八","九"));
 
-    //生成小于124的若干个随机数，用于生成麻将牌
+    //生成小于108(只到筒条万)的若干个随机数，用于生成麻将牌
     public  static int[] getRandomNum(int num){
         int[] randomNum = new int[num];
         for(int i=0;i<num;i++){
             assert rand != null;
-            randomNum[i] = rand.nextInt(124); }
+            randomNum[i] = rand.nextInt(108); }
         Arrays.sort(randomNum);
         return randomNum;
     }
@@ -116,9 +119,6 @@ public class MahjongRiddle {
         String[] transformedAnswer = new String[answerNum.length];
         for(int i=0;i<answerNum.length;i++){
             if((answerNum[i]>=72)&&(answerNum[i]<108)){
-                ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
-                        "一","二","三","四","五","六","七","八","九"
-                ));
                 transformedAnswer[i] = (chineseNum.get(Math.toIntExact(answerNum[i] % 9))+"万");
             }
             else if (((answerNum[i]>=108)&&(answerNum[i]<124))&&(answerNum[i]%4==0)){
@@ -147,17 +147,29 @@ public class MahjongRiddle {
         return transformAnswer;
     }
 
-    //临时性的检测是否是麻将牌用语
+    //临时性地检测是否是麻将牌用语
     public static boolean isMahjongTile(GroupMessageEvent event){
         String str = event.getMessage().contentToString();
         return str.contains("风")||str.contains("万")||str.contains("筒")||str.contains("条");
     }
 
+    //将int[]转换成一个存储中文数字的String[]
+    public static String turnIntoChineseNum(RiddleFactor rf){
+        String shuziStr = "";
+        for (int i=0;i<rf.answerNum.length;i++){
+            shuziStr=shuziStr+chineseNum.get(rf.answerNum[i]%9);
+            if (i!=rf.answerNum.length-1){
+                shuziStr=shuziStr+"、";
+            }
+        }
+        return shuziStr;
+    }
+
     public static void riddleStart(GroupMessageEvent event) throws IOException {
 
 
-        if (event.getMessage().contentToString().contains("麻将测试")) {
-            event.getSubject().sendMessage("麻将测试开始了");
+        if (event.getMessage().contentToString().contains("猜麻将")) {
+            event.getSubject().sendMessage("来猜麻将吧！\n\n七筒会随机生成5张麻将牌（只含筒牌、条牌和万字牌），猜中最后一张的会是赢家！\n请注意，只有形式诸如”三条“、”五筒“、”七万“的答案会触发判定。\n如果没有人猜中，本轮游戏会在180秒内自动关闭。");
             //检测是否有该群的flag，如果没有则重新生成并在180s之后清空
             if (!riddleSessionHolder.containsKey(event.getGroup().getId())) {
 
@@ -170,6 +182,8 @@ public class MahjongRiddle {
                 riddleSessionHolder.put(event.getGroup().getId(), rf);;
                 BufferedImage img = getTileImage(displayAnswer(rf.isGuessed, transformAnswer(rf.answerNum)));
                 sendTileImage(img, event);
+
+                event.getSubject().sendMessage("麻将牌上的数字分别为："+turnIntoChineseNum(rf));
 
                 //180s清空谜语重置标记
                 timer.schedule(new EndSessionTimerTask(sessionId,event), 180 * 1000);
@@ -187,7 +201,7 @@ public class MahjongRiddle {
 
             //检测这次结束之后是否全中，全中了则删除该flag
             if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
-                event.getSubject().sendMessage("恭喜猜中！");
+                event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
                 MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
             }
         }

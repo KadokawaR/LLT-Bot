@@ -36,6 +36,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         //匹配词为 "[Oo]k [Ss]hiba" "/[Ss]hiba" "柴犬" "柴柴"
         //现在先临时使用一下
         if (event.getMessage().contentToString().contains("Shiba")) {
+            event.getSubject().sendMessage("正在获取狗狗>>>>>>>");
             this.executor.submit(() -> {
                 try {
                     Optional<URL> url = ImageURLResolver.resolve(ImageSource.DOG_CEO_SHIBA, ImageURLResolver.Source.DOG_CEO);
@@ -53,6 +54,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         //匹配词为 "[Oo]k [Hh]usky" "/[Hh]usky" "二哈" "哈士奇"
         //现在先临时使用一下
         if (event.getMessage().contentToString().contains("Husky")) {
+            event.getSubject().sendMessage("正在获取狗狗>>>>>>>");
             this.executor.submit(() -> {
                 try {
                     Optional<URL> url = ImageURLResolver.resolve(ImageSource.DOG_CEO_HUSKY, ImageURLResolver.Source.DOG_CEO);
@@ -70,6 +72,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
         //匹配词为 "[Oo]k [Dd]oggie" "/[Dd]og[s ]" "狗狗" “来点狗”
         //现在先临时使用一下
         if (event.getMessage().contentToString().contains("Dog")) {
+            event.getSubject().sendMessage("正在获取狗狗>>>>>>>");
             this.executor.submit(() -> {
                 try {
                     Optional<URL> url = ImageURLResolver.resolve(ImageSource.DOG_CEO_RANDOM, ImageURLResolver.Source.DOG_CEO);

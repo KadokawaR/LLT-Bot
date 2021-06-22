@@ -118,12 +118,18 @@ public final class JavaPluginMain extends JavaPlugin {
                 AdminTools.getFriendList(event);
             }
 
+            //测试BroadcastSystem的功能
             try {
                 BroadcastSystem.testSendToGroup(event);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
+            try {
+                BroadcastSystem.directlySendToGroup(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
     }
 
