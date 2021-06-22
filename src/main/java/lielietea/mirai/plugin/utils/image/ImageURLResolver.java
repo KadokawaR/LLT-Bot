@@ -21,7 +21,7 @@ public class ImageURLResolver {
             }
             JsonObject jsonObject = JsonParser.parseString(sb.toString()).getAsJsonObject();
             if(jsonObject.getAsJsonPrimitive("status").getAsString().equals("success")){
-                return Optional.of(new URL(jsonObject.getAsJsonPrimitive("message").toString()));
+                return Optional.of(new URL(jsonObject.getAsJsonPrimitive("message").toString().replaceAll("\"","")));
             }
             return Optional.empty();
         }
@@ -32,7 +32,7 @@ public class ImageURLResolver {
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonArray().get(0).toString()));
+            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonArray().get(0).toString().replaceAll("\"","")));
         }
         else if(source==Source.RADNOM_GOD){
             StringBuilder sb = new StringBuilder();
@@ -40,7 +40,7 @@ public class ImageURLResolver {
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonObject().getAsJsonPrimitive("url").toString()));
+            return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonObject().getAsJsonPrimitive("url").toString().replaceAll("\"","")));
         }
         //获得来自place.dog的狗，默认尺寸为300x200
         else{
