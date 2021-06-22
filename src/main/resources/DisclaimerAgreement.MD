@@ -4,4 +4,4 @@
 
 基于维持互联网秩序的考量，请勿恶意使用本项目。本项目有权停止对任何对象的服务，任何解释权均归本项目开发组所有。
 
-本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的开源项目 Mirai (https://github.com/mamoe/mirai) ，清华大学开放中文词库 (http://thuocl.thunlp.org/)。
+本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的 Mirai (https://github.com/mamoe/mirai) ，基于 Apache License 2.0 协议的谷歌 Gson (https://github.com/google/gson) ，清华大学开放中文词库 (http://thuocl.thunlp.org/)。
