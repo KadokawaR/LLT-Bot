@@ -1,14 +1,11 @@
 package lielietea.mirai.plugin.admintools;
 
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
-import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BroadcastSystem {
 
