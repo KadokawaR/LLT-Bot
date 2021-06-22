@@ -88,12 +88,13 @@ public final class JavaPluginMain extends JavaPlugin {
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
 
-            //test for image
+            //test for mahjong riddle
             try {
-                MahjongRiddle.sendTileImage(event);
+                MahjongRiddle.riddleStart(event);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
 
         });
 
