@@ -9,22 +9,17 @@ import java.util.*;
 
 public class BroadcastSystem {
 
-    public static void sendToGroup(MessageEvent event, String message){
+    public static void sendToGroup(MessageEvent event, String message) throws InterruptedException {
         Iterator<Group> it = event.getBot().getGroups().stream().iterator();
         Timer timer = new Timer();
 
         while (it.hasNext()){
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    Objects.requireNonNull(event.getBot().getGroup(it.next().getId())).sendMessage(message);
-                }
-            };
-            timer.schedule(task, 6000);
+            Objects.requireNonNull(event.getBot().getGroup(it.next().getId())).sendMessage(message);
+            Thread.sleep(6000);
         }
     }
 
-    public static void testSendToGroup(FriendMessageEvent event){
+    public static void testSendToGroup(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
         AdministrativeAccountChecker aac = new AdministrativeAccountChecker();
         if (message.contains("/broadcast") && aac.checkIdentity(event)){
