@@ -48,4 +48,20 @@ public class AdminTools {
             event.getSubject().sendMessage(allFriendInfo);
         }
     }
+
+    public static void getFriendAvatar(FriendMessageEvent event){
+        String message = event.getMessage().contentToString();
+        if (administrativeAccountChecker.checkIdentity(event)&&message.contains("/avatar")){
+            String[] splitMessage = message.split(" ");
+            if (splitMessage.length!=2){
+                event.getSubject().sendMessage("请使用空格分割/avatar指示器和QQ号");
+                return;
+            }
+            if (!splitMessage[0].equals("/avatar")){
+                event.getSubject().sendMessage("/avatar指示器使用不正确");
+                return;
+            }
+            event.getSubject().sendMessage(event.getBot().getFriend(Long.parseLong(splitMessage[1])).getAvatarUrl());
+        }
+    }
 }

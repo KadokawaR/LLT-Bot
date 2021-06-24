@@ -35,7 +35,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
     public boolean getShiba(MessageEvent event){
         //匹配词为 "[Oo]k [Ss]hiba" "/[Ss]hiba" "柴犬" "柴柴"
         //现在先临时使用一下
-        if (event.getMessage().contentToString().contains("Shiba")) {
+        if (event.getMessage().contentToString().contains("Shiba")||event.getMessage().contentToString().contains("shiba")) {
             event.getSubject().sendMessage("正在获取狗狗>>>>>>>");
             this.executor.submit(() -> {
                 try {
@@ -53,7 +53,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
     public boolean getHusky(MessageEvent event){
         //匹配词为 "[Oo]k [Hh]usky" "/[Hh]usky" "二哈" "哈士奇"
         //现在先临时使用一下
-        if (event.getMessage().contentToString().contains("Husky")) {
+        if (event.getMessage().contentToString().contains("Husky")||event.getMessage().contentToString().contains("husky")) {
             event.getSubject().sendMessage("正在获取狗狗>>>>>>>");
             this.executor.submit(() -> {
                 try {
@@ -71,7 +71,7 @@ public class DogImage implements MessageHandler<MessageEvent>, CloseRequiredHand
     public boolean getRandomDog(MessageEvent event){
         //匹配词为 "[Oo]k [Dd]oggie" "/[Dd]og[s ]" "狗狗" “来点狗”
         //现在先临时使用一下
-        if (event.getMessage().contentToString().contains("Dog")) {
+        if (event.getMessage().contentToString().contains("Dogs")||event.getMessage().contentToString().contains("dogs")) {
             event.getSubject().sendMessage("正在获取狗狗>>>>>>>");
             this.executor.submit(() -> {
                 try {

@@ -128,6 +128,9 @@ public final class JavaPluginMain extends JavaPlugin {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            AdminTools.getFriendAvatar(event);
+
         });
     }
 
