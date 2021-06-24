@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.admintools;
+package lielietea.mirai.plugin.broadcast;
 
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import net.mamoe.mirai.contact.ContactList;
