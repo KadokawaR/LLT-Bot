@@ -7,6 +7,7 @@ import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.messageresponder.mahjong.MahjongRiddle;
+import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
@@ -63,9 +64,7 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, BotInvitedJoinGroupRequestEvent::accept);
 
         //应该是入群须知+简单介绍，现在先占位一下
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event ->{
-            event.getGroup().sendMessage("你好，这里是烈烈茶店长七筒。");
-        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, JoinGroup::sendNotice);
 
 
         //Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
@@ -120,7 +119,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //测试BroadcastSystem的功能
             try {
-                BroadcastSystem.testSendToGroup(event);
+                BroadcastSystem.testSendToAllGroups(event);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

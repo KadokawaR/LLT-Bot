@@ -24,7 +24,7 @@ public class BroadcastSystem {
     }
 
     //测试广播消息
-    public static void testSendToGroup(FriendMessageEvent event) throws InterruptedException {
+    public static void testSendToAllGroups(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast_emergency") && aac.checkIdentity(event)){
             //message = message.replace("/broadcast ","");
@@ -36,7 +36,7 @@ public class BroadcastSystem {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast") && aac.checkIdentity(event)) {
             String[] splitMessage = message.split(" ");
-            if (splitMessage.length>3){
+            if (splitMessage.length!=3){
                 event.getSubject().sendMessage("请使用空格分割/broadcast指示器、群号和消息");
                 return;
             }
