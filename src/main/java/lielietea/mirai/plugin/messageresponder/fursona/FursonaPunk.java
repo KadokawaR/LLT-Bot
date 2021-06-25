@@ -3,10 +3,11 @@ package lielietea.mirai.plugin.messageresponder.fursona;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import lielietea.mirai.plugin.messageresponder.Reloadable;
-import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -16,14 +17,15 @@ import java.util.*;
 public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadable {
     static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
     static Fursona fursonaComponents;
+    static final String FURSONA_PATH = "/cluster/fursona.json";
 
     static{
-        final String FURSONA_PATH = "/cluster/fursona.json";
-        InputStream is = FortuneTeller.class.getResourceAsStream(FURSONA_PATH);
+        InputStream is = FursonaPunk.class.getResourceAsStream(FURSONA_PATH);
         assert is != null;
-        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         Gson gson = new Gson();
         fursonaComponents = gson.fromJson(br, Fursona.class);
+
     }
 
     @Override
@@ -240,13 +242,13 @@ public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadabl
     }
 
     @Override
-    public void reload() {
-        final String FURSONA_PATH = "/cluster/fursona.json";
-        InputStream is = FortuneTeller.class.getResourceAsStream(FURSONA_PATH);
+    public boolean reload() {
+        InputStream is = FursonaPunk.class.getResourceAsStream(FURSONA_PATH);
         assert is != null;
         BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         Gson gson = new Gson();
         fursonaComponents = gson.fromJson(br, Fursona.class);
+        return true;
     }
 
     enum wordType {

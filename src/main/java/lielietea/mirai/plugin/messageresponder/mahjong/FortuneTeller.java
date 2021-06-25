@@ -5,6 +5,8 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.*;
 public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
 
     static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
+    static final Logger logger = LogManager.getLogger();
 
     public static int getMahjongOfTheDay(MessageEvent event){
         //获取当日幸运数字
@@ -98,7 +101,7 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求麻将占卜，但Bot获取麻将图片失败",e);
             }
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
             return true;

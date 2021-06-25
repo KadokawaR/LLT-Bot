@@ -141,8 +141,12 @@ public class MessageRespondCenter {
     public void reload(MessageEvent event){
         MessageChainBuilder messages = new MessageChainBuilder();
         for(MessageHandler<MessageEvent> reloadable:reloadable){
-            ((Reloadable) reloadable).reload();
-            messages.append("“"+reloadable.getName()+"” 已重载完毕。\n");
+            if(((Reloadable) reloadable).reload()){
+                messages.append("“"+reloadable.getName()+"” 已重载完毕。\n");
+            } else {
+                messages.append("“"+reloadable.getName()+"” 重载失败。\n");
+            }
+
 
         }
         event.getSubject().sendMessage(messages.build());

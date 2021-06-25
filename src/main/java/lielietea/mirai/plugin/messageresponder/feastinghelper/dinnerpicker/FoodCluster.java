@@ -2,12 +2,13 @@ package lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker;
 
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class FoodCluster {
     final List<String> foods;
@@ -15,10 +16,12 @@ public class FoodCluster {
 
     static final String DEFAULT_FOOD_TEXT = "/THUOCL/THUOCL_food.txt";
     static final Random rand = new Random();
+    static final Logger logger = LogManager.getLogger();
 
-    public FoodCluster() {
+    FoodCluster() {
         foods = new ArrayList<>();
         InputStream is = FoodCluster.class.getResourceAsStream(DEFAULT_FOOD_TEXT);
+        assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8));
         String str;
         for(;;){
@@ -30,8 +33,7 @@ public class FoodCluster {
                 str = str.substring(0,str.indexOf("\t"));
                 foods.add(str);
             } catch (IOException e){
-                e.printStackTrace();
-                Logger.getGlobal().warning("读取食品列表失败！");
+                logger.fatal("转换食品列表文件为对象失败！",e);
                 break;
             }
         }
@@ -40,6 +42,33 @@ public class FoodCluster {
             if(!food.contains("匹萨")&&!food.contains("比萨"))
                 foodsWithoutPizza.add(food);
         }
+    }
+
+    boolean reload(){
+        foods.clear();
+        InputStream is = FoodCluster.class.getResourceAsStream(DEFAULT_FOOD_TEXT);
+        assert is != null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8));
+        String str;
+        for(;;){
+            try{
+                str = br.readLine();
+                if(str==null){
+                    break;
+                }
+                str = str.substring(0,str.indexOf("\t"));
+                foods.add(str);
+            } catch (IOException e){
+                logger.fatal("转换食品列表文件为对象失败！",e);
+                return false;
+            }
+        }
+        foodsWithoutPizza.clear();
+        for(String food:foods){
+            if(!food.contains("匹萨")&&!food.contains("比萨"))
+                foodsWithoutPizza.add(food);
+        }
+        return true;
     }
 
     static final FoodCluster INSTANCE = new FoodCluster();

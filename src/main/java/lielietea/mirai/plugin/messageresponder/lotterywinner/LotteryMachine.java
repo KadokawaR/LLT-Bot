@@ -5,6 +5,7 @@ import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.PlainText;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ public class LotteryMachine {
     static final Timer timer = new Timer(true);
     static final Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
     static final Random rand = new Random();
+    static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
 
     static{
         //每日6点定时清空C4触发标记
@@ -59,8 +61,7 @@ public class LotteryMachine {
                 if(!(senderPermissionChecker(event)))
                     event.getSender().mute(120);
             } catch (PermissionDeniedException e) {
-                e.printStackTrace();
-                Logger.getGlobal().warning("禁言失败，没有管理员权限！");
+                logger.error("禁言失败，群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"尝试发起OK Bummer功能，但该群并未授予Bot管理员权限！",e);
             } finally {
                 if(victim.getId()==event.getSender().getId()){
                     event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n" +
@@ -116,8 +117,7 @@ public class LotteryMachine {
                     try {
                         event.getGroup().getSettings().setMuteAll(true);
                     } catch (PermissionDeniedException e) {
-                        e.printStackTrace();
-                        Logger.getGlobal().warning("全群禁言失败，没有管理员权限！");
+                        logger.error("禁言失败，群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"尝试发起OK C4功能，但该群并未授予Bot管理员权限！",e);
                     } finally {
                         event.getGroup().sendMessage("中咧！");
                         event.getGroup().sendMessage(new At(event.getSender().getId()).plus("成功触发了C4！大家一起恭喜TA！"));
@@ -131,8 +131,7 @@ public class LotteryMachine {
                             try {
                                 event.getGroup().getSettings().setMuteAll(false);
                             } catch (PermissionDeniedException e) {
-                                e.printStackTrace();
-                                Logger.getGlobal().warning("解除全群禁言失败，没有管理员权限！");
+                                logger.error("解除全群禁言失败，BOT在群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"中尝试解除因OK C4产生的全群禁言，但该群并未授予Bot管理员权限！",e);
                             }
                         }
                     }, 300000);

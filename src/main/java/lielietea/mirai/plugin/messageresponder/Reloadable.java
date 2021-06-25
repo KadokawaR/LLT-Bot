@@ -7,5 +7,5 @@ public interface Reloadable {
     /**
      * 一个重载配置文件的方法
      */
-    void reload();
+    boolean reload();
 }

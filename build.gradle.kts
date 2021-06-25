@@ -23,6 +23,12 @@ dependencies{
     //需要用Gson来创建Json持久化数据，就用下面这个
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.guava:guava:30.1.1-jre")
+
+    //Log4j2
+    implementation("org.apache.logging.log4j:log4j-api:2.14.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
+
+    //Junit
     implementation("junit:junit:4.13.1")
 
     //annotationProcessor("com.google.auto.service:auto-service:1.0")

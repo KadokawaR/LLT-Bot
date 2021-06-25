@@ -2,19 +2,21 @@ package lielietea.mirai.plugin.messageresponder.autoreply;
 
 import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-@SuppressWarnings("ConstantConditions")
 class AutoReplyLinesCluster {
     TreeMap<Double,String> goodbyeReplyLines;
     TreeMap<Double,String> antiDirtyWordsReplyLines;
     TreeMap<Double,String> antiOverwatchGameReplyLines;
 
     static final Gson gson = new Gson();
+    static final Logger logger = LogManager.getLogger();
     static AutoReplyLinesCluster INSTANCE;
 
     static final String DEFAULT_AUTOREPLY_JSON_PATH = "/cluster/autoreply.json";
@@ -22,16 +24,19 @@ class AutoReplyLinesCluster {
 
     static {
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+        assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
     AutoReplyLinesCluster(){}
 
-    public static void loadReplyLinesFromPreset(){
+    public static boolean loadReplyLinesFromPreset(){
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
+        assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
+        return true;
     }
 
     public static AutoReplyLinesCluster getInstance(){
@@ -63,14 +68,6 @@ class AutoReplyLinesCluster {
         event.getSubject().sendMessage(pickReply(type));
     }
 
-    @Override
-    public String toString() {
-        return "AutoReplyLinesCluster{" +
-                "goodbyeReplyLines=" + goodbyeReplyLines +
-                ", antiDirtyWordsReplyLines=" + antiDirtyWordsReplyLines +
-                ", antiOverwatchGameReplyLines=" + antiOverwatchGameReplyLines +
-                '}';
-    }
 
     //回复的类型
     public enum ReplyType{

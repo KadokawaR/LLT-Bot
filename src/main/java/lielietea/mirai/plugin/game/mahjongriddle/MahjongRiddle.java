@@ -4,6 +4,8 @@ import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -14,6 +16,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MahjongRiddle {
+    static final Logger logger = LogManager.getLogger();
     static final Lock lock = new ReentrantLock(true);
     static int RIDDLE_LENGTH = 5;
 
@@ -191,7 +194,7 @@ public class MahjongRiddle {
                         img = getTileImage(displayAnswer(rf.isGuessed, transformAnswer(rf.answerNum)));
                         sendTileImage(img, event);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error("猜麻将开始时，生成空白图片失败",e);
                     }
 
                     event.getSubject().sendMessage("麻将牌上的数字分别为："+turnIntoChineseNum(rf));
@@ -210,7 +213,7 @@ public class MahjongRiddle {
                         img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
                         sendTileImage(img, event);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error("猜麻将游戏中，生成图片失败",e);
                     }
                 }
 

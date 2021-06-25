@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker;
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
+import lielietea.mirai.plugin.messageresponder.Reloadable;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import java.util.List;
  * 一个类似于”今天吃什么“的类
  * 会给用户推送随机加入3-10种配料的披萨
  */
-public class MealPicker implements MessageHandler<MessageEvent> {
+public class MealPicker implements MessageHandler<MessageEvent>, Reloadable {
 
     final MessageMatcher<MessageEvent> requestMealMatcher;
 
@@ -42,5 +43,10 @@ public class MealPicker implements MessageHandler<MessageEvent> {
     @Override
     public String getName() {
         return "今天吃什么";
+    }
+
+    @Override
+    public boolean reload() {
+        return FoodCluster.getINSTANCE().reload();
     }
 }

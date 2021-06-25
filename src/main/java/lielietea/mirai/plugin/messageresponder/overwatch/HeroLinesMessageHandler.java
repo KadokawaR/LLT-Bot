@@ -44,9 +44,10 @@ public class HeroLinesMessageHandler implements MessageHandler<GroupMessageEvent
 
 
     @Override
-    public void reload() {
+    public boolean reload() {
         //目前只能从默认json重载
         //更多功能还需要编辑
         HeroLinesCluster.reloadReplyLinesFromPreset();
+        return true;
     }
 }

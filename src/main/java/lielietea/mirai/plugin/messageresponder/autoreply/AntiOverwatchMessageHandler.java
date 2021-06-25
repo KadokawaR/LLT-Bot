@@ -42,9 +42,7 @@ public class AntiOverwatchMessageHandler implements MessageHandler<MessageEvent>
 
 
     @Override
-    public void reload() {
-        //目前只能从默认json重载
-        //更多功能还需要编辑
-        AutoReplyLinesCluster.loadReplyLinesFromPreset();
+    public boolean reload() {
+        return AutoReplyLinesCluster.loadReplyLinesFromPreset();
     }
 }

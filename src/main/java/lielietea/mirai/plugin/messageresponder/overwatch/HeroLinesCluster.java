@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Random;
 
-@SuppressWarnings("ConstantConditions")
 class HeroLinesCluster {
     Multimap<Hero,String> ultimateAbilityHeroLines;
     Multimap<Hero,String> commonHeroLines;
@@ -24,6 +23,7 @@ class HeroLinesCluster {
 
     static {
         InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
+        assert is != null;
         BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
     }
@@ -37,6 +37,7 @@ class HeroLinesCluster {
     //重载默认herolines.json
     public static void reloadReplyLinesFromPreset(){
         InputStream is = HeroLinesCluster.class.getResourceAsStream(DEFAULT_HEROLINES_JSON_PATH);
+        assert is != null;
         BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         INSTANCE = gson.fromJson(br, HeroLinesCluster.class);
     }
@@ -65,13 +66,5 @@ class HeroLinesCluster {
     public static void reply(MessageEvent event, Hero hero){
         //我们还没有加入英雄的普通台词，目前默认回复大招台词
         event.getSubject().sendMessage(pickUltimateAbilityHeroLine(hero));
-    }
-
-    @Override
-    public String toString() {
-        return "HeroLinesCluster{" +
-                "ultimateAbilityHeroLines=" + ultimateAbilityHeroLines +
-                ", commonHeroLines=" + commonHeroLines +
-                '}';
     }
 }

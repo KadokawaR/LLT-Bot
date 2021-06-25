@@ -1,12 +1,15 @@
 package lielietea.mirai.plugin.game.mahjongriddle;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.TimerTask;
 
 class EndSessionTimerTask extends TimerTask {
+    static final Logger logger = LogManager.getLogger();
     int id;
     GroupMessageEvent event;
 
@@ -24,7 +27,7 @@ class EndSessionTimerTask extends TimerTask {
                 BufferedImage imgAnswer = MahjongRiddle.getTileImage(MahjongRiddle.resolveRandomTiles(MahjongRiddle.riddleSessionHolder.get(event.getGroup().getId()).answerNum));
                 MahjongRiddle.sendTileImage(imgAnswer, event);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("猜麻将倒计时结束公布答案时，生成图片失败",e);
             }
             //清空该Session
             MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
