@@ -15,7 +15,6 @@ import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /*
@@ -100,18 +99,9 @@ public final class JavaPluginMain extends JavaPlugin {
             //包括自动打招呼，关键词触发，指令
             MessageRespondCenter.getINSTANCE().handleFrinedMessageEvent(event);
 
-            //临时的 管理员账号输入”/group“获得bot所在的所有群的详细列表
-            //由于AdministrativeAccountChecker里面的非static方法我调用不了 我临时在AdminTools中写了个
-            //潜在崩溃可能：Mirai支持的单条消息长度为5000字，如果超过可能要分消息
-            //所以每条消息返回的群数量不大于特定数值（比如50个群？）
-            //虽然估计也不会有这么多群，但以防万一
-            if (event.getMessage().contentToString().contains("/group")) {
-                AdminTools.getGroupList(event);
-            }
+            //管理员功能
+            AdminTools.getINSTANCE().handleAdminCommand(event);
 
-            if (event.getMessage().contentToString().contains("/friend")) {
-                AdminTools.getFriendList(event);
-            }
 
             //测试BroadcastSystem的功能
             try {
@@ -125,8 +115,6 @@ public final class JavaPluginMain extends JavaPlugin {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            AdminTools.getFriendAvatar(event);
 
         });
     }

@@ -18,6 +18,7 @@ import lielietea.mirai.plugin.messageresponder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler;
 import lielietea.mirai.plugin.utils.messagematcher.*;
 import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,10 +138,14 @@ public class MessageRespondCenter {
     /**
      * 实现了 {@link Reloadable} 的回复处理器，可用此方法来完成回复设置重载
      */
-    public void reload(){
+    public void reload(MessageEvent event){
+        MessageChainBuilder messages = new MessageChainBuilder();
         for(MessageHandler<MessageEvent> reloadable:reloadable){
             ((Reloadable) reloadable).reload();
+            messages.append("“"+reloadable.getName()+"” 已重载完毕。\n");
+
         }
+        event.getSubject().sendMessage(messages.build());
     }
 
     /**
