@@ -10,7 +10,7 @@ import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.MealP
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.PizzaPicker;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.drinkpicker.DrinkPicker;
 import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
-import lielietea.mirai.plugin.messageresponder.getsomedogs.DogImage;
+import lielietea.mirai.plugin.messageresponder.lovelypicture.LovelyImage;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryBummerMessageHandler;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryC4MessageHandler;
 import lielietea.mirai.plugin.messageresponder.lotterywinner.LotteryWinnerMessageHandler;
@@ -124,9 +124,14 @@ public class MessageRespondCenter {
         register(new AntiDirtyWordMessageHandler(new DirtyWordMessageMatcher()));
         register(new GreetingMessageHandler());
         register(new HeroLinesMessageHandler(new RequestOverwatchHeroLineMessageMatcher()));
-
-        //Beta Feature
-        register(new DogImage());
+        register(new LovelyImage(new DogMessageMatcher(),
+                new DogShibaMessageMatcher(),
+                new DogHuskyMessageMatcher(),
+                new DogBerneseMessageMatcher(),
+                new DogMalamuteMessageMatcher(),
+                new DogGSDMessageMatcher(),
+                new DogSamoyedMessageMatcher(),
+                new CatMessageMatcher()));
     }
 
     /**

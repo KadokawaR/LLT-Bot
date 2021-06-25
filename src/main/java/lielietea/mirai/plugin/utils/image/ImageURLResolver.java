@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ImageURLResolver {
     public static Optional<URL> resolve(String urlString, Source source) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
-        //获取来自dog.ceo的狗
+        //获取来自dog.ceo的图片
         if(source==Source.DOG_CEO){
             StringBuilder sb = new StringBuilder();
             String line;
@@ -25,7 +25,7 @@ public class ImageURLResolver {
             }
             return Optional.empty();
         }
-        //获得来自shiba.online的狗
+        //获得来自shiba.online的图片
         else if(source==Source.SHIBE_ONLINE){
             StringBuilder sb = new StringBuilder();
             String line;
@@ -34,17 +34,14 @@ public class ImageURLResolver {
             }
             return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonArray().get(0).toString().replaceAll("\"","")));
         }
-        else if(source==Source.RADNOM_GOD){
+        //获得来自random.dog的图片
+        else{
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
             return Optional.of(new URL(JsonParser.parseString(sb.toString()).getAsJsonObject().getAsJsonPrimitive("url").toString().replaceAll("\"","")));
-        }
-        //获得来自place.dog的狗，默认尺寸为300x200
-        else{
-            return Optional.of(new URL("https://place.dog/300/200"));
         }
     }
 
@@ -53,10 +50,8 @@ public class ImageURLResolver {
         //https://dog.ceo/
         SHIBE_ONLINE,
         //https://shibe.online/
-        RADNOM_GOD,
+        RADNOM_DOG,
         //https://random.dog/
-        PLACE_DOG
-        //https://place.dog/
 
     }
 }
