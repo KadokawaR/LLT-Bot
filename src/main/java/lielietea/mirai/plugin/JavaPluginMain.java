@@ -5,7 +5,7 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.messageresponder.mahjong.MahjongRiddle;
+import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
@@ -88,11 +88,8 @@ public final class JavaPluginMain extends JavaPlugin {
             GrandVIPServiceDepartment.handleMessage(event);
 
             //test for mahjong riddle
-            try {
-                MahjongRiddle.riddleStart(event);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            MahjongRiddle.riddleStart(event);
+
 
 
         });

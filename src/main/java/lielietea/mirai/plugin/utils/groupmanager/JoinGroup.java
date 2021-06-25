@@ -1,9 +1,6 @@
 package lielietea.mirai.plugin.utils.groupmanager;
 
-import lielietea.mirai.plugin.messageresponder.mahjong.MahjongRiddle;
 import net.mamoe.mirai.event.events.BotJoinGroupEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder.mahjong;
+package lielietea.mirai.plugin.game.mahjongriddle;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
