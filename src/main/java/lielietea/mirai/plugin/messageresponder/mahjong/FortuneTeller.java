@@ -16,7 +16,7 @@ import java.util.*;
 public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
 
     static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LogManager.getLogger(FortuneTeller.class);
 
     public static int getMahjongOfTheDay(MessageEvent event){
         //获取当日幸运数字

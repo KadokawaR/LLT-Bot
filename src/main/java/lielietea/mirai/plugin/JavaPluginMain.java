@@ -16,6 +16,8 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
@@ -32,6 +34,8 @@ build.gradle.kts里改依赖库和插件版本
  */
 
 public final class JavaPluginMain extends JavaPlugin {
+    static Logger logger = LogManager.getLogger(JavaPluginMain.class);
+
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
 
     private JavaPluginMain() {
@@ -68,7 +72,7 @@ public final class JavaPluginMain extends JavaPlugin {
             try {
                 JoinGroup.sendNotice(event);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         });
 
@@ -118,19 +122,19 @@ public final class JavaPluginMain extends JavaPlugin {
             try {
                 BroadcastSystem.testSendToAllGroups(event);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
 
             try {
                 BroadcastSystem.directlySendToGroup(event);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
 
             try {
                 BroadcastSystem.sendToAllFriends(event);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
 
         });

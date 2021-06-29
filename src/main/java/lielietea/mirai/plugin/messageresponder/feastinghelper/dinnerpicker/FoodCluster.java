@@ -16,7 +16,7 @@ public class FoodCluster {
 
     static final String DEFAULT_FOOD_TEXT = "/THUOCL/THUOCL_food.txt";
     static final Random rand = new Random();
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LogManager.getLogger(FoodCluster.class);
 
     FoodCluster() {
         foods = new ArrayList<>();

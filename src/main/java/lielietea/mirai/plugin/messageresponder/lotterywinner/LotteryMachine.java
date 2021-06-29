@@ -15,7 +15,7 @@ public class LotteryMachine {
     static final Timer timer = new Timer(true);
     static final Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
     static final Random rand = new Random();
-    static final org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+    static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(LotteryMachine.class);
 
     static{
         //每日6点定时清空C4触发标记

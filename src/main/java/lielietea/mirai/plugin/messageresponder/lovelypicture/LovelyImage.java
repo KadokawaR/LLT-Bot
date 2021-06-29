@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 
 
 public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequiredHandler {
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LogManager.getLogger(LovelyImage.class);
 
     public LovelyImage(MessageMatcher<MessageEvent> dogCommandMessageMatcher, MessageMatcher<MessageEvent> shibaCommandMessageMatcher, MessageMatcher<MessageEvent> huskyCommandMessageMatcher, MessageMatcher<MessageEvent> berneseCommandMessageMatcher, MessageMatcher<MessageEvent> malamuteCommandMessageMatcher, MessageMatcher<MessageEvent> germanShepherdCommandMessageMatcher, MessageMatcher<MessageEvent> samoyedCommandMessageMatcher, MessageMatcher<MessageEvent> catCommandMessageMatcher) {
         this.dogCommandMessageMatcher = dogCommandMessageMatcher;

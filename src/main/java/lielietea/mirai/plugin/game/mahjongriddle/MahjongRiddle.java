@@ -16,7 +16,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MahjongRiddle {
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LogManager.getLogger(MahjongRiddle.class);
     static final Lock lock = new ReentrantLock(true);
     static int RIDDLE_LENGTH = 5;
 

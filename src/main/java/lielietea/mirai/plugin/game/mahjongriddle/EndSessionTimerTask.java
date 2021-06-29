@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.TimerTask;
 
 class EndSessionTimerTask extends TimerTask {
-    static final Logger logger = LogManager.getLogger();
+    static final Logger logger = LogManager.getLogger(EndSessionTimerTask.class);
     int id;
     GroupMessageEvent event;
 

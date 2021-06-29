@@ -27,6 +27,8 @@ dependencies{
     //Log4j2
     implementation("org.apache.logging.log4j:log4j-api:2.14.1")
     implementation("org.apache.logging.log4j:log4j-core:2.14.1")
+    //implementation("org.slf4j:slf4j-api:1.7.31")
+    //implementation("org.slf4j:slf4j-simple:1.7.31")
 
     //Junit
     implementation("junit:junit:4.13.1")
