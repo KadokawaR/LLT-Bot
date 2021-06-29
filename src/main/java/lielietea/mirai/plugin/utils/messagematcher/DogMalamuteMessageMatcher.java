@@ -5,7 +5,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.regex.Pattern;
 
 public class DogMalamuteMessageMatcher implements MessageMatcher<MessageEvent>{
-    static final Pattern regPattern = Pattern.compile("((/[Mm]alamute)|([oO][kK] [Mm]alamute))|(((来点)|/)(阿拉斯加))");
+    static final Pattern regPattern = Pattern.compile("((/[Mm]alamute)|([oO][kK] 阿拉))|(((来点)|/)(阿拉斯加))");
 
 
     @Override

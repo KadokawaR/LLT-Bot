@@ -24,11 +24,12 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int date = calendar.get(Calendar.DATE);
-        long numOfTheDay = (year+month*10000+date*1000000)*100000000000L/event.getSender().getId();
-        return Math.toIntExact(numOfTheDay % 144);
+        long datetime = year* 1000L +month*100+date;
+        Random random = new Random(event.getSender().getId()+datetime);
+        return random.nextInt(144);
     }
 
-    public static String getMahjong(long mahjongOfTheDay){
+    public static String getMahjong(int mahjongOfTheDay){
         ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
                 "一","二","三","四","五","六","七","八","九"
         ));
@@ -43,27 +44,27 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
         ));
         int mahjongNumero;
         if(mahjongOfTheDay<36){
-            mahjongNumero = Math.toIntExact(mahjongOfTheDay % 9);
+            mahjongNumero = mahjongOfTheDay % 9;
             return (chineseNum.get(mahjongNumero)+"筒");
         }
         else if (mahjongOfTheDay<72){
-            mahjongNumero = Math.toIntExact(mahjongOfTheDay % 9);
+            mahjongNumero = mahjongOfTheDay % 9;
             return (chineseNum.get(mahjongNumero)+"条");
         }
         else if (mahjongOfTheDay<108){
-            mahjongNumero = Math.toIntExact(mahjongOfTheDay % 9);
+            mahjongNumero = mahjongOfTheDay % 9;
             return (chineseNum.get(mahjongNumero)+"萬");
         }
         else if (mahjongOfTheDay<124){
-            mahjongNumero = Math.toIntExact(mahjongOfTheDay % 4);
+            mahjongNumero = mahjongOfTheDay % 4;
             return (fengXiang.get(mahjongNumero)+"风");
         }
         else if (mahjongOfTheDay<136){
-            mahjongNumero = Math.toIntExact(mahjongOfTheDay%3);
+            mahjongNumero = mahjongOfTheDay%3;
             return (zhongFaBai.get(mahjongNumero));
         }
         else{
-            mahjongNumero = Math.toIntExact(mahjongOfTheDay) - 136;
+            mahjongNumero = mahjongOfTheDay - 136;
             return ("花牌（"+huaPai.get(mahjongNumero)+")");
         }
     }
@@ -101,6 +102,7 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
             } catch (IOException e) {
+                e.printStackTrace();
                 logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求麻将占卜，但Bot获取麻将图片失败",e);
             }
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));

@@ -7,7 +7,9 @@ import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
+import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
+import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -45,7 +47,7 @@ public final class JavaPluginMain extends JavaPlugin {
         MessageRespondCenter.getINSTANCE().ini();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
-            Optional.ofNullable(event.getBot().getGroup(578984285)).ifPresent(group->group.sendMessage("老子来了"));
+            Optional.ofNullable(event.getBot().getGroup(GroupID.DEV)).ifPresent(group->group.sendMessage("老子来了"));
             BotChecker.addBotToBotList(event.getBot().getId());
         });
 
@@ -62,7 +64,16 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, BotInvitedJoinGroupRequestEvent::accept);
 
         //应该是入群须知+简单介绍，现在先占位一下
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, JoinGroup::sendNotice);
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event ->{
+            try {
+                JoinGroup.sendNotice(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        //Bot离群
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, LeaveGroup::cancelFlag);
 
 
         //Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
@@ -112,6 +123,12 @@ public final class JavaPluginMain extends JavaPlugin {
 
             try {
                 BroadcastSystem.directlySendToGroup(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                BroadcastSystem.sendToAllFriends(event);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

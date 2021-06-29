@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.broadcast;
 
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import net.mamoe.mirai.contact.ContactList;
+import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -19,16 +20,16 @@ public class BroadcastSystem {
         Iterator<Group> it = groupContactList.iterator();
         while (it.hasNext()){
             Objects.requireNonNull(event.getBot().getGroup(it.next().getId())).sendMessage(message);
-            Thread.sleep(6000);
+            Thread.sleep(3000);
         }
     }
 
     //测试广播消息
     public static void testSendToAllGroups(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast_emergency") && aac.checkIdentity(event)){
-            //message = message.replace("/broadcast ","");
-            sendToAllGroups(event, "目前正在广播七筒的测试消息。请无视。");
+        if (message.contains("/broadcast_emergency ") && aac.checkIdentity(event)){
+            message = message.replace("/broadcast_emergency ","");
+            sendToAllGroups(event, message);
         }
     }
 
@@ -45,6 +46,22 @@ public class BroadcastSystem {
                 return;
             }
             Objects.requireNonNull(event.getBot().getGroup(Long.parseLong(splitMessage[1]))).sendMessage(splitMessage[2]);
+        }
+    }
+
+    public static void sendToAllFriends(FriendMessageEvent event) throws InterruptedException {
+        String message = event.getMessage().contentToString();
+        if (message.contains("/broadcast2f ") && aac.checkIdentity(event)) {
+            message = message.replace("/broadcast2f ","");
+            sendToCertainFriends(event,message,event.getBot().getFriends());
+        }
+    }
+
+    public static void sendToCertainFriends(MessageEvent event, String message, ContactList<Friend> friendContactList) throws InterruptedException {
+        Iterator<Friend> it = friendContactList.iterator();
+        while (it.hasNext()){
+            Objects.requireNonNull(event.getBot().getGroup(it.next().getId())).sendMessage(message);
+            Thread.sleep(3000);
         }
     }
 }
