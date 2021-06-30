@@ -20,6 +20,7 @@ import lielietea.mirai.plugin.utils.messagematcher.*;
 import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class MessageRespondCenter {
      * 自动处理来自群的消息
      * @param event 群消息事件
      */
-    public void handleGroupMessageEvent(MessageEvent event){
+    public void handleGroupMessageEvent(MessageEvent event) throws IOException {
         for(MessageHandler<MessageEvent> handler:groupMessageHandlers) {
             if(handler.isOnBeta()){
                 if(true/*这里缺个Group Config的判断*/)
@@ -67,7 +68,7 @@ public class MessageRespondCenter {
      * 自动处理来自好友的消息
      * @param event 好友消息事件
      */
-    public void handleFrinedMessageEvent(MessageEvent event){
+    public void handleFrinedMessageEvent(MessageEvent event) throws IOException {
         for(MessageHandler<MessageEvent> handler:friendMessageHandlers){
             if(handler.handleMessage(event)) break;
         }
@@ -77,7 +78,7 @@ public class MessageRespondCenter {
      * 自动处理来自群临时的消息
      * @param event 群临时消息事件
      */
-    public void handleGroupTempMessageEvent(MessageEvent event){
+    public void handleGroupTempMessageEvent(MessageEvent event) throws IOException {
         for(MessageHandler<MessageEvent> handler:groupTempMessageHandlers){
             if(handler.handleMessage(event)) break;
         }
@@ -87,7 +88,7 @@ public class MessageRespondCenter {
      * 自动处理来自陌生人的消息
      * @param event 陌生人消息事件
      */
-    public void handleStrangerMessageEvent(MessageEvent event){
+    public void handleStrangerMessageEvent(MessageEvent event) throws IOException {
         for(MessageHandler<MessageEvent> handler:strangerMessageHandlers){
             if(handler.handleMessage(event)) break;
         }

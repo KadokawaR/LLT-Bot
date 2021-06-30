@@ -6,6 +6,7 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,7 @@ public class LotteryWinnerMessageHandler implements MessageHandler<GroupMessageE
 
 
     @Override
-    public boolean handleMessage(GroupMessageEvent event) {
+    public boolean handleMessage(GroupMessageEvent event) throws IOException {
         if(lotteryWinnerMatcher.matches(event)){
             LotteryMachine.okWinner(event);
             return true;

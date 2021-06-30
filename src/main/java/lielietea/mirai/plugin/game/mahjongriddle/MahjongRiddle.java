@@ -205,10 +205,6 @@ public class MahjongRiddle {
             }
 
             if (isMahjongTile(event) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
-                //最神秘的一句话
-                //完全没有调用 不知道为什么会这样
-                //原来写法：
-                // setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event);
                 riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event).isGuessed;
                 //
                 if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {

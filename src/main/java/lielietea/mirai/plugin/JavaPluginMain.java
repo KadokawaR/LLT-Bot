@@ -22,6 +22,7 @@ import net.mamoe.mirai.event.events.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /*
@@ -109,7 +110,11 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
-            MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
+            try {
+                MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
@@ -124,7 +129,11 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
-            MessageRespondCenter.getINSTANCE().handleFrinedMessageEvent(event);
+            try {
+                MessageRespondCenter.getINSTANCE().handleFrinedMessageEvent(event);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             //管理员功能
             AdminTools.getINSTANCE().handleAdminCommand(event);

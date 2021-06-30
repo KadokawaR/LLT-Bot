@@ -1,12 +1,14 @@
 package lielietea.mirai.plugin.messageresponder.lotterywinner;
 
 import lielietea.mirai.plugin.utils.Notice;
+import lielietea.mirai.plugin.utils.image.ImageCreater;
 import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.PlainText;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -90,7 +92,7 @@ public class LotteryMachine {
     //}
 
 
-    public static void okWinner(GroupMessageEvent event){
+    public static void okWinner(GroupMessageEvent event) throws IOException {
 
         //获取当日幸运数字
         Calendar calendar = Calendar.getInstance();
@@ -105,6 +107,7 @@ public class LotteryMachine {
 
         //广播结果
         event.getGroup().sendMessage("Ok Winner! "+candidates.get(Math.toIntExact(guyOfTheDay)).getNick());
+        ImageCreater.sendWinnerImage(ImageCreater.createWinnerImage(candidates.get(Math.toIntExact(guyOfTheDay))),event);
     }
 
     public static void okC4(GroupMessageEvent event){

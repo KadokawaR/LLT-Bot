@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.messageresponder;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public interface MessageHandler<T extends MessageEvent> {
      * @param event 传入消息事件
      * @return 该类必须返回一个布尔值，代表传入的消息事件是否由该处理器处理。
      */
-    boolean handleMessage(T event);
+    boolean handleMessage(T event) throws IOException;
 
     /**
      * 这个方法返回该回复处理器可以处理的消息事件的类型。返回值不能为空。
