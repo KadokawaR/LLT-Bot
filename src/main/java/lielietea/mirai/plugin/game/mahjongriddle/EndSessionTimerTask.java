@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.TimerTask;
 
 class EndSessionTimerTask extends TimerTask {
-    static final Logger logger = LogManager.getLogger(EndSessionTimerTask.class);
+    //static final Logger logger = LogManager.getLogger(EndSessionTimerTask.class);
     int id;
     GroupMessageEvent event;
 
@@ -27,7 +27,7 @@ class EndSessionTimerTask extends TimerTask {
                 BufferedImage imgAnswer = MahjongRiddle.getTileImage(MahjongRiddle.resolveRandomTiles(MahjongRiddle.riddleSessionHolder.get(event.getGroup().getId()).answerNum));
                 MahjongRiddle.sendTileImage(imgAnswer, event);
             } catch (IOException e) {
-                logger.error("猜麻将倒计时结束公布答案时，生成图片失败",e);
+                //logger.error("猜麻将倒计时结束公布答案时，生成图片失败",e);
             }
             //清空该Session
             MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());

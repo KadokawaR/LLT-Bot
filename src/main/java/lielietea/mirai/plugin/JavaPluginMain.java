@@ -3,11 +3,14 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
+import lielietea.mirai.plugin.feedback.FeedBack;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
+import lielietea.mirai.plugin.utils.groupmanager.Help;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
+import lielietea.mirai.plugin.utils.groupmanager.Speech;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
@@ -60,14 +63,21 @@ public final class JavaPluginMain extends JavaPlugin {
         //自动通过好友请求
         GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, NewFriendRequestEvent::accept);
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> Optional.ofNullable(event.getBot().getFriend(event.getFriend().getId())).ifPresent(friend->friend.sendMessage(
-                "你好，这是QQ机器人自动发送的验证消息"
-        )));
+        //加为好友之后发送简介与免责声明
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> {
+            event.getFriend().sendMessage(Speech.joinGroup);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            event.getFriend().sendMessage(Speech.disclaimer);
+        });
 
         //自动通过拉群请求
         GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, BotInvitedJoinGroupRequestEvent::accept);
 
-        //应该是入群须知+简单介绍，现在先占位一下
+        //入群须知
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event ->{
             try {
                 JoinGroup.sendNotice(event);
@@ -94,6 +104,9 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
+            //帮助功能
+            Help.detect(event);
+
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
             MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
@@ -103,7 +116,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //test for mahjong riddle
             MahjongRiddle.riddleStart(event);
-
 
 
         });
@@ -117,6 +129,8 @@ public final class JavaPluginMain extends JavaPlugin {
             //管理员功能
             AdminTools.getINSTANCE().handleAdminCommand(event);
 
+            //意见反馈
+            FeedBack.get(event);
 
             //测试BroadcastSystem的功能
             try {

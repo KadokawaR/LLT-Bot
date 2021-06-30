@@ -16,7 +16,7 @@ class AutoReplyLinesCluster {
     TreeMap<Double,String> antiOverwatchGameReplyLines;
 
     static final Gson gson = new Gson();
-    static final Logger logger = LogManager.getLogger(AutoReplyLinesCluster.class);
+    //static final Logger logger = LogManager.getLogger(AutoReplyLinesCluster.class);
     static AutoReplyLinesCluster INSTANCE;
 
     static final String DEFAULT_AUTOREPLY_JSON_PATH = "/cluster/autoreply.json";

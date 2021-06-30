@@ -16,7 +16,7 @@ import java.util.*;
 public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
 
     static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
-    static final Logger logger = LogManager.getLogger(FortuneTeller.class);
+    //static final Logger logger = LogManager.getLogger(FortuneTeller.class);
 
     public static int getMahjongOfTheDay(MessageEvent event){
         //获取当日幸运数字
@@ -65,7 +65,7 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
         }
         else{
             mahjongNumero = mahjongOfTheDay - 136;
-            return ("花牌（"+huaPai.get(mahjongNumero)+")");
+            return ("花牌（"+huaPai.get(mahjongNumero)+"）");
         }
     }
 
@@ -103,7 +103,7 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
             } catch (IOException e) {
                 e.printStackTrace();
-                logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求麻将占卜，但Bot获取麻将图片失败",e);
+                //logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求麻将占卜，但Bot获取麻将图片失败",e);
             }
             event.getSubject().sendMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
             return true;

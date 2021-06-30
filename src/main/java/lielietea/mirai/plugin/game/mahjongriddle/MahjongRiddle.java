@@ -174,8 +174,8 @@ public class MahjongRiddle {
 
     public static void riddleStart(GroupMessageEvent event){
 
-        lock.lock();
-        try{
+        //lock.lock();
+        //try{
             if (event.getMessage().contentToString().contains("猜麻将")) {
                 event.getSubject().sendMessage("来猜麻将吧！\n\n七筒会随机生成5张麻将牌（只含筒牌、条牌和万字牌），猜中最后一张的会是赢家！" +
                         "\n请注意，只有形式诸如“三条”、“五筒”、“七万”的答案会触发判定。\n如果没有人猜中，本轮游戏会在180秒内自动关闭。");
@@ -205,7 +205,12 @@ public class MahjongRiddle {
             }
 
             if (isMahjongTile(event) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
-                setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event);
+                //最神秘的一句话
+                //完全没有调用 不知道为什么会这样
+                //原来写法：
+                // setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event);
+                riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event).isGuessed;
+                //
                 if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {
                     event.getSubject().sendMessage("中了!");
                     BufferedImage img = null;
@@ -224,8 +229,8 @@ public class MahjongRiddle {
                     MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
                 }
             }
-        } finally {
-            lock.lock();
-        }
+        //} finally {
+        //    lock.lock();
+        //}
     }
 }

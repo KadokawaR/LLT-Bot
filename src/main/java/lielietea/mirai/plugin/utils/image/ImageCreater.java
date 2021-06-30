@@ -36,7 +36,6 @@ public class ImageCreater {
         return inputStream;
     }
 
-
     public static BufferedImage createWinnerImage(Contact winner) throws IOException {
         InputStream is = getInputStream(winner.getAvatarUrl());
         BufferedImage img = ImageIO.read(is);

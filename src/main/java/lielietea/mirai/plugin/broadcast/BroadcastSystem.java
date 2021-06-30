@@ -35,7 +35,7 @@ public class BroadcastSystem {
 
     public static void directlySendToGroup(FriendMessageEvent event) throws InterruptedException{
         String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast") && aac.checkIdentity(event)) {
+        if (message.contains("/broadcast ") && aac.checkIdentity(event)) {
             String[] splitMessage = message.split(" ");
             if (splitMessage.length!=3){
                 event.getSubject().sendMessage("请使用空格分割/broadcast指示器、群号和消息");
@@ -58,9 +58,8 @@ public class BroadcastSystem {
     }
 
     public static void sendToCertainFriends(MessageEvent event, String message, ContactList<Friend> friendContactList) throws InterruptedException {
-        Iterator<Friend> it = friendContactList.iterator();
-        while (it.hasNext()){
-            Objects.requireNonNull(event.getBot().getGroup(it.next().getId())).sendMessage(message);
+        for (Friend friend : friendContactList) {
+            Objects.requireNonNull(event.getBot().getFriend(friend.getId())).sendMessage(message);
             Thread.sleep(3000);
         }
     }

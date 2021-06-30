@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 
 
 public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequiredHandler {
-    static final Logger logger = LogManager.getLogger(LovelyImage.class);
+    //static final Logger logger = LogManager.getLogger(LovelyImage.class);
 
     public LovelyImage(MessageMatcher<MessageEvent> dogCommandMessageMatcher, MessageMatcher<MessageEvent> shibaCommandMessageMatcher, MessageMatcher<MessageEvent> huskyCommandMessageMatcher, MessageMatcher<MessageEvent> berneseCommandMessageMatcher, MessageMatcher<MessageEvent> malamuteCommandMessageMatcher, MessageMatcher<MessageEvent> germanShepherdCommandMessageMatcher, MessageMatcher<MessageEvent> samoyedCommandMessageMatcher, MessageMatcher<MessageEvent> catCommandMessageMatcher) {
         this.dogCommandMessageMatcher = dogCommandMessageMatcher;
@@ -156,7 +156,7 @@ public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequ
     }
 
     public static void notifyImageFailToObtain(GroupMessageEvent event,String type,IOException e){
-        logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求获取"+type+"图，但Bot尝试通过URL获取图片失败",e);
+        //logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求获取"+type+"图，但Bot尝试通过URL获取图片失败",e);
         event.getGroup().sendMessage(new At(event.getSender().getId()).plus("非常抱歉，获取"+type+"图的渠道好像出了一些问题，图片获取失败"));
     }
 

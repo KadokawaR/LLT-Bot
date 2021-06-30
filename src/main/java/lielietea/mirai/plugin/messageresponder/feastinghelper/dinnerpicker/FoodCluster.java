@@ -16,7 +16,7 @@ public class FoodCluster {
 
     static final String DEFAULT_FOOD_TEXT = "/THUOCL/THUOCL_food.txt";
     static final Random rand = new Random();
-    static final Logger logger = LogManager.getLogger(FoodCluster.class);
+    //static final Logger logger = LogManager.getLogger(FoodCluster.class);
 
     FoodCluster() {
         foods = new ArrayList<>();
@@ -33,7 +33,7 @@ public class FoodCluster {
                 str = str.substring(0,str.indexOf("\t"));
                 foods.add(str);
             } catch (IOException e){
-                logger.fatal("转换食品列表文件为对象失败！",e);
+                //logger.fatal("转换食品列表文件为对象失败！",e);
                 break;
             }
         }
@@ -59,7 +59,7 @@ public class FoodCluster {
                 str = str.substring(0,str.indexOf("\t"));
                 foods.add(str);
             } catch (IOException e){
-                logger.fatal("转换食品列表文件为对象失败！",e);
+                //logger.fatal("转换食品列表文件为对象失败！",e);
                 return false;
             }
         }

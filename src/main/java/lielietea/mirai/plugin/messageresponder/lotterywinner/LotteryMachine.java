@@ -15,7 +15,7 @@ public class LotteryMachine {
     static final Timer timer = new Timer(true);
     static final Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
     static final Random rand = new Random();
-    static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(LotteryMachine.class);
+    //static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(LotteryMachine.class);
 
     static{
         //每日6点定时清空C4触发标记
@@ -48,43 +48,46 @@ public class LotteryMachine {
     }
 
     public static void okBummer(GroupMessageEvent event) {
-        if (botPermissionChecker(event)){
+        if (botPermissionChecker(event)) {
             //抽取倒霉蛋
             List<NormalMember> candidates = event.getGroup().getMembers().stream().filter(normalMember -> normalMember.getPermission().equals(MemberPermission.MEMBER)).collect(Collectors.toList());
             NormalMember victim = candidates.get(rand.nextInt(candidates.size()));
 
             //禁言倒霉蛋
             //顺便把发送者禁言了
-            try {
-                victim.mute(120);
-                //如果发送者不是管理员，那么发送者也将被禁言
-                if(!(senderPermissionChecker(event)))
-                    event.getSender().mute(120);
-            } catch (PermissionDeniedException e) {
-                logger.error("禁言失败，群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"尝试发起OK Bummer功能，但该群并未授予Bot管理员权限！",e);
-            } finally {
-                if(victim.getId()==event.getSender().getId()){
-                    event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n" +
-                            event.getSender().getNick() + "尝试随机极限一换一。他成功把自己换出去了！");
-                }
-                else if ((senderPermissionChecker(event))) {
-                    //如果发送者是管理员，那么提示
-                    event.getGroup().sendMessage( new PlainText("Ok Bummer! " + victim.getNick() + "\n管理员")
-                            .plus(new At(event.getSender().getId()))
-                            .plus(new PlainText(" 随机带走了 "))
-                            .plus(new At(victim.getId())));
-                } else {
-                    //如果发送者不是管理员，那么提示
-                    event.getGroup().sendMessage( new PlainText("Ok Bummer! " + victim.getNick() + "\n")
-                            .plus(new At(event.getSender().getId()))
-                            .plus(new PlainText(" 以自己为代价随机带走了 "))
-                            .plus(new At(victim.getId())));
-                }
+
+            //try {
+            victim.mute(120);
+            //如果发送者不是管理员，那么发送者也将被禁言
+            if (!(senderPermissionChecker(event))) {
+                event.getSender().mute(120);
             }
-        } else {
+            //} catch (PermissionDeniedException e) {
+            //logger.error("禁言失败，群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"尝试发起OK Bummer功能，但该群并未授予Bot管理员权限！",e);
+            //} finally {
+            if (victim.getId() == event.getSender().getId()) {
+                event.getGroup().sendMessage("Ok Bummer! " + victim.getNick() + "\n" +
+                        event.getSender().getNick() + "尝试随机极限一换一。他成功把自己换出去了！");
+            } else if ((senderPermissionChecker(event))) {
+                //如果发送者是管理员，那么提示
+                event.getGroup().sendMessage(new PlainText("Ok Bummer! " + victim.getNick() + "\n管理员")
+                        .plus(new At(event.getSender().getId()))
+                        .plus(new PlainText(" 随机带走了 "))
+                        .plus(new At(victim.getId())));
+            } else {
+                //如果发送者不是管理员，那么提示
+                event.getGroup().sendMessage(new PlainText("Ok Bummer! " + victim.getNick() + "\n")
+                        .plus(new At(event.getSender().getId()))
+                        .plus(new PlainText(" 以自己为代价随机带走了 "))
+                        .plus(new At(victim.getId())));
+            }
+        }
+        //}
+        else {
             event.getGroup().sendMessage(Notice.BOT_NO_ADMIN_PERMISSION);
         }
     }
+    //}
 
 
     public static void okWinner(GroupMessageEvent event){
@@ -117,7 +120,7 @@ public class LotteryMachine {
                     try {
                         event.getGroup().getSettings().setMuteAll(true);
                     } catch (PermissionDeniedException e) {
-                        logger.error("禁言失败，群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"尝试发起OK C4功能，但该群并未授予Bot管理员权限！",e);
+                        //logger.error("禁言失败，群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"尝试发起OK C4功能，但该群并未授予Bot管理员权限！",e);
                     } finally {
                         event.getGroup().sendMessage("中咧！");
                         event.getGroup().sendMessage(new At(event.getSender().getId()).plus("成功触发了C4！大家一起恭喜TA！"));
@@ -131,7 +134,7 @@ public class LotteryMachine {
                             try {
                                 event.getGroup().getSettings().setMuteAll(false);
                             } catch (PermissionDeniedException e) {
-                                logger.error("解除全群禁言失败，BOT在群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"中尝试解除因OK C4产生的全群禁言，但该群并未授予Bot管理员权限！",e);
+                                //logger.error("解除全群禁言失败，BOT在群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"中尝试解除因OK C4产生的全群禁言，但该群并未授予Bot管理员权限！",e);
                             }
                         }
                     }, 300000);
