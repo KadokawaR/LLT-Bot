@@ -4,6 +4,10 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.utils.ExternalResource;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,5 +41,15 @@ public class ImageSender {
             Logger.getGlobal().warning("资源关闭失败！");
         }
 
+    }
+
+    public static void sendImageFromBufferedImage(Contact contact, BufferedImage image) throws IOException {
+        InputStream is;
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+        ImageOutputStream imOut;
+        imOut = ImageIO.createImageOutputStream(bs);
+        ImageIO.write(image, "png", imOut);
+        is = new ByteArrayInputStream(bs.toByteArray());
+        contact.sendMessage(Contact.uploadImage(contact, is));
     }
 }

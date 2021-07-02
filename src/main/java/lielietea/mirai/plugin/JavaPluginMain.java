@@ -3,6 +3,7 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
+import lielietea.mirai.plugin.broadcast.foodie.Foodie;
 import lielietea.mirai.plugin.feedback.FeedBack;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
@@ -90,11 +91,10 @@ public final class JavaPluginMain extends JavaPlugin {
         //Bot离群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, LeaveGroup::cancelFlag);
 
-
         //Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event ->{
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER)||(event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))){
-                event.getGroup().sendMessage("谢谢，你将获得更多的乐趣。");
+                event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
             }
         });
 
@@ -116,6 +116,13 @@ public final class JavaPluginMain extends JavaPlugin {
                 e.printStackTrace();
             }
 
+            //自动发送食物
+            try {
+                Foodie.send(event);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
 
@@ -123,6 +130,11 @@ public final class JavaPluginMain extends JavaPlugin {
             MahjongRiddle.riddleStart(event);
 
 
+        });
+
+        //群成员入群自动欢迎
+        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> {
+            memberJoinEvent.getGroup().sendMessage("欢迎。");
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {

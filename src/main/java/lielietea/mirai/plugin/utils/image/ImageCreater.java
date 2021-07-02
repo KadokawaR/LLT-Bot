@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.utils.image;
 
 import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
+import lielietea.mirai.plugin.utils.json.JsonFile;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
@@ -19,35 +20,10 @@ public class ImageCreater {
     static int wx = 94;
     static int hx = 251;
 
-    public static InputStream getInputStream(String urlPath) {
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try {
-            URL url = new URL(urlPath);
-            try {
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // 设置网络连接超时时间
-            httpURLConnection.setConnectTimeout(3000);
-            // 设置应用程序要从网络连接读取数据
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setRequestMethod("GET");
-            int responseCode = httpURLConnection.getResponseCode();
-            if (responseCode == 200) {
-                // 从服务器返回一个输入流
-                inputStream = httpURLConnection.getInputStream();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return inputStream;
-    }
 
     public static BufferedImage createWinnerImage(Contact winner) throws IOException {
         //读入头像和wanted底图
-        InputStream is1 = getInputStream(winner.getAvatarUrl());
+        InputStream is1 = JsonFile.getInputStream(winner.getAvatarUrl());
         BufferedImage img1 = ImageIO.read(is1);
         InputStream is2 = ImageCreater.class.getResourceAsStream("/pics/winner/wanted.jpg");
         BufferedImage img2 = ImageIO.read(is2);
@@ -77,13 +53,7 @@ public class ImageCreater {
     }
 
     public static void sendWinnerImage(BufferedImage image, GroupMessageEvent event) throws IOException {
-        InputStream is;
-        ByteArrayOutputStream bs = new ByteArrayOutputStream();
-        ImageOutputStream imOut;
-        imOut = ImageIO.createImageOutputStream(bs);
-        ImageIO.write(image, "png", imOut);
-        is = new ByteArrayInputStream(bs.toByteArray());
-        event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), is));
-        is.close();
+        event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), BufferedImageToInputStream.execute(image)));
+        BufferedImageToInputStream.execute(image).close();
     }
 }
