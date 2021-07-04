@@ -33,7 +33,7 @@ public class JetPack extends BaiduAPI{
             //用/location查询七筒目前所在的位置
             if (event.getMessage().contentToString().contains("/location")) {
                 Location currentLocation = JetPackUtil.getCurrentLocation(loc1, loc2, recordMap.get(recordMap.size()-1).departureTime);
-                String currentLocationStr = C2AToString(currentLocation);
+                String currentLocationStr = C2AToString(currentLocation,event);
                 if (!currentLocationStr.contains("目前暂不清楚七筒的位置。")) {
                     ImageSender.sendImageFromBufferedImage(event.getSubject(), getStaticImage(currentLocation, ZOOM_LEVEL));
                 }

@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.game.jetpack;
 
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.utils.json.JsonFile;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -108,18 +109,18 @@ public class BaiduAPI {
     }
 
     //将CoordToAddr里面的内容组合成省市镇
-    public static String C2AToString(Location location) throws Exception {
+    public static String C2AToString(Location location, MessageEvent event) throws Exception {
         CoordToAddr c2a = getAddr(location);
         String result = "";
         assert c2a != null;
         if(c2a.status == 0) {
             if (!c2a.result.addressComponent.country.equals("中国")) {
-                result = result + c2a.result.addressComponent.country;
+                result += c2a.result.addressComponent.country;
             }
             if (!c2a.result.addressComponent.city.equals(c2a.result.addressComponent.province)){
-                result = result + c2a.result.addressComponent.province;
+                result += c2a.result.addressComponent.province;
             }
-            result = result + c2a.result.addressComponent.city + c2a.result.addressComponent.district+c2a.result.addressComponent.town;
+            result += c2a.result.addressComponent.city + c2a.result.addressComponent.district+c2a.result.addressComponent.town;
             return "七筒目前在"+result+"境内，坐标为："+String.valueOf(location.lng)+","+String.valueOf(location.lat);
         }
         else{
