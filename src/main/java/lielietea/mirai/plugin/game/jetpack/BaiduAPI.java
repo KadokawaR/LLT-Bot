@@ -11,12 +11,12 @@ public class BaiduAPI {
     static final int ZOOM_LEVEL =13;//百度地图图片默认缩放等级，数值越高图片显示的区域越精细
 
     //地理编码Gson转换的类
-    public class AddrToCoord{
+    public static class AddrToCoord{
         int status;
         Result result;
     }
 
-    public class Result{
+    public static class Result{
         Location location;
         int precise;
         int confidence;
@@ -34,12 +34,12 @@ public class BaiduAPI {
     }
 
     //地理逆编码Gson转换的类
-    public class CoordToAddr{
+    public static class CoordToAddr{
         int status;
         Result2 result;
     }
 
-    public class Result2{
+    public static class Result2{
         Location location;
         String formatted_address;
         String business;
@@ -51,7 +51,7 @@ public class BaiduAPI {
         int cityCode;
     }
 
-    public class AddressComponent{
+    public static class AddressComponent{
         String country;
         int country_code;
         String country_code_iso;
@@ -71,8 +71,8 @@ public class BaiduAPI {
 
     //解析百度地图地理编码返回的json
     public static AddrToCoord getJsonUrlCoord(String urlPath) throws Exception{
-        Gson gson = new Gson();
-        return gson.fromJson(JsonFile.read(urlPath), AddrToCoord.class);
+        Gson gson1 = new Gson();
+        return gson1.fromJson(JsonFile.read(urlPath), AddrToCoord.class);
     }
 
     //通过地址来返回坐标结果
@@ -81,17 +81,23 @@ public class BaiduAPI {
         if (JsonFile.read(LOCATION_PATH).contains("无相关结果")) {
             return null;
         }
+        if (getJsonUrlAddr(LOCATION_PATH).status!=0){
+            return null;
+        }
         return getJsonUrlCoord(LOCATION_PATH);
     }
     //解析百度地图逆编码返回的json
     public static CoordToAddr getJsonUrlAddr(String urlPath) throws Exception{
-        Gson gson = new Gson();
-        return gson.fromJson(JsonFile.read(urlPath), CoordToAddr.class);
+        Gson gson2 = new Gson();
+        return gson2.fromJson(JsonFile.read(urlPath), CoordToAddr.class);
     }
 
     //通过坐标来返回地址结果
     public static CoordToAddr getAddr(Location location) throws Exception{
         String ADDRESS_PATH = "https://api.map.baidu.com/reverse_geocoding/v3/?ak="+DEV_KEY+"&output=json&coordtype=wgs84ll&location="+String.valueOf(location.lat)+","+String.valueOf(location.lng);
+        if (getJsonUrlAddr(ADDRESS_PATH).status!=0){
+            return null;
+        }
         return getJsonUrlAddr(ADDRESS_PATH);
     }
 
@@ -105,14 +111,15 @@ public class BaiduAPI {
     public static String C2AToString(Location location) throws Exception {
         CoordToAddr c2a = getAddr(location);
         String result = "";
+        assert c2a != null;
         if(c2a.status == 0) {
-            if (c2a.result.addressComponent.country != "中国") {
+            if (!c2a.result.addressComponent.country.equals("中国")) {
                 result = result + c2a.result.addressComponent.country;
             }
-            if (c2a.result.addressComponent.city!=c2a.result.addressComponent.province){
+            if (!c2a.result.addressComponent.city.equals(c2a.result.addressComponent.province)){
                 result = result + c2a.result.addressComponent.province;
             }
-            result = result + c2a.result.addressComponent.district+c2a.result.addressComponent.town;
+            result = result + c2a.result.addressComponent.city + c2a.result.addressComponent.district+c2a.result.addressComponent.town;
             return "七筒目前在"+result+"境内，坐标为："+String.valueOf(location.lng)+","+String.valueOf(location.lat);
         }
         else{

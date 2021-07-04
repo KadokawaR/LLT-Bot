@@ -33,6 +33,7 @@ public class JsonFile {
                 e.printStackTrace();
             }
             // 设置网络连接超时时间
+            assert httpURLConnection != null;
             httpURLConnection.setConnectTimeout(3000);
             // 设置应用程序要从网络连接读取数据
             httpURLConnection.setDoInput(true);

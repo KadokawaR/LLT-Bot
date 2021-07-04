@@ -5,6 +5,7 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.broadcast.foodie.Foodie;
 import lielietea.mirai.plugin.feedback.FeedBack;
+import lielietea.mirai.plugin.game.jetpack.JetPack;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
@@ -104,32 +105,40 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
+            //临时的bot检测
+            if ((event.getSender().getId()!=340865180L)&&(event.getSender().getId()!=384087036L)) {
+                //帮助功能
+                Help.detect(event);
 
-            //帮助功能
-            Help.detect(event);
+                //JetPack
+                try {
+                    JetPack.start(event);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-            //处理所有需要回复的消息
-            //包括自动打招呼，关键词触发，指令
-            try {
-                MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
-            } catch (IOException e) {
-                e.printStackTrace();
+                //处理所有需要回复的消息
+                //包括自动打招呼，关键词触发，指令
+                try {
+                    MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //自动发送食物
+                try {
+                    Foodie.send(event);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //VIP待遇
+                GrandVIPServiceDepartment.handleMessage(event);
+
+                //test for mahjong riddle
+                MahjongRiddle.riddleStart(event);
+
             }
-
-            //自动发送食物
-            try {
-                Foodie.send(event);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //VIP待遇
-            GrandVIPServiceDepartment.handleMessage(event);
-
-            //test for mahjong riddle
-            MahjongRiddle.riddleStart(event);
-
-
         });
 
         //群成员入群自动欢迎
