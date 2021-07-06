@@ -6,10 +6,13 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.net.URLEncoder;
+import java.util.List;
 
 public class BaiduAPI {
     static final String DEV_KEY = "tOebp3inj7gwxhfWiyKykcyp8aeXrQPk";
     static final int ZOOM_LEVEL =13;//百度地图图片默认缩放等级，数值越高图片显示的区域越精细
+    static final int ZOOM_LEVEL_CITY = 16;
 
     //地理编码Gson转换的类
     public static class AddrToCoord{
@@ -70,6 +73,16 @@ public class BaiduAPI {
         String distance;
     }
 
+    public static class LocationMercator{
+        double x;
+        double y;
+    }
+
+    public static class Coordinates{
+        int status;
+        List<LocationMercator> result;
+    }
+
     //解析百度地图地理编码返回的json
     public static AddrToCoord getJsonUrlCoord(String urlPath) throws Exception{
         Gson gson1 = new Gson();
@@ -102,14 +115,38 @@ public class BaiduAPI {
         return getJsonUrlAddr(ADDRESS_PATH);
     }
 
+    //返回坐标转换结果
+    public static Coordinates getJsonUrlMercator(String urlPath) throws Exception {
+        Gson gson3 = new Gson();
+        return gson3.fromJson(JsonFile.read(urlPath),Coordinates.class);
+    }
+
+    //将经纬度转换为墨卡托投影坐标系
+    public static LocationMercator wgsToMercator (Location location) throws Exception {
+        String MERCATOR_PATH = "http://api.map.baidu.com/geoconv/v1/?coords="+ location.lng +","+ location.lat +"&from=5&to=6&ak="+DEV_KEY;
+        if (getJsonUrlMercator(MERCATOR_PATH).status!=0){
+            return null;
+        }
+        return getJsonUrlMercator(MERCATOR_PATH).result.get(0);
+    }
+
+    //将墨卡托投影坐标系转换为经纬度
+    public static Location mercatorToWGS (LocationMercator lm) throws Exception {
+        String MERCATOR_PATH = "http://api.map.baidu.com/geoconv/v1/?coords="+String.valueOf(lm.x)+","+String.valueOf(lm.y)+"&from=6&to=5&ak="+DEV_KEY;
+        if (getJsonUrlMercator(MERCATOR_PATH).status!=0){
+            return null;
+        }
+        return new Location(getJsonUrlMercator(MERCATOR_PATH).result.get(0).x,getJsonUrlMercator(MERCATOR_PATH).result.get(0).y);
+    }
+
     //通过坐标和缩放范围返回一张静态的地图图片，默认大小为800*600
     public static BufferedImage getStaticImage(Location location,int zoomLevel) throws Exception{
-        String STATIC_IMAGE_PATH = "https://api.map.baidu.com/staticimage/v2?ak="+DEV_KEY+"&mcode=666666&center="+String.valueOf(location.lat)+","+String.valueOf(location.lng)+"&width=800&height=600&zoom="+String.valueOf(zoomLevel);
+        String STATIC_IMAGE_PATH = "https://api.map.baidu.com/staticimage/v2?ak="+DEV_KEY+"&mcode=666666&center="+String.valueOf(location.lng)+","+String.valueOf(location.lat)+"&width=800&height=600&zoom="+String.valueOf(zoomLevel);
         return ImageIO.read(JsonFile.getInputStream(STATIC_IMAGE_PATH));
     }
 
     //将CoordToAddr里面的内容组合成省市镇
-    public static String C2AToString(Location location, MessageEvent event) throws Exception {
+    public static String C2AToString(Location location) throws Exception {
         CoordToAddr c2a = getAddr(location);
         String result = "";
         assert c2a != null;
@@ -117,13 +154,15 @@ public class BaiduAPI {
             if (!c2a.result.addressComponent.country.equals("中国")) {
                 result += c2a.result.addressComponent.country;
             }
-            if (!c2a.result.addressComponent.city.equals(c2a.result.addressComponent.province)){
+            if (!c2a.result.addressComponent.city.equals(c2a.result.addressComponent.province)) {
                 result += c2a.result.addressComponent.province;
             }
-            result += c2a.result.addressComponent.city + c2a.result.addressComponent.district+c2a.result.addressComponent.town;
-            return "七筒目前在"+result+"境内，坐标为："+String.valueOf(location.lng)+","+String.valueOf(location.lat);
-        }
-        else{
+            result += c2a.result.addressComponent.city + c2a.result.addressComponent.district + c2a.result.addressComponent.town;
+            if (result != "") {
+                return "七筒目前在" + result + "境内，坐标为：" + String.valueOf(location.lng).substring(0, 6) + "," + String.valueOf(location.lat).substring(0, 5);
+            }
+            return "目前暂不清楚七筒的位置。";
+        } else{
             return "目前暂不清楚七筒的位置。";
         }
     }

@@ -91,7 +91,6 @@ public class LotteryMachine {
     }
     //}
 
-
     public static void okWinner(GroupMessageEvent event) throws IOException {
 
         //获取当日幸运数字
@@ -107,7 +106,7 @@ public class LotteryMachine {
 
         //广播结果
         event.getGroup().sendMessage("Ok Winner! "+candidates.get(Math.toIntExact(guyOfTheDay)).getNick());
-        ImageCreater.sendWinnerImage(ImageCreater.createWinnerImage(candidates.get(Math.toIntExact(guyOfTheDay))),event);
+        ImageCreater.sendImage(ImageCreater.createWinnerImage(candidates.get(Math.toIntExact(guyOfTheDay))),event);
     }
 
     public static void okC4(GroupMessageEvent event){

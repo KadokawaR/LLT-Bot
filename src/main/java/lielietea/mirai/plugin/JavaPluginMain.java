@@ -159,6 +159,9 @@ public final class JavaPluginMain extends JavaPlugin {
             //管理员功能
             AdminTools.getINSTANCE().handleAdminCommand(event);
 
+            //帮助
+            Help.detect(event);
+
             //意见反馈
             FeedBack.get(event);
 

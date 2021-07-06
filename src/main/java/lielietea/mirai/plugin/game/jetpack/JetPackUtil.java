@@ -1,20 +1,31 @@
 package lielietea.mirai.plugin.game.jetpack;
 
+import com.google.gson.Gson;
 import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.FoodCluster;
+import lielietea.mirai.plugin.messageresponder.fursona.Fursona;
+import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
 import net.mamoe.mirai.event.events.MessageEvent;
+import sun.nio.cs.UTF_8;
 
+import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 import static java.lang.Math.pow;
+import static lielietea.mirai.plugin.game.jetpack.BaiduAPI.ZOOM_LEVEL;
+import static lielietea.mirai.plugin.game.jetpack.BaiduAPI.ZOOM_LEVEL_CITY;
 
 
 public class JetPackUtil {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    static final String LOCATION_RECORD = "/jetpackrecord/jetpackrecord.txt";
+    static final String TXT_PATH = System.getProperty("user.dir")+File.separator+"jetpack.txt";
 
     public static class locationRecord{
         double lng;
@@ -58,11 +69,10 @@ public class JetPackUtil {
         if (now_ms >= actualArrivalTime_ms) {
             return loc2;
         } else {
-            BaiduAPI.Location loc_now=null;
             assert false;
-            loc_now.lat = loc1.lat + (loc2.lat - loc1.lat) * (now_ms - departureTime_ms) / (actualArrivalTime_ms - departureTime_ms);
-            loc_now.lng = loc1.lng + (loc2.lng - loc1.lng) * (now_ms - departureTime_ms) / (actualArrivalTime_ms - departureTime_ms);
-            return loc_now;
+            Double lat = loc1.lat + (loc2.lat - loc1.lat) * (now_ms - departureTime_ms) / (actualArrivalTime_ms - departureTime_ms);
+            Double lng = loc1.lng + (loc2.lng - loc1.lng) * (now_ms - departureTime_ms) / (actualArrivalTime_ms - departureTime_ms);
+            return new BaiduAPI.Location(lng,lat);
         }
     }
 
@@ -70,7 +80,7 @@ public class JetPackUtil {
     public static void writeRecord(String content) {
         BufferedWriter out;
         try {
-            out = new BufferedWriter(new FileWriter(LOCATION_RECORD, true));
+            out = new BufferedWriter(new FileWriter(TXT_PATH, true));
             out.write(content);
             out.close();
         } catch (IOException e) {
@@ -92,13 +102,11 @@ public class JetPackUtil {
         }
     }
 
-
     //读取txt文件返回Map
     public static List<locationRecord> readRecord() throws IOException {
         List<locationRecord> locMap = new ArrayList<>();
-        InputStream is = FoodCluster.class.getResourceAsStream(LOCATION_RECORD);
-        assert is != null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8));
+        InputStreamReader is = new InputStreamReader(new FileInputStream(TXT_PATH));
+        BufferedReader br = new BufferedReader(is);
         String str;
         while(true) {
             str = br.readLine();
@@ -114,5 +122,54 @@ public class JetPackUtil {
     //把LocationRecord按照输出顺序转换成String
     public static String convertLocationRecord(locationRecord lr){
         return String.valueOf(lr.lng)+","+String.valueOf(lr.lat)+","+lr.locationName+","+lr.departureTime+"\n";
+    }
+
+    //计算ZoomLevel
+    public static int zoomLevelCalculator(BaiduAPI.Location loc1, BaiduAPI.Location loc2){
+        double duration = getFlightDuration(loc1,loc2);
+        if(duration<=2.5){
+            return 16;
+        }else if (duration<=5){
+            return 15;
+        }else if (duration<=15){
+            return 14;
+        }else if (duration<=30){
+            return 13;
+        }else if(duration<=60){
+            return 12;
+        }else if(duration<=480){
+            return (int) (13-duration/60);
+        }else{
+            return 5;
+        }
+    }
+
+    static class cityBorders{
+        List<cityCoords> borders;
+    }
+
+    static class cityCoords{
+        String city;
+        List<BaiduAPI.Location> coords;
+    }
+
+    public static boolean isBetween(BaiduAPI.Location loc1, BaiduAPI.Location loc2, BaiduAPI.Location loc){
+        return ((loc1.lat-loc.lat)*(loc2.lat-loc.lat)<0)&&((loc1.lng-loc.lng)*(loc2.lng-loc.lng)<0);
+    }
+
+    //判断坐标是否在城市区域内，是的话返回17
+    public static int zoomLevelCalculatorS(BaiduAPI.Location loc){
+        String CITYCOORDS_PATH = "/cluster/citycoords.json";
+        InputStream is = FursonaPunk.class.getResourceAsStream(CITYCOORDS_PATH);
+        assert is != null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        Gson gson = new Gson();
+        cityBorders cb = gson.fromJson(br, cityBorders.class);
+        for(int i=0;i<cb.borders.size();i++){
+            if (isBetween(cb.borders.get(i).coords.get(0),cb.borders.get(i).coords.get(1),loc)){
+                return ZOOM_LEVEL_CITY;
+            }
+        }
+        return ZOOM_LEVEL;
     }
 }

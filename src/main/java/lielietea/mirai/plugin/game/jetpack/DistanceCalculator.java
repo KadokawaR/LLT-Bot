@@ -19,4 +19,5 @@ public class DistanceCalculator {
         s = (s * 10000) / 10;
         return s;
     }
+
 }
