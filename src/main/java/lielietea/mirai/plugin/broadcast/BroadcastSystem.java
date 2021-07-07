@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.broadcast;
 
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
+import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
@@ -27,10 +28,11 @@ public class BroadcastSystem {
     //测试广播消息
     public static void testSendToAllGroups(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast_emergency ") && aac.checkIdentity(event)){
-            message = message.replace("/broadcast_emergency ","");
+        if (message.contains("/broadcast2g ") && aac.checkIdentity(event)){
+            message = message.replace("/broadcast2g ","");
             sendToAllGroups(event, message);
         }
+        Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("群广播已完成。");
     }
 
     public static void directlySendToGroup(FriendMessageEvent event) throws InterruptedException{
@@ -55,12 +57,20 @@ public class BroadcastSystem {
             message = message.replace("/broadcast2f ","");
             sendToCertainFriends(event,message,event.getBot().getFriends());
         }
+        Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("好友广播已完成。");
     }
 
     public static void sendToCertainFriends(MessageEvent event, String message, ContactList<Friend> friendContactList) throws InterruptedException {
         for (Friend friend : friendContactList) {
             Objects.requireNonNull(event.getBot().getFriend(friend.getId())).sendMessage(message);
             Thread.sleep(3000);
+        }
+    }
+
+    //broadcast helper
+    public static void broadcastHelper(MessageEvent event){
+        if (event.getMessage().contentToString().contains("/broadcasthelper")&& aac.checkIdentity(event)){
+            event.getSubject().sendMessage("/broadcast2f+空格+消息，发送给所有好友\n/broadcast2g+空格+消息，发送给所有群\n/broadcast+空格+群号+空格+消息，发送给指定群");
         }
     }
 }

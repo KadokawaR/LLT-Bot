@@ -45,7 +45,7 @@ public class JetPackUtil {
     public static double getFlightDuration(BaiduAPI.Location loc1, BaiduAPI.Location loc2) {
         double distance = DistanceCalculator.GetDistance(loc1.lng, loc1.lat, loc2.lng, loc2.lat);
         //分钟与公里的拟合曲线 y=0.515x^0.836
-        return 0.515 * pow(distance / 1000, 0.836);
+        return 0.515 * pow(distance / 1000, 0.836) / 5;
     }
 
     //以sdf格式返回预计抵达时间的String
@@ -127,18 +127,18 @@ public class JetPackUtil {
     //计算ZoomLevel
     public static int zoomLevelCalculator(BaiduAPI.Location loc1, BaiduAPI.Location loc2){
         double duration = getFlightDuration(loc1,loc2);
-        if(duration<=2.5){
+        if(duration<=1.25){
             return 16;
-        }else if (duration<=5){
+        }else if (duration<=2.5){
             return 15;
-        }else if (duration<=15){
+        }else if (duration<=7.5){
             return 14;
-        }else if (duration<=30){
+        }else if (duration<=15){
             return 13;
-        }else if(duration<=60){
+        }else if(duration<=30){
             return 12;
-        }else if(duration<=480){
-            return (int) (13-duration/60);
+        }else if(duration<=240){
+            return (int) (13-duration/30);
         }else{
             return 5;
         }

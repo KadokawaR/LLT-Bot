@@ -8,6 +8,7 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class AdminTools {
@@ -21,13 +22,20 @@ public class AdminTools {
     }
 
     public void handleAdminCommand(FriendMessageEvent event){
-        //TODO：回复消息长度不能长于5000字
         if (event.getMessage().contentToString().contains("/group")) {
-            getGroupList(event);
+            try {
+                getGroupList(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         if (event.getMessage().contentToString().contains("/friend")) {
-            getFriendList(event);
+            try {
+                getFriendList(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         if (event.getMessage().contentToString().contains("/reload")) {
@@ -42,15 +50,27 @@ public class AdminTools {
         return allGroupInfo2;
     }
 
-    void getGroupList(FriendMessageEvent event){
+    void getGroupList(FriendMessageEvent event) throws InterruptedException {
         if (administrativeAccountChecker.checkIdentity(event)){
             Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
-            String allGroupInfo = "";
+            int size = event.getBot().getGroups().getSize();
+            String[] allGroupInfo = new String[size/20+1];
+            Arrays.fill(allGroupInfo, "");
+            int count =0;
+            int countString = 0;
             while (listIter.hasNext()){
-                allGroupInfo = addGroupInfo(listIter,allGroupInfo);
-                //event.getSender().sendMessage(allGroupInfo);
+                if (count>19){
+                    count=0;
+                    countString+=1;
+                }
+                allGroupInfo[countString] = addGroupInfo(listIter,allGroupInfo[countString]);
+                count+=1;
             }
-            event.getSubject().sendMessage(allGroupInfo);
+            for (int i=0;i<=countString;i++){
+                event.getSubject().sendMessage(allGroupInfo[i]);
+                Thread.sleep(1000);
+            }
+            event.getSubject().sendMessage("七筒目前的群数量是："+String.valueOf(size));
         }
     }
 
@@ -59,15 +79,27 @@ public class AdminTools {
         return allFriendInfo + "\n好友ID " + next.getId() + "\n好友名称 " + next.getNick() + "\n";
     }
 
-    void getFriendList(FriendMessageEvent event){
+    void getFriendList(FriendMessageEvent event) throws InterruptedException {
         if (administrativeAccountChecker.checkIdentity(event)){
             Iterator<Friend> listIter = event.getBot().getFriends().stream().iterator();
-            String allFriendInfo = "";
+            int size = event.getBot().getFriends().getSize();
+            String[] allFriendInfo = new String[size/30+1];
+            Arrays.fill(allFriendInfo, "");
+            int count =0;
+            int countString = 0;;
             while (listIter.hasNext()){
-                allFriendInfo = addFriendInfo(listIter,allFriendInfo);
-                //event.getSender().sendMessage(allGroupInfo);
+                if (count>29){
+                    count=0;
+                    countString+=1;
+                }
+                allFriendInfo[countString] = addFriendInfo(listIter,allFriendInfo[countString]);
+                count+=1;
             }
-            event.getSubject().sendMessage(allFriendInfo);
+            for (int i=0;i<=countString;i++){
+                event.getSubject().sendMessage(allFriendInfo[i]);
+                Thread.sleep(1000);
+            }
+            event.getSubject().sendMessage("七筒目前的好友数量是："+String.valueOf(size));
         }
     }
 

@@ -52,7 +52,7 @@ public class JetPack extends BaiduAPI{
 
             //初始化jetpack
             if (event.getMessage().contentToString().equals("/jetpack")){
-                event.getSubject().sendMessage("喷气背包时间到！\n\n七筒可以乘坐喷气背包飞抵任何地方，但目前七筒还没有办护照，所以暂时不能出国。输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者飞行路线。");
+                event.getSubject().sendMessage("喷气背包时间到！\n\n七筒可以乘坐喷气背包飞抵任何地方，但目前七筒还没有办护照，所以暂时不能出国。输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者飞行路线。\n\n请注意，输入的地点七筒不一定能够识别，所以请按照诸如“上海市徐家汇”、“长沙市坡子街茶颜悦色”、“上海市交通路与双汇路路口”、“长沙市五一广场”的格式输入地点。只有置信度相对高的地点七筒才能够到达。");
             }
 
             //用/jetpack + 地址来尝试构建新飞行
@@ -95,8 +95,8 @@ public class JetPack extends BaiduAPI{
                     String destinationName = isInLaunchProcess.get(event.getSender().getId()).locationName;
                     long flyingDuration = (long) (JetPackUtil.getFlightDuration(loc2,loc3)*60*1000);
                     long flyingDurationM = (long) (JetPackUtil.getFlightDuration(loc2,loc3));
-                    event.getSubject().sendMessage("七筒正在使用喷气背包前往" + destinationName + "，预计抵达时间："+ JetPackUtil.sdf.parse(JetPackUtil.getEstimatedArrivalTime(loc2, loc3, recordMap.get(recordMap.size()-1).departureTime)));
                     JetPackUtil.writeRecord(JetPackUtil.convertLocationRecord(isInLaunchProcess.get(event.getSender().getId())));
+                    event.getSubject().sendMessage("七筒正在使用喷气背包前往" + destinationName + "，预计抵达时间："+ JetPackUtil.getEstimatedArrivalTime(loc2, loc3, recordMap.get(recordMap.size()-1).departureTime));
                     isInLaunchProcess.remove(event.getSender().getId());
                     //抵达之后告知
                     timerJP.schedule(new TimerTask() {

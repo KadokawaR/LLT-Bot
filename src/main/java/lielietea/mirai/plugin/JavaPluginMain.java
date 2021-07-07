@@ -184,6 +184,8 @@ public final class JavaPluginMain extends JavaPlugin {
                 logger.error(e);
             }
 
+            BroadcastSystem.broadcastHelper(event);
+
         });
     }
 
