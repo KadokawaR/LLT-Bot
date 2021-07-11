@@ -1,0 +1,62 @@
+{
+  "group": [
+    {
+      "id": 123456789,
+      "money": 4000,
+      "warehouse": [
+        {"id":1,"num":1},{"id":2,"num":2},{"id":3,"num":3},{"id":4,"num":4}
+      ],
+      "layout": [
+        {
+          "loc": 0,
+          "object": 17,
+          "stamp": 1545098699
+        },
+        {
+          "loc": 1,
+          "object": 15,
+          "stamp": 1545098699
+        },
+        {
+          "loc": 2,
+          "object": 0,
+          "stamp": 1545098699
+        },
+        {
+          "loc": 3,
+          "object": 0,
+          "stamp": 1545098699
+        }
+      ]
+    },
+    {
+      "id": 123456789,
+      "money": 4000,
+      "warehouse": [
+        {"id":1,"num":1},{"id":2,"num":2},{"id":3,"num":3},{"id":4,"num":4}
+      ],
+      "layout": [
+        {
+          "loc": 0,
+          "object": 17,
+          "stamp": 1545098699
+        },
+        {
+          "loc": 1,
+          "object": 15,
+          "stamp": 1545098699
+        },
+        {
+          "loc": 2,
+          "object": 0,
+          "stamp": 1545098699
+        },
+        {
+          "loc": 3,
+          "object": 0,
+          "stamp": 1545098699
+        }
+      ]
+    }
+  ]
+}

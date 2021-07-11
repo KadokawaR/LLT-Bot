@@ -18,9 +18,8 @@ public class BroadcastSystem {
     }
 
     public static void sendToCertainGroups(MessageEvent event, String message, ContactList<Group> groupContactList) throws InterruptedException {
-        Iterator<Group> it = groupContactList.iterator();
-        while (it.hasNext()){
-            Objects.requireNonNull(event.getBot().getGroup(it.next().getId())).sendMessage(message);
+        for (Group group : groupContactList) {
+            Objects.requireNonNull(event.getBot().getGroup(group.getId())).sendMessage(message);
             Thread.sleep(3000);
         }
     }

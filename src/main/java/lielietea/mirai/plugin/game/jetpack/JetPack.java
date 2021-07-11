@@ -1,16 +1,13 @@
 package lielietea.mirai.plugin.game.jetpack;
 
-import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
+import lielietea.mirai.plugin.utils.fileutils.Write;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import org.checkerframework.checker.units.qual.A;
 
-import java.io.IOException;
 import java.util.*;
 
-import static lielietea.mirai.plugin.game.jetpack.JetPackUtil.getEstimatedArrivalTime;
-import static lielietea.mirai.plugin.game.jetpack.JetPackUtil.zoomLevelCalculatorS;
+import static lielietea.mirai.plugin.game.jetpack.JetPackUtil.*;
 
 public class JetPack extends BaiduAPI{
 
@@ -19,7 +16,7 @@ public class JetPack extends BaiduAPI{
     static Map<Long, JetPackUtil.locationRecord> isInLaunchProcess = new HashMap<>();
 
     public static void start(GroupMessageEvent event) throws Exception {
-        if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().contains("/yes") || event.getMessage().contentToString().contains("/no")||event.getMessage().contentToString().contains("/location")||event.getMessage().contentToString().contains("/abort")||event.getMessage().contentToString().contains("/landing")) {
+        if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().contains("/yes") || event.getMessage().contentToString().contains("/no")||event.getMessage().contentToString().contains("/location")||event.getMessage().contentToString().contains("/abort")||event.getMessage().contentToString().contains("/landing")||event.getMessage().contentToString().contains("/record")) {
             List<JetPackUtil.locationRecord> recordMap = JetPackUtil.readRecord();
             Date arrivalTime;
             Location loc1;
@@ -50,9 +47,9 @@ public class JetPack extends BaiduAPI{
                 }
             }
 
-            //初始化jetpack
-            if (event.getMessage().contentToString().equals("/jetpack")){
-                event.getSubject().sendMessage("喷气背包时间到！\n\n七筒可以乘坐喷气背包飞抵任何地方，但目前七筒还没有办护照，所以暂时不能出国。输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者飞行路线。\n\n请注意，输入的地点七筒不一定能够识别，所以请按照诸如“上海市徐家汇”、“长沙市坡子街茶颜悦色”、“上海市交通路与双汇路路口”、“长沙市五一广场”的格式输入地点。只有置信度相对高的地点七筒才能够到达。");
+            //初始化的jetpack指令
+            if (event.getMessage().contentToString().equals("/jetpack")||event.getMessage().contentToString().equals("/jetpack ")){
+                event.getSubject().sendMessage("喷气背包时间到！\n\n七筒可以使用喷气背包飞抵任何地方。但目前七筒还没有办护照，所以暂时不能出国。输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者当前的飞行路线。\n\n请注意，输入的地点七筒不一定能够识别，所以请按照诸如“上海市徐家汇”、“长沙市坡子街茶颜悦色”、“上海市交通路与双汇路路口”、“长沙市五一广场”的格式输入地点。只有置信度相对高的地点七筒才能够到达。");
             }
 
             //用/jetpack + 地址来尝试构建新飞行
@@ -95,7 +92,7 @@ public class JetPack extends BaiduAPI{
                     String destinationName = isInLaunchProcess.get(event.getSender().getId()).locationName;
                     long flyingDuration = (long) (JetPackUtil.getFlightDuration(loc2,loc3)*60*1000);
                     long flyingDurationM = (long) (JetPackUtil.getFlightDuration(loc2,loc3));
-                    JetPackUtil.writeRecord(JetPackUtil.convertLocationRecord(isInLaunchProcess.get(event.getSender().getId())));
+                    Write.append(JetPackUtil.convertLocationRecord(isInLaunchProcess.get(event.getSender().getId())),TXT_PATH);
                     event.getSubject().sendMessage("七筒正在使用喷气背包前往" + destinationName + "，预计抵达时间："+ JetPackUtil.getEstimatedArrivalTime(loc2, loc3, recordMap.get(recordMap.size()-1).departureTime));
                     isInLaunchProcess.remove(event.getSender().getId());
                     //抵达之后告知
@@ -121,7 +118,7 @@ public class JetPack extends BaiduAPI{
             //直接抵达 重新写入一遍最后一条记录
             if (event.getMessage().contentToString().contains("/abort") && aac.checkIdentity(event)){
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(recordMap.get(recordMap.size() - 1).lng,recordMap.get(recordMap.size() - 1).lat,recordMap.get(recordMap.size() - 1).locationName,JetPackUtil.sdf.format(dateNow));
-                JetPackUtil.writeRecord(JetPackUtil.convertLocationRecord(newRecord));
+                Write.append(JetPackUtil.convertLocationRecord(newRecord),TXT_PATH);
                 event.getSubject().sendMessage("飞行已经被终止，七筒提前抵达目的地。");
             }
             //迫降在当地 写入两条记录
@@ -129,8 +126,8 @@ public class JetPack extends BaiduAPI{
                 Location currentLocation = JetPackUtil.getCurrentLocation(loc1, loc2, recordMap.get(recordMap.size()-1).departureTime);
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(currentLocation.lng,currentLocation.lat,"迫降点",JetPackUtil.sdf.format(dateNow));
                 //写入两次
-                JetPackUtil.writeRecord(JetPackUtil.convertLocationRecord(newRecord));
-                JetPackUtil.writeRecord(JetPackUtil.convertLocationRecord(newRecord));
+                Write.append(JetPackUtil.convertLocationRecord(newRecord),TXT_PATH);
+                Write.append(JetPackUtil.convertLocationRecord(newRecord),TXT_PATH);
                 if (!C2AToString(currentLocation).contains("目前暂不清楚七筒的位置。")) {
                     event.getSubject().sendMessage(C2AToString(currentLocation)+"，已经成功迫降。");
                     timerJP.cancel();
@@ -140,7 +137,14 @@ public class JetPack extends BaiduAPI{
                     timerJP.cancel();
                 }
             }
+            //获得完整的飞行记录
+            if (event.getMessage().contentToString().contains("/record")){
+                StringBuilder recordStr = new StringBuilder();
+                for (locationRecord lr : JetPackUtil.readRecord()){
+                    recordStr.append(lr.locationName).append(",").append(lr.lng).append(",").append(lr.lat).append("\n");
+                }
+                event.getSender().sendMessage(recordStr.toString());
+            }
         }
     }
 }
-

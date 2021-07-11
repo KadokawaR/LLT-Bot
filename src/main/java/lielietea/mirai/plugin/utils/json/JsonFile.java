@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class JsonFile {
 
+    //读取网页上的json文本
     public static String read(String urlPath) throws Exception {
         URL url = new URL(urlPath);
         BufferedReader reader = new BufferedReader
@@ -23,6 +24,7 @@ public class JsonFile {
         return jsonstring.toString();
     }
 
+    //读取该URL地址的图片
     public static InputStream getInputStream(String urlPath) {
         InputStream inputStream = null;
         HttpURLConnection httpURLConnection = null;

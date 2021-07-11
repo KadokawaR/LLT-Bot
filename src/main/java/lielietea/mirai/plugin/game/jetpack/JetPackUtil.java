@@ -25,7 +25,7 @@ import static lielietea.mirai.plugin.game.jetpack.BaiduAPI.ZOOM_LEVEL_CITY;
 public class JetPackUtil {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    static final String TXT_PATH = System.getProperty("user.dir")+File.separator+"jetpack.txt";
+    static final String TXT_PATH = System.getProperty("user.dir")+File.separator+"data"+File.separator+"jetpack.txt";
 
     public static class locationRecord{
         double lng;
@@ -74,19 +74,6 @@ public class JetPackUtil {
             Double lng = loc1.lng + (loc2.lng - loc1.lng) * (now_ms - departureTime_ms) / (actualArrivalTime_ms - departureTime_ms);
             return new BaiduAPI.Location(lng,lat);
         }
-    }
-
-    //在文件中追写内容
-    public static void writeRecord(String content) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(TXT_PATH, true));
-            out.write(content);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     //将整行String转换为locationRecord
@@ -160,7 +147,7 @@ public class JetPackUtil {
     //判断坐标是否在城市区域内，是的话返回17
     public static int zoomLevelCalculatorS(BaiduAPI.Location loc){
         String CITYCOORDS_PATH = "/cluster/citycoords.json";
-        InputStream is = FursonaPunk.class.getResourceAsStream(CITYCOORDS_PATH);
+        InputStream is = JetPackUtil.class.getResourceAsStream(CITYCOORDS_PATH);
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         Gson gson = new Gson();

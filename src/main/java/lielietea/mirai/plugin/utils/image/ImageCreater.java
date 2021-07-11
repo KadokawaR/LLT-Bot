@@ -28,9 +28,15 @@ public class ImageCreater {
         BufferedImage img1 = ImageIO.read(is1);
         InputStream is2 = ImageCreater.class.getResourceAsStream("/pics/winner/wanted.jpg");
         BufferedImage img2 = ImageIO.read(is2);
+        BufferedImage img0;
         //头像变形
-        ImageScale isc = new ImageScale();
-        BufferedImage img0 = isc.imageZoomOut(img1,512,512,false);
+        if (img1.getHeight()<512){
+            img0 = ImageEnlarger.zoomInImage(img1,512,512);
+        }
+        else {
+            ImageScale isc = new ImageScale();
+            img0 = isc.imageZoomOut(img1, 512, 512, false);
+        }
 
         int w0 = img0.getWidth();
         int h0 = img0.getHeight();

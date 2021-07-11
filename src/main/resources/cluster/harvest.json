@@ -1,0 +1,46 @@
+{
+  "harvestlist": [
+    {
+      "seed": "OrangeTree",
+      "harvest":
+      [
+        {
+          "fruit": "Orange",
+          "chance": [1.5,2.25,3.25]
+        },
+        {
+          "fruit": "OrangeSeed",
+          "chance": [1.85,2.1,3.05]
+        }
+      ]
+    },
+    {
+      "seed": "AppleTree",
+      "harvest":
+      [
+        {
+          "fruit": "Apple",
+          "chance": [1.55,2.25,3.25]
+        },
+        {
+          "fruit": "OrangeSeed",
+          "chance": [1.85,2.1,3.05]
+        }
+      ]
+    },
+    {
+      "seed": "StrawberryPlant",
+      "harvest":
+      [
+        {
+          "fruit": "Strawberry",
+          "chance": [1.5,2.25,3.25]
+        },
+        {
+          "fruit": "StrawberrySeed",
+          "chance": [1.85,2.1,3.05]
+        }
+      ]
+    }
+  ]
+}
