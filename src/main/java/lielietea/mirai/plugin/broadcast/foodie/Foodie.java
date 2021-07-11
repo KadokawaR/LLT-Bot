@@ -40,8 +40,8 @@ public class Foodie {
 
             if (!foodieActivationFlags.get(event.getSubject().getId())){
                 event.getSubject().sendMessage("饿了么？要来点吃的吗？");
-                FoodieUtil.sendFoodieImage(event,FOODIE_URL);
                 foodieActivationFlags.put(event.getSubject().getId(),true);
+                FoodieUtil.sendFoodieImage(event,FOODIE_URL);
             }
         }
     }
