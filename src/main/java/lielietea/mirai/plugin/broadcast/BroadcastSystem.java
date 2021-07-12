@@ -30,8 +30,8 @@ public class BroadcastSystem {
         if (message.contains("/broadcast2g ") && aac.checkIdentity(event)){
             message = message.replace("/broadcast2g ","");
             sendToAllGroups(event, message);
+            Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("群广播已完成。");
         }
-        Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("群广播已完成。");
     }
 
     public static void directlySendToGroup(FriendMessageEvent event) throws InterruptedException{
@@ -55,8 +55,8 @@ public class BroadcastSystem {
         if (message.contains("/broadcast2f ") && aac.checkIdentity(event)) {
             message = message.replace("/broadcast2f ","");
             sendToCertainFriends(event,message,event.getBot().getFriends());
+            Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("好友广播已完成。");
         }
-        Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("好友广播已完成。");
     }
 
     public static void sendToCertainFriends(MessageEvent event, String message, ContactList<Friend> friendContactList) throws InterruptedException {

@@ -120,12 +120,16 @@ public class JetPackUtil {
             return 15;
         }else if (duration<=7.5){
             return 14;
-        }else if (duration<=15){
+        }else if (duration<=10){
             return 13;
-        }else if(duration<=30){
+        }else if(duration<=15){
             return 12;
-        }else if(duration<=240){
-            return (int) (13-duration/30);
+        }else if(duration<=20){
+            return 11;
+        }else if(duration<=30){
+            return 10;
+        }else if(duration<=150){
+            return (int) (10-duration/30);
         }else{
             return 5;
         }
