@@ -29,11 +29,24 @@ public class GardenUtils {
         long money;
         List<Warehouse> warehouse;
         List<GardenTiles> layout;
+        List<Integer> seedlist;
+        GroupGarden(long id1, long money1, List<Warehouse> warehouse1, List<GardenTiles> layout1, List<Integer> seedlist1){
+            id = id1;
+            money = money1;
+            warehouse = warehouse1;
+            layout = layout1;
+            seedlist = seedlist1;
+        }
     }
     static class GardenTiles{
         int loc;
         int object;
         long stamp;
+        GardenTiles(int loc1,int object1,long stamp1){
+            loc = loc1;
+            object = object1;
+            stamp = stamp1;
+        }
     }
     static class GardenStatus{
         int loc;
@@ -83,17 +96,17 @@ public class GardenUtils {
     /**
      * 根据群聊ID获得花园的基本信息，每个群聊的花园属性不变。
      */
-    public static GardenType getGardenInfo(GroupMessageEvent event){
-        Random random = new Random(event.getSubject().getId());
+    public static GardenType getGardenInfo(long groupID){
+        Random random = new Random(groupID);
         return GardenType.values()[random.nextInt(GardenType.values().length)];
     }
 
     /**
      * 查询当前群
      */
-    public static int getGroupGarden(GroupMessageEvent event,GardenWorld gw){
+    public static int getGroupGarden(long groupID,GardenWorld gw){
         for (int i=0;i<gw.group.size();i++){
-            if (gw.group.get(i).id==event.getSubject().getId()){
+            if (gw.group.get(i).id==groupID){
                 return i;
             }
         }
@@ -108,20 +121,47 @@ public class GardenUtils {
         Date date = new Date();
         long now = date.getTime();
         for(int i=0;i<gg.layout.size();i++){
-            list.add(new GardenStatus(gg.layout.get(i).loc,gg.layout.get(i).object,(now>=getMatureTime(gg.layout.get(i)))));
+            list.add(new GardenStatus(gg.layout.get(i).loc,gg.layout.get(i).object,(now>=getMatureTime(gg,gg.layout.get(i)))));
         }
         return list;
     }
 
     /**
      * 根据种植时间和种类的返回果实成熟的时间戳
+     * 如果种子的类型和花园类型相同，则成熟时间减半
      */
-    public static long getMatureTime(GardenTiles gt){
+    public static long getMatureTime(GroupGarden gg,GardenTiles gt){
         PlantSeed ps = PlantSeed.values()[gt.object];
+        if (ps.plantType[gt.object]==getGardenInfo(gg.id)){
+            return (gt.stamp+(long) ps.seedTime[ps.ordinal()] * 60 * 1000 /2 );
+        }
         return (gt.stamp+ (long) ps.seedTime[ps.ordinal()] * 60 * 1000);
     }
 
     /**
-     *
+     *为花园添加一列
      */
+    public static GardenWorld addRow(GardenWorld gw, long groupID){
+        Date date = new Date();
+        long dateNow = date.getTime();
+        int size = gw.group.get(getGroupGarden(groupID,gw)).layout.size();
+        for (int i=size;i<size+6;i++){
+            gw.group.get(getGroupGarden(groupID,gw)).layout.add(new GardenTiles(i,0,dateNow));
+        }
+        return gw;
+    }
+
+    /**
+     * 初始化群花园
+     */
+    public static GardenWorld initialize(GardenWorld gw, GroupMessageEvent event){
+        long groupID = event.getGroup().getId();
+        List<Warehouse> warehouseList = new ArrayList<>();
+        List<GardenTiles> gardenTilesList = new ArrayList<>();
+        List<Integer> plantSeedList = new ArrayList<>();
+        GroupGarden gg = new GroupGarden(groupID,0,warehouseList,gardenTilesList,plantSeedList);
+        gw.group.add(gg);
+        gw = addRow(gw,groupID);
+        return gw;
+    }
 }

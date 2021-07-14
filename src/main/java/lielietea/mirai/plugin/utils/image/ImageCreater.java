@@ -51,12 +51,12 @@ public class ImageCreater {
         ImageArrayTwo = img2.getRGB(0, 0, w2, h2, ImageArrayTwo, 0, w2);
 
         // 生成新图片
-        BufferedImage img_new;
-        img_new = new BufferedImage(w2, h2, BufferedImage.TYPE_INT_RGB);
-        img_new.setRGB(0, 0, w2, h2, ImageArrayTwo, 0, w2); // 设置上半部分或左半部分的RGB
-        img_new.setRGB(wx, hx, w0, h0, ImageArrayOne, 0, w0);
+        BufferedImage imgNew;
+        imgNew = new BufferedImage(w2, h2, BufferedImage.TYPE_INT_RGB);
+        imgNew.setRGB(0, 0, w2, h2, ImageArrayTwo, 0, w2); // 设置上半部分或左半部分的RGB
+        imgNew.setRGB(wx, hx, w0, h0, ImageArrayOne, 0, w0);
 
-        return img_new;
+        return imgNew;
     }
 
     public static BufferedImage getImageFromResource (String filepath) throws IOException {
@@ -77,11 +77,11 @@ public class ImageCreater {
         }
         int[] imageArray = new int[(xEnd-xStart)*(yEnd-yStart)];
         imageArray = img.getRGB(xStart,yStart,xEnd-xStart,yEnd-yStart,imageArray,0,xEnd-xStart);
-        BufferedImage img_new;
-        img_new = new BufferedImage(xEnd-xStart,yEnd-yStart,BufferedImage.TYPE_INT_RGB);
-        img_new.setRGB(0,0,xEnd-xStart,yEnd-yStart,imageArray,0,xEnd-xStart);
+        BufferedImage imgNew;
+        imgNew = new BufferedImage(xEnd-xStart,yEnd-yStart,BufferedImage.TYPE_INT_RGB);
+        imgNew.setRGB(0,0,xEnd-xStart,yEnd-yStart,imageArray,0,xEnd-xStart);
 
-        return img_new;
+        return imgNew;
     }
 
     //在小图上加大图
@@ -125,5 +125,35 @@ public class ImageCreater {
     public static void sendImage(BufferedImage image, GroupMessageEvent event) throws IOException {
         event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), BufferedImageToInputStream.execute(image)));
         BufferedImageToInputStream.execute(image).close();
+    }
+
+    //在原图的右边加上一张等高的新图片
+    public static BufferedImage addImageAtRight(BufferedImage imgLeft, BufferedImage imgRight){
+        int hL = imgLeft.getHeight();
+        int wL = imgLeft.getWidth();
+        int wR = imgRight.getWidth();
+        BufferedImage imgNew = new BufferedImage(wL+wR,hL,BufferedImage.TYPE_INT_RGB);
+        int[] imgLeftArray = new int[wL*hL];
+        int[] imgRightArray = new int[wR*hL];
+        imgLeftArray = imgLeft.getRGB(0, 0, wL, hL, imgLeftArray, 0, wL);
+        imgRightArray = imgLeft.getRGB(0, 0, wR, hL, imgRightArray, 0, wR);
+        imgNew.setRGB(0,0,wL,hL,imgLeftArray,0,wL);
+        imgNew.setRGB(wL,0,wR,hL,imgRightArray,0,wR);
+        return imgNew;
+    }
+
+    //在原图的下边加上一张等宽的新图片
+    public static BufferedImage addImageAtBottom(BufferedImage imgUp, BufferedImage imgBottom){
+        int hU = imgUp.getHeight();
+        int hB = imgBottom.getHeight();
+        int wU = imgUp.getWidth();
+        BufferedImage imgNew = new BufferedImage(wU,hU+hB,BufferedImage.TYPE_INT_RGB);
+        int[] imgLeftArray = new int[wU*hU];
+        int[] imgRightArray = new int[wU*hB];
+        imgLeftArray = imgUp.getRGB(0, 0, wU, hU, imgLeftArray, 0, wU);
+        imgRightArray = imgUp.getRGB(0, 0, wU, hB, imgRightArray, 0, wU);
+        imgNew.setRGB(0,0,wU,hU,imgLeftArray,0,wU);
+        imgNew.setRGB(0,hU,wU,hB,imgRightArray,0,wU);
+        return imgNew;
     }
 }

@@ -31,12 +31,15 @@ public class Harvest extends GardenUtils{
     public static HarvestList getHarvestFromJson(){
         String HARVEST_PATH = "/cluster/harvest.json";
         InputStream is = JetPackUtil.class.getResourceAsStream(HARVEST_PATH);
+        assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         Gson gson = new Gson();
         return gson.fromJson(br,HarvestList.class);
     }
 
-    //根据Harvest.json里面的chance数组来计算最终获得的物品的数量
+    /**
+     * 根据Harvest.json里面的chance数组来计算最终获得的物品的数量
+     */
     public static int fruitCalculator(double[] chance){
         double[] realChance = new double[chance.length];
         int[] number = new int[chance.length];
@@ -58,38 +61,55 @@ public class Harvest extends GardenUtils{
         return number[0];
     }
 
-    public static List<Warehouse> put(List<Warehouse> warehouseList, Fruits fruit, int num){
-        for (Warehouse warehouse : warehouseList){
-            if(warehouse.id==fruit.ordinal()){
-                warehouse.num += num;
-                return warehouseList;
+    /**
+     * 向仓库里面添加 fruits，如果没有这个种类则新建，如果有这个种类则更新数值
+     * 如果数值超过99，则自动变成99
+     */
+    public static GardenWorld put(GardenWorld gw, long groupID, Fruits fruit, int num){
+        for (int i = 0; i<gw.group.get(getGroupGarden(groupID,gw)).warehouse.size();i++){
+            if(gw.group.get(getGroupGarden(groupID,gw)).warehouse.get(i).id==fruit.ordinal()){
+                gw.group.get(getGroupGarden(groupID,gw)).warehouse.get(i).num += num;
+                if (gw.group.get(getGroupGarden(groupID,gw)).warehouse.get(i).num>99){
+                    gw.group.get(getGroupGarden(groupID,gw)).warehouse.get(i).num=99;
+                }
+                return gw;
             }
         }
-        warehouseList.add(new Warehouse(fruit.ordinal(),num));
-        return warehouseList;
+        gw.group.get(getGroupGarden(groupID,gw)).warehouse.add(new Warehouse(fruit.ordinal(),num));
+        return gw;
     }
 
-    public static GroupGarden pick(GroupGarden gg,HarvestList hl){
-        Random random = new Random();
+    /**
+     * 采摘花园里全部的成熟植物
+     */
+    public static GardenWorld pick(GardenWorld gw, long groupID, HarvestList hl){
         Date date = new Date();
-        long datenow = date.getTime();
-        List<GardenStatus> list = convertToGS(gg);
-        for (int i=0;i<gg.layout.size();i++){
+        long dateNow = date.getTime();
+        List<GardenStatus> list = convertToGS(gw.group.get(getGroupGarden(groupID,gw)));
+        for (int i=0;i<gw.group.get(getGroupGarden(groupID,gw)).layout.size();i++){
             if (list.get(i).isMature){
-                gg.layout.get(i).stamp=datenow;
-                gg.layout.get(i).object=0;
+                gw.group.get(getGroupGarden(groupID,gw)).layout.get(i).stamp=dateNow;
+                gw.group.get(getGroupGarden(groupID,gw)).layout.get(i).object=0;
                 for(HarvestRes hr : hl.harvestlist){
-                    if (hr.seed.ordinal()==gg.layout.get(i).object){
+                    if (hr.seed.ordinal()==gw.group.get(getGroupGarden(groupID,gw)).layout.get(i).object){
                         for( FruitDetail fd : hr.fruitDetails){
-                            gg.warehouse=put(gg.warehouse,fd.fruit,fruitCalculator(fd.chance));
+                            gw = put(gw, groupID,fd.fruit,fruitCalculator(fd.chance));
                         }
                     }
                 }
             }
         }
-        return gg;
+        return gw;
     }
 
-
+    /**
+     * 龙卷风摧毁停车场
+     */
+    public static GardenWorld remove(GardenWorld gw, long groupID){
+        for(int i=0;i<gw.group.get(getGroupGarden(groupID,gw)).layout.size();i++){
+            gw.group.get(getGroupGarden(groupID,gw)).layout.get(i).object = 0;
+        }
+        return gw;
+    }
 
 }

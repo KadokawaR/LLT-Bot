@@ -2,22 +2,19 @@ package lielietea.mirai.plugin.game.garden.propertyenum;
 
 public enum Fruits {
     Orange,
-    OrangeSeed,
     Apple,
-    AppleSeed,
     Strawberry,
-    StrawberrySeed,
     Coconut,
-    CoconutTreeSeed,
     Raspberry,
-    RaspberrySeed,
+
     Blueberry,
-    BlueberrySeed,
     Rose,
-    RoseSeed,
     DesertRose,
-    DesertRoseSeed,
     Lychee,
-    LycheeSeed,
     CoffeeBean;
+
+    public int[] value = new int[]{
+            10,10,10,15,10,
+            10,15,20,15,10
+    };
 }

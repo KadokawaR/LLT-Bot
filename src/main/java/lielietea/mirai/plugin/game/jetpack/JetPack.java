@@ -93,7 +93,7 @@ public class JetPack extends BaiduAPI{
                     long flyingDuration = (long) (JetPackUtil.getFlightDuration(loc2,loc3)*60*1000);
                     long flyingDurationM = (long) (JetPackUtil.getFlightDuration(loc2,loc3));
                     Write.append(JetPackUtil.convertLocationRecord(isInLaunchProcess.get(event.getSender().getId())),TXT_PATH);
-                    event.getSubject().sendMessage("七筒正在使用喷气背包前往" + destinationName + "，预计抵达时间："+ JetPackUtil.getEstimatedArrivalTime(loc2, loc3, recordMap.get(recordMap.size()-1).departureTime));
+                    event.getSubject().sendMessage("七筒正在使用喷气背包前往" + destinationName + "，预计抵达时间："+ JetPackUtil.getEstimatedArrivalTime(loc2, loc3, sdf.format(dateNow)));
                     isInLaunchProcess.remove(event.getSender().getId());
                     //抵达之后告知
                     timerJP.schedule(new TimerTask() {
@@ -138,7 +138,7 @@ public class JetPack extends BaiduAPI{
                 }
             }
             //获得完整的飞行记录
-            if (event.getMessage().contentToString().contains("/record")){
+            if (event.getMessage().contentToString().contains("/record") && aac.checkIdentity(event)){
                 StringBuilder recordStr = new StringBuilder();
                 for (locationRecord lr : JetPackUtil.readRecord()){
                     recordStr.append(lr.locationName).append(",").append(lr.lng).append(",").append(lr.lat).append("\n");
