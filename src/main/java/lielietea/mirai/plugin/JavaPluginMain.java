@@ -2,10 +2,12 @@ package lielietea.mirai.plugin;
 
 
 
+import lielietea.mirai.plugin.admintools.statistic.StatisticController;
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.broadcast.foodie.Foodie;
 import lielietea.mirai.plugin.feedback.FeedBack;
 import lielietea.mirai.plugin.game.jetpack.JetPack;
+import lielietea.mirai.plugin.messageresponder.FakeRespondCenter;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
@@ -40,9 +42,8 @@ build.gradle.kts里改依赖库和插件版本
  */
 
 public final class JavaPluginMain extends JavaPlugin {
-    static Logger logger = LogManager.getLogger(JavaPluginMain.class);
-
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
+    static Logger logger = LogManager.getLogger(JavaPluginMain.class);
 
     private JavaPluginMain() {
         super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.0")
@@ -55,6 +56,8 @@ public final class JavaPluginMain extends JavaPlugin {
         getLogger().info("日志");
 
         MessageRespondCenter.getINSTANCE().ini();
+
+        StatisticController.resetMinuteCount();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(GroupID.DEV)).ifPresent(group->group.sendMessage("老子来了"));
@@ -105,41 +108,17 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
-            //bot检测
-            BotChecker bc = new BotChecker();
-            if (!bc.checkIdentity(event)) {
-                //帮助功能
-                Help.detect(event);
 
-                //JetPack
-                try {
-                    JetPack.start(event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                //处理所有需要回复的消息
-                //包括自动打招呼，关键词触发，指令
-                try {
-                    MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                //自动发送食物
-                try {
-                    Foodie.send(event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                //VIP待遇
-                GrandVIPServiceDepartment.handleMessage(event);
-
-                //test for mahjong riddle
-                MahjongRiddle.riddleStart(event);
-
+            try {
+                MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
+                FakeRespondCenter.handle(event);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            //VIP待遇
+            GrandVIPServiceDepartment.handleMessage(event);
+
         });
 
         //群成员入群自动欢迎

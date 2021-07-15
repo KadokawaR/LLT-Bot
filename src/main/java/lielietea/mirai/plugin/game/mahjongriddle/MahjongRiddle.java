@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -228,5 +229,13 @@ public class MahjongRiddle {
         //} finally {
         //    lock.lock();
         //}
+    }
+
+    public static UUID getUUID(){
+        return UUID.nameUUIDFromBytes(getName().getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String getName(){
+        return "猜麻将";
     }
 }

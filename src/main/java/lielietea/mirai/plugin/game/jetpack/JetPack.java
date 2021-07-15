@@ -4,6 +4,7 @@ import lielietea.mirai.plugin.utils.fileutils.Write;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
 
@@ -15,7 +16,7 @@ public class JetPack extends BaiduAPI{
     static Timer timerILP = new Timer(true);
     static Map<Long, JetPackUtil.locationRecord> isInLaunchProcess = new HashMap<>();
 
-    public static void start(GroupMessageEvent event) throws Exception {
+    public static void start(MessageEvent event) throws Exception {
         if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().contains("/yes") || event.getMessage().contentToString().contains("/no")||event.getMessage().contentToString().contains("/location")||event.getMessage().contentToString().contains("/abort")||event.getMessage().contentToString().contains("/landing")||event.getMessage().contentToString().contains("/record")) {
             List<JetPackUtil.locationRecord> recordMap = JetPackUtil.readRecord();
             Date arrivalTime;

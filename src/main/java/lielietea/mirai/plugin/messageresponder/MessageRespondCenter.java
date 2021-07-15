@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.messageresponder;
 
 
+import lielietea.mirai.plugin.admintools.statistic.StatisticController;
 import lielietea.mirai.plugin.messageresponder.autoreply.AntiDirtyWordMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.AntiOverwatchMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.GoodbyeMessageHandler;
@@ -47,20 +48,28 @@ public class MessageRespondCenter {
      * 自动处理来自群的消息
      * @param event 群消息事件
      */
-    public void handleGroupMessageEvent(MessageEvent event) throws IOException {
+    public void handleGroupMessageEvent(GroupMessageEvent event) throws IOException {
         for(MessageHandler<MessageEvent> handler:groupMessageHandlers) {
-            if(handler.isOnBeta()){
-                if(true/*这里缺个Group Config的判断*/)
-                    if (handler.handleMessage(event))
-                        break;
-            }
-            else if(handler.isPermissionRequired()){
-                if(true/*这里缺个Group Config的判断*/)
-                    if (handler.handleMessage(event))
-                        break;
-            }
-            else if (handler.handleMessage(event))
+            if(StatisticController.checkGroupCount(event)) {
+                if (handler.isOnBeta()) {
+                    if (true/*这里缺个Group Config的判断*/)
+                        if (handler.handleMessage(event))
+                            StatisticController.addMinuteCount(event.getSubject().getId());
+                    StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
+                    break;
+                } else if (handler.isPermissionRequired()) {
+                    if (true/*这里缺个Group Config的判断*/)
+                        if (handler.handleMessage(event))
+                            StatisticController.addMinuteCount(event.getSubject().getId());
+                    StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
+                    break;
+                } else if (handler.handleMessage(event))
+                    StatisticController.addMinuteCount(event.getSubject().getId());
+                StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
                 break;
+            } else{
+                break;
+            }
         }
     }
 
