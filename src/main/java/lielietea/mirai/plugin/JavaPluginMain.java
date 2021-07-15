@@ -105,8 +105,9 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
-            //临时的bot检测
-            if ((event.getSender().getId()!=340865180L)&&(event.getSender().getId()!=384087036L)) {
+            //bot检测
+            BotChecker bc = new BotChecker();
+            if (!bc.checkIdentity(event)) {
                 //帮助功能
                 Help.detect(event);
 
@@ -165,9 +166,9 @@ public final class JavaPluginMain extends JavaPlugin {
             //意见反馈
             FeedBack.get(event);
 
-            //测试BroadcastSystem的功能
+            //BroadcastSystem
             try {
-                BroadcastSystem.testSendToAllGroups(event);
+                BroadcastSystem.sendToAllGroups(event);
             } catch (InterruptedException e) {
                 logger.error(e);
             }

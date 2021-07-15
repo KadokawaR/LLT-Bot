@@ -62,5 +62,25 @@ public class GardenMap extends GardenUtils{
         return imgBig;
     }
 
-
+    public static String assembleText(GardenWorld gw, long groupID){
+        List<Integer> integerList = tileList(gw,groupID);
+        StringBuilder result= new StringBuilder();
+        int count = 0;
+        for (Integer integer : integerList) {
+            if (integer == -1){
+                result.append("X");
+            } else {
+                result.append(integer);
+            }
+            if (count < 6) {
+                result.append("|");
+            } else {
+                result.append("\n");
+                count = 0;
+            }
+            count += 1;
+        }
+        return result.toString();
+    }
+    
 }

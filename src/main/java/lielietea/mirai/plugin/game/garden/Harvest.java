@@ -75,7 +75,9 @@ public class Harvest extends GardenUtils{
                 return gw;
             }
         }
-        gw.group.get(getGroupGarden(groupID,gw)).warehouse.add(new Warehouse(fruit.ordinal(),num));
+        if (num!=0) {
+            gw.group.get(getGroupGarden(groupID, gw)).warehouse.add(new Warehouse(fruit.ordinal(), num));
+        }
         return gw;
     }
 

@@ -156,9 +156,13 @@ public class GardenUtils {
      */
     public static GardenWorld initialize(GardenWorld gw, GroupMessageEvent event){
         long groupID = event.getGroup().getId();
+        Random random = new Random();
         List<Warehouse> warehouseList = new ArrayList<>();
         List<GardenTiles> gardenTilesList = new ArrayList<>();
         List<Integer> plantSeedList = new ArrayList<>();
+        for(int i=0; i<3;i++){
+            plantSeedList.add(random.nextInt(PlantSeed.values().length));
+        }
         GroupGarden gg = new GroupGarden(groupID,0,warehouseList,gardenTilesList,plantSeedList);
         gw.group.add(gg);
         gw = addRow(gw,groupID);

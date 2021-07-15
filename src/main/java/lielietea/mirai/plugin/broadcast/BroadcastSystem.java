@@ -25,7 +25,7 @@ public class BroadcastSystem {
     }
 
     //测试广播消息
-    public static void testSendToAllGroups(FriendMessageEvent event) throws InterruptedException {
+    public static void sendToAllGroups(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast2g ") && aac.checkIdentity(event)){
             message = message.replace("/broadcast2g ","");
