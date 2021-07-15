@@ -173,13 +173,14 @@ public class MahjongRiddle {
         return shuziStr;
     }
 
-    public static void riddleStart(GroupMessageEvent event){
+    public static riddleType riddleStart(GroupMessageEvent event) throws IOException {
 
         //lock.lock();
         //try{
             if (event.getMessage().contentToString().contains("猜麻将")) {
                 event.getSubject().sendMessage("来猜麻将吧！\n\n七筒会随机生成5张麻将牌（只含筒牌、条牌和万字牌），猜中最后一张的会是赢家！" +
                         "\n请注意，只有形式诸如“三条”、“五筒”、“七万”的答案会触发判定。\n如果没有人猜中，本轮游戏会在180秒内自动关闭。");
+
                 //检测是否有该群的flag，如果没有则重新生成并在180s之后清空
                 if (!riddleSessionHolder.containsKey(event.getGroup().getId())) {
 
@@ -202,6 +203,7 @@ public class MahjongRiddle {
 
                     //180s清空谜语重置标记
                     timer.schedule(new EndSessionTimerTask(sessionId,event), 180 * 1000);
+                    return riddleType.Start;
                 }
             }
 
@@ -209,33 +211,36 @@ public class MahjongRiddle {
                 riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event).isGuessed;
                 //
                 if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {
-                    event.getSubject().sendMessage("中了!");
-                    BufferedImage img = null;
-                    try {
+                    //检测这次结束之后是否全中，全中了则删除该flag
+                    if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
+                        event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
+                        BufferedImage img = null;
                         img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
                         sendTileImage(img, event);
-                    } catch (IOException e) {
-                        logger.error("猜麻将游戏中，生成图片失败",e);
+                        MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
+                        return riddleType.Congratulation;
                     }
+                    event.getSubject().sendMessage("中了!");
+                    BufferedImage img = null;
+                    img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
+                    sendTileImage(img, event);
+                    return riddleType.Get;
                 }
 
-
-                //检测这次结束之后是否全中，全中了则删除该flag
-                if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
-                    event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
-                    MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
-                }
             }
         //} finally {
         //    lock.lock();
         //}
+        return riddleType.Nothing;
     }
 
-    public static UUID getUUID(){
-        return UUID.nameUUIDFromBytes(getName().getBytes(StandardCharsets.UTF_8));
+    public static UUID getUUID(String name){
+        return UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String getName(){
         return "猜麻将";
     }
+
+    public enum riddleType { Start, Get, Congratulation, Nothing};
 }

@@ -23,7 +23,7 @@ public class StatisticController {
     }
 
     /**
-     * 适用于MessageRespondCenter
+     * 增加每分钟计数
      * @param groupID
      */
     public static void addMinuteCount(long groupID){
@@ -35,22 +35,18 @@ public class StatisticController {
     }
 
     /**
-     * 适用于FakeRespondCenter
+     * 检测是否每分钟超过10条
      * @param event
      * @return
      */
     public static boolean checkGroupCount(GroupMessageEvent event){
         long groupID = event.getGroup().getId();
         if(!minuteCount.containsKey(groupID)){
-            minuteCount.put(groupID,1);
             return true;
         }
-        int count = minuteCount.get(groupID);
-        if(count>10){
+        if(minuteCount.get(groupID)>10){
             return false;
         } else {
-            minuteCount.remove(groupID);
-            minuteCount.put(groupID,count+1);
             return true;
         }
     }

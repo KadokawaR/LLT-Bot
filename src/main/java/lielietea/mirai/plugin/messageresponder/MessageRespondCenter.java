@@ -55,18 +55,18 @@ public class MessageRespondCenter {
                     if (true/*这里缺个Group Config的判断*/)
                         if (handler.handleMessage(event))
                             StatisticController.addMinuteCount(event.getSubject().getId());
-                    StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
-                    break;
+                            StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
+                            break;
                 } else if (handler.isPermissionRequired()) {
                     if (true/*这里缺个Group Config的判断*/)
                         if (handler.handleMessage(event))
                             StatisticController.addMinuteCount(event.getSubject().getId());
-                    StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
-                    break;
+                            StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
+                            break;
                 } else if (handler.handleMessage(event))
                     StatisticController.addMinuteCount(event.getSubject().getId());
-                StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
-                break;
+                    StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
+                    break;
             } else{
                 break;
             }

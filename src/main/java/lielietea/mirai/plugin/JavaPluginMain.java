@@ -4,13 +4,10 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.admintools.statistic.StatisticController;
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
-import lielietea.mirai.plugin.broadcast.foodie.Foodie;
 import lielietea.mirai.plugin.feedback.FeedBack;
-import lielietea.mirai.plugin.game.jetpack.JetPack;
-import lielietea.mirai.plugin.messageresponder.FakeRespondCenter;
+import lielietea.mirai.plugin.messageresponder.fakerespondcenter.FakeRespondCenter;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.utils.groupmanager.Help;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;

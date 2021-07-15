@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.messageresponder;
+package lielietea.mirai.plugin.messageresponder.fakerespondcenter;
 
 import lielietea.mirai.plugin.admintools.statistic.StatisticController;
 import lielietea.mirai.plugin.broadcast.foodie.Foodie;
@@ -10,16 +10,17 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 public class FakeRespondCenter {
+
     public static void handle(GroupMessageEvent event) throws Exception {
+
         BotChecker bc = new BotChecker();
+
         if (StatisticController.checkGroupCount(event)&&(!bc.checkIdentity(event))){
-            MahjongRiddle.riddleStart(event);
+            MahjongRiddleHandler.handle(event);
             Help.detect(event);
             Foodie.send(event);
             JetPack.start(event);
         }
-
-
 
     }
 }
