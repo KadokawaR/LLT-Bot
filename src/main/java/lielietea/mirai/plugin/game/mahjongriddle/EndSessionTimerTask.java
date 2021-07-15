@@ -1,8 +1,6 @@
 package lielietea.mirai.plugin.game.mahjongriddle;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -10,8 +8,8 @@ import java.util.TimerTask;
 
 class EndSessionTimerTask extends TimerTask {
     //static final Logger logger = LogManager.getLogger(EndSessionTimerTask.class);
-    int id;
-    GroupMessageEvent event;
+    final int id;
+    final GroupMessageEvent event;
 
     public EndSessionTimerTask(int id,GroupMessageEvent event) {
         this.id = id;

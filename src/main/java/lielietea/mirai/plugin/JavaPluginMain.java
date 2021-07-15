@@ -2,13 +2,12 @@ package lielietea.mirai.plugin;
 
 
 
-import lielietea.mirai.plugin.admintools.statistic.StatisticController;
+import lielietea.mirai.plugin.admintools.StatisticController;
 import lielietea.mirai.plugin.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.feedback.FeedBack;
-import lielietea.mirai.plugin.messageresponder.fakerespondcenter.FakeRespondCenter;
+import lielietea.mirai.plugin.game.GameCenter;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.admintools.AdminTools;
-import lielietea.mirai.plugin.utils.groupmanager.Help;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
 import lielietea.mirai.plugin.utils.groupmanager.Speech;
@@ -40,7 +39,7 @@ build.gradle.kts里改依赖库和插件版本
 
 public final class JavaPluginMain extends JavaPlugin {
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
-    static Logger logger = LogManager.getLogger(JavaPluginMain.class);
+    static final Logger logger = LogManager.getLogger(JavaPluginMain.class);
 
     private JavaPluginMain() {
         super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.0")
@@ -100,15 +99,13 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         //群名改变之后发送消息
-        GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event ->{
-            event.getGroup().sendMessage("好名字。");
-        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event -> event.getGroup().sendMessage("好名字。"));
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
             try {
                 MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
-                FakeRespondCenter.handle(event);
+                GameCenter.handle(event);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,9 +116,7 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         //群成员入群自动欢迎
-        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> {
-            memberJoinEvent.getGroup().sendMessage("欢迎。");
-        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎。"));
 
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
 
@@ -136,9 +131,6 @@ public final class JavaPluginMain extends JavaPlugin {
             //管理员功能
             AdminTools.getINSTANCE().handleAdminCommand(event);
 
-            //帮助
-            Help.detect(event);
-
             //意见反馈
             FeedBack.get(event);
 
@@ -149,11 +141,7 @@ public final class JavaPluginMain extends JavaPlugin {
                 logger.error(e);
             }
 
-            try {
-                BroadcastSystem.directlySendToGroup(event);
-            } catch (InterruptedException e) {
-                logger.error(e);
-            }
+            BroadcastSystem.directlySendToGroup(event);
 
             try {
                 BroadcastSystem.sendToAllFriends(event);

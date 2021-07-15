@@ -5,8 +5,6 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -16,7 +14,6 @@ import java.util.*;
 public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
 
     static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
-    //static final Logger logger = LogManager.getLogger(FortuneTeller.class);
 
     public static int getMahjongOfTheDay(MessageEvent event){
         //获取当日幸运数字

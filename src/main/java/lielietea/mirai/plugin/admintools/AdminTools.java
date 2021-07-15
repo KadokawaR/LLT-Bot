@@ -7,6 +7,7 @@ import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -37,10 +38,26 @@ public class AdminTools {
                 e.printStackTrace();
             }
         }
-
         if (event.getMessage().contentToString().contains("/reload")) {
-            MessageRespondCenter.getINSTANCE().reload(event);
+            reloadManually(event);
         }
+        if (event.getMessage().contentToString().contains("/optimized")) {
+            optimizeManually(event);
+        }
+    }
+
+    void reloadManually(MessageEvent event){
+        MessageChainBuilder messages = new MessageChainBuilder();
+        String result = MessageRespondCenter.getINSTANCE().reload();
+        messages.append(result);
+        event.getSubject().sendMessage(messages.build());
+    }
+
+    void optimizeManually(MessageEvent event){
+        MessageChainBuilder messages = new MessageChainBuilder();
+        String result = MessageRespondCenter.getINSTANCE().optimizeHandlerSequence();
+        messages.append(result);
+        event.getSubject().sendMessage(messages.build());
     }
 
     String addGroupInfo(Iterator<Group> listIter,String allGroupInfo){

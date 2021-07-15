@@ -99,7 +99,7 @@ public class GrandVIPServiceDepartment {
     static String buildGreeting(VIP vip){
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         if(vip == VIP.KADOKAWA){
-            if(hour<6){
+            if(hour>7 && hour<10){
                 return greetingKADOKAWA_morning.get(Math.toIntExact(random.nextInt(100000)) % greetingKADOKAWA_morning.size());
             } else if(hour<22){
                 return greetingKADOKAWA_normal.get(Math.toIntExact(random.nextInt(100000)) % greetingKADOKAWA_normal.size());
@@ -108,7 +108,7 @@ public class GrandVIPServiceDepartment {
             }
         }
         else if(vip == VIP.MG){
-            if(hour<6){
+            if(hour>6 && hour<9){
                 return greetingMG_morning.get(Math.toIntExact(random.nextInt(100000)) % greetingMG_morning.size());
             } else if(hour<22){
                 return greetingMG_normal.get(Math.toIntExact(random.nextInt(100000)) % greetingMG_normal.size());

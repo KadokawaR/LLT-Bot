@@ -4,7 +4,6 @@ import lielietea.mirai.plugin.game.garden.propertyenum.PlantSeed;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
 
 public class Planting extends GardenUtils{

@@ -12,7 +12,7 @@ import java.util.*;
 
 public class BroadcastSystem {
 
-    static AdministrativeAccountChecker aac = new AdministrativeAccountChecker();
+    static final AdministrativeAccountChecker aac = new AdministrativeAccountChecker();
     public static void sendToAllGroups(MessageEvent event, String message) throws InterruptedException {
         sendToCertainGroups(event, message, event.getBot().getGroups());
     }
@@ -34,7 +34,7 @@ public class BroadcastSystem {
         }
     }
 
-    public static void directlySendToGroup(FriendMessageEvent event) throws InterruptedException{
+    public static void directlySendToGroup(FriendMessageEvent event) {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast ") && aac.checkIdentity(event)) {
             String[] splitMessage = message.split(" ");

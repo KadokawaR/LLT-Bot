@@ -1,17 +1,13 @@
 package lielietea.mirai.plugin.utils.image;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class ImageScale {
 
     private int width;
     private int height;
     private int scaleWidth;
-    double support = (double) 3.0;
+    final double support = 3.0;
     double[] contrib;
     double[] normContrib;
     double[] tmpContrib;
@@ -248,7 +244,7 @@ public class ImageScale {
 
             int stop;
             int stopY = Y + nHalfDots;
-            if (stopY > (int) (iH - 1)) {
+            if (stopY > (iH - 1)) {
                 stopY = iH - 1;
                 stop = nHalfDots + (iH - 1 - Y);
             } else {
@@ -277,8 +273,6 @@ public class ImageScale {
     int Clip(int x) {
         if (x < 0)
             return 0;
-        if (x > 255)
-            return 255;
-        return x;
+        return Math.min(x, 255);
     }
 }

@@ -19,9 +19,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MahjongRiddle {
     static final Logger logger = LogManager.getLogger(MahjongRiddle.class);
     static final Lock lock = new ReentrantLock(true);
-    static int RIDDLE_LENGTH = 5;
+    static final int RIDDLE_LENGTH = 5;
 
-    static Random rand = new Random();
+    static final Random rand = new Random();
 
     static class RiddleFactor {
         int[] answerNum;
@@ -29,10 +29,10 @@ public class MahjongRiddle {
         int id;
     }
 
-    static Timer timer = new Timer(true);
-    static Map<Long, RiddleFactor> riddleSessionHolder = new HashMap<>();
+    static final Timer timer = new Timer(true);
+    static final Map<Long, RiddleFactor> riddleSessionHolder = new HashMap<>();
 
-    static ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
+    static final ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
             "一","二","三","四","五","六","七","八","九"));
 
     //生成小于108(只到筒条万)的若干个随机数，用于生成麻将牌
@@ -163,14 +163,14 @@ public class MahjongRiddle {
 
     //将int[]转换成一个存储中文数字的String[]
     public static String turnIntoChineseNum(RiddleFactor rf){
-        String shuziStr = "";
+        StringBuilder shuziStr = new StringBuilder();
         for (int i=0;i<rf.answerNum.length;i++){
-            shuziStr=shuziStr+chineseNum.get(rf.answerNum[i]%9);
+            shuziStr.append(chineseNum.get(rf.answerNum[i] % 9));
             if (i!=rf.answerNum.length-1){
-                shuziStr=shuziStr+"、";
+                shuziStr.append("、");
             }
         }
-        return shuziStr;
+        return shuziStr.toString();
     }
 
     public static riddleType riddleStart(GroupMessageEvent event) throws IOException {

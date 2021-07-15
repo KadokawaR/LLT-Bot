@@ -1,21 +1,12 @@
 package lielietea.mirai.plugin.game.jetpack;
 
 import com.google.gson.Gson;
-import lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker.FoodCluster;
-import lielietea.mirai.plugin.messageresponder.fursona.Fursona;
-import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
-import net.mamoe.mirai.event.events.MessageEvent;
-import sun.nio.cs.UTF_8;
 
-import java.awt.*;
-import java.awt.geom.Line2D;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 import static java.lang.Math.pow;
 import static lielietea.mirai.plugin.game.jetpack.BaiduAPI.ZOOM_LEVEL;
@@ -24,14 +15,14 @@ import static lielietea.mirai.plugin.game.jetpack.BaiduAPI.ZOOM_LEVEL_CITY;
 
 public class JetPackUtil {
 
-    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     static final String TXT_PATH = System.getProperty("user.dir")+File.separator+"data"+File.separator+"jetpack.txt";
 
     public static class locationRecord{
-        double lng;
-        double lat;
-        String locationName;
-        String departureTime;
+        final double lng;
+        final double lat;
+        final String locationName;
+        final String departureTime;
         locationRecord(double lng1,double lat1, String ln1, String dt1){
             lng = lng1;
             lat = lat1;

@@ -1,8 +1,7 @@
-package lielietea.mirai.plugin.admintools.statistic;
+package lielietea.mirai.plugin.admintools;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import java.util.*;
@@ -10,9 +9,10 @@ import java.util.*;
 @SuppressWarnings("ConstantConditions")
 public class StatisticController {
     //还要多考虑一下这个统计应该怎么做
-    static Table<Long,UUID,Integer> data = HashBasedTable.create();
-    static Map<Long,Integer> minuteCount = new HashMap<>();
+    static final Table<Long,UUID,Integer> data = HashBasedTable.create();
+    static final Map<Long,Integer> minuteCount = new HashMap<>();
     static boolean resetStartFlag = false;
+    static final int MAX_THRESHOLD = 10;
 
     public static void countIn(long groupID, UUID serviceID){
         if (data.contains(groupID,serviceID)) {
@@ -24,7 +24,6 @@ public class StatisticController {
 
     /**
      * 增加每分钟计数
-     * @param groupID
      */
     public static void addMinuteCount(long groupID){
         if(!minuteCount.containsKey(groupID)){
@@ -36,15 +35,13 @@ public class StatisticController {
 
     /**
      * 检测是否每分钟超过10条
-     * @param event
-     * @return
      */
     public static boolean checkGroupCount(GroupMessageEvent event){
         long groupID = event.getGroup().getId();
         if(!minuteCount.containsKey(groupID)){
             return true;
         }
-        if(minuteCount.get(groupID)>10){
+        if(minuteCount.get(groupID)>MAX_THRESHOLD){
             return false;
         } else {
             return true;

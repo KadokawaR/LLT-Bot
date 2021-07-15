@@ -3,7 +3,6 @@ package lielietea.mirai.plugin.game.jetpack;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.image.ImageSender;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
@@ -12,9 +11,9 @@ import static lielietea.mirai.plugin.game.jetpack.JetPackUtil.*;
 
 public class JetPack extends BaiduAPI{
 
-    static Timer timerJP = new Timer(true);
-    static Timer timerILP = new Timer(true);
-    static Map<Long, JetPackUtil.locationRecord> isInLaunchProcess = new HashMap<>();
+    static final Timer timerJP = new Timer(true);
+    static final Timer timerILP = new Timer(true);
+    static final Map<Long, JetPackUtil.locationRecord> isInLaunchProcess = new HashMap<>();
 
     public static void start(MessageEvent event) throws Exception {
         if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().contains("/yes") || event.getMessage().contentToString().contains("/no")||event.getMessage().contentToString().contains("/location")||event.getMessage().contentToString().contains("/abort")||event.getMessage().contentToString().contains("/landing")||event.getMessage().contentToString().contains("/record")) {

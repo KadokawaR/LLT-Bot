@@ -3,13 +3,10 @@ package lielietea.mirai.plugin.game.garden;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.game.garden.propertyenum.GardenType;
 import lielietea.mirai.plugin.game.garden.propertyenum.PlantSeed;
-import lielietea.mirai.plugin.messageresponder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,11 +22,11 @@ public class GardenUtils {
         List<GroupGarden> group;
     }
     static class GroupGarden{
-        long id;
+        final long id;
         long money;
-        List<Warehouse> warehouse;
-        List<GardenTiles> layout;
-        List<Integer> seedlist;
+        final List<Warehouse> warehouse;
+        final List<GardenTiles> layout;
+        final List<Integer> seedlist;
         GroupGarden(long id1, long money1, List<Warehouse> warehouse1, List<GardenTiles> layout1, List<Integer> seedlist1){
             id = id1;
             money = money1;
@@ -39,7 +36,7 @@ public class GardenUtils {
         }
     }
     static class GardenTiles{
-        int loc;
+        final int loc;
         int object;
         long stamp;
         GardenTiles(int loc1,int object1,long stamp1){
@@ -49,9 +46,9 @@ public class GardenUtils {
         }
     }
     static class GardenStatus{
-        int loc;
-        int object;
-        boolean isMature;
+        final int loc;
+        final int object;
+        final boolean isMature;
 
         public GardenStatus(int loc1, int object1, boolean isMature1){
             loc = loc1;
@@ -60,7 +57,7 @@ public class GardenUtils {
         }
     }
     static class Warehouse{
-        int id;
+        final int id;
         int num;
         Warehouse(int id1, int num1){
             id = id1;

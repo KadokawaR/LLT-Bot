@@ -2,8 +2,6 @@ package lielietea.mirai.plugin.messageresponder.autoreply;
 
 import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.MessageEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -16,7 +14,6 @@ class AutoReplyLinesCluster {
     TreeMap<Double,String> antiOverwatchGameReplyLines;
 
     static final Gson gson = new Gson();
-    //static final Logger logger = LogManager.getLogger(AutoReplyLinesCluster.class);
     static AutoReplyLinesCluster INSTANCE;
 
     static final String DEFAULT_AUTOREPLY_JSON_PATH = "/cluster/autoreply.json";

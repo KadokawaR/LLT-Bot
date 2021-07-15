@@ -1,6 +1,6 @@
-package lielietea.mirai.plugin.messageresponder.fakerespondcenter;
+package lielietea.mirai.plugin.game.mahjongriddle;
 
-import lielietea.mirai.plugin.admintools.statistic.StatisticController;
+import lielietea.mirai.plugin.admintools.StatisticController;
 import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 

@@ -2,8 +2,6 @@ package lielietea.mirai.plugin.messageresponder.feastinghelper.dinnerpicker;
 
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,7 +14,6 @@ public class FoodCluster {
 
     static final String DEFAULT_FOOD_TEXT = "/THUOCL/THUOCL_food.txt";
     static final Random rand = new Random();
-    //static final Logger logger = LogManager.getLogger(FoodCluster.class);
 
     FoodCluster() {
         foods = new ArrayList<>();

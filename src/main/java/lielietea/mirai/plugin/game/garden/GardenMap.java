@@ -3,7 +3,6 @@ package lielietea.mirai.plugin.game.garden;
 import lielietea.mirai.plugin.game.garden.propertyenum.PlantSeed;
 import lielietea.mirai.plugin.utils.image.ImageCreater;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;

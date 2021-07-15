@@ -2,11 +2,9 @@ package lielietea.mirai.plugin.game.jetpack;
 
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.utils.json.JsonFile;
-import net.mamoe.mirai.event.events.MessageEvent;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.net.URLEncoder;
 import java.util.List;
 
 public class BaiduAPI {
@@ -29,8 +27,8 @@ public class BaiduAPI {
     }
 
     public static class Location{
-        Double lng;
-        Double lat;
+        final Double lng;
+        final Double lat;
         Location(Double lng1, Double lat1){
             lng = lng1;
             lat = lat1;

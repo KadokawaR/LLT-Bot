@@ -13,7 +13,7 @@ public enum Fruits {
     Lychee,
     CoffeeBean;
 
-    public int[] value = new int[]{
+    public final int[] value = new int[]{
             10,10,10,15,10,
             10,15,20,15,10
     };

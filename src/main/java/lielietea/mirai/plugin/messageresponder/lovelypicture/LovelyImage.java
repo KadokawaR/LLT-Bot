@@ -8,8 +8,6 @@ import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -20,7 +18,6 @@ import java.util.concurrent.Executors;
 
 
 public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequiredHandler {
-    //static final Logger logger = LogManager.getLogger(LovelyImage.class);
 
     public LovelyImage(MessageMatcher<MessageEvent> dogCommandMessageMatcher, MessageMatcher<MessageEvent> shibaCommandMessageMatcher, MessageMatcher<MessageEvent> huskyCommandMessageMatcher, MessageMatcher<MessageEvent> berneseCommandMessageMatcher, MessageMatcher<MessageEvent> malamuteCommandMessageMatcher, MessageMatcher<MessageEvent> germanShepherdCommandMessageMatcher, MessageMatcher<MessageEvent> samoyedCommandMessageMatcher, MessageMatcher<MessageEvent> catCommandMessageMatcher) {
         this.dogCommandMessageMatcher = dogCommandMessageMatcher;
@@ -35,24 +32,24 @@ public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequ
     }
 
     static class ImageSource{
-        static String DOG_CEO_HUSKY = "https://dog.ceo/api/breed/husky/images/random";
-        static String DOG_CEO_BERNESE = "https://dog.ceo/api/breed/mountain/bernese/images/random";
-        static String DOG_CEO_MALAMUTE = "https://dog.ceo/api/breed/malamute/images/random";
-        static String DOG_CEO_GSD = "https://dog.ceo/api/breed/germanshepherd/images/random";
-        static String DOG_CEO_SAMOYED = "https://dog.ceo/api/breed/samoyed/images/random";
-        static String SHIBE_ONLINE_SHIBA = "https://shibe.online/api/shibes";
-        static String SHIBE_ONLINE_CAT = "https://shibe.online/api/cats";
-        static String RANDOM_DOG = "https://random.dog/woof.json";
+        static final String DOG_CEO_HUSKY = "https://dog.ceo/api/breed/husky/images/random";
+        static final String DOG_CEO_BERNESE = "https://dog.ceo/api/breed/mountain/bernese/images/random";
+        static final String DOG_CEO_MALAMUTE = "https://dog.ceo/api/breed/malamute/images/random";
+        static final String DOG_CEO_GSD = "https://dog.ceo/api/breed/germanshepherd/images/random";
+        static final String DOG_CEO_SAMOYED = "https://dog.ceo/api/breed/samoyed/images/random";
+        static final String SHIBE_ONLINE_SHIBA = "https://shibe.online/api/shibes";
+        static final String SHIBE_ONLINE_CAT = "https://shibe.online/api/cats";
+        static final String RANDOM_DOG = "https://random.dog/woof.json";
     }
 
-    MessageMatcher<MessageEvent> dogCommandMessageMatcher;
-    MessageMatcher<MessageEvent> shibaCommandMessageMatcher;
-    MessageMatcher<MessageEvent> huskyCommandMessageMatcher;
-    MessageMatcher<MessageEvent> berneseCommandMessageMatcher;
-    MessageMatcher<MessageEvent> malamuteCommandMessageMatcher;
-    MessageMatcher<MessageEvent> germanShepherdCommandMessageMatcher;
-    MessageMatcher<MessageEvent> samoyedCommandMessageMatcher;
-    MessageMatcher<MessageEvent> catCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> dogCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> shibaCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> huskyCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> berneseCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> malamuteCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> germanShepherdCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> samoyedCommandMessageMatcher;
+    final MessageMatcher<MessageEvent> catCommandMessageMatcher;
 
 
     static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));

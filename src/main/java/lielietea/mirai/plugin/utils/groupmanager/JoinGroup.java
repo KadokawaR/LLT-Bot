@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class JoinGroup {
     
-    static Map<Long, Boolean> joinGroupEventFlag = new HashMap<>();
+    static final Map<Long, Boolean> joinGroupEventFlag = new HashMap<>();
     public static void sendNotice(BotJoinGroupEvent event) throws InterruptedException {
         if (!joinGroupEventFlag.containsKey(event.getGroupId())){
             joinGroupEventFlag.put(event.getGroupId(), false);

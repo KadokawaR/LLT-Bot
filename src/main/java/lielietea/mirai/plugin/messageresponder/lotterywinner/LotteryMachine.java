@@ -6,18 +6,15 @@ import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.PlainText;
-import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class LotteryMachine {
     static final Timer timer = new Timer(true);
     static final Map<Long,Boolean> c4ActivationFlags = new HashMap<>();
     static final Random rand = new Random();
-    //static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(LotteryMachine.class);
 
     static{
         //每日6点定时清空C4触发标记

@@ -1,8 +1,6 @@
 package lielietea.mirai.plugin.game.jetpack;
 
-import com.sun.org.apache.xml.internal.dtm.ref.DTMAxisIterNodeList;
 import lielietea.mirai.plugin.utils.image.ImageCreater;
-import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -62,7 +60,7 @@ public class MapDrawer extends BaiduAPI {
         return res;
     }
 
-    public static BufferedImage drawFlag(Location loc, Location currentLocation, int zoomLevel, BufferedImage originImage) throws IOException {
+    public static BufferedImage drawFlag(Location loc, Location currentLocation, int zoomLevel, BufferedImage originImage) {
         try {
             if (isInsidePicture(currentLocation,zoomLevel,loc)){
                 double meter = pow(2,18-zoomLevel);

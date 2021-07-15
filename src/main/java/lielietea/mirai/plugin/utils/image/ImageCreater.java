@@ -1,25 +1,19 @@
 package lielietea.mirai.plugin.utils.image;
 
-import lielietea.mirai.plugin.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.utils.json.JsonFile;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class ImageCreater {
 
-    static int wx = 94;
-    static int hx = 251;
+    static final int wx = 94;
+    static final int hx = 251;
 
 
     public static BufferedImage createWinnerImage(Contact winner) throws IOException {

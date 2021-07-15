@@ -1,22 +1,22 @@
 package lielietea.mirai.plugin.utils.groupmanager;
 
 public class Speech {
-    public static String joinGroup = "七爷来了！这里是烈烈茶店长七筒。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。开发者团队推荐授予七筒管理员权限以解锁所有功能。";
-    public static String disclaimer = "本项目仅限学习使用，不涉及到任何商业或者金钱用途，禁止用于非法行为。您的使用行为将被视为对本声明全部内容的认可。本声明在您邀请该账号（QQ账号：340865180）进入任何腾讯QQ群聊时生效。\n" +
+    public static final String joinGroup = "七爷来了！这里是烈烈茶店长七筒。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。开发者团队推荐授予七筒管理员权限以解锁所有功能。";
+    public static final String disclaimer = "本项目仅限学习使用，不涉及到任何商业或者金钱用途，禁止用于非法行为。您的使用行为将被视为对本声明全部内容的认可。本声明在您邀请该账号（QQ账号：340865180）进入任何腾讯QQ群聊时生效。\n" +
             "\n" +
             "本项目在运作时，不可避免地会使用到您的QQ号、QQ昵称、群号、群昵称等信息。后台不会收集具体的聊天内容，如果您对此有所疑问，请停止使用本项目。基于维持互联网秩序的考量，请勿恶意使用本项目。本项目有权停止对任何对象的服务，任何解释权均归本项目开发组所有。\n" +
             "\n" +
             "本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的 Mirai (https://github.com/mamoe/mirai) ，基于 Apache License 2.0 协议的谷歌 Gson (https://github.com/google/gson) ，清华大学开放中文词库 (http://thuocl.thunlp.org/) ，动物图片来自互联网开源动物图片API Shibe.online(shibes as a service)、Dog.ceo (The internet's biggest collection of open source dog pictures.)、random.dog (Hello World, This Is Dog)。\n";
-    public static String help = "输入下方带有斜杠的关键词可以获得相关信息。\n\n" +
+    public static final String help = "输入下方带有斜杠的关键词可以获得相关信息。\n\n" +
                                 "/intro 七筒简介\n"+
                                 "/usage 如何在自己的群中使用七筒\n"+
                                 "/discl 免责协议\n"+
                                 "/funct 功能列表\n"+
                                 "/conta 联系开发者";
-    public static String intro = "七筒是一个用于服务简体中文 Furry 社群的 QQ 机器人项目，皆在试图为群聊增加一些乐趣。请发送/funct 来了解如何使用七筒。注意，不要和我，也不要和生活太较真。";
-    public static String usage ="点击头像添加七筒为好友（或者添加号码 340865180），并将其邀请到QQ群聊中，即可在该群聊中使用七筒的服务。\n\n" +
+    public static final String intro = "七筒是一个用于服务简体中文 Furry 社群的 QQ 机器人项目，皆在试图为群聊增加一些乐趣。请发送/funct 来了解如何使用七筒。注意，不要和我，也不要和生活太较真。";
+    public static final String usage ="点击头像添加七筒为好友（或者添加号码 340865180），并将其邀请到QQ群聊中，即可在该群聊中使用七筒的服务。\n\n" +
                                 "如果需要查看七筒的功能列表，请输入/funct。";
-    public static String funct = "输入下方的关键词即可使用对应功能。\n\n" +
+    public static final String funct = "输入下方的关键词即可使用对应功能。\n\n" +
                                 "兽设 -> 获取你的今日兽设。\n"+
                                 "猜麻将 -> 随机生成五张麻将牌，第一个猜中全部的人是赢家。\n"+
                                 "求签 -> 查看你的今日运势。\n"+
@@ -41,5 +41,5 @@ public class Speech {
                                 "Ok Cat 或者 /cat -> 来点猫猫！\n"+
                                 "\n"+
                                 "请注意，不同功能的更新频率不同。求签与兽设每日更新一次，奶茶每小时更新一次，群组winner每日更新一次。";
-    public static String conta ="如果需要联系七筒的开发者，请直接添加七筒好友，并在发送消息的开头注明”意见反馈“。只有含有“意见反馈”字样的单条消息才会被接收。如有其他问题，请添加开发者好友，号码：2955808839。";
+    public static final String conta ="如果需要联系七筒的开发者，请直接添加七筒好友，并在发送消息的开头注明”意见反馈“。只有含有“意见反馈”字样的单条消息才会被接收。如有其他问题，请添加开发者好友，号码：2955808839。";
 }
