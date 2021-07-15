@@ -2,6 +2,8 @@ package lielietea.mirai.plugin.messageresponder;
 
 
 import lielietea.mirai.plugin.admintools.statistic.StatisticController;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import lielietea.mirai.plugin.messageresponder.autoreply.AntiDirtyWordMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.AntiOverwatchMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.GoodbyeMessageHandler;
@@ -20,10 +22,10 @@ import lielietea.mirai.plugin.messageresponder.overwatch.HeroLinesMessageHandler
 import lielietea.mirai.plugin.utils.messagematcher.*;
 import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 这个类管理所有回复处理器，并将回复事件传递给回复处理器。回复处理器是用来处理消息事件，并根据情况进行回复的组件(包括自动打招呼，关键词触发，指令 etc)，
@@ -31,10 +33,7 @@ import java.util.List;
  * <p>所有回复处理器(也就是不同功能的回复模组)，都需要实现 {@link MessageHandler} 接口，并在使用 {@link #register(MessageHandler)} 进行注册。推荐在 {@link #ini()} 方法内进行注册</p>
  */
 public class MessageRespondCenter {
-    static final List<MessageHandler<MessageEvent>> groupMessageHandlers = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> groupTempMessageHandlers = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> friendMessageHandlers = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> strangerMessageHandlers = new ArrayList<>();
+    static final List<BoxedHandler> handlers = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> reloadable = new ArrayList<>();
     static final List<MessageHandler<MessageEvent>> closeRequired = new ArrayList<>();
 
@@ -44,32 +43,48 @@ public class MessageRespondCenter {
         return INSTANCE;
     }
 
-    /**
-     * 自动处理来自群的消息
-     * @param event 群消息事件
-     */
+    /*
+    Updated upstream
     public void handleGroupMessageEvent(GroupMessageEvent event) throws IOException {
         for(MessageHandler<MessageEvent> handler:groupMessageHandlers) {
             if(StatisticController.checkGroupCount(event)) {
                 if (handler.isOnBeta()) {
-                    if (true/*这里缺个Group Config的判断*/)
-                        if (handler.handleMessage(event))
-                            StatisticController.addMinuteCount(event.getSubject().getId());
+                    if (true)
+            if (handler.handleMessage(event))
+            StatisticController.addMinuteCount(event.getSubject().getId());
                             StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
                             break;
-                } else if (handler.isPermissionRequired()) {
-                    if (true/*这里缺个Group Config的判断*/)
-                        if (handler.handleMessage(event))
-                            StatisticController.addMinuteCount(event.getSubject().getId());
-                            StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
-                            break;
-                } else if (handler.handleMessage(event))
+            } else if (handler.isPermissionRequired()) {
+                if (true)
+                if (handler.handleMessage(event))
                     StatisticController.addMinuteCount(event.getSubject().getId());
                     StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
-                    break;
-            } else{
                 break;
+            } else if (handler.handleMessage(event))
+        StatisticController.addMinuteCount(event.getSubject().getId());
+        StatisticController.countIn(event.getSubject().getId(), handler.getUUID());
+        break;
+        } else{
+     */
+
+    /**
+     * 自动处理来自群的消息
+     * @param event 群消息事件
+     */
+    public void handleGroupMessageEvent(MessageEvent event) throws IOException {
+        for(BoxedHandler handler:handlers) {
+            if(handler.isBetaFeature()){
+                if(true/*这里缺个Group Config的判断*/)
+                    if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                        break;
             }
+            else if(handler.needPermission()){
+                if(true/*这里缺个Group Config的判断*/)
+                    if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                        break;
+            }
+            else if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                break;
         }
     }
 
@@ -77,9 +92,9 @@ public class MessageRespondCenter {
      * 自动处理来自好友的消息
      * @param event 好友消息事件
      */
-    public void handleFrinedMessageEvent(MessageEvent event) throws IOException {
-        for(MessageHandler<MessageEvent> handler:friendMessageHandlers){
-            if(handler.handleMessage(event)) break;
+    public void handleFriendMessageEvent(MessageEvent event) throws IOException {
+        for(BoxedHandler handler:handlers){
+            if(handler.handleMessage(event, MessageHandler.MessageType.FRIEND)) break;
         }
     }
 
@@ -88,8 +103,8 @@ public class MessageRespondCenter {
      * @param event 群临时消息事件
      */
     public void handleGroupTempMessageEvent(MessageEvent event) throws IOException {
-        for(MessageHandler<MessageEvent> handler:groupTempMessageHandlers){
-            if(handler.handleMessage(event)) break;
+        for(BoxedHandler handler:handlers){
+            if(handler.handleMessage(event, MessageHandler.MessageType.TEMP)) break;
         }
     }
 
@@ -98,8 +113,8 @@ public class MessageRespondCenter {
      * @param event 陌生人消息事件
      */
     public void handleStrangerMessageEvent(MessageEvent event) throws IOException {
-        for(MessageHandler<MessageEvent> handler:strangerMessageHandlers){
-            if(handler.handleMessage(event)) break;
+        for(BoxedHandler handler:handlers){
+            if(handler.handleMessage(event, MessageHandler.MessageType.STRANGER)) break;
         }
     }
 
@@ -109,10 +124,7 @@ public class MessageRespondCenter {
      */
     @SuppressWarnings("unchecked")
     public void register(MessageHandler<? extends MessageEvent> handler){
-        if(handler.types().contains(MessageHandler.MessageType.GROUP)) groupMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler.types().contains(MessageHandler.MessageType.FRIEND)) friendMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler.types().contains(MessageHandler.MessageType.STRANGER)) strangerMessageHandlers.add((MessageHandler<MessageEvent>) handler);
-        if(handler.types().contains(MessageHandler.MessageType.TEMP)) groupTempMessageHandlers.add((MessageHandler<MessageEvent>) handler);
+        handlers.add(new BoxedHandler((MessageHandler<MessageEvent>) handler));
         if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
         if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
     }
@@ -152,12 +164,10 @@ public class MessageRespondCenter {
         MessageChainBuilder messages = new MessageChainBuilder();
         for(MessageHandler<MessageEvent> reloadable:reloadable){
             if(((Reloadable) reloadable).reload()){
-                messages.append("“"+reloadable.getName()+"” 已重载完毕。\n");
+                messages.append("“").append(reloadable.getName()).append("” 已重载完毕。\n");
             } else {
-                messages.append("“"+reloadable.getName()+"” 重载失败。\n");
+                messages.append("“").append(reloadable.getName()).append("” 重载失败。\n");
             }
-
-
         }
         event.getSubject().sendMessage(messages.build());
     }
@@ -171,5 +181,214 @@ public class MessageRespondCenter {
         }
     }
 
+    /**
+     * 通过UUID来获取回复处理器的名字
+     * @return 如果对应UUID的回复处理器存在，那么返回一个包含名字的Optional
+     */
+    public Optional<String> getName(UUID uuid){
+        for(BoxedHandler handler:handlers){
+            if(handler.getUUID().equals(uuid))
+                return Optional.of(handler.getName());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 通过名字来获取回复处理器的UUID
+     * @return 如果对应名字的回复处理器存在，那么返回一个包含UUID的Optional
+     */
+    public Optional<UUID> getUUID(String name){
+        for(BoxedHandler handler:handlers){
+            if(handler.getName().equals(name))
+                return Optional.of(handler.getUUID());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 通过UUID来获取对应回复处理器调用次数的统计数据
+     * @param reset 是否在获取后重置统计数据
+     * @return -1：该回复处理器不存在。
+     */
+    public int getStatistics(UUID uuid, boolean reset){
+        BoxedHandler handler = getHandler(uuid).orElse(null);
+        if(handler!=null){
+            if(reset) handler.resetCount();
+            return handler.getCount();
+        }
+        return -1;
+    }
+
+    /**
+     * 通过名字来获取对应回复处理器调用次数的统计数据
+     * @param reset 是否在获取后重置统计数据
+     * @return -1：该回复处理器不存在。
+     */
+    public int getStatistics(String name, boolean reset){
+        BoxedHandler handler = getHandler(name).orElse(null);
+        if(handler!=null){
+            if(reset) handler.resetCount();
+            return handler.getCount();
+        }
+        return -1;
+    }
+
+    /**
+     * 通过获取所有回复处理器调用次数的统计数据
+     * @param reset 是否在获取后重置统计数据
+     */
+    public Map<UUID,Integer> getStatistics(boolean reset){
+        Map<UUID,Integer> result = new HashMap<>();
+        for(BoxedHandler handler:handlers){
+            result.put(handler.getUUID(),handler.getCount());
+            if(reset) handler.resetCount();
+        }
+        return result;
+    }
+
+
+    /**
+     * 通过UUID来获取对应回复处理器群消息调用次数的统计数据
+     * @param reset 是否在获取后重置统计数据
+     * @return 如果对应UUID的回复处理器存在，那么返回一个包含统计数据的的Optional。请注意：如果该回复处理器不支持处理群消息，仍将返回一个包含空Map的Optional。
+     */
+    public Optional<Map<Long,Integer>> getGroupStatistics(UUID uuid, boolean reset){
+        BoxedHandler handler = getHandler(uuid).orElse(null);
+        if(handler!=null){
+            if(reset) handler.resetGroupCount();
+            return Optional.of(handler.getGroupCount());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 通过名字来获取对应回复处理器群消息调用次数的统计数据
+     * @param reset 是否在获取后重置统计数据
+     * @return 如果对应名字的回复处理器存在，那么返回一个包含统计数据的的Optional。请注意：如果该回复处理器不支持处理群消息，仍将返回一个包含空Map的Optional。
+     */
+    public Optional<Map<Long,Integer>> getGroupStatistics(String name, boolean reset){
+        BoxedHandler handler = getHandler(name).orElse(null);
+        if(handler!=null){
+            if(reset) handler.resetGroupCount();
+            return Optional.of(handler.getGroupCount());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 通过获取所有回复处理器群消息调用次数的统计数据
+     * @param reset 是否在获取后重置统计数据
+     */
+    public Table<Long,UUID,Integer> getGroupStatistics(boolean reset){
+        Table<Long,UUID,Integer> result = HashBasedTable.create();
+        for(BoxedHandler handler:handlers){
+            if(!handler.getGroupCount().isEmpty()){
+                Map<Long,Integer> handlerGroupCount = handler.groupCount;
+                for(Map.Entry<Long,Integer> entry: handlerGroupCount.entrySet()){
+                    result.put(entry.getKey(),handler.getUUID(),entry.getValue());
+                }
+                if(reset) handler.resetGroupCount();
+            }
+        }
+        return result;
+    }
+
+    void optimizeHandlerSequence(){
+        //Do Not Edit
+    }
+
+    Optional<BoxedHandler> getHandler(UUID uuid){
+        for(BoxedHandler handler:handlers){
+            if(handler.getUUID().equals(uuid))
+                return Optional.of(handler);
+        }
+        return Optional.empty();
+    }
+
+    Optional<BoxedHandler> getHandler(String name){
+        for(BoxedHandler handler:handlers){
+            if(handler.getName().equals(name))
+                return Optional.of(handler);
+        }
+        return Optional.empty();
+    }
+
+    static class BoxedHandler implements Comparable<BoxedHandler>{
+        MessageHandler<MessageEvent> handler;
+        List<MessageHandler.MessageType> types;
+        int count;
+        Map<Long,Integer> groupCount;
+
+        BoxedHandler(MessageHandler<MessageEvent> handler) {
+            this.handler = handler;
+            types = handler.types();
+            count = 0;
+            groupCount = new HashMap<>();
+        }
+
+        UUID getUUID(){
+            return handler.getUUID();
+        }
+
+        String getName(){
+            return handler.getName();
+        }
+
+        boolean handleMessage(MessageEvent event,MessageHandler.MessageType messageType) throws IOException {
+            if (fit(messageType))
+                if (handler.handleMessage(event)) {
+                    count++;
+                    if (isGroupMessage(event)) {
+                        addToGroupCount(((GroupMessageEvent) event).getGroup().getId());
+                    }
+                    return true;
+                }
+            return false;
+        }
+
+        boolean needPermission(){
+            return handler.isPermissionRequired();
+        }
+
+        boolean isBetaFeature(){
+            return handler.isOnBeta();
+        }
+
+        boolean fit(MessageHandler.MessageType type){
+            return types.contains(type);
+        }
+
+        boolean isGroupMessage(MessageEvent event){
+            return event instanceof GroupMessageEvent;
+        }
+
+        int getCount(){
+            return count;
+        }
+
+        Map<Long,Integer> getGroupCount(){
+            return new HashMap<>(groupCount);
+        }
+
+        void addToGroupCount(long groupID){
+            if(groupCount.containsKey(groupID))
+                groupCount.replace(groupID,groupCount.get(groupID)+1);
+            else
+                groupCount.put(groupID,1);
+        }
+
+        void resetCount(){
+            count = 0;
+        }
+
+        void resetGroupCount(){
+            groupCount.clear();
+        }
+
+        @Override
+        public int compareTo(@NotNull BoxedHandler o) {
+            return count-o.getCount();
+        }
+    }
 
 }

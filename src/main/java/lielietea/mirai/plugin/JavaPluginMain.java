@@ -128,7 +128,7 @@ public final class JavaPluginMain extends JavaPlugin {
             //处理所有需要回复的消息
             //包括自动打招呼，关键词触发，指令
             try {
-                MessageRespondCenter.getINSTANCE().handleFrinedMessageEvent(event);
+                MessageRespondCenter.getINSTANCE().handleFriendMessageEvent(event);
             } catch (IOException e) {
                 e.printStackTrace();
             }
