@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.messageresponder;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import lielietea.mirai.plugin.admintools.StatisticController;
 import lielietea.mirai.plugin.messageresponder.autoreply.AntiDirtyWordMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.AntiOverwatchMessageHandler;
 import lielietea.mirai.plugin.messageresponder.autoreply.GoodbyeMessageHandler;
@@ -93,18 +94,20 @@ public class MessageRespondCenter {
         READ_LOCK.lock();
         try{
             for(BoxedHandler handler:handlers) {
-                if(handler.isBetaFeature()){
-                    if(true/*这里缺个Group Config的判断*/)
-                        if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
-                            break;
-                }
-                else if(handler.needPermission()){
-                    if(true/*这里缺个Group Config的判断*/)
-                        if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
-                            break;
-                }
-                else if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                if (StatisticController.checkGroupCount((GroupMessageEvent) event)) {
+                    if (handler.isBetaFeature()) {
+                        if (true/*这里缺个Group Config的判断*/)
+                            if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                                break;
+                    } else if (handler.needPermission()) {
+                        if (true/*这里缺个Group Config的判断*/)
+                            if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                                break;
+                    } else if (handler.handleMessage(event, MessageHandler.MessageType.GROUP))
+                        break;
+                } else {
                     break;
+                }
             }
         }finally{
             READ_LOCK.unlock();

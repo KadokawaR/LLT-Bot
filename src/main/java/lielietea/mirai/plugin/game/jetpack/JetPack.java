@@ -147,4 +147,6 @@ public class JetPack extends BaiduAPI{
             }
         }
     }
+
+    public enum jetpackType {Help,Location,FlyStart,Nothing}
 }

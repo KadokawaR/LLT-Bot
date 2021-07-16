@@ -34,7 +34,7 @@ public class StatisticController {
     }
 
     /**
-     * 检测是否每分钟超过10条
+     * 检测是否每分钟超过 MAX_THRESHOLD
      */
     public static boolean checkGroupCount(GroupMessageEvent event){
         long groupID = event.getGroup().getId();
