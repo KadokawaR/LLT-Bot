@@ -65,7 +65,7 @@ public class DiceMessageHandler implements MessageHandler<MessageEvent> {
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "骰子";
     }
 

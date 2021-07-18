@@ -11,8 +11,6 @@ import java.util.UUID;
 /**
  * 回复处理器接口，如果要让 {@link MessageRespondCenter} 对回复处理器进行托管，那么必须实现该类并注册
  *
- * <p>如果实现该接口同时实现 {@link Reloadable} 接口，那么 {@link MessageRespondCenter} 可以在需要时重载回复处理器的配置</p>
- *
  * @param <T> 必须继承自MessageEvent
  */
 public interface MessageHandler<T extends MessageEvent> {
@@ -37,14 +35,14 @@ public interface MessageHandler<T extends MessageEvent> {
      * @return UUID
      */
     default UUID getUUID(){
-        return UUID.nameUUIDFromBytes(this.getName().getBytes(StandardCharsets.UTF_8));
+        return UUID.nameUUIDFromBytes(this.getFunctionName().getBytes(StandardCharsets.UTF_8));
     }
 
     /**
      * 返回该回复处理器所代表的功能的名字
      * @return 功能名字
      */
-    String getName();
+    String getFunctionName();
 
     /**
      * 该回复处理器是否是测试特性？
@@ -63,6 +61,8 @@ public interface MessageHandler<T extends MessageEvent> {
     default boolean isPermissionRequired() {
         return false;
     }
+
+    default void onclose(){ }
 
     enum MessageType{
         GROUP,

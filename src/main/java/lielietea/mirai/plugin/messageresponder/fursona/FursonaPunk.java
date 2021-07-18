@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.messageresponder.fursona;
 
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
-import lielietea.mirai.plugin.messageresponder.Reloadable;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
@@ -12,7 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadable {
+public class FursonaPunk implements MessageHandler<GroupMessageEvent>{
     static final List<MessageHandler.MessageType> type = new ArrayList<>(Collections.singletonList(MessageHandler.MessageType.GROUP));
     static Fursona fursonaComponents;
     static final String FURSONA_PATH = "/cluster/fursona.json";
@@ -42,7 +41,7 @@ public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadabl
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "Fursonapunk";
     }
 
@@ -237,16 +236,6 @@ public class FursonaPunk implements MessageHandler<GroupMessageEvent>, Reloadabl
         String action = furfur.Action[random.nextInt(furfur.Action.length)];
         String items = furfur.Items[random.nextInt(furfur.Items.length)];
         return "的兽设是：在"+era+"的"+location+"，"+reason1+"。因为"+reason2+'，'+action+"的，"+getRandomHats(furfur,random)+getRandomClothes(furfur,random)+"手握"+items+"的"+getSpecies(furfur,random)+"兽人。";
-    }
-
-    @Override
-    public boolean reload() {
-        InputStream is = FursonaPunk.class.getResourceAsStream(FURSONA_PATH);
-        assert is != null;
-        BufferedReader br =new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        Gson gson = new Gson();
-        fursonaComponents = gson.fromJson(br, Fursona.class);
-        return true;
     }
 
     enum wordType {

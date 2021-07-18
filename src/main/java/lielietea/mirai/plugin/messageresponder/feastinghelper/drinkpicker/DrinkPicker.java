@@ -122,7 +122,7 @@ public class DrinkPicker implements MessageHandler<MessageEvent> {
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return null;
     }
 

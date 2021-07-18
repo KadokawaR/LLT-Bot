@@ -37,7 +37,7 @@ public class LotteryC4MessageHandler implements MessageHandler<GroupMessageEvent
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "\"彩票：C4\"";
     }
 

@@ -37,7 +37,7 @@ public class LotteryBummerMessageHandler implements MessageHandler<GroupMessageE
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "彩票：Bummer";
     }
 

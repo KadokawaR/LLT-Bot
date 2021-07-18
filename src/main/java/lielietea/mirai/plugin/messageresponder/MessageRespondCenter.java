@@ -41,14 +41,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <p>所有回复处理器(也就是不同功能的回复模组)，都需要实现 {@link MessageHandler} 接口，并在使用 {@link #register(MessageHandler)} 进行注册。推荐在 {@link #ini()} 方法内进行注册</p>
  */
 public class MessageRespondCenter {
-    static final List<BoxedHandler> handlers = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> reloadable = new ArrayList<>();
-    static final List<MessageHandler<MessageEvent>> closeRequired = new ArrayList<>();
-
     static final ReadWriteLock REENTRANT_READ_WRITE_LOCK = new ReentrantReadWriteLock();
     static final Lock READ_LOCK = REENTRANT_READ_WRITE_LOCK.readLock();
     static final Lock WRITE_LOCK = REENTRANT_READ_WRITE_LOCK.writeLock();
     static final Timer TIMER = new Timer(true);
+
+    final List<BoxedHandler> handlers;
 
     static{
         //每隔1个小时自动优化回复处理器顺序
@@ -81,6 +79,10 @@ public class MessageRespondCenter {
     }
 
     static final MessageRespondCenter INSTANCE = new MessageRespondCenter();
+
+    MessageRespondCenter() {
+        handlers = new ArrayList<>();
+    }
 
     public static MessageRespondCenter getINSTANCE() {
         return INSTANCE;
@@ -166,8 +168,6 @@ public class MessageRespondCenter {
     @SuppressWarnings("unchecked")
     public void register(MessageHandler<? extends MessageEvent> handler){
         handlers.add(new BoxedHandler((MessageHandler<MessageEvent>) handler));
-        if(handler instanceof Reloadable) reloadable.add((MessageHandler<MessageEvent>) handler);
-        if(handler instanceof CloseRequiredHandler) closeRequired.add((MessageHandler<MessageEvent>) handler);
     }
 
     /**
@@ -200,21 +200,6 @@ public class MessageRespondCenter {
     }
 
     /**
-     * 实现了 {@link Reloadable} 的回复处理器，可用此方法来完成回复设置重载
-     */
-    public String reload(){
-        StringBuilder builder = new StringBuilder();
-        for(MessageHandler<MessageEvent> reloadable:reloadable){
-            if(((Reloadable) reloadable).reload()){
-                builder.append("[").append(reloadable.getName()).append("]已重载完毕。\n");
-            } else {
-                builder.append("[").append(reloadable.getName()).append("]重载失败。\n");
-            }
-        }
-        return builder.toString();
-    }
-
-    /**
      * 优化回复处理器的调用顺序
      * @return 优化后的回复处理器顺序与调用统计
      */
@@ -233,11 +218,11 @@ public class MessageRespondCenter {
     }
 
     /**
-     * 实现了 {@link CloseRequiredHandler} 的回复处理器，可用此方法完成关闭Mirai时的收尾工作
+     * 用此方法完成关闭Mirai时的收尾工作，必须在Mirai关闭时调用。
      */
     public void close(){
-        for(MessageHandler<MessageEvent> closing : closeRequired){
-            ((CloseRequiredHandler) closing).onclose();
+        for(BoxedHandler handler: handlers){
+            handler.close();
         }
     }
 
@@ -439,7 +424,7 @@ public class MessageRespondCenter {
         }
 
         String getName(){
-            return handler.getName();
+            return handler.getFunctionName();
         }
 
         boolean handleMessage(MessageEvent event,MessageHandler.MessageType messageType) throws IOException {
@@ -472,6 +457,10 @@ public class MessageRespondCenter {
 
         int getCount(){
             return count;
+        }
+
+        void close(){
+            handler.onclose();
         }
 
         Map<Long,Integer> getGroupCount(){

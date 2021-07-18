@@ -48,7 +48,7 @@ public class Help implements MessageHandler<MessageEvent> {
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "帮助";
     }
 }

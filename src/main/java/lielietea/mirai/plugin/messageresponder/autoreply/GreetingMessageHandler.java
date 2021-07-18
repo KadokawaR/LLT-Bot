@@ -31,7 +31,7 @@ public class GreetingMessageHandler implements MessageHandler<GroupMessageEvent>
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "自动回复：打招呼";
     }
 }

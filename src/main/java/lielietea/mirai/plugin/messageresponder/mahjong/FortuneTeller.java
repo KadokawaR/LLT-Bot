@@ -115,7 +115,7 @@ public class FortuneTeller implements MessageHandler<GroupMessageEvent> {
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "麻将占卜";
     }
 }

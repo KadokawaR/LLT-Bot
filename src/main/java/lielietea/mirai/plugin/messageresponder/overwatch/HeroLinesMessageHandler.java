@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.messageresponder.overwatch;
 
 
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
-import lielietea.mirai.plugin.messageresponder.Reloadable;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -13,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class HeroLinesMessageHandler implements MessageHandler<GroupMessageEvent>, Reloadable {
+public class HeroLinesMessageHandler implements MessageHandler<GroupMessageEvent> {
     static final List<MessageType> type = new ArrayList<>(Collections.singletonList(MessageType.GROUP));
 
     final MessageMatcher<MessageEvent> requestHeroLineMater;
@@ -38,16 +37,7 @@ public class HeroLinesMessageHandler implements MessageHandler<GroupMessageEvent
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return null;
-    }
-
-
-    @Override
-    public boolean reload() {
-        //目前只能从默认json重载
-        //更多功能还需要编辑
-        HeroLinesCluster.reloadReplyLinesFromPreset();
-        return true;
     }
 }

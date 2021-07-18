@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.admintools;
 
+import lielietea.mirai.plugin.admintools.reload.ReloadManager;
 import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;
@@ -48,7 +49,7 @@ public class AdminTools {
 
     void reloadManually(MessageEvent event){
         MessageChainBuilder messages = new MessageChainBuilder();
-        String result = MessageRespondCenter.getINSTANCE().reload();
+        String result = ReloadManager.getINSTANCE().reload(event);
         messages.append(result);
         event.getSubject().sendMessage(messages.build());
     }

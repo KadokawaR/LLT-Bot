@@ -38,7 +38,7 @@ public class LotteryWinnerMessageHandler implements MessageHandler<GroupMessageE
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "彩票：Winner";
     }
 }

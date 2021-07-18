@@ -1,6 +1,5 @@
 package lielietea.mirai.plugin.messageresponder.lovelypicture;
 
-import lielietea.mirai.plugin.messageresponder.CloseRequiredHandler;
 import lielietea.mirai.plugin.messageresponder.MessageHandler;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import lielietea.mirai.plugin.utils.image.ImageURLResolver;
@@ -17,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequiredHandler {
+public class LovelyImage implements MessageHandler<GroupMessageEvent> {
 
     public LovelyImage(MessageMatcher<MessageEvent> dogCommandMessageMatcher, MessageMatcher<MessageEvent> shibaCommandMessageMatcher, MessageMatcher<MessageEvent> huskyCommandMessageMatcher, MessageMatcher<MessageEvent> berneseCommandMessageMatcher, MessageMatcher<MessageEvent> malamuteCommandMessageMatcher, MessageMatcher<MessageEvent> germanShepherdCommandMessageMatcher, MessageMatcher<MessageEvent> samoyedCommandMessageMatcher, MessageMatcher<MessageEvent> catCommandMessageMatcher) {
         this.dogCommandMessageMatcher = dogCommandMessageMatcher;
@@ -189,7 +188,7 @@ public class LovelyImage implements MessageHandler<GroupMessageEvent>, CloseRequ
     }
 
     @Override
-    public String getName() {
+    public String getFunctionName() {
         return "OK Animal";
     }
 
