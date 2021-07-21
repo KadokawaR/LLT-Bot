@@ -2,15 +2,19 @@ package lielietea.mirai.plugin.admintools;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
+import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 
 @SuppressWarnings("ConstantConditions")
 public class StatisticController {
     //还要多考虑一下这个统计应该怎么做
-    static final Table<Long,UUID,Integer> data = HashBasedTable.create();
-    static final Map<Long,Integer> minuteCount = new HashMap<>();
+    public static final Table<Long,UUID,Integer> data = HashBasedTable.create();
+    public static final Map<Long,Integer> minuteCount = new HashMap<>();
     static boolean resetStartFlag = false;
     static final int MAX_THRESHOLD = 10;
 
@@ -41,11 +45,7 @@ public class StatisticController {
         if(!minuteCount.containsKey(groupID)){
             return true;
         }
-        if(minuteCount.get(groupID)>MAX_THRESHOLD){
-            return false;
-        } else {
-            return true;
-        }
+        return minuteCount.get(groupID) <= MAX_THRESHOLD;
     }
 
     /**
@@ -58,9 +58,20 @@ public class StatisticController {
             t.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.println("hello world");
+                    minuteCount.clear();
+                    System.out.println("分钟计数器已重置");
                 }
             }, 60 * 1000, 60 * 1000);
+        }
+    }
+
+    /**
+     * 读取statistics
+     */
+    public static void getStatistics(FriendMessageEvent event){
+        AdministrativeAccountChecker accountChecker = new AdministrativeAccountChecker();
+        if (accountChecker.checkIdentity(event)&&event.getMessage().contentToString().contains("/statistics")){
+            event.getSubject().sendMessage(String.valueOf(MessageRespondCenter.getINSTANCE().getGroupStatistics(false)));
         }
     }
 }

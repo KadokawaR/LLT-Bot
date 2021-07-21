@@ -11,16 +11,6 @@ import java.util.Objects;
 import static java.lang.Math.pow;
 
 public class MapDrawer extends BaiduAPI {
-    /**
-    public static double X_800_600_lng(int zoomLevel){
-        double meter = pow(2,18-zoomLevel);
-        return DistanceCalculator.GetDegree(meter*400);
-    }
-    public static double Y_800_600_lat(int zoomLevel){
-        double meter = pow(2,18-zoomLevel);
-        return DistanceCalculator.GetDegree(meter*300);
-    }
-    **/
 
     //判断是否更加接近于点1
     public static boolean nearerToPoint1(double point1x, double point1y, double point2x, double point2y, double pointcx, double pointcy){

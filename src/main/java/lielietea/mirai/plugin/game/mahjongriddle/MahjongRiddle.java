@@ -104,7 +104,7 @@ public class MahjongRiddle {
     public static boolean gotAnswer(int[] answerNum,GroupMessageEvent event){
         String[] answer = transformAnswer(answerNum);
         for (String s : answer) {
-            if (event.getMessage().contentToString().contains(s)) {
+            if (event.getMessage().contentToString().equals(s)) {
                 return true;
             }
         }

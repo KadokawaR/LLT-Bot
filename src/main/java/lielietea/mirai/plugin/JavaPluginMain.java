@@ -113,6 +113,9 @@ public final class JavaPluginMain extends JavaPlugin {
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
 
+            if(event.getMessage().contentToString().contains("/countnow")){
+                event.getSubject().sendMessage(String.valueOf(StatisticController.minuteCount.get(event.getSubject().getId())));
+            }
         });
 
         //群成员入群自动欢迎
@@ -150,6 +153,8 @@ public final class JavaPluginMain extends JavaPlugin {
             }
 
             BroadcastSystem.broadcastHelper(event);
+
+            StatisticController.getStatistics(event);
 
         });
     }
