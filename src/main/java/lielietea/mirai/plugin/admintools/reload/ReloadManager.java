@@ -29,7 +29,7 @@ public class ReloadManager {
      * 初始化该管理器类。必须在插件启动时调用。
      */
     public void ini() {
-        //not implemented yet.
+        //TODO:waiting for implementing.
     }
 
     static class Interpreter{
@@ -40,7 +40,7 @@ public class ReloadManager {
         }
 
         String handle(){
-            //waiting for implementing.
+            //TODO:waiting for implementing.
             return "Reloading does not implemented yet!";
         }
     }

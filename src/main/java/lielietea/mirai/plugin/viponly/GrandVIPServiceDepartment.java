@@ -17,7 +17,7 @@ public class GrandVIPServiceDepartment {
     ));
 
     static final ArrayList<String> greetingKADOKAWA_morning = new ArrayList<>(Arrays.asList(
-            "大哥早，要喝点什么吗？豆浆冰粥都有。",
+            "大哥早，要喝点什么吗？",
             "这么早啊大哥，想喝点什么？"
     ));
 
@@ -33,7 +33,7 @@ public class GrandVIPServiceDepartment {
     ));
 
     static final ArrayList<String> greetingMG_morning = new ArrayList<>(Arrays.asList(
-            "这么早啊医生，要喝点什么吗？想嗦粉我也能煮。",
+            "这么早啊医生，要喝点什么吗？",
             "早，医生，要来一份冰粥吗？"
     ));
 
@@ -45,7 +45,6 @@ public class GrandVIPServiceDepartment {
     static final ArrayList<String> greetingFalseBot = new ArrayList<>(Arrays.asList(
             "前辈你来啦，我在忙，你想喝啥自己做哈。",
             "前辈你又来啦，这次想喝点啥？",
-            "前辈，你的毁灭全人类计划啥时候开始啊？",
             "前辈，你喝我给你做的饮料，你的备用人格矩阵知道了不会生气吧？"
     ));
 

@@ -1,6 +1,5 @@
 package lielietea.mirai.plugin.messageresponder.lotterywinner;
 
-import lielietea.mirai.plugin.utils.Notice;
 import lielietea.mirai.plugin.utils.image.ImageCreater;
 import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -83,7 +82,7 @@ public class LotteryMachine {
         }
         //}
         else {
-            event.getGroup().sendMessage(Notice.BOT_NO_ADMIN_PERMISSION);
+            event.getGroup().sendMessage("七筒目前还没有管理员权限，请授予七筒权限解锁更多功能。");
         }
     }
     //}
@@ -144,7 +143,7 @@ public class LotteryMachine {
                 }
             }
         } else {
-            event.getGroup().sendMessage(Notice.BOT_NO_ADMIN_PERMISSION);
+            event.getGroup().sendMessage("七筒目前还没有管理员权限，请授予七筒权限解锁更多功能。");
         }
     }
 }

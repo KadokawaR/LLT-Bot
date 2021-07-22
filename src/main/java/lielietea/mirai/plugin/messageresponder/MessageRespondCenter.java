@@ -49,19 +49,6 @@ public class MessageRespondCenter {
     static final MessageRespondCenter INSTANCE = new MessageRespondCenter();
 
     static {
-        //每隔1个小时自动优化回复处理器顺序
-        Calendar calendar = Calendar.getInstance();
-        int baseHour = calendar.get(Calendar.HOUR_OF_DAY) / 6 * 6 + 6;
-        baseHour = baseHour == 24 ? 0 : baseHour;
-        calendar.set(Calendar.HOUR_OF_DAY, baseHour);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 1);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date date = calendar.getTime();
-        if (date.before(new Date())) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            date = calendar.getTime();
-        }
         TIMER.schedule(new TimerTask() {
                            @Override
                            public void run() {
@@ -74,7 +61,7 @@ public class MessageRespondCenter {
                                }
                            }
                        },
-                date,
+                60000,
                 6 * 60 * 60 * 1000);
     }
 
