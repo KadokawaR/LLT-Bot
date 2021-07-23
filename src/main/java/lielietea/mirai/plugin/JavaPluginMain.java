@@ -3,14 +3,14 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.admintools.StatisticController;
-import lielietea.mirai.plugin.broadcast.BroadcastSystem;
-import lielietea.mirai.plugin.feedback.FeedBack;
-import lielietea.mirai.plugin.game.GameCenter;
-import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
+import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
+import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
+import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
+import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
-import lielietea.mirai.plugin.utils.groupmanager.Speech;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.Speech;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
@@ -22,7 +22,6 @@ import net.mamoe.mirai.event.events.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /*
@@ -42,7 +41,7 @@ public final class JavaPluginMain extends JavaPlugin {
     static final Logger logger = LogManager.getLogger(JavaPluginMain.class);
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.0")
+        super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.1")
                 .info("LieLieTea QQ Group Bot")
                 .build());
     }
@@ -51,7 +50,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        MessageRespondCenter.getINSTANCE().ini();
+        ResponderManager.getINSTANCE().ini();
 
         StatisticController.resetMinuteCount();
 
@@ -67,13 +66,13 @@ public final class JavaPluginMain extends JavaPlugin {
 
         //加为好友之后发送简介与免责声明
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> {
-            event.getFriend().sendMessage(Speech.joinGroup);
+            event.getFriend().sendMessage(Speech.JOIN_GROUP);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            event.getFriend().sendMessage(Speech.disclaimer);
+            event.getFriend().sendMessage(Speech.DISCLAIMER);
         });
 
         //自动通过拉群请求
@@ -104,7 +103,8 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
             try {
-                MessageRespondCenter.getINSTANCE().handleGroupMessageEvent(event);
+                //所有消息之后都集中到这个地方处理
+                MessageDispatcher.getINSTANCE().handleMessage(event);
                 GameCenter.handle(event);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -123,19 +123,12 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
 
-            //处理所有需要回复的消息
-            //包括自动打招呼，关键词触发，指令
-            try {
-                MessageRespondCenter.getINSTANCE().handleFriendMessageEvent(event);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //所有消息之后都集中到这个地方处理
+            MessageDispatcher.getINSTANCE().handleMessage(event);
 
             //管理员功能
             AdminTools.getINSTANCE().handleAdminCommand(event);
 
-            //意见反馈
-            FeedBack.get(event);
 
             //BroadcastSystem
             try {
@@ -161,6 +154,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
     @Override
     public void onDisable(){
-        MessageRespondCenter.getINSTANCE().close();
+        ResponderManager.getINSTANCE().close();
+        MessageDispatcher.getINSTANCE().close();
     }
 }

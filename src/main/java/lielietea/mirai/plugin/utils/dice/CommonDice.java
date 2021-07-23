@@ -48,48 +48,12 @@ public class CommonDice {
         return result;
     }
 
-    /**
-     * 私聊某人投掷结果
-     *
-     * @param directMessageTarget 私聊对象
-     */
-    public void privatelyInfoResult(Friend directMessageTarget){
-        directMessageTarget.sendMessage(buildMessage());
-    }
 
-    /**
-     * 在某群中广播投掷结果并引用投掷命令
-     *
-     * @param quoteMessage 被引用的消息
-     * @param broadcastGroup 广播对象
-     */
-    public void broadcastResultByQuote(MessageChain quoteMessage,Group broadcastGroup){
-        broadcastGroup.sendMessage(buildMessage(quoteMessage));
-    }
-
-    /**
-     * 在某群中广播投掷结果
-     *
-     * @param broadcastGroup 广播对象
-     */
-    public void broadcastResult(Group broadcastGroup){
-        broadcastGroup.sendMessage(buildMessage());
-    }
-
-
-    MessageChain buildMessage(){
-        MessageChainBuilder message = new MessageChainBuilder();
-        message.append("您掷出的点数是:");
-        result.forEach(result-> message.append(String.valueOf(+result)).append(" "));
-        return message.build();
-    }
-
-    MessageChain buildMessage(MessageChain quoteMessage){
-        MessageChainBuilder message = new MessageChainBuilder();
-        message.append(new QuoteReply(quoteMessage));
-        message.append("您掷出的点数是:");
-        result.forEach(result-> message.append(String.valueOf(result)).append(" "));
-        return message.build();
+    public String buildMessage(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("您掷出的点数是:");
+        result.forEach(result-> builder.append(String.valueOf(+result)).append(" "));
+        return builder.toString();
     }
 
 

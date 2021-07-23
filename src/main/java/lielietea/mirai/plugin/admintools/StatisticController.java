@@ -2,17 +2,16 @@ package lielietea.mirai.plugin.admintools;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
+import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 
 @SuppressWarnings("ConstantConditions")
 public class StatisticController {
-    //还要多考虑一下这个统计应该怎么做
+    //TODO:等待重写。需要保存和命令读取功能
     public static final Table<Long,UUID,Integer> data = HashBasedTable.create();
     public static final Map<Long,Integer> minuteCount = new HashMap<>();
     static boolean resetStartFlag = false;
@@ -71,7 +70,7 @@ public class StatisticController {
     public static void getStatistics(FriendMessageEvent event){
         AdministrativeAccountChecker accountChecker = new AdministrativeAccountChecker();
         if (accountChecker.checkIdentity(event)&&event.getMessage().contentToString().contains("/statistics")){
-            event.getSubject().sendMessage(String.valueOf(MessageRespondCenter.getINSTANCE().getGroupStatistics(false)));
+            event.getSubject().sendMessage("正在重写中");
         }
     }
 }

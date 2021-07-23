@@ -1,0 +1,41 @@
+package lielietea.mirai.plugin.core.messagehandler;
+
+import net.mamoe.mirai.event.events.MessageEvent;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
+public interface MessageHandler<T extends MessageEvent> {
+
+    boolean match(T event);
+
+    MessageChainPackage handle(T event);
+
+    /**
+     * 对于每个群每分钟的最多回复消息数量
+     * @return 如果返回-1，那么为无限制
+     */
+    default int getGroupLimit(){
+        return 30;
+    }
+
+    /**
+     * 对于每个发送者每分钟的最多回复消息数量
+     * @return 如果返回-1，那么为无限制
+     */
+    default int getPersonalLimit(){
+        return 3;
+    }
+
+    /**
+     * 功能模块的UUID，默认根据名字自动生成
+     */
+    default UUID getUUID(){
+        return UUID.nameUUIDFromBytes(this.getName().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * 功能模块的名字
+     */
+    String getName();
+}

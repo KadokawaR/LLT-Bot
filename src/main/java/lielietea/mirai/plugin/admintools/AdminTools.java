@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.admintools;
 
-import lielietea.mirai.plugin.admintools.reload.ReloadManager;
-import lielietea.mirai.plugin.messageresponder.MessageRespondCenter;
+import lielietea.mirai.plugin.resource.reload.ReloadManager;
+import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;
 import net.mamoe.mirai.contact.Friend;
@@ -56,7 +56,7 @@ public class AdminTools {
 
     void optimizeManually(MessageEvent event){
         MessageChainBuilder messages = new MessageChainBuilder();
-        String result = MessageRespondCenter.getINSTANCE().optimizeHandlerSequence();
+        String result = ResponderManager.getINSTANCE().optimizeHandlerSequence();
         messages.append(result);
         event.getSubject().sendMessage(messages.build());
     }
