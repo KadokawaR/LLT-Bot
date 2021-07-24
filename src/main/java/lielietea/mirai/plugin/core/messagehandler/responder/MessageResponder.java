@@ -1,8 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.responder;
 
-import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.MessageHandler;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 

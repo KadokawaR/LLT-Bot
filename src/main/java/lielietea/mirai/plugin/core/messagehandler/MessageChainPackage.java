@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class MessageChainPackage {
-    Contact sender;
+    final Contact sender;
     Contact target;
-    List<Object> action = new ArrayList<>();
-    String handlerName;
-    UUID handlerUUID;
+    final List<Object> action = new ArrayList<>();
+    final String handlerName;
+    final UUID handlerUUID;
     String note;
 
     public void execute(){
@@ -67,7 +67,7 @@ public class MessageChainPackage {
     }
 
     public static class Builder{
-        MessageChainPackage onBuild;
+        final MessageChainPackage onBuild;
 
         public Builder(MessageEvent event,MessageHandler messageHandler) {
             onBuild = new MessageChainPackage(event,messageHandler);

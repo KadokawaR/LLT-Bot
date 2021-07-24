@@ -11,10 +11,10 @@ import java.net.URL;
 import java.util.Optional;
 
 class AnimalImagePusher implements Runnable {
-    GroupMessageEvent event;
-    String imageSource;
-    ImageURLResolver.Source uRLResolver;
-    String type;
+    final GroupMessageEvent event;
+    final String imageSource;
+    final ImageURLResolver.Source uRLResolver;
+    final String type;
 
     public AnimalImagePusher(GroupMessageEvent event, String imageSource, String type, ImageURLResolver.Source uRLResolver) {
         this.event = event;

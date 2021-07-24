@@ -48,15 +48,6 @@ public class Help implements MessageResponder<MessageEvent> {
     }
 
 
-    @Override
-    public int getGroupLimit() {
-        return 12;
-    }
-
-    @Override
-    public int getPersonalLimit() {
-        return 6;
-    }
 
     @Override
     public String getName() {

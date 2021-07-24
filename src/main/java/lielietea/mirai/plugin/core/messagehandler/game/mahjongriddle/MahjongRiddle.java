@@ -190,7 +190,7 @@ public class MahjongRiddle {
                     int sessionId = rand.nextInt(10086);
                     rf.id = sessionId;
 
-                    riddleSessionHolder.put(event.getGroup().getId(), rf);;
+                    riddleSessionHolder.put(event.getGroup().getId(), rf);
                     BufferedImage img = null;
                     try {
                         img = getTileImage(displayAnswer(rf.isGuessed, transformAnswer(rf.answerNum)));
@@ -242,5 +242,5 @@ public class MahjongRiddle {
         return "猜麻将";
     }
 
-    public enum riddleType { Start, Get, Congratulation, Nothing};
+    public enum riddleType { Start, Get, Congratulation, Nothing}
 }

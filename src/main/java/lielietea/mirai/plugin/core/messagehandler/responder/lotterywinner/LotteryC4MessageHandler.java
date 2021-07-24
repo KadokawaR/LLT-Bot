@@ -4,7 +4,6 @@ import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
 import lielietea.mirai.plugin.utils.messagematcher.MessageMatcher;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

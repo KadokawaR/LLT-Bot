@@ -104,7 +104,7 @@ public class AdminTools {
             String[] allFriendInfo = new String[size/30+1];
             Arrays.fill(allFriendInfo, "");
             int count =0;
-            int countString = 0;;
+            int countString = 0;
             while (listIter.hasNext()){
                 if (count>29){
                     count=0;

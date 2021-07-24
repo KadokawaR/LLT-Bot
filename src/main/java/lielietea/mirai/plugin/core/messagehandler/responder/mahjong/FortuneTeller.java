@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.mahjong;
 
+import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -13,7 +14,7 @@ import java.util.*;
 
 public class FortuneTeller implements MessageResponder<GroupMessageEvent> {
 
-    static final List<MessageResponder.MessageType> type = new ArrayList<>(Collections.singletonList(MessageResponder.MessageType.GROUP));
+    static final List<MessageResponder.MessageType> TYPES = new ArrayList<>(Collections.singletonList(MessageResponder.MessageType.GROUP));
 
     public static int getMahjongOfTheDay(MessageEvent event){
         //获取当日幸运数字
@@ -91,31 +92,35 @@ public class FortuneTeller implements MessageResponder<GroupMessageEvent> {
         return "\n今天的占卜麻将牌是: "+getMahjong(mahjongOfTheDay)+"\n运势是: "+MahjongSay.luck.get(mahjongNumero)+"\n"+MahjongSay.saying.get(mahjongNumero);
     }
 
+    @NotNull
     @Override
-    public boolean handleMessage(GroupMessageEvent event) {
-        if ((event.getMessage().contentToString().equals("麻将")) || (event.getMessage().contentToString().contains("求签"))){
-            final String MAHJONG_PIC_PATH = "/pics/mahjong/"+getMahjong(getMahjongOfTheDay(event))+".png";
-            try (InputStream img = FortuneTeller.class.getResourceAsStream(MAHJONG_PIC_PATH)) {
+    public List<MessageType> types() {
+        return TYPES;
+    }
+
+    @Override
+    public boolean match(GroupMessageEvent event) {
+        return event.getMessage().contentToString().equals("麻将") || event.getMessage().contentToString().contains("求签");
+    }
+
+    @Override
+    public MessageChainPackage handle(GroupMessageEvent event) {
+        MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event,this);
+        builder.addTask(() -> {
+            final String mahjongPicPath = "/pics/mahjong/"+getMahjong(getMahjongOfTheDay(event))+".png";
+            try (InputStream img = FortuneTeller.class.getResourceAsStream(mahjongPicPath)) {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
             } catch (IOException e) {
                 e.printStackTrace();
-                //logger.warn("群（"+event.getGroup().getId()+"）"+event.getGroup().getName()+"请求麻将占卜，但Bot获取麻将图片失败",e);
             }
-            event.getSubject().sendMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
-            return true;
-        }
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public List<MessageType> types() {
-        return type;
+        });
+        builder.addMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
+        return builder.build();
     }
 
     @Override
-    public String getFunctionName() {
+    public String getName() {
         return "麻将占卜";
     }
 }

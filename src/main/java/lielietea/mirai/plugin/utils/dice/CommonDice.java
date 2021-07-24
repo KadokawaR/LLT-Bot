@@ -1,11 +1,5 @@
 package lielietea.mirai.plugin.utils.dice;
 
-import net.mamoe.mirai.contact.Friend;
-import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

@@ -19,7 +19,7 @@ class HeroLinesCluster {
     @SuppressWarnings("rawtypes")
     static final Gson gson = new GsonBuilder().registerTypeAdapter(Multimap.class,new HeroLinesMultimapTypeAdapter()).setPrettyPrinting().create();
     static final Random rand = new Random();
-    static HeroLinesCluster INSTANCE;
+    static final HeroLinesCluster INSTANCE;
 
     static final String DEFAULT_HEROLINES_JSON_PATH = "/cluster/herolines.json";
 

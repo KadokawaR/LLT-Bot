@@ -43,7 +43,6 @@ public class ResponderManager {
     static final Lock READ_LOCK = REENTRANT_READ_WRITE_LOCK.readLock();
     static final Lock WRITE_LOCK = REENTRANT_READ_WRITE_LOCK.writeLock();
     static final Timer TIMER = new Timer(true);
-    static final ResponderManager INSTANCE = new ResponderManager();
 
     static {
         //TODO:这个通知的工作不应该由这个类来做
@@ -64,20 +63,24 @@ public class ResponderManager {
     }
 
     final List<BoxedHandler> handlers;
+    final Map<UUID,BoxedHandler> addressMap;
 
     ResponderManager() {
         handlers = new ArrayList<>();
+        addressMap = new HashMap<>();
     }
+
+    static final ResponderManager INSTANCE = new ResponderManager();
 
     public static ResponderManager getINSTANCE() {
         return INSTANCE;
     }
 
-    public MessageChainPackage handle(MessageEvent event, BoxedHandler handler){
-        return handler.handle(event);
+    public MessageChainPackage handle(MessageEvent event, UUID handler){
+        return addressMap.get(handler).handle(event);
     }
 
-    public Optional<BoxedHandler> match(MessageEvent event){
+    public Optional<UUID> match(MessageEvent event){
         READ_LOCK.unlock();
         try{
             MessageResponder.MessageType type = getType(event);
@@ -85,19 +88,19 @@ public class ResponderManager {
                 if (handler.isBetaFeature()){
                     if (true/*TODO:这里缺个Group Config的判断*/) {
                         if (handler.match(event, type)) {
-                            return Optional.of(handler);
+                            return Optional.of(handler.getUUID());
                         }
                     }
                 }
                 else if (handler.needPermission()){
                     if (true/*TODO:这里缺个Group Config的判断*/) {
                         if (handler.match(event, type)) {
-                            return Optional.of(handler);
+                            return Optional.of(handler.getUUID());
                         }
                     }
                 } else {
                     if (handler.match(event, type)) {
-                        return Optional.of(handler);
+                        return Optional.of(handler.getUUID());
                     }
                 }
             }
@@ -112,7 +115,9 @@ public class ResponderManager {
      */
     @SuppressWarnings("unchecked")
     public void register(Supplier<MessageResponder<? extends MessageEvent>> handler) {
-        handlers.add(new BoxedHandler((MessageResponder<MessageEvent>) handler.get()));
+        BoxedHandler registry = new BoxedHandler((MessageResponder<MessageEvent>) handler.get());
+        handlers.add(registry);
+        addressMap.put(registry.getUUID(),registry);
     }
 
     /**
@@ -218,14 +223,6 @@ public class ResponderManager {
             this.handler = handler;
             types = handler.types();
             count = 0;
-        }
-
-        public int getGroupLimit(){
-            return handler.getGroupLimit();
-        }
-
-        public int getPersonalLimit(){
-            return handler.getPersonalLimit();
         }
 
         UUID getUUID() {

@@ -4,7 +4,7 @@ import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
 import lielietea.mirai.plugin.utils.exception.NoHandlerMethodMatchException;
 import lielietea.mirai.plugin.utils.image.ImageURLResolver;
-import net.mamoe.mirai.event.events.GroupMessageEvent;;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -52,7 +52,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
         }
     }
 
-    static LovelyImage INSTANCE = new LovelyImage();
+    static final LovelyImage INSTANCE = new LovelyImage();
 
     public static LovelyImage getINSTANCE() {
         return INSTANCE;

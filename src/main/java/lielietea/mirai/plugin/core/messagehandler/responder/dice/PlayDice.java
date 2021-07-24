@@ -94,16 +94,6 @@ public class PlayDice implements MessageResponder<MessageEvent> {
     }
 
     @Override
-    public int getGroupLimit() {
-        return 60;
-    }
-
-    @Override
-    public int getPersonalLimit() {
-        return 10;
-    }
-
-    @Override
     public String getName() {
         return "掷骰子";
     }

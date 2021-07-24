@@ -1,7 +1,6 @@
 package lielietea.mirai.plugin.core.dispatcher;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
-import lielietea.mirai.plugin.core.messagehandler.MessageHandler;
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import net.mamoe.mirai.contact.Member;
@@ -17,6 +16,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MessageDispatcher {
+    final static int GROUP_MESSAGE_LIMIT_PER_MIN = 30;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 5;
+
     final Map<Long,Integer> groupMessageThreshold = new HashMap<>();
     final Map<Long,Integer> personalMessageThreshold = new HashMap<>();
     final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -41,53 +43,57 @@ public class MessageDispatcher {
         this.executor = Executors.newCachedThreadPool();
     }
 
-    static MessageDispatcher INSTANCE = new MessageDispatcher();
+    static final MessageDispatcher INSTANCE = new MessageDispatcher();
 
     static public MessageDispatcher getINSTANCE() {
         return INSTANCE;
     }
 
     public void handleMessage(MessageEvent event){
-        boolean handled = false;
-
-        //最先交由ResponderManager处理
-        Optional<ResponderManager.BoxedHandler> boxedHandler = ResponderManager.getINSTANCE().match(event);
-        if(boxedHandler.isPresent()){
-            if(!reachLimit(event,boxedHandler.get().getGroupLimit(),boxedHandler.get().getPersonalLimit())){
-                handled = true;
-                MessageChainPackage temp = ResponderManager.getINSTANCE().handle(event,boxedHandler.get());
-                addToThreshold(temp);
-                handleMessageChainPackage(temp);
-            }
-        }
-
-        //然后交由GameManager处理
-        //TODO:GameManager还没改写
-
-        //最后交由Feedback处理
-        if(!handled){
-            if(event instanceof FriendMessageEvent){
-                if(FeedBack.getINSTANCE().match((FriendMessageEvent) event)){
-                    MessageChainPackage temp = FeedBack.getINSTANCE().handle((FriendMessageEvent) event);
+        //首先需要没有达到每分钟消息数限制
+        if(!reachLimit(event)){
+            //最先交由ResponderManager处理
+            Optional<UUID> boxedHandler = ResponderManager.getINSTANCE().match(event);
+            if(boxedHandler.isPresent()){
+                {
+                    handled = true;
+                    MessageChainPackage temp = ResponderManager.getINSTANCE().handle(event,boxedHandler.get());
                     addToThreshold(temp);
                     handleMessageChainPackage(temp);
                 }
             }
-        }
-    }
 
-    boolean reachLimit(MessageEvent event, int groupLimit, int personalLimit){
+            //然后交由GameManager处理
+            //TODO:GameManager还没改写
+
+            //最后交由Feedback处理
+            if(!handled){
+                if(event instanceof FriendMessageEvent){
+                    if(FeedBack.getINSTANCE().match((FriendMessageEvent) event)){
+                        MessageChainPackage temp = FeedBack.getINSTANCE().handle((FriendMessageEvent) event);
+                        addToThreshold(temp);
+                        handleMessageChainPackage(temp);
+                    }
+                }
+            }
+        }
+        }
+        boolean handled = false;
+
+
+
+    boolean reachLimit(MessageEvent event){
         readLock.lock();
         try{
             boolean f1 = false;
             boolean f2 = false;
             if(event instanceof GroupMessageEvent){
                 if(groupMessageThreshold.containsKey(((GroupMessageEvent) event).getGroup().getId())){
-                    f1 = groupMessageThreshold.get(((GroupMessageEvent) event).getGroup().getId()) >= groupLimit;
+                    f1 = groupMessageThreshold.get(((GroupMessageEvent) event).getGroup().getId()) >= GROUP_MESSAGE_LIMIT_PER_MIN;
                 }
             }
             if(personalMessageThreshold.containsKey(event.getSender().getId())){
-                f2 = personalMessageThreshold.get(event.getSender().getId()) >= personalLimit;
+                f2 = personalMessageThreshold.get(event.getSender().getId()) >= PERSONAL_MESSAGE_LIMIT_PER_MIN;
             }
             return f1 || f2;
         } finally {

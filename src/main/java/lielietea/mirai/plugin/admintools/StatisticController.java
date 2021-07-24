@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.admintools;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;

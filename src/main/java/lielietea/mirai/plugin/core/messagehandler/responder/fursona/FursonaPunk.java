@@ -14,7 +14,7 @@ import java.util.*;
 
 public class FursonaPunk implements MessageResponder<GroupMessageEvent> {
     static final List<MessageResponder.MessageType> TYPES = new ArrayList<>(Collections.singletonList(MessageResponder.MessageType.GROUP));
-    static Fursona FURSONA_COMPONENTS;
+    static final Fursona FURSONA_COMPONENTS;
     static final String FURSONA_PATH = "/cluster/fursona.json";
 
     static{

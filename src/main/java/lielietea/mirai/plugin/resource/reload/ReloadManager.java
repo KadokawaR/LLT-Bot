@@ -33,7 +33,7 @@ public class ReloadManager {
     }
 
     static class Interpreter{
-        String command;
+        final String command;
 
         public Interpreter(String command) {
             this.command = command;

@@ -1,6 +1,5 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.dinnerpicker;
 
-import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
