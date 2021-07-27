@@ -18,8 +18,6 @@ public interface MessageHandler<T extends MessageEvent> {
         return UUID.nameUUIDFromBytes(this.getName().getBytes(StandardCharsets.UTF_8));
     }
 
-    int getPersonalLimit();
-
     /**
      * 功能模块的名字
      */
