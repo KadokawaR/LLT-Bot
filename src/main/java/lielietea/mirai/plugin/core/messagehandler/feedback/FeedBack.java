@@ -26,12 +26,7 @@ public class FeedBack implements MessageHandler<FriendMessageEvent> {
         builder.addMessage("您的意见我们已经收到。");
         return builder.build();
     }
-
-    @Override
-    public int getPersonalLimit() {
-        return 3;
-    }
-
+    
     @Override
     public String getName() {
         return "意见反馈";
