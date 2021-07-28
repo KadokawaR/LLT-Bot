@@ -27,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 /**
@@ -39,9 +38,7 @@ import java.util.function.Supplier;
  * <p>所有回复处理器(也就是不同功能的回复模组)，都需要实现 {@link MessageResponder} 接口，并在使用 {@link #register(Supplier)} 进行注册。推荐在 {@link #ini()} 方法内进行注册</p>
  */
 public class ResponderManager {
-    static final ReadWriteLock REENTRANT_READ_WRITE_LOCK = new ReentrantReadWriteLock();
-    static final Lock READ_LOCK = REENTRANT_READ_WRITE_LOCK.readLock();
-    static final Lock WRITE_LOCK = REENTRANT_READ_WRITE_LOCK.writeLock();
+    static final Lock LOCK = new ReentrantLock();
     static final Timer TIMER = new Timer(true);
 
     static {
@@ -81,7 +78,7 @@ public class ResponderManager {
     }
 
     public Optional<UUID> match(MessageEvent event) {
-        READ_LOCK.unlock();
+        LOCK.lock();
         try {
             MessageResponder.MessageType type = getType(event);
             for (BoxedHandler handler : handlers) {
@@ -105,7 +102,7 @@ public class ResponderManager {
             }
             return Optional.empty();
         } finally {
-            READ_LOCK.unlock();
+            LOCK.unlock();
         }
     }
 
@@ -147,7 +144,7 @@ public class ResponderManager {
      * @return 优化后的回复处理器顺序与调用统计
      */
     public String optimizeHandlerSequence() {
-        WRITE_LOCK.lock();
+        LOCK.lock();
         try {
             Collections.sort(handlers);
             StringBuilder builder = new StringBuilder("优化后顺序为：\n");
@@ -156,7 +153,7 @@ public class ResponderManager {
             }
             return builder.toString();
         } finally {
-            WRITE_LOCK.unlock();
+            LOCK.unlock();
         }
     }
 
@@ -175,7 +172,7 @@ public class ResponderManager {
      * @return 如果对应UUID的回复处理器存在，那么返回一个包含名字的Optional
      */
     public Optional<String> getName(UUID uuid) {
-        READ_LOCK.lock();
+        LOCK.lock();
         try {
             for (BoxedHandler handler : handlers) {
                 if (handler.getUUID().equals(uuid))
@@ -183,7 +180,7 @@ public class ResponderManager {
             }
             return Optional.empty();
         } finally {
-            READ_LOCK.unlock();
+            LOCK.unlock();
         }
     }
 
@@ -193,7 +190,7 @@ public class ResponderManager {
      * @return 如果对应名字的回复处理器存在，那么返回一个包含UUID的Optional
      */
     public Optional<UUID> getUUID(String name) {
-        READ_LOCK.lock();
+        LOCK.lock();
         try {
             for (BoxedHandler handler : handlers) {
                 if (handler.getName().equals(name))
@@ -201,7 +198,7 @@ public class ResponderManager {
             }
             return Optional.empty();
         } finally {
-            READ_LOCK.unlock();
+            LOCK.unlock();
         }
     }
 
