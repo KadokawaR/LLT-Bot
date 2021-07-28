@@ -10,24 +10,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class MessageChainPackage {
+    final Contact source;
     final Contact sender;
-    Contact target;
     final List<Object> action = new ArrayList<>();
     final String handlerName;
     final UUID handlerUUID;
+    Contact target;
     String note;
 
-    public void execute(){
-        for(Object obj:action){
-            if(obj instanceof MessageChain){
-                target.sendMessage((MessageChain) obj);
-            } else if(obj instanceof Runnable){
-                ((Runnable) obj).run();
-            }
-        }
-    }
-
-    MessageChainPackage(MessageEvent source,MessageChain message,MessageHandler messageHandler){
+    MessageChainPackage(MessageEvent source, MessageChain message, MessageHandler messageHandler) {
+        this.source = source.getSubject();
         sender = source.getSender();
         this.target = source.getSubject();
         action.add(message);
@@ -35,19 +27,30 @@ public class MessageChainPackage {
         handlerUUID = messageHandler.getUUID();
     }
 
-    MessageChainPackage(MessageEvent source,MessageHandler messageHandler){
+    MessageChainPackage(MessageEvent source, MessageHandler messageHandler) {
+        this.source = source.getSubject();
         sender = source.getSender();
         this.target = source.getSender();
         handlerName = messageHandler.getName();
         handlerUUID = messageHandler.getUUID();
     }
 
-    public static MessageChainPackage getDefaultImpl(MessageEvent source,String message,MessageHandler messageHandler){
-        return new MessageChainPackage(source,new MessageChainBuilder().append(message).build(),messageHandler);
+    public static MessageChainPackage getDefaultImpl(MessageEvent source, String message, MessageHandler messageHandler) {
+        return new MessageChainPackage(source, new MessageChainBuilder().append(message).build(), messageHandler);
     }
 
-    public static MessageChainPackage getDefaultImpl(MessageEvent source,MessageChain message,MessageHandler messageHandler){
-        return new MessageChainPackage(source,message,messageHandler);
+    public static MessageChainPackage getDefaultImpl(MessageEvent source, MessageChain message, MessageHandler messageHandler) {
+        return new MessageChainPackage(source, message, messageHandler);
+    }
+
+    public void execute() {
+        for (Object obj : action) {
+            if (obj instanceof MessageChain) {
+                target.sendMessage((MessageChain) obj);
+            } else if (obj instanceof Runnable) {
+                ((Runnable) obj).run();
+            }
+        }
     }
 
     public Contact getSender() {
@@ -66,44 +69,48 @@ public class MessageChainPackage {
         return note;
     }
 
-    public static class Builder{
+    public Contact getSource() {
+        return source;
+    }
+
+    public static class Builder {
         final MessageChainPackage onBuild;
 
-        public Builder(MessageEvent event,MessageHandler messageHandler) {
-            onBuild = new MessageChainPackage(event,messageHandler);
+        public Builder(MessageEvent event, MessageHandler messageHandler) {
+            onBuild = new MessageChainPackage(event, messageHandler);
         }
 
-        public Builder changeTarget(Contact target){
+        public Builder changeTarget(Contact target) {
             onBuild.target = target;
             return this;
         }
 
-        public Builder addMessage(String message){
+        public Builder addMessage(String message) {
             onBuild.action.add(new MessageChainBuilder().append(message).build());
             return this;
         }
 
-        public Builder addMessage(MessageChain message){
+        public Builder addMessage(MessageChain message) {
             onBuild.action.add(message);
             return this;
         }
 
-        public Builder addTask(Runnable task){
+        public Builder addTask(Runnable task) {
             onBuild.action.add(task);
             return this;
         }
 
-        public Builder addNote(String note){
-            if(onBuild.note==null)
-                onBuild.note=note;
-            else{
+        public Builder addNote(String note) {
+            if (onBuild.note == null)
+                onBuild.note = note;
+            else {
                 StringBuilder builder = new StringBuilder(onBuild.note);
                 onBuild.note = builder.append(note).toString();
             }
             return this;
         }
 
-        public MessageChainPackage build(){
+        public MessageChainPackage build() {
             return onBuild;
         }
     }

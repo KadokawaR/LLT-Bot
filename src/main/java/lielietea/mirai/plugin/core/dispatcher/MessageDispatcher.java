@@ -1,8 +1,10 @@
 package lielietea.mirai.plugin.core.dispatcher;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.core.messagehandler.MessageHandler;
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
+import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -11,39 +13,27 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MessageDispatcher {
     final static int GROUP_MESSAGE_LIMIT_PER_MIN = 30;
     final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 5;
-
-    final Map<Long,Integer> groupMessageThreshold = new HashMap<>();
-    final Map<Long,Integer> personalMessageThreshold = new HashMap<>();
-    final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    final Lock readLock = readWriteLock.readLock();
-    final Lock writeLock = readWriteLock.writeLock();
+    final static MessageDispatcher INSTANCE = new MessageDispatcher();
+    final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
+    final CacheThreshold personalThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_MIN);
     final Timer thresholdReset = new Timer(true);
     final ExecutorService executor;
+
 
     MessageDispatcher(){
         thresholdReset.schedule(new TimerTask() {
             @Override
             public void run() {
-                writeLock.lock();
-                try{
-                    groupMessageThreshold.clear();
-                    personalMessageThreshold.clear();
-                }finally{
-                    writeLock.unlock();
-                }
+                groupThreshold.clearCache();
+                personalThreshold.clearCache();
             }
         },10000,60 * 1000);
         this.executor = Executors.newCachedThreadPool();
     }
-
-    static final MessageDispatcher INSTANCE = new MessageDispatcher();
 
     static public MessageDispatcher getINSTANCE() {
         return INSTANCE;
@@ -53,6 +43,7 @@ public class MessageDispatcher {
         //首先需要没有达到每分钟消息数限制
         if(!reachLimit(event)){
             //最先交由ResponderManager处理
+            boolean handled = false;
             Optional<UUID> boxedHandler = ResponderManager.getINSTANCE().match(event);
             if(boxedHandler.isPresent()){
                 {
@@ -77,51 +68,20 @@ public class MessageDispatcher {
                 }
             }
         }
-        }
-        boolean handled = false;
-
-
+    }
 
     boolean reachLimit(MessageEvent event){
-        readLock.lock();
-        try{
-            boolean f1 = false;
-            boolean f2 = false;
-            if(event instanceof GroupMessageEvent){
-                if(groupMessageThreshold.containsKey(((GroupMessageEvent) event).getGroup().getId())){
-                    f1 = groupMessageThreshold.get(((GroupMessageEvent) event).getGroup().getId()) >= GROUP_MESSAGE_LIMIT_PER_MIN;
-                }
-            }
-            if(personalMessageThreshold.containsKey(event.getSender().getId())){
-                f2 = personalMessageThreshold.get(event.getSender().getId()) >= PERSONAL_MESSAGE_LIMIT_PER_MIN;
-            }
-            return f1 || f2;
-        } finally {
-            readLock.unlock();
-        }
-
+        return event instanceof GroupMessageEvent?
+                (groupThreshold.reachLimit(event.getSubject().getId()) || personalThreshold.reachLimit(event.getSender().getId()))
+                : personalThreshold.reachLimit(event.getSender().getId());
     }
 
     void addToThreshold(MessageChainPackage messageChainPackage){
-        writeLock.lock();
-        try{
-            if(messageChainPackage.getSender() instanceof Member){
-                long groupID =((Member) messageChainPackage.getSender()).getGroup().getId();
-                if(groupMessageThreshold.containsKey(groupID)){
-                    groupMessageThreshold.replace(groupID, groupMessageThreshold.get(groupID + 1));
-                } else {
-                    groupMessageThreshold.put(groupID,1);
-                }
-            }
-
-            long senderID = messageChainPackage.getSender().getId();
-            if(personalMessageThreshold.containsKey(senderID)){
-                personalMessageThreshold.replace(senderID, personalMessageThreshold.get(senderID + 1));
-            } else {
-                personalMessageThreshold.put(senderID,1);
-            }
-        } finally {
-            writeLock.unlock();
+        if(messageChainPackage.getSource() instanceof Group){
+            groupThreshold.count(messageChainPackage.getSource().getId());
+            personalThreshold.count(messageChainPackage.getSender().getId());
+        } else {
+            personalThreshold.count(messageChainPackage.getSender().getId());
         }
     }
 
