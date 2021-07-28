@@ -12,10 +12,10 @@ import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.dinne
 import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.drinkpicker.DrinkPicker;
 import lielietea.mirai.plugin.core.messagehandler.responder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.Help;
-import lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture.LovelyImage;
 import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.LotteryBummerMessageHandler;
 import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.LotteryC4MessageHandler;
 import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.LotteryWinnerMessageHandler;
+import lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture.LovelyImage;
 import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesSelector;
 import lielietea.mirai.plugin.utils.exception.MessageEventTypeException;
@@ -63,7 +63,7 @@ public class ResponderManager {
     }
 
     final List<BoxedHandler> handlers;
-    final Map<UUID,BoxedHandler> addressMap;
+    final Map<UUID, BoxedHandler> addressMap;
 
     ResponderManager() {
         handlers = new ArrayList<>();
@@ -76,23 +76,22 @@ public class ResponderManager {
         return INSTANCE;
     }
 
-    public MessageChainPackage handle(MessageEvent event, UUID handler){
+    public MessageChainPackage handle(MessageEvent event, UUID handler) {
         return addressMap.get(handler).handle(event);
     }
 
-    public Optional<UUID> match(MessageEvent event){
+    public Optional<UUID> match(MessageEvent event) {
         READ_LOCK.unlock();
-        try{
+        try {
             MessageResponder.MessageType type = getType(event);
-            for (BoxedHandler handler : handlers){
-                if (handler.isBetaFeature()){
+            for (BoxedHandler handler : handlers) {
+                if (handler.isBetaFeature()) {
                     if (true/*TODO:这里缺个Group Config的判断*/) {
                         if (handler.match(event, type)) {
                             return Optional.of(handler.getUUID());
                         }
                     }
-                }
-                else if (handler.needPermission()){
+                } else if (handler.needPermission()) {
                     if (true/*TODO:这里缺个Group Config的判断*/) {
                         if (handler.match(event, type)) {
                             return Optional.of(handler.getUUID());
@@ -105,7 +104,7 @@ public class ResponderManager {
                 }
             }
             return Optional.empty();
-        }finally{
+        } finally {
             READ_LOCK.unlock();
         }
     }
@@ -117,7 +116,7 @@ public class ResponderManager {
     public void register(Supplier<MessageResponder<? extends MessageEvent>> handler) {
         BoxedHandler registry = new BoxedHandler((MessageResponder<MessageEvent>) handler.get());
         handlers.add(registry);
-        addressMap.put(registry.getUUID(),registry);
+        addressMap.put(registry.getUUID(), registry);
     }
 
     /**
@@ -206,11 +205,11 @@ public class ResponderManager {
         }
     }
 
-    MessageResponder.MessageType getType(MessageEvent event) throws MessageEventTypeException{
-        if(event instanceof GroupMessageEvent) return MessageResponder.MessageType.GROUP;
-        else if(event instanceof FriendMessageEvent) return MessageResponder.MessageType.FRIEND;
-        else if(event instanceof GroupTempMessageEvent) return MessageResponder.MessageType.TEMP;
-        else if(event instanceof StrangerMessageEvent) return MessageResponder.MessageType.STRANGER;
+    MessageResponder.MessageType getType(MessageEvent event) throws MessageEventTypeException {
+        if (event instanceof GroupMessageEvent) return MessageResponder.MessageType.GROUP;
+        else if (event instanceof FriendMessageEvent) return MessageResponder.MessageType.FRIEND;
+        else if (event instanceof GroupTempMessageEvent) return MessageResponder.MessageType.TEMP;
+        else if (event instanceof StrangerMessageEvent) return MessageResponder.MessageType.STRANGER;
         else throw new MessageEventTypeException();
     }
 
@@ -239,7 +238,7 @@ public class ResponderManager {
             return false;
         }
 
-        MessageChainPackage handle(MessageEvent event){
+        MessageChainPackage handle(MessageEvent event) {
             return handler.handle(event);
         }
 

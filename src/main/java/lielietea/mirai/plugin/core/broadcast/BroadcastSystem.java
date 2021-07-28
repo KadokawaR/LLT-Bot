@@ -8,11 +8,12 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
-import java.util.*;
+import java.util.Objects;
 
 public class BroadcastSystem {
 
     static final AdministrativeAccountChecker aac = new AdministrativeAccountChecker();
+
     public static void sendToAllGroups(MessageEvent event, String message) throws InterruptedException {
         sendToCertainGroups(event, message, event.getBot().getGroups());
     }
@@ -27,8 +28,8 @@ public class BroadcastSystem {
     //测试广播消息
     public static void sendToAllGroups(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast2g ") && aac.checkIdentity(event)){
-            message = message.replace("/broadcast2g ","");
+        if (message.contains("/broadcast2g ") && aac.checkIdentity(event)) {
+            message = message.replace("/broadcast2g ", "");
             sendToAllGroups(event, message);
             Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("群广播已完成。");
         }
@@ -38,11 +39,11 @@ public class BroadcastSystem {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast ") && aac.checkIdentity(event)) {
             String[] splitMessage = message.split(" ");
-            if (splitMessage.length!=3){
+            if (splitMessage.length != 3) {
                 event.getSubject().sendMessage("请使用空格分割/broadcast指示器、群号和消息");
                 return;
             }
-            if (!splitMessage[0].equals("/broadcast")){
+            if (!splitMessage[0].equals("/broadcast")) {
                 event.getSubject().sendMessage("/broadcast指示器使用不正确");
                 return;
             }
@@ -53,8 +54,8 @@ public class BroadcastSystem {
     public static void sendToAllFriends(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast2f ") && aac.checkIdentity(event)) {
-            message = message.replace("/broadcast2f ","");
-            sendToCertainFriends(event,message,event.getBot().getFriends());
+            message = message.replace("/broadcast2f ", "");
+            sendToCertainFriends(event, message, event.getBot().getFriends());
             Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage("好友广播已完成。");
         }
     }
@@ -67,8 +68,8 @@ public class BroadcastSystem {
     }
 
     //broadcast helper
-    public static void broadcastHelper(MessageEvent event){
-        if (event.getMessage().contentToString().contains("/broadcasthelper")&& aac.checkIdentity(event)){
+    public static void broadcastHelper(MessageEvent event) {
+        if (event.getMessage().contentToString().contains("/broadcasthelper") && aac.checkIdentity(event)) {
             event.getSubject().sendMessage("/broadcast2f+空格+消息，发送给所有好友\n/broadcast2g+空格+消息，发送给所有群\n/broadcast+空格+群号+空格+消息，发送给指定群");
         }
     }

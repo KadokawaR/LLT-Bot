@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 class CacheThreshold {
-    final Map<Long,Integer> data = new HashMap<>();
+    final Map<Long, Integer> data = new HashMap<>();
     final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     final Lock readLock = readWriteLock.readLock();
     final Lock writeLock = readWriteLock.writeLock();
@@ -17,37 +17,37 @@ class CacheThreshold {
         this.limit = limit;
     }
 
-    public void clearCache(){
+    public void clearCache() {
         writeLock.lock();
-        try{
+        try {
             data.clear();
         } finally {
             writeLock.unlock();
         }
     }
 
-    public void count(long id){
+    public void count(long id) {
         writeLock.lock();
-        try{
-            data.put(id,data.getOrDefault(data,0)+1);
+        try {
+            data.put(id, data.getOrDefault(data, 0) + 1);
         } finally {
             writeLock.unlock();
         }
     }
 
-    public int get(long id){
+    public int get(long id) {
         readLock.lock();
-        try{
-            return data.getOrDefault(id,0);
+        try {
+            return data.getOrDefault(id, 0);
         } finally {
             readLock.unlock();
         }
     }
 
-    public boolean reachLimit(long id){
+    public boolean reachLimit(long id) {
         readLock.lock();
-        try{
-            return data.getOrDefault(id,0) >= limit;
+        try {
+            return data.getOrDefault(id, 0) >= limit;
         } finally {
             readLock.unlock();
         }

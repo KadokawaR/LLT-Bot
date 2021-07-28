@@ -24,10 +24,9 @@ public class ImageCreater {
         BufferedImage img2 = ImageIO.read(is2);
         BufferedImage img0;
         //头像变形
-        if (img1.getHeight()<512){
-            img0 = ImageEnlarger.zoomInImage(img1,512,512);
-        }
-        else {
+        if (img1.getHeight() < 512) {
+            img0 = ImageEnlarger.zoomInImage(img1, 512, 512);
+        } else {
             ImageScale isc = new ImageScale();
             img0 = isc.imageZoomOut(img1, 512, 512, false);
         }
@@ -53,48 +52,48 @@ public class ImageCreater {
         return imgNew;
     }
 
-    public static BufferedImage getImageFromResource (String filepath) throws IOException {
+    public static BufferedImage getImageFromResource(String filepath) throws IOException {
         InputStream is2 = ImageCreater.class.getResourceAsStream(filepath);
         assert is2 != null;
         return ImageIO.read(is2);
     }
 
     //裁剪图片
-    public static BufferedImage cutImage (BufferedImage img,int xStart, int yStart, int xEnd, int yEnd){
+    public static BufferedImage cutImage(BufferedImage img, int xStart, int yStart, int xEnd, int yEnd) {
         int w = img.getWidth();
         int h = img.getHeight();
-        if (xEnd>w){
+        if (xEnd > w) {
             xEnd = w;
         }
-        if (yEnd>h){
+        if (yEnd > h) {
             yEnd = h;
         }
-        int[] imageArray = new int[(xEnd-xStart)*(yEnd-yStart)];
-        imageArray = img.getRGB(xStart,yStart,xEnd-xStart,yEnd-yStart,imageArray,0,xEnd-xStart);
+        int[] imageArray = new int[(xEnd - xStart) * (yEnd - yStart)];
+        imageArray = img.getRGB(xStart, yStart, xEnd - xStart, yEnd - yStart, imageArray, 0, xEnd - xStart);
         BufferedImage imgNew;
-        imgNew = new BufferedImage(xEnd-xStart,yEnd-yStart,BufferedImage.TYPE_INT_RGB);
-        imgNew.setRGB(0,0,xEnd-xStart,yEnd-yStart,imageArray,0,xEnd-xStart);
+        imgNew = new BufferedImage(xEnd - xStart, yEnd - yStart, BufferedImage.TYPE_INT_RGB);
+        imgNew.setRGB(0, 0, xEnd - xStart, yEnd - yStart, imageArray, 0, xEnd - xStart);
 
         return imgNew;
     }
 
     //在小图上加大图
-    public static BufferedImage addImage (BufferedImage imgBig, BufferedImage imgSmall, int xStart, int yStart){
+    public static BufferedImage addImage(BufferedImage imgBig, BufferedImage imgSmall, int xStart, int yStart) {
         int wB = imgBig.getWidth();
         int hB = imgBig.getHeight();
         int wS = imgSmall.getWidth();
         int hS = imgSmall.getHeight();
-        if (xStart<0){
-            imgSmall = cutImage(imgSmall,-xStart,0,wS,hS);
+        if (xStart < 0) {
+            imgSmall = cutImage(imgSmall, -xStart, 0, wS, hS);
         }
-        if (yStart<0){
-            imgSmall = cutImage(imgSmall,0,-yStart,wS,hS);
+        if (yStart < 0) {
+            imgSmall = cutImage(imgSmall, 0, -yStart, wS, hS);
         }
-        if (xStart+wS>wB){
-            imgSmall = cutImage(imgSmall,0,0,wB-xStart,hS);
+        if (xStart + wS > wB) {
+            imgSmall = cutImage(imgSmall, 0, 0, wB - xStart, hS);
         }
-        if (xStart+wS>wB){
-            imgSmall = cutImage(imgSmall,0,0,wS,hB-yStart);
+        if (xStart + wS > wB) {
+            imgSmall = cutImage(imgSmall, 0, 0, wS, hB - yStart);
         }
         int wS_new = imgSmall.getWidth();
         int hS_new = imgSmall.getHeight();
@@ -104,16 +103,16 @@ public class ImageCreater {
         return imgBig;
     }
 
-    public static BufferedImage addImageAtCenter(BufferedImage imgBig, BufferedImage imgSmall){
+    public static BufferedImage addImageAtCenter(BufferedImage imgBig, BufferedImage imgSmall) {
         int wB = imgBig.getWidth();
         int hB = imgBig.getHeight();
         int wS = imgSmall.getWidth();
         int hS = imgSmall.getHeight();
 
-        int xStart = (wB-wS)/2;
-        int yStart = (hB-hS)/2;
+        int xStart = (wB - wS) / 2;
+        int yStart = (hB - hS) / 2;
 
-        return addImage(imgBig,imgSmall,xStart,yStart);
+        return addImage(imgBig, imgSmall, xStart, yStart);
     }
 
     public static void sendImage(BufferedImage image, GroupMessageEvent event) throws IOException {
@@ -122,32 +121,32 @@ public class ImageCreater {
     }
 
     //在原图的右边加上一张等高的新图片
-    public static BufferedImage addImageAtRight(BufferedImage imgLeft, BufferedImage imgRight){
+    public static BufferedImage addImageAtRight(BufferedImage imgLeft, BufferedImage imgRight) {
         int hL = imgLeft.getHeight();
         int wL = imgLeft.getWidth();
         int wR = imgRight.getWidth();
-        BufferedImage imgNew = new BufferedImage(wL+wR,hL,BufferedImage.TYPE_INT_RGB);
-        int[] imgLeftArray = new int[wL*hL];
-        int[] imgRightArray = new int[wR*hL];
+        BufferedImage imgNew = new BufferedImage(wL + wR, hL, BufferedImage.TYPE_INT_RGB);
+        int[] imgLeftArray = new int[wL * hL];
+        int[] imgRightArray = new int[wR * hL];
         imgLeftArray = imgLeft.getRGB(0, 0, wL, hL, imgLeftArray, 0, wL);
         imgRightArray = imgLeft.getRGB(0, 0, wR, hL, imgRightArray, 0, wR);
-        imgNew.setRGB(0,0,wL,hL,imgLeftArray,0,wL);
-        imgNew.setRGB(wL,0,wR,hL,imgRightArray,0,wR);
+        imgNew.setRGB(0, 0, wL, hL, imgLeftArray, 0, wL);
+        imgNew.setRGB(wL, 0, wR, hL, imgRightArray, 0, wR);
         return imgNew;
     }
 
     //在原图的下边加上一张等宽的新图片
-    public static BufferedImage addImageAtBottom(BufferedImage imgUp, BufferedImage imgBottom){
+    public static BufferedImage addImageAtBottom(BufferedImage imgUp, BufferedImage imgBottom) {
         int hU = imgUp.getHeight();
         int hB = imgBottom.getHeight();
         int wU = imgUp.getWidth();
-        BufferedImage imgNew = new BufferedImage(wU,hU+hB,BufferedImage.TYPE_INT_RGB);
-        int[] imgLeftArray = new int[wU*hU];
-        int[] imgRightArray = new int[wU*hB];
+        BufferedImage imgNew = new BufferedImage(wU, hU + hB, BufferedImage.TYPE_INT_RGB);
+        int[] imgLeftArray = new int[wU * hU];
+        int[] imgRightArray = new int[wU * hB];
         imgLeftArray = imgUp.getRGB(0, 0, wU, hU, imgLeftArray, 0, wU);
         imgRightArray = imgUp.getRGB(0, 0, wU, hB, imgRightArray, 0, wU);
-        imgNew.setRGB(0,0,wU,hU,imgLeftArray,0,wU);
-        imgNew.setRGB(0,hU,wU,hB,imgRightArray,0,wU);
+        imgNew.setRGB(0, 0, wU, hU, imgLeftArray, 0, wU);
+        imgNew.setRGB(0, hU, wU, hB, imgRightArray, 0, wU);
         return imgNew;
     }
 }

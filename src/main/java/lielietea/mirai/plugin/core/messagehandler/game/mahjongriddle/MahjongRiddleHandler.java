@@ -9,17 +9,17 @@ public class MahjongRiddleHandler extends StatisticController {
     public static void handle(GroupMessageEvent event) throws IOException {
         long groupID = event.getGroup().getId();
         MahjongRiddle.riddleType rt = MahjongRiddle.riddleStart(event);
-        if (rt == MahjongRiddle.riddleType.Start){
+        if (rt == MahjongRiddle.riddleType.Start) {
             addMinuteCount(groupID);
-            countIn(groupID,MahjongRiddle.getUUID("猜麻将开始"));
+            countIn(groupID, MahjongRiddle.getUUID("猜麻将开始"));
         }
-        if (rt == MahjongRiddle.riddleType.Congratulation){
+        if (rt == MahjongRiddle.riddleType.Congratulation) {
             addMinuteCount(groupID);
-            countIn(groupID,MahjongRiddle.getUUID("猜麻将猜完"));
+            countIn(groupID, MahjongRiddle.getUUID("猜麻将猜完"));
         }
-        if (rt == MahjongRiddle.riddleType.Get){
+        if (rt == MahjongRiddle.riddleType.Get) {
             addMinuteCount(groupID);
-            countIn(groupID,MahjongRiddle.getUUID("猜麻将猜中"));
+            countIn(groupID, MahjongRiddle.getUUID("猜麻将猜中"));
         }
     }
 }

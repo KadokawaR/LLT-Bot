@@ -22,7 +22,7 @@ public class PlayDice implements MessageResponder<MessageEvent> {
     static final Pattern CAPTURE_PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])([1-9]\\d{0,7})");
     static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])([1-9]\\d]{0,7})");
 
-    static{
+    static {
         {
             REG_PATTERN.add(Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})"));
             REG_PATTERN.add(Pattern.compile("\\.([1-9]\\d{0,2})([dD])[1-9]\\d{0,7}"));
@@ -30,12 +30,12 @@ public class PlayDice implements MessageResponder<MessageEvent> {
         }
     }
 
-    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+    static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
 
     @Override
     public boolean match(MessageEvent event) {
-        for(Pattern pattern: REG_PATTERN){
-            if(pattern.matcher(event.getMessage().contentToString()).matches()){
+        for (Pattern pattern : REG_PATTERN) {
+            if (pattern.matcher(event.getMessage().contentToString()).matches()) {
                 return true;
             }
         }
@@ -44,7 +44,7 @@ public class PlayDice implements MessageResponder<MessageEvent> {
 
     @Override
     public MessageChainPackage handle(MessageEvent event) {
-        return MessageChainPackage.getDefaultImpl(event,executeDiceCommand(event),this);
+        return MessageChainPackage.getDefaultImpl(event, executeDiceCommand(event), this);
     }
 
     @NotNull
@@ -54,28 +54,28 @@ public class PlayDice implements MessageResponder<MessageEvent> {
     }
 
 
-    static String executeDiceCommand(MessageEvent event){
-        if(PATTERN_COMMON_COMMAND.matcher(event.getMessage().contentToString()).matches()){
-            return DiceFactory.getCustomDice(captureFromPatternCommon(event.getMessage().contentToString()),1).buildMessage();
+    static String executeDiceCommand(MessageEvent event) {
+        if (PATTERN_COMMON_COMMAND.matcher(event.getMessage().contentToString()).matches()) {
+            return DiceFactory.getCustomDice(captureFromPatternCommon(event.getMessage().contentToString()), 1).buildMessage();
         } else {
-            if(PATTERN_DND.matcher(event.getMessage().contentToString()).matches()){
+            if (PATTERN_DND.matcher(event.getMessage().contentToString()).matches()) {
                 return DiceFactory.getCustomDice(captureFromPatternDND(event.getMessage().contentToString()).get(1), captureFromPatternDND(event.getMessage().contentToString()).get(0)).buildMessage();
-            } else if(PATTERN_DND_SINGLE_ROLL.matcher(event.getMessage().contentToString()).matches()) {
-                return DiceFactory.getCustomDice(captureFromPatternDNDSingleRoll(event.getMessage().contentToString()),1).buildMessage();
+            } else if (PATTERN_DND_SINGLE_ROLL.matcher(event.getMessage().contentToString()).matches()) {
+                return DiceFactory.getCustomDice(captureFromPatternDNDSingleRoll(event.getMessage().contentToString()), 1).buildMessage();
             }
         }
         throw new NoHandlerMethodMatchException();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    static int captureFromPatternCommon(String input){
+    static int captureFromPatternCommon(String input) {
         Matcher matcher = CAPTURE_PATTERN_COMMON_COMMAND.matcher(input);
         matcher.find();
         return Integer.parseInt(matcher.group(2));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    static List<Integer> captureFromPatternDND(String input){
+    static List<Integer> captureFromPatternDND(String input) {
         Matcher matcher = CAPTURE_PATTERN_DND.matcher(input);
         matcher.find();
         List<Integer> captured = new ArrayList<>();
@@ -87,7 +87,7 @@ public class PlayDice implements MessageResponder<MessageEvent> {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    static int captureFromPatternDNDSingleRoll(String input){
+    static int captureFromPatternDNDSingleRoll(String input) {
         Matcher matcher = CAPTURE_PATTERN_DND_SINGLE_ROLL.matcher(input);
         matcher.find();
         return Integer.parseInt(matcher.group(2));

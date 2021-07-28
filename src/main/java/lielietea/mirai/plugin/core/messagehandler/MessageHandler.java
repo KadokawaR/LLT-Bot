@@ -14,7 +14,7 @@ public interface MessageHandler<T extends MessageEvent> {
     /**
      * 功能模块的UUID，默认根据名字自动生成
      */
-    default UUID getUUID(){
+    default UUID getUUID() {
         return UUID.nameUUIDFromBytes(this.getName().getBytes(StandardCharsets.UTF_8));
     }
 

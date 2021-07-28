@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 
-
 public class CommonDice {
     final int bound;
     final int repeat;
@@ -17,8 +16,8 @@ public class CommonDice {
         result = new ArrayList<>();
     }
 
-    public static CommonDice getInstance(int bound, int repeat){
-        CommonDice dice = new CommonDice(bound,repeat);
+    public static CommonDice getInstance(int bound, int repeat) {
+        CommonDice dice = new CommonDice(bound, repeat);
         dice.reroll();
         return dice;
     }
@@ -26,10 +25,10 @@ public class CommonDice {
     /**
      * 扔骰子操作，用这个方法来重新扔一次骰子
      */
-    public void reroll(){
-        if(!result.isEmpty()) result = new ArrayList<>();
-        for(int i=0;i<repeat;i++){
-            result.add(new Random(System.nanoTime()).nextInt(bound)+1);
+    public void reroll() {
+        if (!result.isEmpty()) result = new ArrayList<>();
+        for (int i = 0; i < repeat; i++) {
+            result.add(new Random(System.nanoTime()).nextInt(bound) + 1);
         }
     }
 
@@ -38,15 +37,15 @@ public class CommonDice {
      *
      * @return 一个包含了投掷结果的ArrayList
      */
-    public List<Integer> toList(){
+    public List<Integer> toList() {
         return result;
     }
 
 
-    public String buildMessage(){
+    public String buildMessage() {
         StringBuilder builder = new StringBuilder();
         builder.append("您掷出的点数是:");
-        result.forEach(result-> builder.append(String.valueOf(+result)).append(" "));
+        result.forEach(result -> builder.append(String.valueOf(+result)).append(" "));
         return builder.toString();
     }
 

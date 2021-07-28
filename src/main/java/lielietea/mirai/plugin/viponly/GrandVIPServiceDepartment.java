@@ -7,7 +7,7 @@ import java.util.*;
 
 public class GrandVIPServiceDepartment {
     static final Timer timer = new Timer(true);
-    static final Map<VIP,Boolean> greetedFlags = new HashMap<>();
+    static final Map<VIP, Boolean> greetedFlags = new HashMap<>();
     static final Random random = new Random();
 
     static final ArrayList<String> greetingKADOKAWA_normal = new ArrayList<>(Arrays.asList(
@@ -53,18 +53,18 @@ public class GrandVIPServiceDepartment {
             "川先生好帅！"
     ));
 
-    static{
+    static {
         //每隔6个小时定时清空Greeting触发标记
         Calendar calendar = Calendar.getInstance();
         int baseHour = calendar.get(Calendar.HOUR_OF_DAY) / 6 * 6 + 6;
-        baseHour = baseHour==24 ? 0 : baseHour;
-        calendar.set(Calendar.HOUR_OF_DAY,baseHour);
-        calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,1);
-        calendar.set(Calendar.MILLISECOND,0);
-        Date date=calendar.getTime();
+        baseHour = baseHour == 24 ? 0 : baseHour;
+        calendar.set(Calendar.HOUR_OF_DAY, baseHour);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 1);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date date = calendar.getTime();
         if (date.before(new Date())) {
-            calendar.add(Calendar.DAY_OF_MONTH,1);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
             date = calendar.getTime();
         }
         timer.schedule(new TimerTask() {
@@ -78,16 +78,16 @@ public class GrandVIPServiceDepartment {
     }
 
 
-    public static void handleMessage(MessageEvent event){
-        for(VIP vip:VIP.values()){
-            if(vip.matches(event.getSender().getId())){
-                if(!greetedFlags.containsKey(vip)){
-                    greetedFlags.put(vip,false);
+    public static void handleMessage(MessageEvent event) {
+        for (VIP vip : VIP.values()) {
+            if (vip.matches(event.getSender().getId())) {
+                if (!greetedFlags.containsKey(vip)) {
+                    greetedFlags.put(vip, false);
                 }
 
-                if(!greetedFlags.get(vip)){
-                    event.getSubject().sendMessage(new At(event.getSender().getId()).plus(" "+buildGreeting(vip)));
-                    greetedFlags.put(vip,true);
+                if (!greetedFlags.get(vip)) {
+                    event.getSubject().sendMessage(new At(event.getSender().getId()).plus(" " + buildGreeting(vip)));
+                    greetedFlags.put(vip, true);
                     break;
                 }
 
@@ -95,36 +95,33 @@ public class GrandVIPServiceDepartment {
         }
     }
 
-    static String buildGreeting(VIP vip){
+    static String buildGreeting(VIP vip) {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        if(vip == VIP.KADOKAWA){
-            if(hour>7 && hour<10){
+        if (vip == VIP.KADOKAWA) {
+            if (hour > 7 && hour < 10) {
                 return greetingKADOKAWA_morning.get(Math.toIntExact(random.nextInt(100000)) % greetingKADOKAWA_morning.size());
-            } else if(hour<22){
+            } else if (hour < 22) {
                 return greetingKADOKAWA_normal.get(Math.toIntExact(random.nextInt(100000)) % greetingKADOKAWA_normal.size());
             } else {
                 return greetingKADOKAWA_deepNight.get(Math.toIntExact(random.nextInt(100000)) % greetingKADOKAWA_deepNight.size());
             }
-        }
-        else if(vip == VIP.MG){
-            if(hour>6 && hour<9){
+        } else if (vip == VIP.MG) {
+            if (hour > 6 && hour < 9) {
                 return greetingMG_morning.get(Math.toIntExact(random.nextInt(100000)) % greetingMG_morning.size());
-            } else if(hour<22){
+            } else if (hour < 22) {
                 return greetingMG_normal.get(Math.toIntExact(random.nextInt(100000)) % greetingMG_normal.size());
             } else {
                 return greetingMG_deepNight.get(Math.toIntExact(random.nextInt(100000)) % greetingMG_deepNight.size());
             }
-        }
-        else if(vip == VIP.FALSEBOT){
+        } else if (vip == VIP.FALSEBOT) {
             return greetingFalseBot.get(Math.toIntExact(random.nextInt(100000)) % greetingFalseBot.size());
-        }
-        else{
+        } else {
             return kawaaharaIsMiraculous.get(Math.toIntExact(random.nextInt(100000)) % kawaaharaIsMiraculous.size());
         }
     }
 
 
-    public enum VIP{
+    public enum VIP {
         KADOKAWA(2955808839L),
         MG(1811905537L),
         FALSEBOT(2146029787L),
@@ -137,7 +134,7 @@ public class GrandVIPServiceDepartment {
         }
 
 
-        public boolean matches(long qqID){
+        public boolean matches(long qqID) {
             return this.qqID == qqID;
         }
     }

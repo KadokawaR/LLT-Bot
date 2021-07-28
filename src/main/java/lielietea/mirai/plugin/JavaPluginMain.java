@@ -1,16 +1,15 @@
 package lielietea.mirai.plugin;
 
 
-
+import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.admintools.StatisticController;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
 import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
-import lielietea.mirai.plugin.admintools.AdminTools;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.Speech;
 import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
-import lielietea.mirai.plugin.core.messagehandler.responder.help.Speech;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
@@ -55,7 +54,7 @@ public final class JavaPluginMain extends JavaPlugin {
         StatisticController.resetMinuteCount();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
-            Optional.ofNullable(event.getBot().getGroup(GroupID.DEV)).ifPresent(group->group.sendMessage("老子来了"));
+            Optional.ofNullable(event.getBot().getGroup(GroupID.DEV)).ifPresent(group -> group.sendMessage("老子来了"));
             BotChecker.addBotToBotList(event.getBot().getId());
         });
 
@@ -79,7 +78,7 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, BotInvitedJoinGroupRequestEvent::accept);
 
         //入群须知
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event ->{
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event -> {
             try {
                 JoinGroup.sendNotice(event);
             } catch (InterruptedException e) {
@@ -91,8 +90,8 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, LeaveGroup::cancelFlag);
 
         //Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event ->{
-            if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER)||(event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))){
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
+            if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER) || (event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))) {
                 event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
             }
         });
@@ -113,7 +112,7 @@ public final class JavaPluginMain extends JavaPlugin {
             //VIP待遇
             GrandVIPServiceDepartment.handleMessage(event);
 
-            if(event.getMessage().contentToString().contains("/countnow")){
+            if (event.getMessage().contentToString().contains("/countnow")) {
                 event.getSubject().sendMessage(String.valueOf(StatisticController.minuteCount.get(event.getSubject().getId())));
             }
         });
@@ -153,7 +152,7 @@ public final class JavaPluginMain extends JavaPlugin {
     }
 
     @Override
-    public void onDisable(){
+    public void onDisable() {
         ResponderManager.getINSTANCE().close();
         MessageDispatcher.getINSTANCE().close();
     }

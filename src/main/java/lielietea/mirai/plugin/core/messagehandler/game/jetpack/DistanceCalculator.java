@@ -8,7 +8,7 @@ public class DistanceCalculator {
         return d * Math.PI / 180.0;
     }
 
-    public static double GetDistance(double lng1, double lat1, double lng2, double lat2 ) {
+    public static double GetDistance(double lng1, double lat1, double lng2, double lat2) {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);
         double a = radLat1 - radLat2;

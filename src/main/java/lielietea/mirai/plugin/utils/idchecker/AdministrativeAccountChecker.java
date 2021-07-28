@@ -18,8 +18,8 @@ public class AdministrativeAccountChecker implements IdentityChecker<MessageEven
 
     @Override
     public boolean checkIdentity(MessageEvent event) {
-        for(Long qqID : adminList){
-            if(qqID == event.getSender().getId()) return true;
+        for (Long qqID : adminList) {
+            if (qqID == event.getSender().getId()) return true;
         }
         return false;
     }

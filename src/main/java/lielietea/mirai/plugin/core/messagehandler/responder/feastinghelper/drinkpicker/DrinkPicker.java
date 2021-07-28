@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 
 public class DrinkPicker implements MessageResponder<MessageEvent> {
-    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
     static final List<Pattern> REG_PATTERN = new ArrayList<>();
 
     static final ArrayList<String> DRINK_BASE = new ArrayList<>(Arrays.asList(
@@ -100,22 +100,22 @@ public class DrinkPicker implements MessageResponder<MessageEvent> {
             "不额外加糖"
     ));
 
-    static{
+    static {
         {
-            REG_PATTERN.add(Pattern.compile(".*"+"喝点什么"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"奶茶"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"喝了什么"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"喝什么"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"有点渴"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"好渴"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"来一杯"+".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "喝点什么" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "奶茶" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "喝了什么" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "喝什么" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "有点渴" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "好渴" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "来一杯" + ".*"));
         }
     }
 
     @Override
     public boolean match(MessageEvent event) {
-        for(Pattern pattern: REG_PATTERN){
-            if(pattern.matcher(event.getMessage().contentToString()).matches()){
+        for (Pattern pattern : REG_PATTERN) {
+            if (pattern.matcher(event.getMessage().contentToString()).matches()) {
                 return true;
             }
         }
@@ -124,7 +124,7 @@ public class DrinkPicker implements MessageResponder<MessageEvent> {
 
     @Override
     public MessageChainPackage handle(MessageEvent event) {
-        return MessageChainPackage.getDefaultImpl(event,"您的饮品是 "+getPersonalizedHourlyDrink(event),this);
+        return MessageChainPackage.getDefaultImpl(event, "您的饮品是 " + getPersonalizedHourlyDrink(event), this);
     }
 
     @NotNull
@@ -135,18 +135,18 @@ public class DrinkPicker implements MessageResponder<MessageEvent> {
 
 
     //获取每小时变化的，根据用户而不同的随机饮品
-    static String getPersonalizedHourlyDrink(MessageEvent event){
+    static String getPersonalizedHourlyDrink(MessageEvent event) {
         return mixDrink(pickPersonalizedHourlyIngredients(event.getSender().getId()));
     }
 
-    static int[] pickPersonalizedHourlyIngredients(long qqID){
+    static int[] pickPersonalizedHourlyIngredients(long qqID) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int date = calendar.get(Calendar.DATE);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);//获得当前时间
-        long fullDate = year+month*10000+date*1000000+hour*100000000L;//用时间和小时构成一个10位数
-        long getSixNum = fullDate*1000000L/qqID % 1000000L;//除以QQ号之后获得这个数的最后六位
+        long fullDate = year + month * 10000 + date * 1000000 + hour * 100000000L;//用时间和小时构成一个10位数
+        long getSixNum = fullDate * 1000000L / qqID % 1000000L;//除以QQ号之后获得这个数的最后六位
         long firstTwoNum = getSixNum / 10000;
         long middleTwoNum = (getSixNum % 10000) / 100;
         long lastTwoNum = getSixNum % 100; //获得这个数的三组两位数；
@@ -158,8 +158,8 @@ public class DrinkPicker implements MessageResponder<MessageEvent> {
         return randomTea;
     }
 
-    static String mixDrink(int[] randomTea){
-        return DRINK_BASE.get(randomTea[0])+ TOPPING.get(randomTea[1])+ SUGAR_LEVEL.get(randomTea[2]);
+    static String mixDrink(int[] randomTea) {
+        return DRINK_BASE.get(randomTea[0]) + TOPPING.get(randomTea[1]) + SUGAR_LEVEL.get(randomTea[2]);
     }
 
     @Override

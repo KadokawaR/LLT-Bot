@@ -25,14 +25,14 @@ class AnimalImagePusher implements Runnable {
 
     @Override
     public void run() {
-        MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event,LovelyImage.INSTANCE);
+        MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, LovelyImage.INSTANCE);
         try {
             Optional<URL> url = ImageURLResolver.resolve(imageSource, uRLResolver);
             url.ifPresent(url1 -> builder.addTask(() -> ImageSender.sendImageFromURL(event.getSubject(), url1)));
         } catch (IOException e) {
-            builder.addMessage("非常抱歉，获取"+type+"图的渠道好像出了一些问题，图片获取失败");
+            builder.addMessage("非常抱歉，获取" + type + "图的渠道好像出了一些问题，图片获取失败");
             builder.addNote(e.toString());
-        } finally{
+        } finally {
             //发送给MessageDispatcher去处理
             MessageDispatcher.getINSTANCE().handleMessageChainPackage(builder.build());
         }

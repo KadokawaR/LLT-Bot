@@ -21,8 +21,8 @@ public class FeedBack implements MessageHandler<FriendMessageEvent> {
 
     @Override
     public MessageChainPackage handle(FriendMessageEvent event) {
-        MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event,this);
-        builder.addTask(() -> event.getBot().getGroup(GroupID.DEV).sendMessage("来自"+ event.getSubject().getId() +" - "+event.getSubject().getNick()+"的反馈意见：\n\n"+event.getMessage().contentToString()));
+        MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, this);
+        builder.addTask(() -> event.getBot().getGroup(GroupID.DEV).sendMessage("来自" + event.getSubject().getId() + " - " + event.getSubject().getNick() + "的反馈意见：\n\n" + event.getMessage().contentToString()));
         builder.addMessage("您的意见我们已经收到。");
         return builder.build();
     }

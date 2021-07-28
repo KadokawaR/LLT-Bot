@@ -8,8 +8,8 @@ import net.mamoe.mirai.event.events.MessageEvent;
 public class AccountChecker implements IdentityChecker<MessageEvent> {
     final long targetQQID;
 
-    public AccountChecker(long targetQQID){
-       this.targetQQID = targetQQID;
+    public AccountChecker(long targetQQID) {
+        this.targetQQID = targetQQID;
     }
 
     @Override

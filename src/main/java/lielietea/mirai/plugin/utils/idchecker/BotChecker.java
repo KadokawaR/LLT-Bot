@@ -18,17 +18,17 @@ public class BotChecker implements IdentityChecker<GroupMessageEvent> {
 
     @Override
     public boolean checkIdentity(GroupMessageEvent event) {
-        for(Long botID:botList){
-            if(botID==event.getSender().getId()) return true;
+        for (Long botID : botList) {
+            if (botID == event.getSender().getId()) return true;
         }
         return false;
     }
 
-    public static void addBotToBotList(long botID){
+    public static void addBotToBotList(long botID) {
         botList.add(botID);
     }
 
-    public static void removeBotFromBotList(long botID){
+    public static void removeBotFromBotList(long botID) {
         botList.remove(botID);
     }
 }

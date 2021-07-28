@@ -1,16 +1,17 @@
 package lielietea.mirai.plugin.core.dispatcher;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
-import lielietea.mirai.plugin.core.messagehandler.MessageHandler;
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,14 +25,14 @@ public class MessageDispatcher {
     final ExecutorService executor;
 
 
-    MessageDispatcher(){
+    MessageDispatcher() {
         thresholdReset.schedule(new TimerTask() {
             @Override
             public void run() {
                 groupThreshold.clearCache();
                 personalThreshold.clearCache();
             }
-        },10000,60 * 1000);
+        }, 10000, 60 * 1000);
         this.executor = Executors.newCachedThreadPool();
     }
 
@@ -39,16 +40,16 @@ public class MessageDispatcher {
         return INSTANCE;
     }
 
-    public void handleMessage(MessageEvent event){
+    public void handleMessage(MessageEvent event) {
         //首先需要没有达到每分钟消息数限制
-        if(!reachLimit(event)){
+        if (!reachLimit(event)) {
             //最先交由ResponderManager处理
             boolean handled = false;
             Optional<UUID> boxedHandler = ResponderManager.getINSTANCE().match(event);
-            if(boxedHandler.isPresent()){
+            if (boxedHandler.isPresent()) {
                 {
                     handled = true;
-                    MessageChainPackage temp = ResponderManager.getINSTANCE().handle(event,boxedHandler.get());
+                    MessageChainPackage temp = ResponderManager.getINSTANCE().handle(event, boxedHandler.get());
                     addToThreshold(temp);
                     handleMessageChainPackage(temp);
                 }
@@ -58,9 +59,9 @@ public class MessageDispatcher {
             //TODO:GameManager还没改写
 
             //最后交由Feedback处理
-            if(!handled){
-                if(event instanceof FriendMessageEvent){
-                    if(FeedBack.getINSTANCE().match((FriendMessageEvent) event)){
+            if (!handled) {
+                if (event instanceof FriendMessageEvent) {
+                    if (FeedBack.getINSTANCE().match((FriendMessageEvent) event)) {
                         MessageChainPackage temp = FeedBack.getINSTANCE().handle((FriendMessageEvent) event);
                         addToThreshold(temp);
                         handleMessageChainPackage(temp);
@@ -70,14 +71,14 @@ public class MessageDispatcher {
         }
     }
 
-    boolean reachLimit(MessageEvent event){
-        return event instanceof GroupMessageEvent?
+    boolean reachLimit(MessageEvent event) {
+        return event instanceof GroupMessageEvent ?
                 (groupThreshold.reachLimit(event.getSubject().getId()) || personalThreshold.reachLimit(event.getSender().getId()))
                 : personalThreshold.reachLimit(event.getSender().getId());
     }
 
-    void addToThreshold(MessageChainPackage messageChainPackage){
-        if(messageChainPackage.getSource() instanceof Group){
+    void addToThreshold(MessageChainPackage messageChainPackage) {
+        if (messageChainPackage.getSource() instanceof Group) {
             groupThreshold.count(messageChainPackage.getSource().getId());
             personalThreshold.count(messageChainPackage.getSender().getId());
         } else {
@@ -86,7 +87,7 @@ public class MessageDispatcher {
     }
 
 
-    public void handleMessageChainPackage(MessageChainPackage messageChainPackage){
+    public void handleMessageChainPackage(MessageChainPackage messageChainPackage) {
         //首先加告知StatisticController
         //TODO: Add Hook To StatisticController
 

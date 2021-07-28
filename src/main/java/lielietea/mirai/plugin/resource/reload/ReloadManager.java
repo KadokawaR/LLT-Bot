@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.resource.reload;
 
 import net.mamoe.mirai.event.events.MessageEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +18,11 @@ public class ReloadManager {
         return INSTANCE;
     }
 
-    public String reload(MessageEvent event){
+    public String reload(MessageEvent event) {
         return new Interpreter(event.getMessage().toString()).handle();
     }
 
-    public void register(Reloadable reloadable){
+    public void register(Reloadable reloadable) {
         ReloadManager.getINSTANCE().reloadables.add(reloadable);
     }
 
@@ -32,14 +33,14 @@ public class ReloadManager {
         //TODO:waiting for implementing.
     }
 
-    static class Interpreter{
+    static class Interpreter {
         final String command;
 
         public Interpreter(String command) {
             this.command = command;
         }
 
-        String handle(){
+        String handle() {
             //TODO:waiting for implementing.
             return "Reloading does not implemented yet!";
         }

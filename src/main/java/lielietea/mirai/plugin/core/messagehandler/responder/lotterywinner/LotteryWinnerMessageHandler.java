@@ -23,7 +23,7 @@ public class LotteryWinnerMessageHandler implements MessageResponder<GroupMessag
 
     @Override
     public MessageChainPackage handle(GroupMessageEvent event) {
-        return LotteryMachine.okWinner(event,new MessageChainPackage.Builder(event,this));
+        return LotteryMachine.okWinner(event, new MessageChainPackage.Builder(event, this));
     }
 
     @NotNull

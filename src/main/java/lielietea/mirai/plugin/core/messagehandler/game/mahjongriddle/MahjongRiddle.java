@@ -10,7 +10,10 @@ import org.apache.logging.log4j.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -33,14 +36,15 @@ public class MahjongRiddle {
     static final Map<Long, RiddleFactor> riddleSessionHolder = new HashMap<>();
 
     static final ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
-            "一","二","三","四","五","六","七","八","九"));
+            "一", "二", "三", "四", "五", "六", "七", "八", "九"));
 
     //生成小于108(只到筒条万)的若干个随机数，用于生成麻将牌
-    public static int[] getRandomNum(int num){
+    public static int[] getRandomNum(int num) {
         int[] randomNum = new int[num];
-        for(int i=0;i<num;i++){
+        for (int i = 0; i < num; i++) {
             assert rand != null;
-            randomNum[i] = rand.nextInt(108); }
+            randomNum[i] = rand.nextInt(108);
+        }
         Arrays.sort(randomNum);
         return randomNum;
     }
@@ -61,16 +65,16 @@ public class MahjongRiddle {
             String MAHJONG_PIC_PATH = "/pics/mahjong/" + tile + ".png";
             InputStream is = MahjongRiddle.class.getResourceAsStream(MAHJONG_PIC_PATH);
             BufferedImage img = ImageIO.read(is);
-            int w1=0;
-            int h1=480;
-            if (img0!=null) {
+            int w1 = 0;
+            int h1 = 480;
+            if (img0 != null) {
                 w1 = img0.getWidth();
             }
             int w2 = img.getWidth();
             int h2 = img.getHeight();
             // 从图片中读取RGB
             int[] ImageArrayOne = new int[w1 * h1];
-            if (img0!=null) {
+            if (img0 != null) {
                 ImageArrayOne = img0.getRGB(0, 0, w1, h1, ImageArrayOne, 0, w1); // 逐行扫描图像中各个像素的RGB到数组中
             }
             int[] ImageArrayTwo = new int[w2 * h2];
@@ -79,11 +83,11 @@ public class MahjongRiddle {
             // 生成新图片
             BufferedImage img1;
             img1 = new BufferedImage(w1 + w2, h1, BufferedImage.TYPE_INT_RGB);
-            if (img0!=null) {
+            if (img0 != null) {
                 img1.setRGB(0, 0, w1, h1, ImageArrayOne, 0, w1); // 设置上半部分或左半部分的RGB
             }
             img1.setRGB(w1, 0, w2, h2, ImageArrayTwo, 0, w2);
-            img0=img1;
+            img0 = img1;
         }
         return img0;
     }
@@ -101,7 +105,7 @@ public class MahjongRiddle {
 
 
     //判定消息里面是否有答案
-    public static boolean gotAnswer(int[] answerNum,GroupMessageEvent event){
+    public static boolean gotAnswer(int[] answerNum, GroupMessageEvent event) {
         String[] answer = transformAnswer(answerNum);
         for (String s : answer) {
             if (event.getMessage().contentToString().equals(s)) {
@@ -112,10 +116,10 @@ public class MahjongRiddle {
     }
 
     //如果猜中了则改变rf里面的boolean数组
-    public static RiddleFactor setIsGuessed(RiddleFactor rf, GroupMessageEvent event){
+    public static RiddleFactor setIsGuessed(RiddleFactor rf, GroupMessageEvent event) {
         String[] answer = transformAnswer(rf.answerNum);
-        for(int i = 0; i< rf.answerNum.length;i++){
-            if (event.getMessage().contentToString().contains(answer[i])){
+        for (int i = 0; i < rf.answerNum.length; i++) {
+            if (event.getMessage().contentToString().contains(answer[i])) {
                 rf.isGuessed[i] = true;
             }
         }
@@ -123,16 +127,14 @@ public class MahjongRiddle {
     }
 
     //把缺德的万字和东字转成简体
-    public static String[] transformAnswer(int[] answerNum){
+    public static String[] transformAnswer(int[] answerNum) {
         String[] transformedAnswer = new String[answerNum.length];
-        for(int i=0;i<answerNum.length;i++){
-            if((answerNum[i]>=72)&&(answerNum[i]<108)){
-                transformedAnswer[i] = (chineseNum.get(Math.toIntExact(answerNum[i] % 9))+"万");
-            }
-            else if (((answerNum[i]>=108)&&(answerNum[i]<124))&&(answerNum[i]%4==0)){
-                transformedAnswer[i]="东风";
-            }
-            else{
+        for (int i = 0; i < answerNum.length; i++) {
+            if ((answerNum[i] >= 72) && (answerNum[i] < 108)) {
+                transformedAnswer[i] = (chineseNum.get(Math.toIntExact(answerNum[i] % 9)) + "万");
+            } else if (((answerNum[i] >= 108) && (answerNum[i] < 124)) && (answerNum[i] % 4 == 0)) {
+                transformedAnswer[i] = "东风";
+            } else {
                 transformedAnswer[i] = FortuneTeller.getMahjong(answerNum[i]);
             }
         }
@@ -140,15 +142,19 @@ public class MahjongRiddle {
     }
 
     //boolean数组里如果全部true就返回true
-    public static boolean isAllTrue(boolean[] isGuessed){
-        for(boolean i : isGuessed){ if (!i){ return false; } }
+    public static boolean isAllTrue(boolean[] isGuessed) {
+        for (boolean i : isGuessed) {
+            if (!i) {
+                return false;
+            }
+        }
         return true;
     }
 
     //根据boolean[] isGuessed 来替换 String[] answer
-    public static String[] displayAnswer(boolean[] isGuessed, String[] transformAnswer){
-        for (int i=0;i< transformAnswer.length;i++){
-            if(!isGuessed[i]){
+    public static String[] displayAnswer(boolean[] isGuessed, String[] transformAnswer) {
+        for (int i = 0; i < transformAnswer.length; i++) {
+            if (!isGuessed[i]) {
                 transformAnswer[i] = "无字";
             }
         }
@@ -156,17 +162,17 @@ public class MahjongRiddle {
     }
 
     //临时性地检测是否是麻将牌用语
-    public static boolean isMahjongTile(GroupMessageEvent event){
+    public static boolean isMahjongTile(GroupMessageEvent event) {
         String str = event.getMessage().contentToString();
-        return str.contains("风")||str.contains("万")||str.contains("筒")||str.contains("条");
+        return str.contains("风") || str.contains("万") || str.contains("筒") || str.contains("条");
     }
 
     //将int[]转换成一个存储中文数字的String[]
-    public static String turnIntoChineseNum(RiddleFactor rf){
+    public static String turnIntoChineseNum(RiddleFactor rf) {
         StringBuilder shuziStr = new StringBuilder();
-        for (int i=0;i<rf.answerNum.length;i++){
+        for (int i = 0; i < rf.answerNum.length; i++) {
             shuziStr.append(chineseNum.get(rf.answerNum[i] % 9));
-            if (i!=rf.answerNum.length-1){
+            if (i != rf.answerNum.length - 1) {
                 shuziStr.append("、");
             }
         }
@@ -177,70 +183,70 @@ public class MahjongRiddle {
 
         //lock.lock();
         //try{
-            if (event.getMessage().contentToString().contains("猜麻将")) {
-                event.getSubject().sendMessage("来猜麻将吧！\n\n七筒会随机生成5张麻将牌（只含筒牌、条牌和万字牌），猜中最后一张的会是赢家！" +
-                        "\n请注意，只有形式诸如“三条”、“五筒”、“七万”的答案会触发判定。\n如果没有人猜中，本轮游戏会在180秒内自动关闭。");
+        if (event.getMessage().contentToString().contains("猜麻将")) {
+            event.getSubject().sendMessage("来猜麻将吧！\n\n七筒会随机生成5张麻将牌（只含筒牌、条牌和万字牌），猜中最后一张的会是赢家！" +
+                    "\n请注意，只有形式诸如“三条”、“五筒”、“七万”的答案会触发判定。\n如果没有人猜中，本轮游戏会在180秒内自动关闭。");
 
-                //检测是否有该群的flag，如果没有则重新生成并在180s之后清空
-                if (!riddleSessionHolder.containsKey(event.getGroup().getId())) {
+            //检测是否有该群的flag，如果没有则重新生成并在180s之后清空
+            if (!riddleSessionHolder.containsKey(event.getGroup().getId())) {
 
-                    RiddleFactor rf = new RiddleFactor();
-                    rf.answerNum = getRandomNum(RIDDLE_LENGTH);
-                    rf.isGuessed = new boolean[RIDDLE_LENGTH];
-                    int sessionId = rand.nextInt(10086);
-                    rf.id = sessionId;
+                RiddleFactor rf = new RiddleFactor();
+                rf.answerNum = getRandomNum(RIDDLE_LENGTH);
+                rf.isGuessed = new boolean[RIDDLE_LENGTH];
+                int sessionId = rand.nextInt(10086);
+                rf.id = sessionId;
 
-                    riddleSessionHolder.put(event.getGroup().getId(), rf);
-                    BufferedImage img = null;
-                    try {
-                        img = getTileImage(displayAnswer(rf.isGuessed, transformAnswer(rf.answerNum)));
-                        sendTileImage(img, event);
-                    } catch (IOException e) {
-                        logger.error("猜麻将开始时，生成空白图片失败",e);
-                    }
-
-                    event.getSubject().sendMessage("麻将牌上的数字分别为："+turnIntoChineseNum(rf));
-
-                    //180s清空谜语重置标记
-                    timer.schedule(new EndSessionTimerTask(sessionId,event), 180 * 1000);
-                    return riddleType.Start;
+                riddleSessionHolder.put(event.getGroup().getId(), rf);
+                BufferedImage img = null;
+                try {
+                    img = getTileImage(displayAnswer(rf.isGuessed, transformAnswer(rf.answerNum)));
+                    sendTileImage(img, event);
+                } catch (IOException e) {
+                    logger.error("猜麻将开始时，生成空白图片失败", e);
                 }
-            }
 
-            if (isMahjongTile(event) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
-                riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event).isGuessed;
-                //
-                if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {
-                    //检测这次结束之后是否全中，全中了则删除该flag
-                    if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
-                        event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
-                        BufferedImage img = null;
-                        img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
-                        sendTileImage(img, event);
-                        MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
-                        return riddleType.Congratulation;
-                    }
-                    event.getSubject().sendMessage("中了!");
+                event.getSubject().sendMessage("麻将牌上的数字分别为：" + turnIntoChineseNum(rf));
+
+                //180s清空谜语重置标记
+                timer.schedule(new EndSessionTimerTask(sessionId, event), 180 * 1000);
+                return riddleType.Start;
+            }
+        }
+
+        if (isMahjongTile(event) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
+            riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event).isGuessed;
+            //
+            if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {
+                //检测这次结束之后是否全中，全中了则删除该flag
+                if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
+                    event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
                     BufferedImage img = null;
                     img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
                     sendTileImage(img, event);
-                    return riddleType.Get;
+                    MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
+                    return riddleType.Congratulation;
                 }
-
+                event.getSubject().sendMessage("中了!");
+                BufferedImage img = null;
+                img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
+                sendTileImage(img, event);
+                return riddleType.Get;
             }
+
+        }
         //} finally {
         //    lock.lock();
         //}
         return riddleType.Nothing;
     }
 
-    public static UUID getUUID(String name){
+    public static UUID getUUID(String name) {
         return UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String getName(){
+    public static String getName() {
         return "猜麻将";
     }
 
-    public enum riddleType { Start, Get, Congratulation, Nothing}
+    public enum riddleType {Start, Get, Congratulation, Nothing}
 }

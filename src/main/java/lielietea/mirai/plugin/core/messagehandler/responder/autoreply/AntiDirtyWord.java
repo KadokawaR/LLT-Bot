@@ -12,22 +12,22 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class AntiDirtyWord implements MessageResponder<MessageEvent> {
-    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
     static final List<Pattern> REG_PATTERN = new ArrayList<>();
 
-    static{
+    static {
         {
-            REG_PATTERN.add(Pattern.compile(".*"+"([日干操艹草滚])([你尼泥])([妈马麻])"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"([Mm])otherfucker"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"([Ff])uck ([Yy])ou"+".*"));
-            REG_PATTERN.add(Pattern.compile(".*"+"([Ff])uck"+".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "([日干操艹草滚])([你尼泥])([妈马麻])" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "([Mm])otherfucker" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "([Ff])uck ([Yy])ou" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "([Ff])uck" + ".*"));
         }
     }
 
     @Override
     public boolean match(MessageEvent event) {
-        for(Pattern pattern: REG_PATTERN){
-            if(pattern.matcher(event.getMessage().contentToString()).matches()){
+        for (Pattern pattern : REG_PATTERN) {
+            if (pattern.matcher(event.getMessage().contentToString()).matches()) {
                 return true;
             }
         }
@@ -36,7 +36,7 @@ public class AntiDirtyWord implements MessageResponder<MessageEvent> {
 
     @Override
     public MessageChainPackage handle(MessageEvent event) {
-        return MessageChainPackage.getDefaultImpl(event,AutoReplyLinesCluster.reply(AutoReplyLinesCluster.ReplyType.ANTI_DIRTY_WORDS),this);
+        return MessageChainPackage.getDefaultImpl(event, AutoReplyLinesCluster.reply(AutoReplyLinesCluster.ReplyType.ANTI_DIRTY_WORDS), this);
     }
 
     @NotNull

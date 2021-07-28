@@ -9,20 +9,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-class HeroLinesMultimapTypeAdapter<K,V> implements JsonSerializer<Multimap<K,V>>, JsonDeserializer<Multimap<K,V>> {
+class HeroLinesMultimapTypeAdapter<K, V> implements JsonSerializer<Multimap<K, V>>, JsonDeserializer<Multimap<K, V>> {
 
     @Override
     @SuppressWarnings("unchecked")
     public JsonElement serialize(Multimap<K, V> heroStringMultimap, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonArray object = new JsonArray();
         Map<K, Collection<V>> heroCollectionMap = heroStringMultimap.asMap();
-        for(Hero hero: Hero.values()){
+        for (Hero hero : Hero.values()) {
             JsonObject jsonHeroLinesCollection = new JsonObject();
             JsonArray jsonHeroLines = new JsonArray();
-            for(V v:heroCollectionMap.get((K)hero)){
-                jsonHeroLines.add((String)v);
+            for (V v : heroCollectionMap.get((K) hero)) {
+                jsonHeroLines.add((String) v);
             }
-            jsonHeroLinesCollection.add(hero.name(),jsonHeroLines);
+            jsonHeroLinesCollection.add(hero.name(), jsonHeroLines);
             object.add(jsonHeroLinesCollection);
         }
         return object;
@@ -31,7 +31,7 @@ class HeroLinesMultimapTypeAdapter<K,V> implements JsonSerializer<Multimap<K,V>>
     @Override
     @SuppressWarnings("unchecked")
     public Multimap<K, V> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        Multimap<K,V> heroStringMultimap = MultimapBuilder.hashKeys().arrayListValues().build();
+        Multimap<K, V> heroStringMultimap = MultimapBuilder.hashKeys().arrayListValues().build();
         for (JsonElement element : jsonElement.getAsJsonArray()) {
 
             JsonObject jsonHeroPack = (JsonObject) element;
@@ -42,8 +42,8 @@ class HeroLinesMultimapTypeAdapter<K,V> implements JsonSerializer<Multimap<K,V>>
                 heroLines.add(value.getAsJsonPrimitive().getAsString());
             }
 
-            for(String line:heroLines){
-                heroStringMultimap.put((K) hero,(V) line);
+            for (String line : heroLines) {
+                heroStringMultimap.put((K) hero, (V) line);
             }
 
         }

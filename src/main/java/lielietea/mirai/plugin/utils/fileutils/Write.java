@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Write {
     //追加写入
-    public static void append(String content,String PATH) {
+    public static void append(String content, String PATH) {
         BufferedWriter out;
         try {
             out = new BufferedWriter(new FileWriter(PATH, true));
@@ -18,7 +18,7 @@ public class Write {
     }
 
     //覆盖写入
-    public static void cover(String content,String PATH) {
+    public static void cover(String content, String PATH) {
         BufferedWriter out;
         try {
             out = new BufferedWriter(new FileWriter(PATH));

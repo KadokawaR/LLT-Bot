@@ -2,15 +2,17 @@ package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
 
 import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 class AutoReplyLinesCluster {
-    TreeMap<Double,String> goodbyeReplyLines;
-    TreeMap<Double,String> antiDirtyWordsReplyLines;
-    TreeMap<Double,String> antiOverwatchGameReplyLines;
+    TreeMap<Double, String> goodbyeReplyLines;
+    TreeMap<Double, String> antiDirtyWordsReplyLines;
+    TreeMap<Double, String> antiOverwatchGameReplyLines;
 
     static final Gson gson = new Gson();
     static AutoReplyLinesCluster INSTANCE;
@@ -25,9 +27,10 @@ class AutoReplyLinesCluster {
         INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
     }
 
-    AutoReplyLinesCluster(){}
+    AutoReplyLinesCluster() {
+    }
 
-    public static boolean loadReplyLinesFromPreset(){
+    public static boolean loadReplyLinesFromPreset() {
         InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
@@ -35,14 +38,14 @@ class AutoReplyLinesCluster {
         return true;
     }
 
-    public static AutoReplyLinesCluster getInstance(){
+    public static AutoReplyLinesCluster getInstance() {
         return INSTANCE;
     }
 
     //根据类型和权重挑选回复消息
     static String pickReply(ReplyType type) {
-        TreeMap<Double,String> selectedLines;
-        switch (type){
+        TreeMap<Double, String> selectedLines;
+        switch (type) {
             case ANTI_OVERWATCH_GAME:
                 selectedLines = getInstance().antiOverwatchGameReplyLines;
                 break;
@@ -60,13 +63,13 @@ class AutoReplyLinesCluster {
     }
 
     //回复消息
-    public static String reply(ReplyType type){
+    public static String reply(ReplyType type) {
         return pickReply(type);
     }
 
 
     //回复的类型
-    public enum ReplyType{
+    public enum ReplyType {
         ANTI_OVERWATCH_GAME,
         ANTI_DIRTY_WORDS,
         GOODBYE

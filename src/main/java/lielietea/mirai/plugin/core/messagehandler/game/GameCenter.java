@@ -13,7 +13,7 @@ public class GameCenter {
 
         BotChecker bc = new BotChecker();
 
-        if (StatisticController.checkGroupCount(event)&&(!bc.checkIdentity(event))){
+        if (StatisticController.checkGroupCount(event) && (!bc.checkIdentity(event))) {
             MahjongRiddleHandler.handle(event);
             Foodie.send(event);
             JetPack.start(event);

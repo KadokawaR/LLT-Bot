@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class PizzaPicker implements MessageResponder<MessageEvent> {
 
-    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND,MessageType.GROUP));
+    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
     static final Pattern REG_PATTERN = Pattern.compile("(/[Pp]izza)|([oO][kK] [Pp]izza)");
 
     @Override
@@ -26,7 +26,7 @@ public class PizzaPicker implements MessageResponder<MessageEvent> {
 
     @Override
     public MessageChainPackage handle(MessageEvent event) {
-        return MessageChainPackage.getDefaultImpl(event,FoodCluster.reply(event, FoodCluster.Mode.PIZZA),this);
+        return MessageChainPackage.getDefaultImpl(event, FoodCluster.reply(event, FoodCluster.Mode.PIZZA), this);
     }
 
     @NotNull

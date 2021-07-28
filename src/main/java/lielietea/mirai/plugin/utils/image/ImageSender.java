@@ -24,19 +24,19 @@ public class ImageSender {
             while (-1 != (n = inputStream.read(buffer))) {
                 output.write(buffer, 0, n);
             }
-        }catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             Logger.getGlobal().warning("图片文件下载失败！");
         }
 
-            ExternalResource externalResource = ExternalResource.create(output.toByteArray());
-            Image imageReady;
-            imageReady = contact.uploadImage(externalResource);
-            contact.sendMessage(imageReady);
+        ExternalResource externalResource = ExternalResource.create(output.toByteArray());
+        Image imageReady;
+        imageReady = contact.uploadImage(externalResource);
+        contact.sendMessage(imageReady);
 
-        try{
+        try {
             externalResource.close();
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             Logger.getGlobal().warning("资源关闭失败！");
         }

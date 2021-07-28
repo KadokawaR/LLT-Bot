@@ -23,7 +23,7 @@ public class LotteryC4MessageHandler implements MessageResponder<GroupMessageEve
 
     @Override
     public MessageChainPackage handle(GroupMessageEvent event) {
-        return LotteryMachine.okC4(event,new MessageChainPackage.Builder(event,this));
+        return LotteryMachine.okC4(event, new MessageChainPackage.Builder(event, this));
     }
 
     @NotNull
