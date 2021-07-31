@@ -30,7 +30,7 @@ public class MessageChainPackage {
     MessageChainPackage(MessageEvent source, MessageHandler messageHandler) {
         this.source = source.getSubject();
         sender = source.getSender();
-        this.target = source.getSender();
+        this.target = source.getSubject();
         handlerName = messageHandler.getName();
         handlerUUID = messageHandler.getUUID();
     }
