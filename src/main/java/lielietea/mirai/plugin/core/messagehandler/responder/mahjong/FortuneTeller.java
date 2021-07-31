@@ -105,7 +105,7 @@ public class FortuneTeller implements MessageResponder<GroupMessageEvent> {
                 e.printStackTrace();
             }
         });
-        builder.addMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
+        builder.addMessage(new At(event.getSubject().getId()).plus(whatDoesMahjongSay(event)));
         return builder.build();
     }
 
