@@ -42,7 +42,7 @@ public class AdminTools {
         if (event.getMessage().contentToString().contains("/reload")) {
             reloadManually(event);
         }
-        if (event.getMessage().contentToString().contains("/optimized")) {
+        if (event.getMessage().contentToString().contains("/optimize")) {
             optimizeManually(event);
         }
     }
