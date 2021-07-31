@@ -29,7 +29,7 @@ class CacheThreshold {
     public void count(long id) {
         writeLock.lock();
         try {
-            data.put(id, data.getOrDefault(data, 0) + 1);
+            data.put(id, data.getOrDefault(id, 0) + 1);
         } finally {
             writeLock.unlock();
         }
