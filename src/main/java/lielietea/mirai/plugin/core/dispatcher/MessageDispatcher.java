@@ -91,6 +91,8 @@ public class MessageDispatcher {
         //首先加告知StatisticController
         //TODO: Add Hook To StatisticController
 
+        //TODO 如何处理 MessagePackage自带的Note？
+
         //最后加入线程池
         executor.submit(messageChainPackage::execute);
     }

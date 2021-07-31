@@ -100,6 +100,9 @@ public class MessageChainPackage {
             return this;
         }
 
+        /**
+         * 为包添加备注信息，一般是报错或者给管理员看的提示
+         */
         public Builder addNote(String note) {
             if (onBuild.note == null)
                 onBuild.note = note;
