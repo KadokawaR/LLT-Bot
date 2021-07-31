@@ -15,7 +15,7 @@ public class GameCenter {
 
         if (StatisticController.checkGroupCount(event) && (!bc.checkIdentity(event))) {
             MahjongRiddleHandler.handle(event);
-            Foodie.send(event);
+            //Foodie.send(event);
             JetPack.start(event);
         }
 
