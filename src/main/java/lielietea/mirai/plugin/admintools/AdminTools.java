@@ -6,10 +6,12 @@ import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -44,6 +46,19 @@ public class AdminTools {
         }
         if (event.getMessage().contentToString().contains("/optimize")) {
             optimizeManually(event);
+        }
+
+        if (event.getMessage().contentToString().contains("/coverage")) {
+            getCoverage(event);
+        }
+        if (event.getMessage().contentToString().contains("/numf")) {
+            getFriendNum(event);
+        }
+        if (event.getMessage().contentToString().contains("/numg")) {
+            getGroupNum(event);
+        }
+        if (event.getMessage().contentToString().contains("/adminhelper")) {
+            event.getSubject().sendMessage("/group\n/friend\n/reload\n/optimize\n/coverage覆盖人数\n/numf好友人数\n/numg群聊人数\n");
         }
     }
 
@@ -121,5 +136,37 @@ public class AdminTools {
         }
     }
 
+    void getFriendNum(FriendMessageEvent event){
+        if (administrativeAccountChecker.checkIdentity(event)) {
+            int size = event.getBot().getFriends().getSize();
+            event.getSubject().sendMessage("七筒目前的好友数量是：" + String.valueOf(size));
+        }
+    }
+
+    void getGroupNum(FriendMessageEvent event){
+        if (administrativeAccountChecker.checkIdentity(event)) {
+            int size = event.getBot().getGroups().getSize();
+            event.getSubject().sendMessage("七筒目前的群数量是：" + String.valueOf(size));
+        }
+    }
+
+    void getCoverage(FriendMessageEvent event) {
+        if (administrativeAccountChecker.checkIdentity(event)) {
+            Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
+            ArrayList<Long> list = new ArrayList<>();
+            while (listIter.hasNext()) {
+                Iterator<NormalMember> listIterMember = listIter.next().getMembers().stream().iterator();
+                while (listIterMember.hasNext()) {
+                    long userID = listIterMember.next().getId();
+                    if (!list.contains(userID)) {
+                        list.add(userID);
+                    }
+                }
+            }
+            int size = list.size();
+            event.getSubject().sendMessage("七筒目前的覆盖人数是：" + String.valueOf(size));
+            list.clear();
+        }
+    }
 
 }

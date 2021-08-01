@@ -59,6 +59,10 @@ public class MessageDispatcher {
             //TODO:GameManager还没改写
 
             //最后交由Feedback处理
+            /**
+             * 先临时注释掉了
+             */
+            /*
             if (!handled) {
                 if (event instanceof FriendMessageEvent) {
                     if (FeedBack.getINSTANCE().match((FriendMessageEvent) event)) {
@@ -68,6 +72,7 @@ public class MessageDispatcher {
                     }
                 }
             }
+            */
         }
     }
 

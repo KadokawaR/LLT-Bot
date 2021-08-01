@@ -97,8 +97,10 @@ public class ImageCreater {
         }
         int wS_new = imgSmall.getWidth();
         int hS_new = imgSmall.getHeight();
+
         Graphics2D g2d = imgBig.createGraphics();
-        g2d.drawImage(imgSmall, xStart, yStart, wS_new, hS_new, null);
+        g2d.drawImage(imgSmall.getScaledInstance(wS_new, hS_new, Image.SCALE_SMOOTH), xStart, yStart, null);
+        //g2d.drawImage(imgSmall, xStart, yStart, wS_new, hS_new, null);
         g2d.dispose();
         return imgBig;
     }
@@ -112,7 +114,11 @@ public class ImageCreater {
         int xStart = (wB - wS) / 2;
         int yStart = (hB - hS) / 2;
 
-        return addImage(imgBig, imgSmall, xStart, yStart);
+        Graphics2D g2d = imgBig.createGraphics();
+        g2d.drawImage(imgSmall.getScaledInstance(wS, hS, Image.SCALE_SMOOTH), xStart, yStart, null);
+        //g2d.drawImage(imgSmall,xStart,yStart,wS,hS,null);
+        g2d.dispose();
+        return imgBig;
     }
 
     public static void sendImage(BufferedImage image, GroupMessageEvent event) throws IOException {
