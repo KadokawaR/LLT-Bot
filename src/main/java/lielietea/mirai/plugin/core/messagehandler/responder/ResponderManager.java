@@ -23,7 +23,6 @@ import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -146,10 +145,11 @@ public class ResponderManager {
     public String optimizeHandlerSequence() {
         LOCK.lock();
         try {
-            Collections.sort(handlers);
+            handlers.sort(new BoxedHandlerRearrangeComparator());
             StringBuilder builder = new StringBuilder("优化后顺序为：\n");
             for (BoxedHandler handler : handlers) {
-                builder.append("[Name:").append(handler.getName()).append("|CallingTime:").append(handler.getCount()).append("]\n");
+                builder.append("[功能:").append(handler.getName()).append("-近段时间调用次数:").append(handler.getCount()).append("]\n");
+                handler.resetCount();
             }
             return builder.toString();
         } finally {
@@ -210,7 +210,7 @@ public class ResponderManager {
         else throw new MessageEventTypeException();
     }
 
-    public static class BoxedHandler implements Comparable<BoxedHandler> {
+    static class BoxedHandler {
         final MessageResponder<MessageEvent> handler;
         final List<MessageResponder.MessageType> types;
         int count;
@@ -236,6 +236,7 @@ public class ResponderManager {
         }
 
         MessageChainPackage handle(MessageEvent event) {
+            count++;
             return handler.handle(event);
         }
 
@@ -251,7 +252,6 @@ public class ResponderManager {
             return types.contains(type);
         }
 
-
         int getCount() {
             return count;
         }
@@ -263,10 +263,15 @@ public class ResponderManager {
         void resetCount() {
             count = 0;
         }
+    }
+
+    static class BoxedHandlerRearrangeComparator implements Comparator<BoxedHandler>{
 
         @Override
-        public int compareTo(@NotNull BoxedHandler o) {
-            return count - o.getCount();
+        public int compare(BoxedHandler o1, BoxedHandler o2) {
+            if(o1.getCount()>o2.getCount()) return -1;
+            else if(o1.getCount()==o2.getCount()) return 0;
+            return 1;
         }
     }
 
