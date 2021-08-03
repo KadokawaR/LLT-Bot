@@ -1,10 +1,9 @@
 package lielietea.mirai.plugin.core.dispatcher;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
-import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
+import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -18,21 +17,31 @@ import java.util.concurrent.Executors;
 public class MessageDispatcher {
     final static int GROUP_MESSAGE_LIMIT_PER_MIN = 30;
     final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 5;
+    final static int DAILY_MESSAGE_LIMIT = 4800;
     final static MessageDispatcher INSTANCE = new MessageDispatcher();
     final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
     final CacheThreshold personalThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_MIN);
+    final CacheThreshold dailyThreshold = new CacheThreshold(DAILY_MESSAGE_LIMIT);
     final Timer thresholdReset = new Timer(true);
     final ExecutorService executor;
 
 
     MessageDispatcher() {
         thresholdReset.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                groupThreshold.clearCache();
-                personalThreshold.clearCache();
-            }
-        }, 10000, 60 * 1000);
+                                    @Override
+                                    public void run() {
+                                        groupThreshold.clearCache();
+                                        personalThreshold.clearCache();
+                                    }
+                                }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0),
+                StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
+        thresholdReset.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        dailyThreshold.clearCache();
+                                    }
+                                }, StandardTimeUtil.getStandardFirstTime(0, 0, 1),
+                StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
         this.executor = Executors.newCachedThreadPool();
     }
 
@@ -59,9 +68,10 @@ public class MessageDispatcher {
             //TODO:GameManager还没改写
 
             //最后交由Feedback处理
-            /**
-             * 先临时注释掉了
-             */
+
+            //先临时注释掉了
+            //FIXME Feedback not working correctly
+
             /*
             if (!handled) {
                 if (event instanceof FriendMessageEvent) {
@@ -77,18 +87,19 @@ public class MessageDispatcher {
     }
 
     boolean reachLimit(MessageEvent event) {
-        return event instanceof GroupMessageEvent ?
-                (groupThreshold.reachLimit(event.getSubject().getId()) || personalThreshold.reachLimit(event.getSender().getId()))
-                : personalThreshold.reachLimit(event.getSender().getId());
+        if (dailyThreshold.reachLimit(0)) return true;
+        if (event instanceof GroupMessageEvent) {
+            if (groupThreshold.reachLimit(event.getSubject().getId()))
+                return true;
+        }
+        return personalThreshold.reachLimit(event.getSender().getId());
     }
 
     void addToThreshold(MessageChainPackage messageChainPackage) {
-        if (messageChainPackage.getSource() instanceof Group) {
+        if (messageChainPackage.getSource() instanceof Group)
             groupThreshold.count(messageChainPackage.getSource().getId());
-            personalThreshold.count(messageChainPackage.getSender().getId());
-        } else {
-            personalThreshold.count(messageChainPackage.getSender().getId());
-        }
+        personalThreshold.count(messageChainPackage.getSender().getId());
+        dailyThreshold.count(0);
     }
 
 

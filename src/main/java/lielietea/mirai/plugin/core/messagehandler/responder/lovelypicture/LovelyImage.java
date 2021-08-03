@@ -2,8 +2,8 @@ package lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
-import lielietea.mirai.plugin.utils.exception.NoHandlerMethodMatchException;
-import lielietea.mirai.plugin.utils.image.ImageURLResolver;
+import lielietea.mirai.plugin.exception.NoHandlerMethodMatchException;
+import lielietea.mirai.plugin.utils.image.AnimalImageURLResolver;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,42 +67,42 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
 
 
     static MessageChainPackage getDog(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.RANDOM_DOG, "狗", ImageURLResolver.Source.RADNOM_DOG));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.RANDOM_DOG, "狗", AnimalImageURLResolver.Source.RADNOM_DOG));
         return MessageChainPackage.getDefaultImpl(event, "正在获取狗狗>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getShiba(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.SHIBE_ONLINE_SHIBA, "柴犬", ImageURLResolver.Source.SHIBE_ONLINE));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.SHIBE_ONLINE_SHIBA, "柴犬", AnimalImageURLResolver.Source.SHIBE_ONLINE));
         return MessageChainPackage.getDefaultImpl(event, "正在获取柴犬>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getHusky(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_HUSKY, "哈士奇", ImageURLResolver.Source.DOG_CEO));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_HUSKY, "哈士奇", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取哈士奇>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getBernese(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_BERNESE, "伯恩山", ImageURLResolver.Source.DOG_CEO));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_BERNESE, "伯恩山", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取伯恩山>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getMalamute(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_MALAMUTE, "阿拉斯加", ImageURLResolver.Source.DOG_CEO));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_MALAMUTE, "阿拉斯加", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取阿拉斯加>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getGSD(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_GSD, "德牧", ImageURLResolver.Source.DOG_CEO));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_GSD, "德牧", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取德牧>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getSamoyed(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_SAMOYED, "萨摩耶", ImageURLResolver.Source.DOG_CEO));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_SAMOYED, "萨摩耶", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取萨摩耶>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getCat(GroupMessageEvent event) {
-        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.SHIBE_ONLINE_CAT, "猫", ImageURLResolver.Source.SHIBE_ONLINE));
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.SHIBE_ONLINE_CAT, "猫", AnimalImageURLResolver.Source.SHIBE_ONLINE));
         return MessageChainPackage.getDefaultImpl(event, "正在获取猫咪>>>>>>>", INSTANCE);
     }
 

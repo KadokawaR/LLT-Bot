@@ -33,12 +33,12 @@ public class FeedBack implements MessageHandler<FriendMessageEvent> {
     }
 
     /**
-    老版本的feedback，这里先临时使用一下
+     * 老版本的feedback，这里先临时使用一下
      */
-    public static void get(FriendMessageEvent event){
+    public static void get(FriendMessageEvent event) {
         String message = event.getMessage().contentToString();
-        if (message.contains("意见反馈")){
-            message = "来自"+String.valueOf(event.getSubject().getId())+" - "+event.getSubject().getNick()+"的反馈意见：\n\n"+message;
+        if (message.contains("意见反馈")) {
+            message = "来自" + String.valueOf(event.getSubject().getId()) + " - " + event.getSubject().getNick() + "的反馈意见：\n\n" + message;
             event.getBot().getGroup(GroupID.DEV).sendMessage(message);
             event.getSubject().sendMessage("您的意见我们已经收到。");
         }

@@ -1,7 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.game;
 
 import lielietea.mirai.plugin.admintools.StatisticController;
-import lielietea.mirai.plugin.core.broadcast.foodie.Foodie;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPack;
 import lielietea.mirai.plugin.core.messagehandler.game.mahjongriddle.MahjongRiddleHandler;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;

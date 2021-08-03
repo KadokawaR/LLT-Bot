@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Optional;
 
-public class ImageURLResolver {
+public class AnimalImageURLResolver {
     public static Optional<URL> resolve(String urlString, Source source) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
         //获取来自dog.ceo的图片

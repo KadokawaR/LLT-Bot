@@ -2,8 +2,8 @@ package lielietea.mirai.plugin.core.messagehandler.responder.dice;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
+import lielietea.mirai.plugin.exception.NoHandlerMethodMatchException;
 import lielietea.mirai.plugin.utils.dice.DiceFactory;
-import lielietea.mirai.plugin.utils.exception.NoHandlerMethodMatchException;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 

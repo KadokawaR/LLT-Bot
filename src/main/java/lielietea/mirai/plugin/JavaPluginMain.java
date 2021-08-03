@@ -13,7 +13,6 @@ import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
 import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
 import lielietea.mirai.plugin.utils.idchecker.BotChecker;
 import lielietea.mirai.plugin.utils.idchecker.GroupID;
-import lielietea.mirai.plugin.viponly.GrandVIPServiceDepartment;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.MemberPermission;

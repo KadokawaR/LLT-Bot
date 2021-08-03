@@ -18,7 +18,8 @@ import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.Lotter
 import lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture.LovelyImage;
 import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesSelector;
-import lielietea.mirai.plugin.utils.exception.MessageEventTypeException;
+import lielietea.mirai.plugin.exception.MessageEventTypeException;
+import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import lielietea.mirai.plugin.utils.idchecker.GroupID;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
@@ -54,8 +55,8 @@ public class ResponderManager {
                                }
                            }
                        },
-                60000,
-                6 * 60 * 60 * 1000);
+                StandardTimeUtil.getStandardFirstTime(0, 0, 1),
+                StandardTimeUtil.getPeriodLengthInMS(0, 6, 0, 0));
     }
 
     final List<BoxedHandler> handlers;
@@ -265,12 +266,12 @@ public class ResponderManager {
         }
     }
 
-    static class BoxedHandlerRearrangeComparator implements Comparator<BoxedHandler>{
+    static class BoxedHandlerRearrangeComparator implements Comparator<BoxedHandler> {
 
         @Override
         public int compare(BoxedHandler o1, BoxedHandler o2) {
-            if(o1.getCount()>o2.getCount()) return -1;
-            else if(o1.getCount()==o2.getCount()) return 0;
+            if (o1.getCount() > o2.getCount()) return -1;
+            else if (o1.getCount() == o2.getCount()) return 0;
             return 1;
         }
     }
