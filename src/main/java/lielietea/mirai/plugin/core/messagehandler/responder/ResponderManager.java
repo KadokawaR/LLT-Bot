@@ -46,7 +46,7 @@ public class ResponderManager {
         TIMER.schedule(new TimerTask() {
                            @Override
                            public void run() {
-                               String result = ResponderManager.getINSTANCE().optimizeHandlerSequence();
+                               String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
                                List<Bot> bots = Bot.getInstances();
                                for (Bot bot : bots) {
@@ -149,14 +149,14 @@ public class ResponderManager {
      *
      * @return 优化后的回复处理器顺序与调用统计
      */
-    public String optimizeHandlerSequence() {
+    public String optimizeHandlerSequence(boolean reset) {
         LOCK.lock();
         try {
             handlers.sort(new BoxedHandlerRearrangeComparator());
             StringBuilder builder = new StringBuilder("优化后顺序为：\n");
             for (BoxedHandler handler : handlers) {
                 builder.append("[功能:").append(handler.getName()).append("-近段时间调用次数:").append(handler.getCount()).append("]\n");
-                handler.resetCount();
+                if(reset) handler.resetCount();
             }
             return builder.toString();
         } finally {

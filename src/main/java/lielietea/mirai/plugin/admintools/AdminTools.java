@@ -71,7 +71,7 @@ public class AdminTools {
 
     void optimizeManually(MessageEvent event) {
         MessageChainBuilder messages = new MessageChainBuilder();
-        String result = ResponderManager.getINSTANCE().optimizeHandlerSequence();
+        String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(false);
         messages.append(result);
         event.getSubject().sendMessage(messages.build());
     }
