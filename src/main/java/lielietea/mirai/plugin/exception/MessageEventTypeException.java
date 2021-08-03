@@ -1,5 +1,9 @@
 package lielietea.mirai.plugin.exception;
 
+import net.mamoe.mirai.event.events.MessageEvent;
+
 public class MessageEventTypeException extends RuntimeException {
-    //TODO IMPLEMENT MORE DETAILS
+    public MessageEventTypeException(MessageEvent event) {
+        super("消息类型匹配错误！该消息事件实例为"+event.toString());
+    }
 }

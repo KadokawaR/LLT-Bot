@@ -80,7 +80,13 @@ public class ResponderManager {
     public Optional<UUID> match(MessageEvent event) {
         LOCK.lock();
         try {
-            MessageResponder.MessageType type = getType(event);
+            MessageResponder.MessageType type = null;
+            try{
+                type = getType(event);
+            } catch(MessageEventTypeException e) {
+                e.printStackTrace();
+            }
+            if(type == null) return Optional.empty();
             for (BoxedHandler handler : handlers) {
                 if (handler.isBetaFeature()) {
                     if (true/*TODO:这里缺个Group Config的判断*/) {
@@ -208,7 +214,9 @@ public class ResponderManager {
         else if (event instanceof FriendMessageEvent) return MessageResponder.MessageType.FRIEND;
         else if (event instanceof GroupTempMessageEvent) return MessageResponder.MessageType.TEMP;
         else if (event instanceof StrangerMessageEvent) return MessageResponder.MessageType.STRANGER;
-        else throw new MessageEventTypeException();
+        else {
+            throw new MessageEventTypeException(event);
+        }
     }
 
     static class BoxedHandler {
