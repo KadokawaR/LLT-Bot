@@ -145,8 +145,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
             StatisticController.getStatistics(event);
 
-            FeedBack.get(event);
-
         });
     }
 

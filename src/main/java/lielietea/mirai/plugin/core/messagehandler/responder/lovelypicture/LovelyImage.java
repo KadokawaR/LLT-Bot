@@ -128,7 +128,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
                 return entry.getValue().apply(event);
             }
         }
-        throw new NoHandlerMethodMatchException();
+        throw new NoHandlerMethodMatchException("匹配动物图片",event);
     }
 
     @NotNull

@@ -39,7 +39,7 @@ public class Help implements MessageResponder<MessageEvent> {
             if (entry.getKey().test(event))
                 return MessageChainPackage.getDefaultImpl(event, entry.getValue(), this);
         }
-        throw new NoHandlerMethodMatchException();
+        throw new NoHandlerMethodMatchException("帮助",event);
     }
 
     @NotNull

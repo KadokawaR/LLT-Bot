@@ -3,26 +3,26 @@ package lielietea.mirai.plugin.core.messagehandler.feedback;
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.MessageHandler;
 import lielietea.mirai.plugin.utils.idchecker.GroupID;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 
-public class FeedBack implements MessageHandler<FriendMessageEvent> {
+public class FeedBack implements MessageHandler<MessageEvent> {
 
-    static FeedBack INSTANCE;
+    static FeedBack INSTANCE = new FeedBack();
 
     public static FeedBack getINSTANCE() {
         return INSTANCE;
     }
 
     @Override
-    public boolean match(FriendMessageEvent event) {
+    public boolean match(MessageEvent event) {
         //TODO:黑名单系统
         return event.getMessage().contentToString().contains("意见反馈");
     }
 
     @Override
-    public MessageChainPackage handle(FriendMessageEvent event) {
+    public MessageChainPackage handle(MessageEvent event) {
         MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, this);
-        builder.addTask(() -> event.getBot().getGroup(GroupID.DEV).sendMessage("来自" + event.getSubject().getId() + " - " + event.getSubject().getNick() + "的反馈意见：\n\n" + event.getMessage().contentToString()));
+        builder.addTask(() -> event.getBot().getGroup(GroupID.DEV).sendMessage("来自" + event.getSender().getId() + " - " + event.getSenderName() + "的反馈意见：\n\n" + event.getMessage().contentToString()));
         builder.addMessage("您的意见我们已经收到。");
         return builder.build();
     }
@@ -32,15 +32,4 @@ public class FeedBack implements MessageHandler<FriendMessageEvent> {
         return "意见反馈";
     }
 
-    /**
-     * 老版本的feedback，这里先临时使用一下
-     */
-    public static void get(FriendMessageEvent event) {
-        String message = event.getMessage().contentToString();
-        if (message.contains("意见反馈")) {
-            message = "来自" + String.valueOf(event.getSubject().getId()) + " - " + event.getSubject().getNick() + "的反馈意见：\n\n" + message;
-            event.getBot().getGroup(GroupID.DEV).sendMessage(message);
-            event.getSubject().sendMessage("您的意见我们已经收到。");
-        }
-    }
 }

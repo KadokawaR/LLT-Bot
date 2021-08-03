@@ -1,10 +1,13 @@
 package lielietea.mirai.plugin.core.dispatcher;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.GroupTempMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.Optional;
@@ -50,7 +53,7 @@ public class MessageDispatcher {
     }
 
     public void handleMessage(MessageEvent event) {
-        //首先需要没有达到每分钟消息数限制
+        //首先需要没有达到消息数限制
         if (!reachLimit(event)) {
             //最先交由ResponderManager处理
             boolean handled = false;
@@ -68,21 +71,15 @@ public class MessageDispatcher {
             //TODO:GameManager还没改写
 
             //最后交由Feedback处理
-
-            //先临时注释掉了
-            //FIXME Feedback not working correctly
-
-            /*
             if (!handled) {
-                if (event instanceof FriendMessageEvent) {
-                    if (FeedBack.getINSTANCE().match((FriendMessageEvent) event)) {
-                        MessageChainPackage temp = FeedBack.getINSTANCE().handle((FriendMessageEvent) event);
+                if (event instanceof FriendMessageEvent || event instanceof GroupTempMessageEvent) {
+                    if (FeedBack.getINSTANCE().match(event)) {
+                        MessageChainPackage temp = FeedBack.getINSTANCE().handle(event);
                         addToThreshold(temp);
                         handleMessageChainPackage(temp);
                     }
                 }
             }
-            */
         }
     }
 
