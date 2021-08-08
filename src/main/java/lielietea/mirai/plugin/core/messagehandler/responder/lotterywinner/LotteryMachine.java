@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner;
 
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import lielietea.mirai.plugin.utils.image.ImageCreater;
 import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.contact.NormalMember;
@@ -10,33 +11,27 @@ import net.mamoe.mirai.message.data.PlainText;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class LotteryMachine {
     static final Timer TIMER = new Timer(true);
     static final Map<Long, Boolean> C4_ACTIVATION_FLAGS = new HashMap<>();
+    static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(10);
     static final Random rand = new Random();
 
     static {
         //每日6点定时清空C4触发标记
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 6);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date date = calendar.getTime();
-        if (date.before(new Date())) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            date = calendar.getTime();
-        }
         TIMER.schedule(new TimerTask() {
                            @Override
                            public void run() {
                                LotteryMachine.C4_ACTIVATION_FLAGS.clear();
                            }
                        },
-                date,
-                24 * 60 * 60 * 1000);
+                StandardTimeUtil.getStandardFirstTime(0,0,1),
+                StandardTimeUtil.getPeriodLengthInMS(1,0,0,0));
     }
 
     public static boolean botPermissionChecker(GroupMessageEvent event) {
@@ -112,10 +107,7 @@ public class LotteryMachine {
 
     public static MessageChainPackage okC4(GroupMessageEvent event, MessageChainPackage.Builder builder) {
         if (botPermissionChecker(event)) {
-            if (!C4_ACTIVATION_FLAGS.containsKey(event.getGroup().getId())) {
-                C4_ACTIVATION_FLAGS.put(event.getGroup().getId(), false);
-            }
-            if (!C4_ACTIVATION_FLAGS.get(event.getGroup().getId())) {
+            if (!C4_ACTIVATION_FLAGS.getOrDefault(event.getGroup().getId(),false)) {
                 double ratio = 1D / Math.sqrt(event.getGroup().getMembers().size());
 
                 if (rand.nextDouble() < ratio) {
@@ -126,11 +118,7 @@ public class LotteryMachine {
                     C4_ACTIVATION_FLAGS.put(event.getGroup().getId(), true);
 
                     //设置5分钟后解禁
-                    builder.addTask(() -> TIMER.schedule(new TimerTask() {
-                        public void run() {
-                            event.getGroup().getSettings().setMuteAll(false);
-                        }
-                    }, 300000));
+                    builder.addTask(() -> EXECUTOR.schedule(() -> event.getGroup().getSettings().setMuteAll(false), StandardTimeUtil.getPeriodLengthInMS(0,0,5,0), TimeUnit.MILLISECONDS));
 
 
                 } else {

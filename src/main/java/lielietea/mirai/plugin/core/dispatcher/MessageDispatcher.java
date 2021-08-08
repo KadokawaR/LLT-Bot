@@ -25,12 +25,13 @@ public class MessageDispatcher {
     final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
     final CacheThreshold personalThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_MIN);
     final CacheThreshold dailyThreshold = new CacheThreshold(DAILY_MESSAGE_LIMIT);
-    final Timer thresholdReset = new Timer(true);
+    final Timer thresholdReset1 = new Timer(true);
+    final Timer thresholdReset2 = new Timer(true);
     final ExecutorService executor;
 
 
     MessageDispatcher() {
-        thresholdReset.schedule(new TimerTask() {
+        thresholdReset1.schedule(new TimerTask() {
                                     @Override
                                     public void run() {
                                         groupThreshold.clearCache();
@@ -38,7 +39,7 @@ public class MessageDispatcher {
                                     }
                                 }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0),
                 StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
-        thresholdReset.schedule(new TimerTask() {
+        thresholdReset2.schedule(new TimerTask() {
                                     @Override
                                     public void run() {
                                         dailyThreshold.clearCache();
