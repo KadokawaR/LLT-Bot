@@ -22,6 +22,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
         static final String DOG_CEO_MALAMUTE = "https://dog.ceo/api/breed/malamute/images/random";
         static final String DOG_CEO_GSD = "https://dog.ceo/api/breed/germanshepherd/images/random";
         static final String DOG_CEO_SAMOYED = "https://dog.ceo/api/breed/samoyed/images/random";
+        static final String DOG_CEO_DOBERMAN = "https://dog.ceo/api/breed/doberman/images/random";
         static final String SHIBE_ONLINE_SHIBA = "https://shibe.online/api/shibes";
         static final String SHIBE_ONLINE_CAT = "https://shibe.online/api/cats";
         static final String RANDOM_DOG = "https://random.dog/woof.json";
@@ -34,7 +35,8 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
     static final Pattern HUKSY_REG_PATTERN = Pattern.compile("((/[Hh]usky)|([oO][kK] [Hh]usky))|(((来点)|/)((哈士奇)|(二哈)))");
     static final Pattern BERNESE_REG_PATTERN = Pattern.compile("((/[Bb]ernese)|([oO][kK] 伯恩山))|(((来点)|/)((伯恩山)|(伯恩山犬)))");
     static final Pattern MALAMUTE_REG_PATTERN = Pattern.compile("((/[Mm]alamute)|([oO][kK] 阿拉))|(((来点)|/)(阿拉斯加))");
-    static final Pattern GSD_REG_PATTERN = Pattern.compile("((/(([Gg]sd)|(GSD))|([oO][kK] 德牧))|(((来点)|/)((德牧)|(黑背))))");
+    static final Pattern GSD_REG_PATTERN = Pattern.compile("(((/([Gg]sd)|(GSD))|([oO][kK] 德牧))|(((来点)|/)((德牧)|(黑背))))");
+    static final Pattern DOBERMAN_REG_PATTERN = Pattern.compile("(((/[Dd]obermann?)|([oO][kK] 杜宾))|(((来点)|/)(杜宾)))");
     static final Pattern SAMOYED_REG_PATTERN = Pattern.compile("((/[Ss]amoyed)|([oO][kK] 萨摩耶))|(((来点)|/)(萨摩耶))");
 
     static final Map<Pattern, Function<GroupMessageEvent, MessageChainPackage>> PATTERN_SUPPLIER_MAP = new HashMap<>();
@@ -49,6 +51,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
             PATTERN_SUPPLIER_MAP.put(MALAMUTE_REG_PATTERN, LovelyImage::getMalamute);
             PATTERN_SUPPLIER_MAP.put(GSD_REG_PATTERN, LovelyImage::getGSD);
             PATTERN_SUPPLIER_MAP.put(SAMOYED_REG_PATTERN, LovelyImage::getSamoyed);
+            PATTERN_SUPPLIER_MAP.put(DOBERMAN_REG_PATTERN,LovelyImage::getDoberman);
 
         }
     }
@@ -99,6 +102,11 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
     static MessageChainPackage getSamoyed(GroupMessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_SAMOYED, "萨摩耶", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取萨摩耶>>>>>>>", INSTANCE);
+    }
+
+    static MessageChainPackage getDoberman(GroupMessageEvent event) {
+        INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_DOBERMAN, "杜宾", AnimalImageURLResolver.Source.DOG_CEO));
+        return MessageChainPackage.getDefaultImpl(event, "正在获取杜宾>>>>>>>", INSTANCE);
     }
 
     static MessageChainPackage getCat(GroupMessageEvent event) {
