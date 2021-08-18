@@ -51,7 +51,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
             PATTERN_SUPPLIER_MAP.put(MALAMUTE_REG_PATTERN, LovelyImage::getMalamute);
             PATTERN_SUPPLIER_MAP.put(GSD_REG_PATTERN, LovelyImage::getGSD);
             PATTERN_SUPPLIER_MAP.put(SAMOYED_REG_PATTERN, LovelyImage::getSamoyed);
-            PATTERN_SUPPLIER_MAP.put(DOBERMAN_REG_PATTERN,LovelyImage::getDoberman);
+            PATTERN_SUPPLIER_MAP.put(DOBERMAN_REG_PATTERN, LovelyImage::getDoberman);
 
         }
     }
@@ -136,7 +136,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
                 return entry.getValue().apply(event);
             }
         }
-        throw new NoHandlerMethodMatchException("匹配动物图片",event);
+        throw new NoHandlerMethodMatchException("匹配动物图片", event);
     }
 
     @NotNull

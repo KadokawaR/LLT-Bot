@@ -64,7 +64,7 @@ public class PlayDice implements MessageResponder<MessageEvent> {
                 return DiceFactory.getCustomDice(captureFromPatternDNDSingleRoll(event.getMessage().contentToString()), 1).buildMessage();
             }
         }
-        throw new NoHandlerMethodMatchException("匹配骰子",event);
+        throw new NoHandlerMethodMatchException("匹配骰子", event);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

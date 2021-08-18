@@ -32,19 +32,19 @@ public class MessageDispatcher {
 
     MessageDispatcher() {
         thresholdReset1.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        groupThreshold.clearCache();
-                                        personalThreshold.clearCache();
-                                    }
-                                }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0),
+                                     @Override
+                                     public void run() {
+                                         groupThreshold.clearCache();
+                                         personalThreshold.clearCache();
+                                     }
+                                 }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0),
                 StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
         thresholdReset2.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        dailyThreshold.clearCache();
-                                    }
-                                }, StandardTimeUtil.getStandardFirstTime(0, 0, 1),
+                                     @Override
+                                     public void run() {
+                                         dailyThreshold.clearCache();
+                                     }
+                                 }, StandardTimeUtil.getStandardFirstTime(0, 0, 1),
                 StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
         this.executor = Executors.newCachedThreadPool();
     }

@@ -2,8 +2,7 @@
   "borders": [
     {
       "city": "Shanghai",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 121.410302,
           "lat": 31.270589
@@ -16,8 +15,7 @@
     },
     {
       "city": "Beijing",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 116.232496,
           "lat": 40.029336
@@ -30,8 +28,7 @@
     },
     {
       "city": "Tianjin",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 117.140287,
           "lat": 439.180344
@@ -44,8 +41,7 @@
     },
     {
       "city": "Guangzhou",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 113.223963,
           "lat": 23.169661
@@ -58,8 +54,7 @@
     },
     {
       "city": "Shenzhen",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 113.893164,
           "lat": 22.587901
@@ -72,8 +67,7 @@
     },
     {
       "city": "Hong Kong",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 114.150151,
           "lat": 22.343825
@@ -86,8 +80,7 @@
     },
     {
       "city": "Zhuhai Macau",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 113.522056,
           "lat": 22.296884
@@ -100,8 +93,7 @@
     },
     {
       "city": "Changsha",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 112.938804,
           "lat": 28.247907
@@ -114,8 +106,7 @@
     },
     {
       "city": "Chongqing",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 106.470717,
           "lat": 29.622169
@@ -128,8 +119,7 @@
     },
     {
       "city": "Chengdu",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 104.030488,
           "lat": 30.70085
@@ -142,8 +132,7 @@
     },
     {
       "city": "Zhengzhou",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 113.616486,
           "lat": 34.836131
@@ -156,8 +145,7 @@
     },
     {
       "city": "Wuhan",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 114.239407,
           "lat": 30.640964
@@ -170,8 +158,7 @@
     },
     {
       "city": "Hangzhou",
-      "coords":
-      [
+      "coords": [
         {
           "lng": 120.159025,
           "lat": 30.324012
@@ -183,18 +170,17 @@
       ]
     },
     {
-    "city": "Nanjiing",
-    "coords":
-    [
-      {
-        "lng": 118.739558,
-        "lat": 32.125435
-      },
-      {
-        "lng": 118.831832,
-        "lat": 31.97437
-      }
-    ]
+      "city": "Nanjiing",
+      "coords": [
+        {
+          "lng": 118.739558,
+          "lat": 32.125435
+        },
+        {
+          "lng": 118.831832,
+          "lat": 31.97437
+        }
+      ]
     }
   ]
 }

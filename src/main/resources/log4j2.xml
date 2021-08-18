@@ -10,7 +10,7 @@
             <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
         </Console>
         <RollingRandomAccessFile name="ErrorRollingFile" fileName="logs/error_log/error.log"
-                     filePattern="logs/error_log/$${date:yyyy-MM}/error-%d{yyyy-MM-dd HH-mm}-%i.log">
+                                 filePattern="logs/error_log/$${date:yyyy-MM}/error-%d{yyyy-MM-dd HH-mm}-%i.log">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%t] [%-5level] %msg%n"/>
             <Policies>
@@ -21,9 +21,9 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="Console_ERR" />
-            <AppenderRef ref="ErrorRollingFile" />
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Console_ERR"/>
+            <AppenderRef ref="ErrorRollingFile"/>
         </Root>
     </Loggers>
 </Configuration>

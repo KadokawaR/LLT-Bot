@@ -81,12 +81,12 @@ public class ResponderManager {
         LOCK.lock();
         try {
             MessageResponder.MessageType type = null;
-            try{
+            try {
                 type = getType(event);
-            } catch(MessageEventTypeException e) {
+            } catch (MessageEventTypeException e) {
                 e.printStackTrace();
             }
-            if(type == null) return Optional.empty();
+            if (type == null) return Optional.empty();
             for (BoxedHandler handler : handlers) {
                 if (handler.isBetaFeature()) {
                     if (true/*TODO:这里缺个Group Config的判断*/) {
@@ -156,7 +156,7 @@ public class ResponderManager {
             StringBuilder builder = new StringBuilder("优化后顺序为：\n");
             for (BoxedHandler handler : handlers) {
                 builder.append("[功能:").append(handler.getName()).append("-近段时间调用次数:").append(handler.getCount()).append("]\n");
-                if(reset) handler.resetCount();
+                if (reset) handler.resetCount();
             }
             return builder.toString();
         } finally {

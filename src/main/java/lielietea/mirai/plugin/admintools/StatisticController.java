@@ -1,4 +1,5 @@
 package lielietea.mirai.plugin.admintools;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;

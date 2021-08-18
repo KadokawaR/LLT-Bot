@@ -24,8 +24,8 @@ public class GameCenter {
 
             //FIXME 需要一个黑名单，这个地图api有大问题
             // - 这里是临时解决方案
-            if(!TEMP_SOLUTION_REG.matcher(event.getMessage().contentToString()).matches())
-            JetPack.start(event);
+            if (!TEMP_SOLUTION_REG.matcher(event.getMessage().contentToString()).matches())
+                JetPack.start(event);
         }
 
     }

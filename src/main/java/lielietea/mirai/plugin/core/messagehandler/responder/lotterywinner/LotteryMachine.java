@@ -30,8 +30,8 @@ public class LotteryMachine {
                                LotteryMachine.C4_ACTIVATION_FLAGS.clear();
                            }
                        },
-                StandardTimeUtil.getStandardFirstTime(0,0,1),
-                StandardTimeUtil.getPeriodLengthInMS(1,0,0,0));
+                StandardTimeUtil.getStandardFirstTime(0, 0, 1),
+                StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
     }
 
     public static boolean botPermissionChecker(GroupMessageEvent event) {
@@ -107,7 +107,7 @@ public class LotteryMachine {
 
     public static MessageChainPackage okC4(GroupMessageEvent event, MessageChainPackage.Builder builder) {
         if (botPermissionChecker(event)) {
-            if (!C4_ACTIVATION_FLAGS.getOrDefault(event.getGroup().getId(),false)) {
+            if (!C4_ACTIVATION_FLAGS.getOrDefault(event.getGroup().getId(), false)) {
                 double ratio = 1D / Math.sqrt(event.getGroup().getMembers().size());
 
                 if (rand.nextDouble() < ratio) {
@@ -118,7 +118,7 @@ public class LotteryMachine {
                     C4_ACTIVATION_FLAGS.put(event.getGroup().getId(), true);
 
                     //设置5分钟后解禁
-                    builder.addTask(() -> EXECUTOR.schedule(() -> event.getGroup().getSettings().setMuteAll(false), StandardTimeUtil.getPeriodLengthInMS(0,0,5,0), TimeUnit.MILLISECONDS));
+                    builder.addTask(() -> EXECUTOR.schedule(() -> event.getGroup().getSettings().setMuteAll(false), StandardTimeUtil.getPeriodLengthInMS(0, 0, 5, 0), TimeUnit.MILLISECONDS));
 
 
                 } else {

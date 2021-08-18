@@ -5,7 +5,6 @@ import lielietea.mirai.plugin.admintools.AdminTools;
 import lielietea.mirai.plugin.admintools.StatisticController;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
-import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.Speech;
