@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin;
 
 
-import lielietea.mirai.plugin.admintools.AdminTools;
+import lielietea.mirai.plugin.admintools.AdminCommandDispatcher;
 import lielietea.mirai.plugin.admintools.StatisticController;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
@@ -100,16 +100,12 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
-            try {
-                //所有消息之后都集中到这个地方处理
-                MessageDispatcher.getINSTANCE().handleMessage(event);
-                GameCenter.handle(event);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //VIP待遇
-            //GrandVIPServiceDepartment.handleMessage(event);
+            //所有消息之后都集中到这个地方处理
+            MessageDispatcher.getINSTANCE().handleMessage(event);
+            //管理员功能
+            AdminCommandDispatcher.getInstance().handleMessage(event);
+            //GameCenter
+            GameCenter.handle(event);
 
         });
 
@@ -122,7 +118,7 @@ public final class JavaPluginMain extends JavaPlugin {
             MessageDispatcher.getINSTANCE().handleMessage(event);
 
             //管理员功能
-            AdminTools.getINSTANCE().handleAdminCommand(event);
+            AdminCommandDispatcher.getInstance().handleMessage(event);
 
 
             //BroadcastSystem
@@ -151,5 +147,6 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onDisable() {
         ResponderManager.getINSTANCE().close();
         MessageDispatcher.getINSTANCE().close();
+        AdminCommandDispatcher.getInstance().close();
     }
 }
