@@ -13,7 +13,8 @@ public class BotChecker implements IdentityChecker<GroupMessageEvent> {
     static final List<Long> botList = new ArrayList<>(Arrays.asList(
             340865180L,
             384087036L,
-            3621269439L
+            3621269439L,
+            1402585596L
     ));
 
     @Override
