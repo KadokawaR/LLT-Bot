@@ -12,8 +12,12 @@ class CommandParser {
         return Optional.empty();
     }
 
-    public static class AddToBlacklist implements Operation {
+
+    static abstract class SpecificBlacklistOperation implements Operation{
         long id;
+    }
+
+    public static class AddToBlacklist extends SpecificBlacklistOperation {
         String reason;
         boolean isGroup;
 
@@ -31,12 +35,11 @@ class CommandParser {
         }
     }
 
-    public static class RemoveFromBlacklist implements Operation{
+    public static class RemoveFromBlacklist extends SpecificBlacklistOperation{
         long id;
         boolean isGroup;
 
         public RemoveFromBlacklist(long id, boolean isGroup) {
-            this.id = id;
             this.isGroup = isGroup;
         }
 
@@ -55,8 +58,7 @@ class CommandParser {
     }
 
 
-    public static class EditBlackListNote implements Operation{
-        long id;
+    public static class EditBlackListNote extends SpecificBlacklistOperation{
         String note;
         boolean override;
         boolean isGroup;
@@ -67,8 +69,7 @@ class CommandParser {
     }
 
 
-    public static class SearchInBlackList implements Operation{
-        long id;
+    public static class SearchInBlackList extends SpecificBlacklistOperation{
         boolean isGroup;
 
         public SearchInBlackList(long id, boolean isGroup) {
