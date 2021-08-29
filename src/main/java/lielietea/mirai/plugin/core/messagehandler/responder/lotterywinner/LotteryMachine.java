@@ -46,6 +46,10 @@ public class LotteryMachine {
         if (botPermissionChecker(event)) {
             //抽取倒霉蛋
             List<NormalMember> candidates = event.getGroup().getMembers().stream().filter(normalMember -> normalMember.getPermission().equals(MemberPermission.MEMBER)).collect(Collectors.toList());
+            if(candidates.isEmpty()){
+                builder.addMessage("全都是管理员的群你让我抽一个普通成员禁言？别闹。");
+                return builder.build();
+            }
             NormalMember victim = candidates.get(rand.nextInt(candidates.size()));
 
             //禁言倒霉蛋

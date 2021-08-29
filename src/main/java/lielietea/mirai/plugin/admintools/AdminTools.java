@@ -1,7 +1,6 @@
 package lielietea.mirai.plugin.admintools;
 
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
-import lielietea.mirai.plugin.resource.reload.ReloadManager;
 import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;
 import net.mamoe.mirai.contact.Friend;
@@ -63,9 +62,10 @@ public class AdminTools {
     }
 
     void reloadManually(MessageEvent event) {
+        // TODO 资源重载管理器已经被移除了
+        //  - 这里需要新方法
         MessageChainBuilder messages = new MessageChainBuilder();
-        String result = ReloadManager.getINSTANCE().reload(event);
-        messages.append(result);
+        messages.append("该功能正在重写中");
         event.getSubject().sendMessage(messages.build());
     }
 

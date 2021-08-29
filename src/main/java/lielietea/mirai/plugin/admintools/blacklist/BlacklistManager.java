@@ -23,7 +23,6 @@ public class BlacklistManager {
     final Lock writeLock = readWriteLock.writeLock();
     Set<BlockedContact> blockedGroup = new HashSet<>();
     Set<BlockedContact> blockedUser = new HashSet<>();
-    CommandParser parser = new CommandParser();
 
     static{
         try{
@@ -145,30 +144,28 @@ public class BlacklistManager {
         static void deserialize(){
             File bannedUserJson = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json");
             File bannedGroupJson = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json");
+            Gson gson = new Gson();
+            Type typeToken = new TypeToken<HashSet<BlockedContact>>(){}.getType();
             try(BufferedReader reader = new BufferedReader(new FileReader(bannedUserJson, StandardCharsets.UTF_8))){
-                StringBuilder builder = new StringBuilder();
-                String temp;
-                while((temp= reader.readLine())!=null){
-                    builder.append(temp);
-                }
-                Gson gson = new Gson();
-                Type blockedUserListType = new TypeToken<HashSet<BlockedContact>>(){}.getType();
-                INSTANCE.blockedUser = gson.fromJson(builder.toString(),blockedUserListType);
+                INSTANCE.blockedUser = gson.fromJson(readFromReader(reader),typeToken);
             } catch (IOException e){
                 e.printStackTrace();
             }
             try(BufferedReader reader = new BufferedReader(new FileReader(bannedGroupJson, StandardCharsets.UTF_8))){
-                StringBuilder builder = new StringBuilder();
-                String temp;
-                while((temp= reader.readLine())!=null){
-                    builder.append(temp);
-                }
-                Gson gson = new Gson();
-                Type blockedGroupListType = new TypeToken<HashSet<BlockedContact>>(){}.getType();
-                INSTANCE.blockedGroup = gson.fromJson(builder.toString(),blockedGroupListType);
+                INSTANCE.blockedGroup = gson.fromJson(readFromReader(reader),typeToken);
             } catch (IOException e){
                 e.printStackTrace();
             }
+        }
+
+        static String readFromReader(BufferedReader reader) throws IOException {
+            StringBuilder builder = new StringBuilder();
+            String temp;
+            while((temp= reader.readLine())!=null){
+                builder.append(temp);
+            }
+
+            return builder.toString();
         }
 
         //保存新黑名单对象
