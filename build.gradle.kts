@@ -1,12 +1,12 @@
 plugins {
-    val kotlinVersion = "1.4.30"
+    val kotlinVersion = "1.5.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
-    id("net.mamoe.mirai-console") version "2.6.4"
+    id("net.mamoe.mirai-console") version "2.7.0"
 }
 
 group = "org.example"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     maven{ url =uri("https://maven.aliyun.com/nexus/content/groups/public/")}
