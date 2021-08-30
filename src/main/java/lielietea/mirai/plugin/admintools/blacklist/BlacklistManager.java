@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.admintools.blacklist;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lielietea.mirai.plugin.admintools.Operation;
 import net.mamoe.mirai.console.command.Command;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -32,13 +33,8 @@ public class BlacklistManager {
         }
     }
 
-    public boolean Handle(MessageEvent event) {
-        Optional<Command> operation = CommandParser.parse(event.getMessage().contentToString());
-        if (operation.isEmpty()) return false;
-        else {
-            //TODO 丢给 AdminCommandDispatcher 处理
-            return true;
-        }
+    public Optional<Operation> Handle(MessageEvent event) {
+        return CommandParser.parse(event);
     }
 
     //查询是否在黑名单中
@@ -69,7 +65,6 @@ public class BlacklistManager {
             else return blockedUser.add(new BlockedContact(id, reason, new Date()));
         } finally {
             writeLock.unlock();
-            ;
         }
     }
 
@@ -239,7 +234,7 @@ public class BlacklistManager {
         // 保存新黑名单对象
         // 黑名单对象将在创建与更新时存储为Json文件
         static void serialize() {
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json"), "UTF-8"))) {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json"), StandardCharsets.UTF_8))) {
                 File file = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json");
                 if (!file.exists()) {
                     file.createNewFile();
@@ -251,7 +246,7 @@ public class BlacklistManager {
                 e.printStackTrace();
             }
 
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json"), "UTF-8"))) {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json"), StandardCharsets.UTF_8))) {
                 File file = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json");
                 if (!file.exists()) {
                     file.createNewFile();

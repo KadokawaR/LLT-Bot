@@ -103,7 +103,7 @@ public class AdminTools {
                 event.getSubject().sendMessage(allGroupInfo[i]);
                 Thread.sleep(1000);
             }
-            event.getSubject().sendMessage("七筒目前的群数量是：" + String.valueOf(size));
+            event.getSubject().sendMessage("七筒目前的群数量是：" + size);
         }
     }
 
@@ -132,21 +132,21 @@ public class AdminTools {
                 event.getSubject().sendMessage(allFriendInfo[i]);
                 Thread.sleep(1000);
             }
-            event.getSubject().sendMessage("七筒目前的好友数量是：" + String.valueOf(size));
+            event.getSubject().sendMessage("七筒目前的好友数量是：" + size);
         }
     }
 
     void getFriendNum(FriendMessageEvent event) {
         if (administrativeAccountChecker.checkIdentity(event)) {
             int size = event.getBot().getFriends().getSize();
-            event.getSubject().sendMessage("七筒目前的好友数量是：" + String.valueOf(size));
+            event.getSubject().sendMessage("七筒目前的好友数量是：" + size);
         }
     }
 
     void getGroupNum(FriendMessageEvent event) {
         if (administrativeAccountChecker.checkIdentity(event)) {
             int size = event.getBot().getGroups().getSize();
-            event.getSubject().sendMessage("七筒目前的群数量是：" + String.valueOf(size));
+            event.getSubject().sendMessage("七筒目前的群数量是：" + size);
         }
     }
 
@@ -164,7 +164,7 @@ public class AdminTools {
                 }
             }
             int size = list.size();
-            event.getSubject().sendMessage("七筒目前的覆盖人数是：" + String.valueOf(size));
+            event.getSubject().sendMessage("七筒目前的覆盖人数是：" + size);
             list.clear();
         }
     }

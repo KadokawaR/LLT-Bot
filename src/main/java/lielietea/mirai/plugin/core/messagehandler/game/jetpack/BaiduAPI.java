@@ -108,7 +108,7 @@ public class BaiduAPI {
 
     //通过坐标来返回地址结果
     public static CoordToAddr getAddr(Location location) throws Exception {
-        String ADDRESS_PATH = "https://api.map.baidu.com/reverse_geocoding/v3/?ak=" + DEV_KEY + "&output=json&coordtype=wgs84ll&location=" + String.valueOf(location.lat) + "," + String.valueOf(location.lng);
+        String ADDRESS_PATH = "https://api.map.baidu.com/reverse_geocoding/v3/?ak=" + DEV_KEY + "&output=json&coordtype=wgs84ll&location=" + location.lat + "," + location.lng;
         if (getJsonUrlAddr(ADDRESS_PATH).status != 0) {
             return null;
         }
@@ -132,7 +132,7 @@ public class BaiduAPI {
 
     //将墨卡托投影坐标系转换为经纬度
     public static Location mercatorToWGS(LocationMercator lm) throws Exception {
-        String MERCATOR_PATH = "http://api.map.baidu.com/geoconv/v1/?coords=" + String.valueOf(lm.x) + "," + String.valueOf(lm.y) + "&from=6&to=5&ak=" + DEV_KEY;
+        String MERCATOR_PATH = "http://api.map.baidu.com/geoconv/v1/?coords=" + lm.x + "," + lm.y + "&from=6&to=5&ak=" + DEV_KEY;
         if (getJsonUrlMercator(MERCATOR_PATH).status != 0) {
             return null;
         }
@@ -141,7 +141,7 @@ public class BaiduAPI {
 
     //通过坐标和缩放范围返回一张静态的地图图片，默认大小为800*600
     public static BufferedImage getStaticImage(Location location, int zoomLevel) throws Exception {
-        String STATIC_IMAGE_PATH = "https://api.map.baidu.com/staticimage/v2?ak=" + DEV_KEY + "&mcode=666666&center=" + String.valueOf(location.lng) + "," + String.valueOf(location.lat) + "&width=800&height=600&zoom=" + String.valueOf(zoomLevel);
+        String STATIC_IMAGE_PATH = "https://api.map.baidu.com/staticimage/v2?ak=" + DEV_KEY + "&mcode=666666&center=" + location.lng + "," + location.lat + "&width=800&height=600&zoom=" + zoomLevel;
         return ImageIO.read(JsonFile.getInputStream(STATIC_IMAGE_PATH));
     }
 

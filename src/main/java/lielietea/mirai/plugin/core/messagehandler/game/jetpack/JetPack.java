@@ -98,7 +98,7 @@ public class JetPack extends BaiduAPI {
                     timerJP.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            event.getSubject().sendMessage("七筒已经抵达飞行目的地：" + destinationName + "，飞行时长为" + String.valueOf((int) flyingDurationM) + "分钟");
+                            event.getSubject().sendMessage("七筒已经抵达飞行目的地：" + destinationName + "，飞行时长为" + (int) flyingDurationM + "分钟");
                         }
                     }, flyingDuration);
                 } else {

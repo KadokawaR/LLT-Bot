@@ -22,12 +22,10 @@ class BlacklistOperation {
     //添加对象到黑名单
     static class AddToBlacklist extends SpecificBlacklistOperation {
         String reason;
-        boolean isGroup;
 
-        public AddToBlacklist(MessageEvent event, long id, boolean isGroup, String reason, boolean isGroup1) {
+        public AddToBlacklist(MessageEvent event, long id, boolean isGroup, String reason) {
             super(event, id, isGroup);
             this.reason = reason;
-            this.isGroup = isGroup1;
         }
 
 

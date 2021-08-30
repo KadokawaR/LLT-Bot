@@ -45,7 +45,7 @@ public class CommonDice {
     public String buildMessage() {
         StringBuilder builder = new StringBuilder();
         builder.append("您掷出的点数是:");
-        result.forEach(result -> builder.append(String.valueOf(+result)).append(" "));
+        result.forEach(result -> builder.append(+result).append(" "));
         return builder.toString();
     }
 

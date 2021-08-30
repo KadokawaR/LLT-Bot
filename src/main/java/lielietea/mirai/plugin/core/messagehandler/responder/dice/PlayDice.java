@@ -20,7 +20,7 @@ public class PlayDice implements MessageResponder<MessageEvent> {
     static final Pattern PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])[1-9]\\d{0,7}");
     static final Pattern CAPTURE_PATTERN_COMMON_COMMAND = Pattern.compile("(/dice|/d|/Dice|/D)\\s?([1-9]\\d{0,7})");
     static final Pattern CAPTURE_PATTERN_DND = Pattern.compile("\\.([1-9]\\d{0,2})([dD])([1-9]\\d{0,7})");
-    static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])([1-9]\\d]{0,7})");
+    static final Pattern CAPTURE_PATTERN_DND_SINGLE_ROLL = Pattern.compile("\\.([dD])([1-9]\\d{0,7})");
 
     static {
         {

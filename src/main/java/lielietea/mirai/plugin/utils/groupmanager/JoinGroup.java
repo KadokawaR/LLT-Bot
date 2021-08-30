@@ -23,7 +23,7 @@ public class JoinGroup {
             event.getGroup().sendMessage(Speech.DISCLAIMER);
             Thread.sleep(2000);
             event.getGroup().sendMessage(Speech.HELP);
-            String joinMessage = "七筒已加入" + String.valueOf(event.getGroupId()) + "-" + event.getGroup().getName() + "。";
+            String joinMessage = "七筒已加入" + event.getGroupId() + "-" + event.getGroup().getName() + "。";
             Objects.requireNonNull(event.getBot().getGroup(GroupID.DEV)).sendMessage(joinMessage);
             event.getGroup().getOwner().sendMessage("您好，七筒已经加入了您的群" + event.getGroup().getName() + " - " + event.getGroup().getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。");
         } else {

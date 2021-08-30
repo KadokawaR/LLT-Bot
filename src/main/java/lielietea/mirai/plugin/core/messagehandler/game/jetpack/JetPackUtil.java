@@ -101,7 +101,7 @@ public class JetPackUtil {
 
     //把LocationRecord按照输出顺序转换成String
     public static String convertLocationRecord(locationRecord lr) {
-        return String.valueOf(lr.lng) + "," + String.valueOf(lr.lat) + "," + lr.locationName + "," + lr.departureTime + "\n";
+        return lr.lng + "," + lr.lat + "," + lr.locationName + "," + lr.departureTime + "\n";
     }
 
     //计算ZoomLevel
