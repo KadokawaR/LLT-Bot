@@ -3,6 +3,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.admintools.AdminCommandDispatcher;
 import lielietea.mirai.plugin.admintools.StatisticController;
+import lielietea.mirai.plugin.admintools.blacklist.BlacklistManager;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
 import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
@@ -60,7 +61,20 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOfflineEvent.class, event -> BotChecker.removeBotFromBotList(event.getBot().getId()));
 
         //自动通过好友请求
-        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, NewFriendRequestEvent::accept);
+        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, event -> {
+            if (BlacklistManager.getInstance().contains(event.getFromId(), true)) {
+                // 拒绝该好友请求，但不加入黑名单
+                event.reject(false);
+
+                //提醒开发者，有在黑名单中的人尝试加Bot为好友
+                AdminCommandDispatcher.getInstance().notifyDevGroup("老板们，刚 "
+                        + event.getFromNick() + "(" + event.getFromId() + ") 尝试将加我为好友。该用户在我们的黑名单中。\n"
+                        + ((event.getFromGroupId()) == 0L ? "该好友请求并非来自群关系。" : "该好友请求来自群 " + event.getFromGroupId() + "。\n")
+                        + BlacklistManager.getInstance().getSpecificInform(event.getFromId(), false), event.getBot().getId());
+            } else {
+                event.accept();
+            }
+        });
 
         //加为好友之后发送简介与免责声明
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> {
@@ -74,7 +88,19 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         //自动通过拉群请求
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, BotInvitedJoinGroupRequestEvent::accept);
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, event -> {
+            if (BlacklistManager.getInstance().contains(event.getGroupId(), true)) {
+                //提醒邀请者该群在黑名单中
+                event.getInvitor().sendMessage("不好意思，此群在茶铺黑名单中。如果您觉得这是个错误，请联系开发组。");
+                //提醒开发者，有人尝试将Bot拉入黑名单中的群
+                AdminCommandDispatcher.getInstance().notifyDevGroup("老板们，刚 "
+                        + event.getInvitorNick() + "(" + event.getInvitorId()
+                        + ") 尝试将我拉入群 " + event.getGroupName() + "(" + event.getGroupId() + ")。该群在我们的黑名单中。\n"
+                        + BlacklistManager.getInstance().getSpecificInform(event.getGroupId(), true), event.getBot().getId());
+            } else {
+                event.accept();
+            }
+        });
 
         //入群须知
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event -> {

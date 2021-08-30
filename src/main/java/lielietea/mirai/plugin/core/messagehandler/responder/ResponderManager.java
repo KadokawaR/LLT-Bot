@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.responder;
 
 
+import lielietea.mirai.plugin.admintools.AdminCommandDispatcher;
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiDirtyWord;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiOverwatch;
@@ -20,9 +21,6 @@ import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTelle
 import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesSelector;
 import lielietea.mirai.plugin.exception.MessageEventTypeException;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
-import lielietea.mirai.plugin.utils.idchecker.GroupID;
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.*;
 
 import java.util.*;
@@ -48,11 +46,7 @@ public class ResponderManager {
                            public void run() {
                                String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
-                               List<Bot> bots = Bot.getInstances();
-                               for (Bot bot : bots) {
-                                   Group group = bot.getGroup(GroupID.DEV);
-                                   if (group != null) group.sendMessage(result);
-                               }
+                               AdminCommandDispatcher.getInstance().notifyDevGroup(result);
                            }
                        },
                 StandardTimeUtil.getStandardFirstTime(0, 0, 1),

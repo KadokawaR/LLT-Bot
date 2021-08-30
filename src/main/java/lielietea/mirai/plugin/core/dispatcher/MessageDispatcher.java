@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.dispatcher;
 
+import lielietea.mirai.plugin.admintools.blacklist.BlacklistManager;
 import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
@@ -54,8 +55,8 @@ public class MessageDispatcher {
     }
 
     public void handleMessage(MessageEvent event) {
-        //首先需要没有达到消息数限制
-        if (!reachLimit(event)) {
+        //首先需要不在用户黑名单内，同时没有达到消息数限制
+        if (!BlacklistManager.getInstance().contains(event.getSender().getId(), false) && !reachLimit(event)) {
             //最先交由ResponderManager处理
             boolean handled = false;
             Optional<UUID> boxedHandler = ResponderManager.getINSTANCE().match(event);

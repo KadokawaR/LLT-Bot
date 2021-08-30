@@ -3,8 +3,8 @@ package lielietea.mirai.plugin.admintools.blacklist;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lielietea.mirai.plugin.admintools.AdminCommandDispatcher;
 import lielietea.mirai.plugin.admintools.Operation;
-import net.mamoe.mirai.console.command.Command;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
@@ -33,6 +33,7 @@ public class BlacklistManager {
         }
     }
 
+    //处理消息
     public Optional<Operation> Handle(MessageEvent event) {
         return CommandParser.parse(event);
     }
@@ -56,13 +57,37 @@ public class BlacklistManager {
         }
     }
 
+    // 获取某个黑名单详细信息
+    public String getSpecificInform(long id, boolean isGroup) {
+        readLock.lock();
+        try {
+            Object[] contact = isGroup ?
+                    blockedGroup.stream().filter(blockedContact -> blockedContact.getId() == id).toArray() :
+                    blockedUser.stream().filter(blockedContact -> blockedContact.getId() == id).toArray();
+            if (contact.length == 0) return "该对象不在黑名单中";
+            else return "查找到如下信息：" + buildNaturalLanguage((BlockedContact) contact[0], isGroup);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
 
     // 添加用户或群进入黑名单
     boolean add(long id, String reason, boolean isGroup) {
         writeLock.lock();
         try {
-            if (isGroup) return blockedGroup.add(new BlockedContact(id, reason, new Date()));
-            else return blockedUser.add(new BlockedContact(id, reason, new Date()));
+            boolean success;
+            if (isGroup) {
+                success = blockedGroup.add(new BlockedContact(id, reason, new Date()));
+                // 如果在这个群里，那么自动退群
+                if(success) AdminCommandDispatcher.getInstance().tryQuitGroup(id);
+            }
+            else {
+                success = blockedUser.add(new BlockedContact(id, reason, new Date()));
+                // 如果拥有此人好友，那么自动删除
+                if(success) AdminCommandDispatcher.getInstance().tryDeleteFriend(id);
+            }
+            return success;
         } finally {
             writeLock.unlock();
         }
@@ -123,20 +148,6 @@ public class BlacklistManager {
         }
     }
 
-    // 获取某个黑名单详细信息
-    String getSpecificInform(long id, boolean isGroup) {
-        readLock.lock();
-        try {
-            Object[] contact = isGroup ?
-                    blockedGroup.stream().filter(blockedContact -> blockedContact.getId() == id).toArray() :
-                    blockedUser.stream().filter(blockedContact -> blockedContact.getId() == id).toArray();
-            if (contact.length == 0) return "该对象不在黑名单中";
-            else return "查找到如下信息：" + buildNaturalLanguage((BlockedContact) contact[0], isGroup);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
 
     // 将黑名单对象转换为人话
     String buildNaturalLanguage(BlockedContact blockedContact, boolean isGroup) {
@@ -146,6 +157,7 @@ public class BlacklistManager {
                 + (blockedContact.getExtraNote().equals("") ? "" : "备注： " + blockedContact.getExtraNote());
     }
 
+    // 获取黑名单中全部对象的号码
     String getAllInform(boolean isGroup) {
         readLock.lock();
         try {
@@ -162,6 +174,7 @@ public class BlacklistManager {
         }
     }
 
+    // 获取黑名单中全部对象的封禁信息
     List<String> getAllDetailedInform(boolean isGroup) {
         readLock.lock();
         try {
