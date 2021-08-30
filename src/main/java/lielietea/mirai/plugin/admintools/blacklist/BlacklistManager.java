@@ -3,16 +3,15 @@ package lielietea.mirai.plugin.admintools.blacklist;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.User;
+import net.mamoe.mirai.console.command.Command;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -24,8 +23,8 @@ public class BlacklistManager {
     Set<BlockedContact> blockedGroup = new HashSet<>();
     Set<BlockedContact> blockedUser = new HashSet<>();
 
-    static{
-        try{
+    static {
+        try {
             Files.createDirectories(Path.of(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blockedUser"));
             Files.createDirectories(Path.of(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blockedGroup"));
         } catch (IOException e) {
@@ -33,14 +32,27 @@ public class BlacklistManager {
         }
     }
 
-    /**
-     * 判断群是否在黑名单中
-     */
-    public boolean match(Group group){
+    public boolean Handle(MessageEvent event) {
+        Optional<Command> operation = CommandParser.parse(event.getMessage().contentToString());
+        if (operation.isEmpty()) return false;
+        else {
+            //TODO 丢给 AdminCommandDispatcher 处理
+            return true;
+        }
+    }
+
+    //查询是否在黑名单中
+    public boolean contains(long id, boolean isGroup) {
         readLock.lock();
-        try{
-            for(BlockedContact blocked: INSTANCE.blockedGroup){
-                if(group.getId()==blocked.getId()) return true;
+        try {
+            if (isGroup) {
+                for (BlockedContact blocked : INSTANCE.blockedGroup) {
+                    if (id == blocked.getId()) return true;
+                }
+            } else {
+                for (BlockedContact blocked : INSTANCE.blockedUser) {
+                    if (id == blocked.getId()) return true;
+                }
             }
             return false;
         } finally {
@@ -48,112 +60,168 @@ public class BlacklistManager {
         }
     }
 
-    /**
-     * 判断用户是否在黑名单中
-     */
-    public boolean match(User user){
-        readLock.lock();
-        try{
-            for(BlockedContact blocked: INSTANCE.blockedUser){
-                if(user.getId()==blocked.getId()) return true;
-            }
-            return false;
+
+    // 添加用户或群进入黑名单
+    boolean add(long id, String reason, boolean isGroup) {
+        writeLock.lock();
+        try {
+            if (isGroup) return blockedGroup.add(new BlockedContact(id, reason, new Date()));
+            else return blockedUser.add(new BlockedContact(id, reason, new Date()));
         } finally {
-            readLock.unlock();
+            writeLock.unlock();
+            ;
         }
     }
 
 
-    //从黑名单中移除群
-    public boolean removeGroup(long id){
+    // 从黑名单中移除用户或群
+    boolean remove(long id, boolean isGroup) {
         writeLock.lock();
-        try{
-            BlockedContact tryFind = null;
-            for(BlockedContact blocked: INSTANCE.blockedGroup){
-                if(id==blocked.getId()) tryFind = blocked;
-                break;
-            }
-            if(tryFind!=null) {
-                INSTANCE.blockedGroup.remove(tryFind);
-                return true;
-            }
-            return false;
+        try {
+            if (isGroup) return blockedGroup.removeIf(blockedContact -> blockedContact.getId() == id);
+            else return blockedUser.removeIf(blockedContact -> blockedContact.getId() == id);
+
         } finally {
             writeLock.unlock();
         }
     }
 
-    ///从黑名单中移除用户
-    public boolean removeUser(long id){
-        writeLock.lock();
-        try{
-            BlockedContact tryFind = null;
-            for(BlockedContact blocked: INSTANCE.blockedUser){
-                if(id==blocked.getId()) tryFind = blocked;
-                break;
-            }
-            if(tryFind!=null) {
-                INSTANCE.blockedUser.remove(tryFind);
-                return true;
-            }
-            return false;
-        } finally {
-            writeLock.unlock();
-        }
-    }
 
-    //手动重载黑名单
-    void reloadBlackList(){
+    // 手动重载黑名单
+    void reloadBlackList() {
         writeLock.lock();
-        try{
+        try {
             JsonHelper.deserialize();
         } finally {
             writeLock.unlock();
         }
     }
 
-    //获取某个黑名单详细信息
-    String getSpecificInfomation(long id, boolean isGroup){
+    // 编辑备注
+    boolean editNote(long id, String note, boolean isGroup, boolean override) {
+        writeLock.lock();
+        try {
+            Object[] contact = isGroup ?
+                    blockedGroup.stream().filter(blockedContact -> blockedContact.getId() == id).toArray() :
+                    blockedUser.stream().filter(blockedContact -> blockedContact.getId() == id).toArray();
+            if (contact.length == 0) return false;
+            if (override) ((BlockedContact) contact[0]).setExtraNote(note);
+            else ((BlockedContact) contact[0]).addExtraNote(note);
+            return true;
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    // 重设封禁原因
+    boolean setReason(long id, String reason, boolean isGroup) {
+        writeLock.lock();
+        try {
+            Object[] contact = isGroup ?
+                    blockedGroup.stream().filter(blockedContact -> blockedContact.getId() == id).toArray() :
+                    blockedUser.stream().filter(blockedContact -> blockedContact.getId() == id).toArray();
+            if (contact.length == 0) return false;
+            ((BlockedContact) contact[0]).setReason(reason);
+            return true;
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    // 获取某个黑名单详细信息
+    String getSpecificInform(long id, boolean isGroup) {
         readLock.lock();
-        try{
-            //TODO
-            return "";
+        try {
+            Object[] contact = isGroup ?
+                    blockedGroup.stream().filter(blockedContact -> blockedContact.getId() == id).toArray() :
+                    blockedUser.stream().filter(blockedContact -> blockedContact.getId() == id).toArray();
+            if (contact.length == 0) return "该对象不在黑名单中";
+            else return "查找到如下信息：" + buildNaturalLanguage((BlockedContact) contact[0], isGroup);
         } finally {
             readLock.unlock();
         }
     }
 
-    //触发保存黑名单
-    void saveBlackList(){
+
+    // 将黑名单对象转换为人话
+    String buildNaturalLanguage(BlockedContact blockedContact, boolean isGroup) {
+        return (isGroup ? "\n群号：" : "\nQQ号：") + blockedContact.getId()
+                + "\n封禁时间： " + blockedContact.getBlockedDate()
+                + "\n封禁原因： " + blockedContact.getReason()
+                + (blockedContact.getExtraNote().equals("") ? "" : "备注： " + blockedContact.getExtraNote());
+    }
+
+    String getAllInform(boolean isGroup) {
         readLock.lock();
-        try{
-            JsonHelper.serialize();
+        try {
+            Set<BlockedContact> blacklist = isGroup ? blockedGroup : blockedUser;
+            if (blacklist.isEmpty()) return (isGroup ? "群" : "用户") + "黑名单为空。";
+            StringBuilder builder = new StringBuilder();
+            builder.append(isGroup ? "群" : "用户").append("黑名单如下：\n");
+            for (BlockedContact blockedContact : blacklist) {
+                builder.append(blockedContact.getId()).append("\n");
+            }
+            return builder.toString();
         } finally {
             readLock.unlock();
+        }
+    }
+
+    List<String> getAllDetailedInform(boolean isGroup) {
+        readLock.lock();
+        try {
+            Set<BlockedContact> blacklist = isGroup ? blockedGroup : blockedUser;
+            if (blacklist.isEmpty())
+                return new ArrayList<>(Collections.singleton((isGroup ? "群" : "用户") + "黑名单为空。"));
+            List<String> result = new ArrayList<>();
+            StringBuilder builder = new StringBuilder();
+            builder.append(isGroup ? "群" : "用户").append("黑名单如下：");
+            for (BlockedContact blockedContact : blacklist) {
+                if(builder.length()>=1000){
+                    result.add(builder.toString());
+                    builder = new StringBuilder();
+                }
+                buildNaturalLanguage(blockedContact,isGroup);
+            }
+            result.add(builder.toString());
+            return result;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    // 触发保存黑名单
+    void saveBlackList() {
+        writeLock.lock();
+        try {
+            JsonHelper.serialize();
+        } finally {
+            writeLock.unlock();
         }
     }
 
     static BlacklistManager INSTANCE = new BlacklistManager();
 
-    public static BlacklistManager getInstance(){
+    public static BlacklistManager getInstance() {
         return INSTANCE;
     }
 
-    static class JsonHelper{
-        //读取所有黑名单对象
-        static void deserialize(){
+    static class JsonHelper {
+        // 读取所有黑名单对象
+        static void deserialize() {
             File bannedUserJson = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json");
             File bannedGroupJson = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json");
             Gson gson = new Gson();
-            Type typeToken = new TypeToken<HashSet<BlockedContact>>(){}.getType();
-            try(BufferedReader reader = new BufferedReader(new FileReader(bannedUserJson, StandardCharsets.UTF_8))){
-                INSTANCE.blockedUser = gson.fromJson(readFromReader(reader),typeToken);
-            } catch (IOException e){
+            Type typeToken = new TypeToken<HashSet<BlockedContact>>() {
+            }.getType();
+            try (BufferedReader reader = new BufferedReader(new FileReader(bannedUserJson, StandardCharsets.UTF_8))) {
+                INSTANCE.blockedUser = gson.fromJson(readFromReader(reader), typeToken);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            try(BufferedReader reader = new BufferedReader(new FileReader(bannedGroupJson, StandardCharsets.UTF_8))){
-                INSTANCE.blockedGroup = gson.fromJson(readFromReader(reader),typeToken);
-            } catch (IOException e){
+            try (BufferedReader reader = new BufferedReader(new FileReader(bannedGroupJson, StandardCharsets.UTF_8))) {
+                INSTANCE.blockedGroup = gson.fromJson(readFromReader(reader), typeToken);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -161,19 +229,19 @@ public class BlacklistManager {
         static String readFromReader(BufferedReader reader) throws IOException {
             StringBuilder builder = new StringBuilder();
             String temp;
-            while((temp= reader.readLine())!=null){
+            while ((temp = reader.readLine()) != null) {
                 builder.append(temp);
             }
 
             return builder.toString();
         }
 
-        //保存新黑名单对象
-        //黑名单对象将在创建与更新时存储为Json文件
-        static void serialize(){
-            try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator  + "blocked_user.json"), "UTF-8"))){
+        // 保存新黑名单对象
+        // 黑名单对象将在创建与更新时存储为Json文件
+        static void serialize() {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json"), "UTF-8"))) {
                 File file = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json");
-                if(!file.exists()){
+                if (!file.exists()) {
                     file.createNewFile();
                 }
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -183,9 +251,9 @@ public class BlacklistManager {
                 e.printStackTrace();
             }
 
-            try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator  + "blocked_group.json"), "UTF-8"))){
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json"), "UTF-8"))) {
                 File file = new File(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json");
-                if(!file.exists()){
+                if (!file.exists()) {
                     file.createNewFile();
                 }
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();

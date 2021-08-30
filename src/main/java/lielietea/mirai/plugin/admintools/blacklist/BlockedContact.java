@@ -15,32 +15,32 @@ class BlockedContact {
         extraNote = "";
     }
 
-    public String getReason() {
+    String getReason() {
         return reason;
     }
 
-    public Date getBlockedDate() {
+    Date getBlockedDate() {
         return blockedDate;
     }
 
-    public String getExtraNote() {
+    String getExtraNote() {
         return extraNote;
     }
 
-    public long getId(){
+    long getId(){
         return id;
     }
 
-    public void setReason(String reason) {
+    void setReason(String reason) {
         this.reason = reason;
     }
 
-    public void setExtraNote(String extraNote) {
-        this.extraNote = extraNote;
+    void setExtraNote(String extraNote) {
+        this.extraNote = "["+ new Date() + "] "+ extraNote + "\n";
     }
 
-    public void addExtraNote(String extraNote) {
-        this.extraNote = this.extraNote + extraNote;
+    void addExtraNote(String extraNote) {
+        this.extraNote = this.extraNote + "["+ new Date() + "] "+ extraNote + "\n";
     }
 
     @Override
