@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.utils.dice;
+package lielietea.mirai.plugin.core.messagehandler.responder.dice;
 
 import java.util.ArrayList;
 import java.util.List;

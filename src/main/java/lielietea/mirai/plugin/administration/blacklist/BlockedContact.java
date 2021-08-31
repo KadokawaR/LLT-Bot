@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.admintools.blacklist;
+package lielietea.mirai.plugin.administration.blacklist;
 
 import java.util.Date;
 

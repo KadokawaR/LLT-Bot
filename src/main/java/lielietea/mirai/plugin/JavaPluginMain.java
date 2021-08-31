@@ -1,18 +1,14 @@
 package lielietea.mirai.plugin;
 
 
-import lielietea.mirai.plugin.admintools.AdminCommandDispatcher;
-import lielietea.mirai.plugin.admintools.StatisticController;
-import lielietea.mirai.plugin.admintools.blacklist.BlacklistManager;
+import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
+import lielietea.mirai.plugin.administration.StatisticController;
+import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
-import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
+import lielietea.mirai.plugin.core.MessageDispatcher;
 import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
-import lielietea.mirai.plugin.core.messagehandler.responder.help.Speech;
-import lielietea.mirai.plugin.utils.groupmanager.JoinGroup;
-import lielietea.mirai.plugin.utils.groupmanager.LeaveGroup;
-import lielietea.mirai.plugin.utils.idchecker.BotChecker;
-import lielietea.mirai.plugin.utils.idchecker.GroupID;
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.MemberPermission;
@@ -54,74 +50,32 @@ public final class JavaPluginMain extends JavaPlugin {
         StatisticController.resetMinuteCount();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
-            Optional.ofNullable(event.getBot().getGroup(GroupID.DEV)).ifPresent(group -> group.sendMessage("老子来了"));
-            BotChecker.addBotToBotList(event.getBot().getId());
+            Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
         });
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotOfflineEvent.class, event -> BotChecker.removeBotFromBotList(event.getBot().getId()));
+        // 处理好友请求
+        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, ContactUtil::handleFriendRequest);
 
-        //自动通过好友请求
-        GlobalEventChannel.INSTANCE.subscribeAlways(NewFriendRequestEvent.class, event -> {
-            if (BlacklistManager.getInstance().contains(event.getFromId(), true)) {
-                // 拒绝该好友请求，但不加入黑名单
-                event.reject(false);
+        // 加为好友之后发送简介与免责声明
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, ContactUtil::handleAddFriend);
 
-                //提醒开发者，有在黑名单中的人尝试加Bot为好友
-                AdminCommandDispatcher.getInstance().notifyDevGroup("老板们，刚 "
-                        + event.getFromNick() + "(" + event.getFromId() + ") 尝试将加我为好友。该用户在我们的黑名单中。\n"
-                        + ((event.getFromGroupId()) == 0L ? "该好友请求并非来自群关系。" : "该好友请求来自群 " + event.getFromGroupId() + "。\n")
-                        + BlacklistManager.getInstance().getSpecificInform(event.getFromId(), false), event.getBot().getId());
-            } else {
-                event.accept();
-            }
-        });
+        // 处理拉群请求
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, ContactUtil::handleGroupInvitation);
 
-        //加为好友之后发送简介与免责声明
-        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, event -> {
-            event.getFriend().sendMessage(Speech.JOIN_GROUP);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            event.getFriend().sendMessage(Speech.DISCLAIMER);
-        });
+        // 加群后处理加群事件
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, ContactUtil::handleJoinGroup);
 
-        //自动通过拉群请求
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, event -> {
-            if (BlacklistManager.getInstance().contains(event.getGroupId(), true)) {
-                //提醒邀请者该群在黑名单中
-                event.getInvitor().sendMessage("不好意思，此群在茶铺黑名单中。如果您觉得这是个错误，请联系开发组。");
-                //提醒开发者，有人尝试将Bot拉入黑名单中的群
-                AdminCommandDispatcher.getInstance().notifyDevGroup("老板们，刚 "
-                        + event.getInvitorNick() + "(" + event.getInvitorId()
-                        + ") 尝试将我拉入群 " + event.getGroupName() + "(" + event.getGroupId() + ")。该群在我们的黑名单中。\n"
-                        + BlacklistManager.getInstance().getSpecificInform(event.getGroupId(), true), event.getBot().getId());
-            } else {
-                event.accept();
-            }
-        });
+        // Bot离群
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, ContactUtil::handleLeaveGroup);
 
-        //入群须知
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event -> {
-            try {
-                JoinGroup.sendNotice(event);
-            } catch (InterruptedException e) {
-                logger.error(e);
-            }
-        });
-
-        //Bot离群
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, LeaveGroup::cancelFlag);
-
-        //Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
+        // Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER) || (event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))) {
                 event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
             }
         });
 
-        //群名改变之后发送消息
+        // 群名改变之后发送消息
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event -> event.getGroup().sendMessage("好名字。"));
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {

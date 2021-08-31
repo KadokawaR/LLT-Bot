@@ -1,5 +1,6 @@
-package lielietea.mirai.plugin.core.messagehandler;
+package lielietea.mirai.plugin.core;
 
+import lielietea.mirai.plugin.core.messagehandler.MessageHandler;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChain;

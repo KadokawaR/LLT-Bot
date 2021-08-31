@@ -1,8 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.responder;
 
 
-import lielietea.mirai.plugin.admintools.AdminCommandDispatcher;
-import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiDirtyWord;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiOverwatch;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Goodbye;
@@ -20,6 +19,7 @@ import lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture.Lovely
 import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesSelector;
 import lielietea.mirai.plugin.exception.MessageEventTypeException;
+import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import net.mamoe.mirai.event.events.*;
 
@@ -46,7 +46,7 @@ public class ResponderManager {
                            public void run() {
                                String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
-                               AdminCommandDispatcher.getInstance().notifyDevGroup(result);
+                               MessageUtil.notifyDevGroup(result);
                            }
                        },
                 StandardTimeUtil.getStandardFirstTime(0, 0, 1),

@@ -1,7 +1,6 @@
-package lielietea.mirai.plugin.core.dispatcher;
+package lielietea.mirai.plugin.core;
 
-import lielietea.mirai.plugin.admintools.blacklist.BlacklistManager;
-import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.administration.blacklist.BlacklistManager;
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
@@ -85,6 +84,7 @@ public class MessageDispatcher {
         }
     }
 
+    // 检测是否达到发送消息数量上限
     boolean reachLimit(MessageEvent event) {
         if (dailyThreshold.reachLimit(0)) return true;
         if (event instanceof GroupMessageEvent) {
@@ -94,6 +94,7 @@ public class MessageDispatcher {
         return personalThreshold.reachLimit(event.getSender().getId());
     }
 
+    //添加到 Threshold 计数中
     void addToThreshold(MessageChainPackage messageChainPackage) {
         if (messageChainPackage.getSource() instanceof Group)
             groupThreshold.count(messageChainPackage.getSource().getId());

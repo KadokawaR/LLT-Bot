@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner;
 
-import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import lielietea.mirai.plugin.utils.image.ImageCreater;
 import net.mamoe.mirai.contact.MemberPermission;

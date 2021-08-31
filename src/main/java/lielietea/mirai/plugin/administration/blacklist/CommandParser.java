@@ -1,6 +1,6 @@
-package lielietea.mirai.plugin.admintools.blacklist;
+package lielietea.mirai.plugin.administration.blacklist;
 
-import lielietea.mirai.plugin.admintools.Operation;
+import lielietea.mirai.plugin.administration.Operation;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.game.mahjongriddle;
 
-import lielietea.mirai.plugin.admintools.StatisticController;
+import lielietea.mirai.plugin.administration.StatisticController;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import java.io.IOException;

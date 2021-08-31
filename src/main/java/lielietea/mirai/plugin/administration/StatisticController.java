@@ -1,8 +1,8 @@
-package lielietea.mirai.plugin.admintools;
+package lielietea.mirai.plugin.administration;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
@@ -67,8 +67,7 @@ public class StatisticController {
      * 读取statistics
      */
     public static void getStatistics(FriendMessageEvent event) {
-        AdministrativeAccountChecker accountChecker = new AdministrativeAccountChecker();
-        if (accountChecker.checkIdentity(event) && event.getMessage().contentToString().contains("/statistics")) {
+        if (IdentityUtil.isAdmin(event) && event.getMessage().contentToString().contains("/statistics")) {
             event.getSubject().sendMessage("正在重写中");
         }
     }

@@ -1,8 +1,7 @@
-package lielietea.mirai.plugin.admintools;
+package lielietea.mirai.plugin.administration;
 
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
-import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
-import lielietea.mirai.plugin.utils.idchecker.IdentityChecker;
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
@@ -15,8 +14,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class AdminTools {
-
-    static final IdentityChecker<MessageEvent> administrativeAccountChecker = new AdministrativeAccountChecker();
 
     static final AdminTools INSTANCE = new AdminTools();
 
@@ -84,7 +81,7 @@ public class AdminTools {
     }
 
     void getGroupList(FriendMessageEvent event) throws InterruptedException {
-        if (administrativeAccountChecker.checkIdentity(event)) {
+        if (IdentityUtil.isAdmin(event)) {
             Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
             int size = event.getBot().getGroups().getSize();
             String[] allGroupInfo = new String[size / 20 + 1];
@@ -113,7 +110,7 @@ public class AdminTools {
     }
 
     void getFriendList(FriendMessageEvent event) throws InterruptedException {
-        if (administrativeAccountChecker.checkIdentity(event)) {
+        if (IdentityUtil.isAdmin(event)) {
             Iterator<Friend> listIter = event.getBot().getFriends().stream().iterator();
             int size = event.getBot().getFriends().getSize();
             String[] allFriendInfo = new String[size / 30 + 1];
@@ -137,21 +134,21 @@ public class AdminTools {
     }
 
     void getFriendNum(FriendMessageEvent event) {
-        if (administrativeAccountChecker.checkIdentity(event)) {
+        if (IdentityUtil.isAdmin(event)) {
             int size = event.getBot().getFriends().getSize();
             event.getSubject().sendMessage("七筒目前的好友数量是：" + size);
         }
     }
 
     void getGroupNum(FriendMessageEvent event) {
-        if (administrativeAccountChecker.checkIdentity(event)) {
+        if (IdentityUtil.isAdmin(event)) {
             int size = event.getBot().getGroups().getSize();
             event.getSubject().sendMessage("七筒目前的群数量是：" + size);
         }
     }
 
     void getCoverage(FriendMessageEvent event) {
-        if (administrativeAccountChecker.checkIdentity(event)) {
+        if (IdentityUtil.isAdmin(event)) {
             Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
             ArrayList<Long> list = new ArrayList<>();
             while (listIter.hasNext()) {

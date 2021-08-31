@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture;
 
-import lielietea.mirai.plugin.core.dispatcher.MessageDispatcher;
-import lielietea.mirai.plugin.core.messagehandler.MessageChainPackage;
+import lielietea.mirai.plugin.core.MessageDispatcher;
+import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.utils.image.AnimalImageURLResolver;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.GroupMessageEvent;

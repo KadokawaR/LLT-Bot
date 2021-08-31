@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.dispatcher;
+package lielietea.mirai.plugin.core;
 
 import java.util.HashMap;
 import java.util.Map;

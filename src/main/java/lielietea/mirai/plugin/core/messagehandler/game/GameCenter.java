@@ -1,12 +1,11 @@
 package lielietea.mirai.plugin.core.messagehandler.game;
 
-import lielietea.mirai.plugin.admintools.StatisticController;
+import lielietea.mirai.plugin.administration.StatisticController;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPack;
 import lielietea.mirai.plugin.core.messagehandler.game.mahjongriddle.MahjongRiddleHandler;
-import lielietea.mirai.plugin.utils.idchecker.BotChecker;
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
-import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class GameCenter {
@@ -16,10 +15,8 @@ public class GameCenter {
 
     public static void handle(GroupMessageEvent event) {
 
-        BotChecker bc = new BotChecker();
-
         //TODO 这个threshold不好，需要改
-        if (StatisticController.checkGroupCount(event) && (!bc.checkIdentity(event))) {
+        if (StatisticController.checkGroupCount(event) && (!IdentityUtil.isBot(event))) {
             try{
                 MahjongRiddleHandler.handle(event);
                 //Foodie.send(event);

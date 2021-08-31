@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.game.jetpack;
 
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.fileutils.Write;
-import lielietea.mirai.plugin.utils.idchecker.AdministrativeAccountChecker;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -113,15 +113,14 @@ public class JetPack extends BaiduAPI {
             }
 
             //后门
-            AdministrativeAccountChecker aac = new AdministrativeAccountChecker();
             //直接抵达 重新写入一遍最后一条记录
-            if (event.getMessage().contentToString().contains("/abort") && aac.checkIdentity(event)) {
+            if (event.getMessage().contentToString().contains("/abort") && IdentityUtil.isAdmin(event)) {
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(recordMap.get(recordMap.size() - 1).lng, recordMap.get(recordMap.size() - 1).lat, recordMap.get(recordMap.size() - 1).locationName, JetPackUtil.sdf.format(dateNow));
                 Write.append(JetPackUtil.convertLocationRecord(newRecord), TXT_PATH);
                 event.getSubject().sendMessage("飞行已经被终止，七筒提前抵达目的地。");
             }
             //迫降在当地 写入两条记录
-            if (event.getMessage().contentToString().contains("/landing") && aac.checkIdentity(event)) {
+            if (event.getMessage().contentToString().contains("/landing") && IdentityUtil.isAdmin(event)) {
                 Location currentLocation = JetPackUtil.getCurrentLocation(loc1, loc2, recordMap.get(recordMap.size() - 1).departureTime);
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(currentLocation.lng, currentLocation.lat, "迫降点", JetPackUtil.sdf.format(dateNow));
                 //写入两次
@@ -136,7 +135,7 @@ public class JetPack extends BaiduAPI {
                 }
             }
             //获得完整的飞行记录
-            if (event.getMessage().contentToString().contains("/record") && aac.checkIdentity(event)) {
+            if (event.getMessage().contentToString().contains("/record") && IdentityUtil.isAdmin(event)) {
                 StringBuilder recordStr = new StringBuilder();
                 for (locationRecord lr : JetPackUtil.readRecord()) {
                     recordStr.append(lr.locationName).append(",").append(lr.lng).append(",").append(lr.lat).append("\n");
