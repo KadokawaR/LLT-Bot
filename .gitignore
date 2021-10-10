@@ -7,3 +7,7 @@
 /run/
 /bots/
 /logs/
+/wrapper/
+/caches/
+/daemon/
+/native/

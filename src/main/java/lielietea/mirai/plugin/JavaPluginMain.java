@@ -3,6 +3,8 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.StatisticController;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.MessageDispatcher;
@@ -68,7 +70,7 @@ public final class JavaPluginMain extends JavaPlugin {
         // Bot离群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, ContactUtil::handleLeaveGroup);
 
-        // Bot获得了权限之后发送一句话（中二 or 须知 or sth else 都可以）
+        // Bot获得权限
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER) || (event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))) {
                 event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
@@ -86,6 +88,10 @@ public final class JavaPluginMain extends JavaPlugin {
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter
             GameCenter.handle(event);
+
+            //临时图片版本funct和helper
+            DisclTemporary.handle(event);
+            FunctTemporary.handle(event);
 
         });
 

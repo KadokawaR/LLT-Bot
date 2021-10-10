@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.utils;
 
 import lielietea.mirai.plugin.administration.blacklist.BlacklistManager;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
@@ -53,6 +54,15 @@ public class ContactUtil {
         if(event instanceof BotJoinGroupEvent.Invite){
             sendNoticeWhenJoinGroup(event);
             notifyDevWhenJoinGroup(event, JoinGroupSourceType.INVITE);
+
+            event.getGroup().sendMessage(JOIN_GROUP);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            DisclTemporary.send(event.getGroup());
+
         }
         /*
         通过恢复原来群主身份并入群, Bot 是原群主，
@@ -86,7 +96,7 @@ public class ContactUtil {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        event.getFriend().sendMessage(DISCLAIMER);
+        DisclTemporary.send(event.getFriend());
     }
 
     /**
