@@ -1,18 +1,20 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
 
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.NudgeEvent;
 
-public class NudgeBack {
+public class Nudge {
     public static void returnNudge(NudgeEvent event){
         if (event.getTarget().equals(event.getBot())){
-            event.getTarget().nudge();
+            event.getFrom().nudge().sendTo(event.getSubject());
+            event.getSubject().sendMessage("啥事？");
         }
     }
 
     public static void mentionNudge(GroupMessageEvent event){
-        if (event.getMessage().contentToString().contains("七筒")){
-            event.getSender().nudge();
+        if (event.getMessage().contentToString().contains(String.valueOf(event.getBot().getId()))){
+            event.getSender().nudge().sendTo(event.getSubject());
         }
     }
 }

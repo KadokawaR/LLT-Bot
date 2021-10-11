@@ -3,6 +3,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.StatisticController;
+import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.utils.ContactUtil;
@@ -93,7 +94,13 @@ public final class JavaPluginMain extends JavaPlugin {
             DisclTemporary.handle(event);
             FunctTemporary.handle(event);
 
+            //有关戳一戳的功能
+            Nudge.mentionNudge(event);
+
         });
+
+        //被人戳一戳了
+        GlobalEventChannel.INSTANCE.subscribeAlways(NudgeEvent.class, Nudge::returnNudge);
 
         //群成员入群自动欢迎
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎。"));
