@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 public class MahjongRiddle {
     static final Logger logger = LogManager.getLogger(MahjongRiddle.class);
@@ -161,10 +162,18 @@ public class MahjongRiddle {
         return transformAnswer;
     }
 
+    //读取字符串里出现了几次特定字符
+    public static int matchNumber(String string, String foundString){
+        String[] split = string.split("");
+        return (int) Arrays.stream(split).filter(s -> s.equals(foundString)).count();
+    }
+
     //临时性地检测是否是麻将牌用语
     public static boolean isMahjongTile(GroupMessageEvent event) {
         String str = event.getMessage().contentToString();
-        return str.contains("风") || str.contains("万") || str.contains("筒") || str.contains("条");
+        int sum = matchNumber(str,"风")+matchNumber(str,"万")+matchNumber(str,"筒")+matchNumber(str,"条");
+        //判断是否出现且只出现了一次
+        return sum==1;
     }
 
     //将int[]转换成一个存储中文数字的String[]
