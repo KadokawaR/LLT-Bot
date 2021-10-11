@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lielietea.mirai.plugin.administration.Operation;
 import lielietea.mirai.plugin.utils.ContactUtil;
+import lielietea.mirai.plugin.utils.MessageUtil;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.*;
@@ -23,6 +24,7 @@ public class BlacklistManager {
     final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     final Lock readLock = readWriteLock.readLock();
     final Lock writeLock = readWriteLock.writeLock();
+    boolean deserializationFailureFlag = false;
     Set<BlockedContact> blockedGroup;
     Set<BlockedContact> blockedUser;
 
@@ -31,14 +33,18 @@ public class BlacklistManager {
     }
 
     // 初始化
-    static void initialize(){
+    void initialize() {
         try {
-            Files.createDirectories(Path.of(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blockedUser"));
-            Files.createDirectories(Path.of(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blockedGroup"));
-            if(!bannedUserJson.exists()) bannedUserJson.createNewFile();
-            if(!bannedGroupJson.exists()) bannedGroupJson.createNewFile();
-            JsonHelper.deserialize();
+            Files.createDirectories(Path.of(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist"));
+            if (!bannedUserJson.exists()) bannedUserJson.createNewFile();
+            if (!bannedGroupJson.exists()) bannedGroupJson.createNewFile();
+            List<Set<BlockedContact>> readFromJson = JsonHelper.deserialize();
+            blockedUser = readFromJson.get(0);
+            blockedGroup = readFromJson.get(1);
         } catch (IOException e) {
+            deserializationFailureFlag = true;
+            blockedGroup = new HashSet<>();
+            blockedUser = new HashSet<>();
             e.printStackTrace();
         }
 
@@ -91,12 +97,11 @@ public class BlacklistManager {
             if (isGroup) {
                 success = blockedGroup.add(new BlockedContact(id, reason, new Date()));
                 // 如果在这个群里，那么自动退群
-                if(success) ContactUtil.tryQuitGroup(id);
-            }
-            else {
+                if (success) ContactUtil.tryQuitGroup(id);
+            } else {
                 success = blockedUser.add(new BlockedContact(id, reason, new Date()));
                 // 如果拥有此人好友，那么自动删除
-                if(success) ContactUtil.tryDeleteFriend(id);
+                if (success) ContactUtil.tryDeleteFriend(id);
             }
             return success;
         } finally {
@@ -111,7 +116,6 @@ public class BlacklistManager {
         try {
             if (isGroup) return blockedGroup.removeIf(blockedContact -> blockedContact.getId() == id);
             else return blockedUser.removeIf(blockedContact -> blockedContact.getId() == id);
-
         } finally {
             writeLock.unlock();
         }
@@ -122,7 +126,14 @@ public class BlacklistManager {
     void reloadBlackList() {
         writeLock.lock();
         try {
-            JsonHelper.deserialize();
+            List<Set<BlockedContact>> readFromJson = JsonHelper.deserialize();
+            blockedUser = readFromJson.get(0);
+            blockedGroup = readFromJson.get(1);
+        } catch (IOException e) {
+            deserializationFailureFlag = true;
+            blockedGroup = new HashSet<>();
+            blockedUser = new HashSet<>();
+            e.printStackTrace();
         } finally {
             writeLock.unlock();
         }
@@ -196,11 +207,11 @@ public class BlacklistManager {
             StringBuilder builder = new StringBuilder();
             builder.append(isGroup ? "群" : "用户").append("黑名单如下：");
             for (BlockedContact blockedContact : blacklist) {
-                if(builder.length()>=1000){
+                if (builder.length() >= 1000) {
                     result.add(builder.toString());
                     builder = new StringBuilder();
                 }
-                buildNaturalLanguage(blockedContact,isGroup);
+                buildNaturalLanguage(blockedContact, isGroup);
             }
             result.add(builder.toString());
             return result;
@@ -211,11 +222,15 @@ public class BlacklistManager {
 
     // 触发保存黑名单
     void saveBlackList() {
-        writeLock.lock();
-        try {
-            JsonHelper.serialize();
-        } finally {
-            writeLock.unlock();
+        if(deserializationFailureFlag){
+            MessageUtil.notifyDevGroup("请注意！由于黑名单读取出错，为保护黑名单文件，保存黑名单操作已被取消。");
+        } else {
+            writeLock.lock();
+            try {
+                JsonHelper.serialize(blockedUser, blockedGroup);
+            } finally {
+                writeLock.unlock();
+            }
         }
     }
 
@@ -225,25 +240,36 @@ public class BlacklistManager {
         return INSTANCE;
     }
 
+
     static class JsonHelper {
-        // 读取所有黑名单对象
-        static void deserialize() {
+        /**
+         * 反序列化黑名单
+         *
+         * @return 返回的List中第一个为用户黑名单，第二个为群黑名单
+         */
+        static List<Set<BlockedContact>> deserialize() throws IOException {
             Gson gson = new Gson();
-            Type typeToken = new TypeToken<HashSet<BlockedContact>>() {}.getType();
-            try (BufferedReader reader = new BufferedReader(new FileReader(bannedUserJson, StandardCharsets.UTF_8))) {
-                String jsonString = readFromReader(reader);
-                if(jsonString.equals("")) INSTANCE.blockedUser = new HashSet<>();
-                else INSTANCE.blockedUser = gson.fromJson(readFromReader(reader), typeToken);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try (BufferedReader reader = new BufferedReader(new FileReader(bannedGroupJson, StandardCharsets.UTF_8))) {
-                String jsonString = readFromReader(reader);
-                if(jsonString.equals("")) INSTANCE.blockedGroup = new HashSet<>();
-                else INSTANCE.blockedGroup = gson.fromJson(readFromReader(reader), typeToken);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            List<Set<BlockedContact>> result = new ArrayList<>();
+            Type typeToken = new TypeToken<HashSet<BlockedContact>>() {
+            }.getType();
+
+            // 读取用户黑名单Json
+            BufferedReader reader = new BufferedReader(new FileReader(bannedUserJson, StandardCharsets.UTF_8));
+            String jsonString = readFromReader(reader);
+            Set<BlockedContact> blockedUser;
+            if (jsonString.equals("")) blockedUser = new HashSet<>();
+            else blockedUser = gson.fromJson(readFromReader(reader), typeToken);
+            result.add(blockedUser);
+
+            // 读取群黑名单Json
+            reader = new BufferedReader(new FileReader(bannedGroupJson, StandardCharsets.UTF_8));
+            jsonString = readFromReader(reader);
+            Set<BlockedContact> blockedGroup;
+            if (jsonString.equals("")) blockedGroup = new HashSet<>();
+            else blockedGroup = gson.fromJson(readFromReader(reader), typeToken);
+            result.add(blockedGroup);
+
+            return result;
         }
 
         // 从Json文件中读取文本
@@ -258,10 +284,10 @@ public class BlacklistManager {
 
         // 持久化黑名单对象
         // 黑名单对象将在创建与更新时存储为Json文件
-        static void serialize() {
+        static void serialize(Set<BlockedContact> blockedUser, Set<BlockedContact> blockedGroup) {
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_user.json"), StandardCharsets.UTF_8))) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String jsonString = gson.toJson(INSTANCE.blockedUser);
+                String jsonString = gson.toJson(blockedUser);
                 writer.write(jsonString);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -269,7 +295,7 @@ public class BlacklistManager {
 
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "blacklist" + File.separator + "blocked_group.json"), StandardCharsets.UTF_8))) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String jsonString = gson.toJson(INSTANCE.blockedGroup);
+                String jsonString = gson.toJson(blockedGroup);
                 writer.write(jsonString);
             } catch (IOException e) {
                 e.printStackTrace();
