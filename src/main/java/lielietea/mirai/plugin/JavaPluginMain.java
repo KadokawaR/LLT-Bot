@@ -4,6 +4,7 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.StatisticController;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
+import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.fgi.FurryGamesIndex;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.utils.ContactUtil;
@@ -20,6 +21,7 @@ import net.mamoe.mirai.event.events.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.MalformedURLException;
 import java.util.Optional;
 
 /*
@@ -96,6 +98,13 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //有关戳一戳的功能
             Nudge.mentionNudge(event);
+
+            //测试功能：Furry Games Index
+            try {
+                FurryGamesIndex.search(event);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
         });
 

@@ -38,6 +38,8 @@ dependencies{
 
     // https://mvnrepository.com/artifact/org.reflections/reflections
     // implementation("org.reflections:reflections:0.9.12")
+
+    implementation ("org.jsoup:jsoup:1.11.3")
 }
 
 tasks.test {

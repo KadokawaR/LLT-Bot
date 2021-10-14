@@ -147,9 +147,9 @@ public class ResponderManager {
         LOCK.lock();
         try {
             handlers.sort(new BoxedHandlerRearrangeComparator());
-            StringBuilder builder = new StringBuilder("优化后顺序为：\n");
+            StringBuilder builder = new StringBuilder("Newly optimized sequence: \n");
             for (BoxedHandler handler : handlers) {
-                builder.append("[功能:").append(handler.getName()).append("-近段时间调用次数:").append(handler.getCount()).append("]\n");
+                builder.append("|Functions:").append(handler.getName()).append("-Times:").append(handler.getCount()).append("|\n");
                 if (reset) handler.resetCount();
             }
             return builder.toString();
