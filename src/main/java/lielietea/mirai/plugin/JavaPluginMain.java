@@ -4,7 +4,7 @@ package lielietea.mirai.plugin;
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.StatisticController;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
-import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.fgi.FurryGamesIndex;
+import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.FurryGamesIndex;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.utils.ContactUtil;

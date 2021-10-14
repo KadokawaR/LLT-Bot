@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.responder.autoreply.fgi;
+package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -12,10 +12,9 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.Random;
 
 public class FurryGamesIndex {
     public static final String FGIUrl = "https://furrygames.top/";
@@ -86,16 +85,25 @@ public class FurryGamesIndex {
         return null;
     }
 
-    //通过用户给的名字获取游戏信息
-    public static String[] getGameInfo(String givenGameName){
-        Map<String,String> FGIList= getFGIlist();
+    //通过用户给的名字或者随机获取游戏信息
+    public static String[] getGameInfo(String givenGameName, boolean isRandom){
+        Map<String, String> FGIList = getFGIlist();
         String[] result = new String[4];
-        String name = searchGameName(givenGameName, FGIList);
-        if (name == null){
+        String name;
+
+        if (!isRandom) {
+            name = searchGameName(givenGameName, FGIList);
+        } else {
+            Random random = new Random();
+            int randomNumber = random.nextInt(FGIList.size());
+            name = getCertainKeyOut(FGIList,randomNumber);
+        }
+
+        if (name == null) {
             return null;
         } else {
             String gameURL = FGIList.get(name);
-            if (gameURL == null){
+            if (gameURL == null) {
                 return null;
             } else {
                 String gameDescription = getGameDescription(gameURL);
@@ -107,6 +115,7 @@ public class FurryGamesIndex {
             }
         }
         return result;
+
     }
 
     //通过用户给的名字查看List中是否含有相应的游戏
@@ -119,12 +128,40 @@ public class FurryGamesIndex {
         return null;
     }
 
+
+    public static String getCertainKeyOut(Map<String,String> FGIList, int num){
+        int count = 0;
+        for (String key : FGIList.keySet()){
+            if (count >= num){
+                return key;
+            }
+            count++;
+        }
+        return null;
+    }
+
     public static void search(GroupMessageEvent event) throws MalformedURLException {
+        if(event.getMessage().contentToString().contains("/fgi random")){
+            StringBuilder sb = new StringBuilder();
+            String[] gameInfo = getGameInfo("",true);
+            sb.append(gameInfo[0])
+                    .append("\n\n")
+                    .append(gameInfo[2])
+                    .append("\n\n")
+                    .append(gameInfo[1]);
+            event.getSubject().sendMessage(sb.toString());
+
+            URL url = new URL(gameInfo[3]);
+            ImageSender.sendImageFromURL(event.getSubject(),url);
+
+            return;
+        }
+
         if (event.getMessage().contentToString().contains("/fgi ")||event.getMessage().contentToString().contains("/FGI ")){
             String givenGameName = event.getMessage().contentToString().replace("/fgi ","").replace("/FGI ","");
             StringBuilder sb = new StringBuilder();
 
-            String[] gameInfo = getGameInfo(givenGameName);
+            String[] gameInfo = getGameInfo(givenGameName,false);
             if (gameInfo==null){
                 event.getSubject().sendMessage("没有找到对应的游戏信息。");
             } else {
@@ -144,7 +181,5 @@ public class FurryGamesIndex {
                 }
             }
         }
-
-
     }
 }
