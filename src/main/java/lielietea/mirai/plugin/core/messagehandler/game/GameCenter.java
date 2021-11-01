@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class GameCenter {
 
-    static final Pattern TEMP_SOLUTION_REG = Pattern.compile(".*(([Tt][Aa][Nn][Kk])|([Ff][Uu][Cc][Kk])|([Mm][Aa][Ss]*[Aa][Cc][Rr][Ee])|(坦克)|([屠杀])).*");
+    static final Pattern TEMP_SOLUTION_REG = Pattern.compile(".*(([Tt][Aa][Nn][Kk])|([Ff][Uu][Cc][Kk])|([Mm][Aa][Ss]*[Aa][Cc][Rr][Ee])|(坦克)|([屠杀])|([兽人控])|([的批])|([男同])|([女同])).*");
 
 
     public static void handle(GroupMessageEvent event) {

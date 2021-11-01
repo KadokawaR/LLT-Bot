@@ -17,6 +17,7 @@ public class ContactUtil {
             "\n" +
             "本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的 Mirai (https://github.com/mamoe/mirai) ，基于 Apache License 2.0 协议的谷歌 Gson (https://github.com/google/gson) ，清华大学开放中文词库 (http://thuocl.thunlp.org/) ，动物图片来自互联网开源动物图片API Shibe.online(shibes as a service)、Dog.ceo (The internet's biggest collection of open source dog pictures.)、random.dog (Hello World, This Is Dog)。\n";
 
+    public static final int GroupNumberLimit = 400;
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event){
@@ -29,7 +30,12 @@ public class ContactUtil {
                     + ") 尝试将我拉入群 " + event.getGroupName() + "(" + event.getGroupId() + ")。该群在我们的黑名单中。\n"
                     + BlacklistManager.getInstance().getSpecificInform(event.getGroupId(), true), event.getBot().getId());
         } else {
-            event.accept();
+            //todo:更改最大群聊数量上限
+            if(event.getBot().getGroups().getSize()>=GroupNumberLimit){
+                event.getInvitor().sendMessage("七筒的群聊数量已经接近上限，请稍后再尝试。");
+            } else {
+                event.accept();
+            }
         }
     }
 
@@ -77,7 +83,8 @@ public class ContactUtil {
         - Bot 在其他客户端创建群聊而同步到 Bot 客户端.
         按理说我们Bot不会触发此项内容，但我们在这里还是简单给Dev群发一个提醒*/
         else if(event instanceof  BotJoinGroupEvent.Active){
-            notifyDevWhenJoinGroup(event, JoinGroupSourceType.ACTIVE);
+            //这里有问题
+            //notifyDevWhenJoinGroup(event, JoinGroupSourceType.ACTIVE);
         }
 
     }
@@ -135,7 +142,8 @@ public class ContactUtil {
         else if(source == JoinGroupSourceType.RETRIEVE){
             MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）,这件事不应该发生，因为七筒是通过恢复群主身份入群的，请开发组检查此事！");
         } else if(source == JoinGroupSourceType.ACTIVE){
-            MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）,七筒是通过在其他客户端创建群聊入群的，这是否是开发组的调试？");
+            //todo:不清楚为什么会是这个样子，先注释掉了
+            //MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）,七筒是通过在其他客户端创建群聊入群的，这是否是开发组的调试？");
         }
     }
 

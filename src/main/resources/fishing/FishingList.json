@@ -1,0 +1,62 @@
+{
+  "fishingList": [
+
+    {"code":101,"name":"三文鱼","price":35},
+    {"code":102,"name":"大西洋鲱鱼","price":30},
+    {"code":103,"name":"太平洋侧带鲱","price":30},
+    {"code":104,"name":"黑线鳕","price":30},
+    {"code":105,"name":"阿拉斯加鳕","price":60},
+    {"code":106,"name":"鳗鱼","price":30},
+    {"code":107,"name":"黄鳍金枪鱼","price":40},
+    {"code":108,"name":"蓝旗金枪鱼","price":130},
+    {"code":109,"name":"金目鲷","price":140},
+    {"code":110,"name":"小青龙","price":160},
+    {"code":111,"name":"大青龙","price":200},
+    {"code":112,"name":"麦溪鲤","price":35},
+    {"code":113,"name":"阿穆尔鲤","price":25},
+    {"code":114,"name":"黄花鱼","price":25},
+    {"code":115,"name":"银鲳鱼","price":30},
+    {"code":116,"name":"金鲳鱼","price":40},
+    {"code":117,"name":"河豚鱼","price":80},
+    {"code":118,"name":"东海带鱼","price":65},
+    {"code":119,"name":"鲤鱼王","price":90},
+    {"code":120,"name":"扁花鲣","price":45},
+    {"code":121,"name":"黄尾鲥","price":45},
+    {"code":122,"name":"巴沙鱼","price":45},
+    {"code":123,"name":"海鲶鱼","price":45},
+    {"code":124,"name":"小丑鱼","price":25},
+    {"code":125,"name":"濑尿虾","price":40},
+    {"code":126,"name":"大闸蟹","price":80},
+    {"code":127,"name":"军舰水母","price":60},
+    {"code":128,"name":"海蜇","price":50},
+    {"code":129,"name":"脑珊瑚","price":105},
+    {"code":130,"name":"深红珊瑚","price":120},
+
+
+    {"code":201,"name":"旧靴子","price":20},
+    {"code":202,"name":"旧马鞍","price":20},
+    {"code":203,"name":"海藻","price":10},
+    {"code":204,"name":"易拉罐","price":10},
+    {"code":205,"name":"漂流瓶","price":45},
+    {"code":206,"name":"啤酒瓶","price":20},
+    {"code":207,"name":"烧酒瓶","price":20},
+    {"code":208,"name":"白葡萄酒瓶","price":30},
+    {"code":209,"name":"红葡萄酒瓶","price":30},
+    {"code":210,"name":"洗发水瓶子","price":10},
+    {"code":211,"name":"沐浴露瓶子","price":10},
+
+
+    {"code":301,"name":"被水泡过的音响","price":95},
+    {"code":302,"name":"被水泡过的手机","price":100},
+    {"code":303,"name":"被水泡过的平板","price":100},
+    {"code":304,"name":"被水泡过的笔记本","price":100},
+    {"code":305,"name":"被水泡过的耳机","price":90},
+    {"code":306,"name":"被水泡过的麻将桌","price":135},
+
+
+    {"code":401,"name":"50南瓜比索","price":50},
+    {"code":402,"name":"100南瓜比索","price":100},
+    {"code":403,"name":"150南瓜比索","price":150},
+    {"code":404,"name":"200南瓜比索","price":200}
+  ]
+}
