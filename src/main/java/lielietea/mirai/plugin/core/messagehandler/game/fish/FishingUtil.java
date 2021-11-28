@@ -2,35 +2,64 @@ package lielietea.mirai.plugin.core.messagehandler.game.fish;
 
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPackUtil;
+import lielietea.mirai.plugin.utils.fileutils.Write;
+import net.mamoe.mirai.event.events.MessageEvent;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FishingUtil {
-    class FishRecord{
+
+    final static String FISHING_RECORD_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "fishrecord.json";
+
+    class SingleRecord{
         long ID;
         List<Integer>  recordList;
     }
 
-    FishingUtil(){
-        initialize();
+    class FishingRecord{ List<SingleRecord> singleRecords;}
+
+    static String readFromReader(BufferedReader reader) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        String temp;
+        while ((temp = reader.readLine()) != null) {
+            builder.append(temp);
+        }
+        return builder.toString();
     }
 
-    void initialize(){
-        
-    }
-
-    public static void saveRecord(){
-        String FISHINGLIST_PATH = "/fishing/FishingList.json";
-        InputStream is = JetPackUtil.class.getResourceAsStream(FISHINGLIST_PATH);
-        assert is != null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+    public static FishingRecord openRecord() throws IOException {
+        InputStreamReader is = new InputStreamReader(new FileInputStream(FISHING_RECORD_PATH));
+        BufferedReader br = new BufferedReader(is);
         Gson gson = new Gson();
-        Fishing.FishingList fl = gson.fromJson(br, Fishing.FishingList.class);
+        return gson.fromJson(readFromReader(br), FishingRecord.class);
     }
 
+    public static void saveRecord(long ID, int itemID){
+        try {
+            FishingRecord fr = openRecord();
+            for ( int index = 0; index < fr.singleRecords.size(); index++){
+                if (fr.singleRecords.get(index).ID==ID){
+                    fr.singleRecords.get(index).recordList.add(itemID);
+                    break;
+                }
+            }
+            Gson gson = new Gson();
+            Write.cover(gson.toJson(fr),FISHING_RECORD_PATH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String returnStatistics(MessageEvent event){
+        long ID = event.getSubject().getId();
+        return String.valueOf(ID);
+    }
 
 }

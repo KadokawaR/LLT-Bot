@@ -3,6 +3,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.StatisticController;
+import lielietea.mirai.plugin.core.messagehandler.game.fish.Fishing;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.FurryGamesIndex;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
@@ -106,6 +107,9 @@ public final class JavaPluginMain extends JavaPlugin {
                 e.printStackTrace();
             }
 
+            //钓鱼了
+            Fishing.go(event);
+
         });
 
         //被人戳一戳了
@@ -141,6 +145,9 @@ public final class JavaPluginMain extends JavaPlugin {
             BroadcastSystem.broadcastHelper(event);
 
             StatisticController.getStatistics(event);
+
+            //钓鱼了
+            Fishing.go(event);
 
         });
     }
