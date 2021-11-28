@@ -18,7 +18,7 @@ public class BankAccount {
         additionalInfo = "";
     }
 
-
+    /***
     public void setPumpkinPesos(long pumpkinPesos){
         this.pumpkinPesos = pumpkinPesos;
     }
@@ -38,5 +38,7 @@ public class BankAccount {
     public void setAdditionalInfo(String additionalInfo){
         this.additionalInfo = additionalInfo;
     }
+
+     ***/
 
 }

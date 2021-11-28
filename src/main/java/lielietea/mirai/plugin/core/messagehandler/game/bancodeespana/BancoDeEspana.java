@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lielietea.mirai.plugin.core.messagehandler.game.fish.FishingUtil;
 import lielietea.mirai.plugin.utils.fileutils.Read;
+import lielietea.mirai.plugin.utils.fileutils.Write;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -23,34 +24,40 @@ public class BancoDeEspana {
 
     public BankRecord bankRecord;
 
-    public void initialize() {
+    public static void initialize() throws IOException {
         //if (!file.exists()) { try { file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
+        getINSTANCE().bankRecord = openRecord();
+        System.out.println("bankRecord.tostring: "+getINSTANCE().bankRecord.toString());
+        System.out.println("initialize: "+Arrays.toString(getINSTANCE().bankRecord.bankAccountList.toArray()));
+    }
+
+    BancoDeEspana(){}
+
+    private static final BancoDeEspana INSTANCE;
+    static {
+        INSTANCE = new BancoDeEspana();
         try {
-            bankRecord = openRecord();
-            System.out.println(bankRecord.toString());
-            System.out.println(Arrays.toString(bankRecord.bankAccountList.toArray()));
+            initialize();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    BancoDeEspana(){
-        initialize();
-    }
-
-    static BancoDeEspana INSTANCE = new BancoDeEspana();
 
     public static BancoDeEspana getINSTANCE() {
         return INSTANCE;
     }
 
 
-
-
-
     //读取记录
-    public BankRecord openRecord() throws IOException {
-        InputStreamReader is = new InputStreamReader(new FileInputStream(BANK_RECORD_PATH));
+    public static BankRecord openRecord() throws IOException {
+        InputStreamReader is = null;
+        try {
+            is = new InputStreamReader(new FileInputStream(BANK_RECORD_PATH));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assert is != null;
         BufferedReader br = new BufferedReader(is);
         Gson gson = new Gson();
         return gson.fromJson(Read.fromReader(br), BankRecord.class);
@@ -67,27 +74,25 @@ public class BancoDeEspana {
 
     }
 
-    //序列化+写入 getINSTANCE()
+    //序列化+写入单例
     void serialize() throws IOException {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(BANK_RECORD_PATH), StandardCharsets.UTF_8));
+        //BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(BANK_RECORD_PATH), StandardCharsets.UTF_8));
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonString = gson.toJson(getINSTANCE().bankRecord);
-        writer.write(jsonString);
+        Write.cover(jsonString,BANK_RECORD_PATH);
     }
 
     //如没有该ID则新建账户
-    public void touchAccount(long ID){
+    public static void touchAccount(long ID){
         if (!accountExists(ID)) {
             //BankAccount BA = new BankAccount(ID);
             BankAccount BA = new BankAccount(ID);
-            System.out.println(bankRecord.toString());
-            System.out.println(Arrays.toString(bankRecord.bankAccountList.toArray()));
             getINSTANCE().bankRecord.bankAccountList.add(BA);
         }
     }
 
     //检查该ID是否开户
-    boolean accountExists(long ID){
+    static boolean accountExists(long ID){
         if (getINSTANCE().bankRecord.bankAccountList == null) return false; else {
             for (BankAccount BA : getINSTANCE().bankRecord.bankAccountList) {
                 if (BA.ID == ID) return true;
@@ -107,6 +112,18 @@ public class BancoDeEspana {
             case Other: otherCurrencyProtocol(index, money); return;
         }
     }
+
+    //向特定账户设置特定金额
+    public void moneySetter(Currency kind, int index, double money){
+        switch(kind){
+            case PumpkinPesos: getINSTANCE().bankRecord.bankAccountList.get(index).pumpkinPesos=(long)money; return;
+            case Akaoni: getINSTANCE().bankRecord.bankAccountList.get(index).akaoni=money; return;
+            case Antoninianus: getINSTANCE().bankRecord.bankAccountList.get(index).antoninianus=money; return;
+            case Adventurers: getINSTANCE().bankRecord.bankAccountList.get(index).adventurers=money;; return;
+            case Other: otherCurrencyProtocol(index, money); return;
+        }
+    }
+
 
     //判定账户里有没有足够的钱
     boolean hasEnoughMoney(Currency kind, double money, int index){
@@ -144,7 +161,7 @@ public class BancoDeEspana {
         return false;
     }
 
-    //扣钱！
+    //扣钱！不够返回false
     public boolean minusMoney(long ID, double money, Currency kind){
         int index = 0;
         for ( BankAccount BA : getINSTANCE().bankRecord.bankAccountList){
@@ -160,6 +177,29 @@ public class BancoDeEspana {
                     return true;
                 } else {
                     return false;
+                }
+            }
+            index += 1;
+        }
+        return false;
+    }
+
+    //扣钱！不够直接扣光
+    public boolean minusMoneyMaybeAllIn(long ID, double money, Currency kind){
+        int index = 0;
+        for ( BankAccount BA : getINSTANCE().bankRecord.bankAccountList){
+            if (BA.ID == ID) {
+                if (hasEnoughMoney(kind,money,index)){
+                    moneyCalculator(kind,index,-money);
+                    //保存记录
+                    try {
+                        writeRecord();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                } else {
+                    moneySetter(kind,index,0);
                 }
             }
             index += 1;

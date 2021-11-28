@@ -19,12 +19,12 @@ public class FishingUtil {
 
     final static String FISHING_RECORD_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "fishrecord.json";
 
-    class SingleRecord{
+    static class SingleRecord{
         long ID;
         List<Integer>  recordList;
     }
 
-    class FishingRecord{ List<SingleRecord> singleRecords;}
+    static class FishingRecord{ List<SingleRecord> singleRecords;}
 
     public static FishingRecord openRecord() throws IOException {
         InputStreamReader is = new InputStreamReader(new FileInputStream(FISHING_RECORD_PATH));
