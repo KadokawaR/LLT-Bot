@@ -17,7 +17,8 @@ public class ContactUtil {
             "\n" +
             "本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的 Mirai (https://github.com/mamoe/mirai) ，基于 Apache License 2.0 协议的谷歌 Gson (https://github.com/google/gson) ，清华大学开放中文词库 (http://thuocl.thunlp.org/) ，动物图片来自互联网开源动物图片API Shibe.online(shibes as a service)、Dog.ceo (The internet's biggest collection of open source dog pictures.)、random.dog (Hello World, This Is Dog)。\n";
 
-    public static final int GroupNumberLimit = 400;
+    //todo:存成configuration，通过console交互进行更改和报警
+    public static final int GroupNumberLimit = 600;
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event){

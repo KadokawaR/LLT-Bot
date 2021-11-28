@@ -1,6 +1,8 @@
 package lielietea.mirai.plugin.core.messagehandler.game.fish;
 
 import com.google.gson.Gson;
+import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspana;
+import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.Currency;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPackUtil;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -83,12 +85,16 @@ public class Fishing{
                     Fish fish = getFishFromCode(getItemIDRandomly());
                     assert fish != null;
                     FishingUtil.saveRecord(event.getSender().getId(),fish.code);
-                    mcb.append(fish.name).append("x1").append("，价值").append(String.valueOf(fish.price)).append("鱼币\n");
+                    mcb.append(fish.name).append("x1").append("，价值").append(String.valueOf(fish.price)).append("南瓜比索\n");
                     totalValue = totalValue + fish.price;
                 }
 
-                mcb.append("\n共值").append(String.valueOf(totalValue)).append("鱼币。");
+                mcb.append("\n共值").append(String.valueOf(totalValue)).append("南瓜比索。");
+                //向银行存钱
+                BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(),totalValue, Currency.PumpkinPesos);
+                //发送消息
                 event.getSubject().sendMessage(mcb.asMessageChain());
+                //解除正在钓鱼的flag
                 isInFishingProcessFlag.remove(event.getSender().getId());
             }
         }, time*60000);

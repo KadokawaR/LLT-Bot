@@ -1,0 +1,31 @@
+{
+"BankRecord": {
+"bankAccountList":
+  [
+  {
+    "ID": 2955808839,
+    "pumpkinPesos": 999999,
+    "akaoni": 0,
+    "antoninianus": 0,
+    "adventurers": 0,
+    "additionalInfo": ""
+  },
+  {
+    "ID": 123456,
+    "pumpkinPesos": 0,
+    "akaoni": 0,
+    "antoninianus": 0,
+    "adventurers": 0,
+    "additionalInfo": ""
+  },
+  {
+    "ID": 1811905537,
+    "pumpkinPesos": 2910902,
+    "akaoni": 0,
+    "antoninianus": 0,
+    "adventurers": 0,
+    "additionalInfo": ""
+  }
+]
+}
+}

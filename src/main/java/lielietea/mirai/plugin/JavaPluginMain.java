@@ -3,6 +3,8 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.StatisticController;
+import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspana;
+import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.fish.Fishing;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.FurryGamesIndex;
@@ -110,6 +112,10 @@ public final class JavaPluginMain extends JavaPlugin {
             //钓鱼了
             Fishing.go(event);
 
+            //银行功能
+            SenoritaCounter.go(event);
+
+
         });
 
         //被人戳一戳了
@@ -148,6 +154,9 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //钓鱼了
             Fishing.go(event);
+
+            //银行功能
+            SenoritaCounter.go(event);
 
         });
     }

@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.core.messagehandler.game.fish;
 
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPackUtil;
+import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -25,20 +26,11 @@ public class FishingUtil {
 
     class FishingRecord{ List<SingleRecord> singleRecords;}
 
-    static String readFromReader(BufferedReader reader) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        String temp;
-        while ((temp = reader.readLine()) != null) {
-            builder.append(temp);
-        }
-        return builder.toString();
-    }
-
     public static FishingRecord openRecord() throws IOException {
         InputStreamReader is = new InputStreamReader(new FileInputStream(FISHING_RECORD_PATH));
         BufferedReader br = new BufferedReader(is);
         Gson gson = new Gson();
-        return gson.fromJson(readFromReader(br), FishingRecord.class);
+        return gson.fromJson(Read.fromReader(br), FishingRecord.class);
     }
 
     public static void saveRecord(long ID, int itemID){
@@ -55,11 +47,6 @@ public class FishingUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static String returnStatistics(MessageEvent event){
-        long ID = event.getSubject().getId();
-        return String.valueOf(ID);
     }
 
 }
