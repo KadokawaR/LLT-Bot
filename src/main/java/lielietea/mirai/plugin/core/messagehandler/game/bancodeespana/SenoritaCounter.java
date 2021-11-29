@@ -80,6 +80,13 @@ public class SenoritaCounter {
         }
     }
 
+    public static boolean hasEnoughMoney(MessageEvent event, int money){
+        Double amount = getCertainNumber(event.getSender().getId(),Currency.PumpkinPesos);
+        if (amount!=null) {
+            return (amount >= money);
+        } else return false;
+    }
+
     public static void go(MessageEvent event){
         checkMoney(event);
         moneyLaundry(event);
