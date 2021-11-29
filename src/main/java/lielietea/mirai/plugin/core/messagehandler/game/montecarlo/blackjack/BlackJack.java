@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack;
 
+import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspana;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
@@ -22,6 +23,7 @@ public class BlackJack extends BlackJackUtils{
     static final String YouDontHaveEnoughMoney = "操作失败，请检查您的南瓜比索数量。";
     static final String StartBetNotice = "下注阶段已经开始，预计在60秒内结束。可以通过/bet+金额反复追加下注。";
     static final String EndBetNotice = "下注阶段已经结束。";
+    static final String StartOperateNotice = "现在可以进行操作。功能列表如下：\n\n要牌 or /deal\n双倍下注 or /double\n停牌 or /fold\n下注对子 or /pair\n分牌 or /split\n买保险 or /assurance\n投降 or /surrender\n";
 
     static List<Long> isInBetProcess = new ArrayList<>();
 
@@ -59,6 +61,11 @@ public class BlackJack extends BlackJackUtils{
             getINSTANCE().globalFriendData.get(indexInTheList(event, getINSTANCE().globalFriendData)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setBet(overwriteBet);
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     //对话框中输入/blackjack或者二十一点
     public static void checkBlackJack(MessageEvent event){
@@ -100,6 +107,10 @@ public class BlackJack extends BlackJackUtils{
             }
         },60*1000);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     //对话框中输入/bet或者下注
@@ -172,6 +183,10 @@ public class BlackJack extends BlackJackUtils{
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     //下注阶段的定时任务
     public static void endBetInSixtySeconds(MessageEvent event){
         endBetTimer.schedule(new TimerTask() {
@@ -197,13 +212,22 @@ public class BlackJack extends BlackJackUtils{
 
     //查看用户在列表里第几个
     public static Integer indexOfThePlayer(MessageEvent event, long ID){
-        return indexOfThePlayer(getINSTANCE().globalFriendData.get(indexInTheList(event, getINSTANCE().globalGroupData)).getBlackJackPlayerList(),ID);
+        if (isGroupMessage(event)){
+            return indexOfThePlayer(getINSTANCE().globalGroupData.get(indexInTheList(event, getINSTANCE().globalGroupData)).getBlackJackPlayerList(),ID);
+        } else {
+            return indexOfThePlayer(getINSTANCE().globalFriendData.get(indexInTheList(event, getINSTANCE().globalFriendData)).getBlackJackPlayerList(),ID);
+        }
     }
 
 
     //查看用户是否在该群的列表里
     public static boolean playerIsInTheList(MessageEvent event) {
-        return playerIsInTheList(getINSTANCE().globalFriendData.get(indexInTheList(event, getINSTANCE().globalGroupData)).getBlackJackPlayerList(),event.getSender().getId());
+        if (isGroupMessage(event)){
+            return playerIsInTheList(getINSTANCE().globalGroupData.get(indexInTheList(event, getINSTANCE().globalGroupData)).getBlackJackPlayerList(),event.getSender().getId());
+        } else {
+            return playerIsInTheList(getINSTANCE().globalFriendData.get(indexInTheList(event, getINSTANCE().globalFriendData)).getBlackJackPlayerList(),event.getSender().getId());
+        }
+
     }
 
     //查看全局列表里是几号
@@ -226,7 +250,12 @@ public class BlackJack extends BlackJackUtils{
 
     //添加庄家
     public static void addBookmaker(MessageEvent event){
-        getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().add(new BlackJackPlayer(true));
+        if (isGroupMessage(event)){
+            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().add(new BlackJackPlayer(true));
+        } else {
+            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().add(new BlackJackPlayer(true));
+        }
+
     }
 
     //发牌操作
@@ -265,6 +294,11 @@ public class BlackJack extends BlackJackUtils{
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     //告知玩家牌面情况
     public static void showTheCards(MessageEvent event){
         MessageChainBuilder mcb = new MessageChainBuilder();
@@ -296,8 +330,132 @@ public class BlackJack extends BlackJackUtils{
                 }
             }
         }
-
         event.getSubject().sendMessage(mcb.asMessageChain());
+    }
+
+    //解除禁止玩家操作
+    public static void allowPlayerToOperate(MessageEvent event){
+        if (isGroupMessage(event)){
+            for (BlackJackPlayer bjp : getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList()){
+                if (bjp.getID()!=0) {
+                    bjp.setCanOperate(true);
+                }
+            }
+        //FriendMessageEvent
+        } else {
+            for (BlackJackPlayer bjp : getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList()){
+                if (bjp.getID()!=0) {
+                    bjp.setCanOperate(true);
+                }
+            }
+        }
+        event.getSubject().sendMessage(StartOperateNotice);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //开始玩家操作
+    public static void playerOperation(MessageEvent event){
+        if(bjOperation(event)!=null){
+            if(operationAvailabilityCheck(event)) {
+                switch (bjOperation(event)) {
+                    case Assurance:
+                        assurance(event);
+                        break;
+                    case Deal:
+                        deal(event);
+                        break;
+                    case Double:
+                        doubleBet(event);
+                        break;
+                    case Fold:
+                        fold(event);
+                        break;
+                    case Pair:
+                        pair(event);
+                        break;
+                    case Split:
+                        split(event);
+                        break;
+                    case Surrender:
+                        surrender(event);
+                        break;
+                }
+            }
+        }
+    }
+
+    //要玩家没有fold+可以操作的时候才能操作
+    public static boolean operationAvailabilityCheck(MessageEvent event){
+        if (isGroupMessage(event)) {
+            return (!getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).isHasFolded())
+                    &&
+                    (!getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).isCanOperate());
+        } else {
+            return (!getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).isHasFolded())
+                    &&
+                    (!getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).isCanOperate());
+        }
+    }
+
+    //保险
+    public static void assurance(MessageEvent event){
+        if (isGroupMessage(event)) {
+        getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setHasAssurance(true);
+    } else {
+        getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setHasAssurance(true);
+    }}
+
+    //要牌
+    public static void deal(MessageEvent event){}
+
+    //双倍下注
+    public static void doubleBet(MessageEvent event){
+        if (isGroupMessage(event)) {
+            int bet = getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet();
+            SenoritaCounter.minusMoney(event,bet);
+            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBet(bet*2);
+        } else {
+            int bet = getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet();
+            SenoritaCounter.minusMoney(event,bet);
+            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBet(bet*2);
+        }
+    }
+
+    //停牌
+    public static void fold(MessageEvent event){
+        if (isGroupMessage(event)) {
+            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setHasFolded(true);
+        } else {
+            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setHasFolded(true);
+        }
+    }
+
+    //下注对子
+    public static void pair(MessageEvent event){
+        if (isGroupMessage(event)) {
+            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBetPair(true);
+        } else {
+            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBetPair(true);
+        }
+    }
+
+    //分牌
+    public static void split(MessageEvent event){}
+
+    //投降
+    public static void surrender(MessageEvent event){
+        if(isGroupMessage(event)){
+            SenoritaCounter.addMoney(event,getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet()/2);
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            mcb.append((new At(event.getSender().getId()))).append("降了，将会返还您一半的赌注。");
+            event.getSubject().sendMessage(mcb.asMessageChain());
+        } else {
+            SenoritaCounter.addMoney(event,getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet()/2);
+            event.getSubject().sendMessage("您投降了，将会返还您一半的赌注。");
+        }
     }
 
 }

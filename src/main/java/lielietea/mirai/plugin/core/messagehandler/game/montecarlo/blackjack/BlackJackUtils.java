@@ -34,24 +34,31 @@ public class BlackJackUtils {
         switch(event.getMessage().contentToString()){
             case "/assurance":
             case "/Assurance":
+            case "买保险":
                 return BlackJackOperation.Assurance;
             case "/deal":
             case "/Deal":
+            case "要牌":
                 return BlackJackOperation.Deal;
             case "/double":
             case "/Double":
+            case "双倍下注":
                 return BlackJackOperation.Double;
             case "/fold":
             case "/Fold":
+            case "停牌":
                 return BlackJackOperation.Fold;
             case "/pair":
             case "/Pair":
+            case "下注对子":
                 return BlackJackOperation.Pair;
             case "/split":
             case "/Split":
+            case "分牌":
                 return BlackJackOperation.Split;
             case "/surrender":
             case "/Surrender":
+            case "投降":
                 return BlackJackOperation.Surrender;
         }
         return null;

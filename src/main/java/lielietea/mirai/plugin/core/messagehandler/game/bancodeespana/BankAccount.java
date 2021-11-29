@@ -17,28 +17,4 @@ public class BankAccount {
         adventurers = 0;
         additionalInfo = "";
     }
-
-    /***
-    public void setPumpkinPesos(long pumpkinPesos){
-        this.pumpkinPesos = pumpkinPesos;
-    }
-
-    public void setAkaoni(double akaoni){
-        this.akaoni = akaoni;
-    }
-
-    public void setAntoninianus(double antoninianus){
-        this.antoninianus = antoninianus;
-    }
-
-    public void setAdventurers(double adventurers){
-        this.adventurers = adventurers;
-    }
-
-    public void setAdditionalInfo(String additionalInfo){
-        this.additionalInfo = additionalInfo;
-    }
-
-     ***/
-
 }
