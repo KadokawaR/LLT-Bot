@@ -4,6 +4,7 @@ import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspa
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.CasinoCroupier;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackOperation;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackPhase;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.Color;
@@ -101,6 +102,18 @@ public class BlackJackUtils {
         return null;
     }
 
+    //组合成扑克牌字符串
+    public static String getPoker(Integer integer){
+        String poker = "";
+        switch(getColor(integer)){
+            case Club: poker += "♣"; break;
+            case Heart: poker += "♥"; break;
+            case Spade: poker += "♠"; break;
+            case Diamond: poker += "♦"; break;
+        }
+        return poker+getNumber(integer);
+    }
+
     //查看列表里是否有相应号码
     public static boolean isInTheList(MessageEvent event,List<BlackJackData> globalData){
         for (BlackJackData bjd : globalData){
@@ -111,7 +124,7 @@ public class BlackJackUtils {
         return false;
     }
 
-    //查看列表里是几号
+    //查看全局列表里是几号
     public static Integer indexInTheList(MessageEvent event,List<BlackJackData> globalData){
         int index = 0;
         for (BlackJackData bjd : globalData){
@@ -128,4 +141,30 @@ public class BlackJackUtils {
         return SenoritaCounter.hasEnoughMoney(event,bet);
     }
 
+    //查看用户在列表里第几个
+    public static Integer indexOfThePlayer(List<BlackJackPlayer> blackJackPlayerList, long ID){
+        int index = 0;
+        for (BlackJackPlayer bjp : blackJackPlayerList){
+            if (bjp.getID()==ID){
+                return index;
+            }
+            index += 1;
+        }
+        return null;
+    }
+
+    //查看用户是否在该群的列表里
+    public static boolean playerIsInTheList(List<BlackJackPlayer> blackJackPlayerList, long ID){
+        for (BlackJackPlayer bjp : blackJackPlayerList){
+            if (bjp.getID()==ID){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //是不是群聊
+    public static boolean isGroupMessage(MessageEvent event){
+        return (event.getClass().equals(GroupMessageEvent.class));
+    }
 }

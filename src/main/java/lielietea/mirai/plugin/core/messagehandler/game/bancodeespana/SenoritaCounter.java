@@ -87,6 +87,14 @@ public class SenoritaCounter {
         } else return false;
     }
 
+    public static void minusMoney(MessageEvent event, int money){
+        BancoDeEspana.getINSTANCE().minusMoney(event.getSender().getId(),money,Currency.PumpkinPesos);
+    }
+
+    public static void addMoney(MessageEvent event, int money){
+        BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(),money,Currency.PumpkinPesos);
+    }
+
     public static void go(MessageEvent event){
         checkMoney(event);
         moneyLaundry(event);

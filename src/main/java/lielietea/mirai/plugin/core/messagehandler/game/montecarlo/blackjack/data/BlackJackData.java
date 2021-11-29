@@ -10,6 +10,7 @@ public class BlackJackData {
     List<BlackJackPlayer> blackJackPlayerList;
     BlackJackPhase phase;
     int cardnumber;
+    List<Integer> cardPile;
 
     public long getID() {
         return ID;
@@ -57,5 +58,26 @@ public class BlackJackData {
 
     public void setPhase(BlackJackPhase ph) {
         phase = ph;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
+    }
+
+    public void setBlackJackPlayerList(List<BlackJackPlayer> blackJackPlayerList) {
+        this.blackJackPlayerList = blackJackPlayerList;
+    }
+
+    public void setCardnumber(int cardnumber) {
+        this.cardnumber = cardnumber;
+    }
+
+
+    public List<Integer> getCardPile() {
+        return cardPile;
+    }
+
+    public void setCardPile(List<Integer> cardPile) {
+        this.cardPile = cardPile;
     }
 }

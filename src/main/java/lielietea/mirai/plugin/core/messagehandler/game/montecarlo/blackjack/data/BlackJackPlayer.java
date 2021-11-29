@@ -12,6 +12,8 @@ public class BlackJackPlayer {
     boolean betPair;
     boolean hasSplit;
     boolean canOperate;
+    boolean isDouble;
+    boolean hasAssurance;
 
     //生成普通玩家
     public BlackJackPlayer(long id, int betNumber){
@@ -21,6 +23,8 @@ public class BlackJackPlayer {
         betPair = false;
         hasSplit = false;
         canOperate = false;
+        isDouble = false;
+        hasAssurance = false;
     }
 
     //生成庄家
@@ -31,5 +35,72 @@ public class BlackJackPlayer {
         betPair = false;
         hasSplit = false;
         canOperate = false;
+        isDouble = false;
+        hasAssurance = false;
+    }
+
+
+    public long getID() {
+        return ID;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
+    }
+
+    public List<Integer> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Integer> cards) {
+        this.cards = cards;
+    }
+
+    public int getBet() {
+        return bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
+    }
+
+    public boolean isBetPair() {
+        return betPair;
+    }
+
+    public void setBetPair(boolean betPair) {
+        this.betPair = betPair;
+    }
+
+    public boolean isHasSplit() {
+        return hasSplit;
+    }
+
+    public void setHasSplit(boolean hasSplit) {
+        this.hasSplit = hasSplit;
+    }
+
+    public boolean isCanOperate() {
+        return canOperate;
+    }
+
+    public void setCanOperate(boolean canOperate) {
+        this.canOperate = canOperate;
+    }
+
+    public boolean isDouble() {
+        return isDouble;
+    }
+
+    public void setDouble(boolean aDouble) {
+        isDouble = aDouble;
+    }
+
+    public boolean isHasAssurance() {
+        return hasAssurance;
+    }
+
+    public void setHasAssurance(boolean hasAssurance) {
+        this.hasAssurance = hasAssurance;
     }
 }
