@@ -49,14 +49,14 @@ public class Fishing{
     }
 
     public static void go(MessageEvent event){
-        if (event.getMessage().contentToString().contains("/fish")){
+        if (event.getMessage().contentToString().contains("/fish")||event.getMessage().contentToString().equals("开始钓鱼")){
             if (!isInFishingProcessFlag.contains(event.getSender().getId())){
                 isInFishingProcessFlag.add(event.getSender().getId());
                 getFish(event);
             } else {
                 MessageChainBuilder mcb = new MessageChainBuilder();
                 if (event.getClass().equals(GroupMessageEvent.class)){
-                    mcb.append((new At(event.getSender().getId())));
+                    mcb.append((new At(event.getSender().getId()))).append(" ");
                 }
                 mcb.append("上次抛竿还在进行中。");
                 event.getSubject().sendMessage(mcb.asMessageChain());
@@ -73,19 +73,20 @@ public class Fishing{
             @Override
             public void run() {
 
+                //随机生成包含鱼的code和数量的Map
+                Map<Integer,Integer> fishList = getItemIDRandomly(itemNumber);
+
                 MessageChainBuilder mcb = new MessageChainBuilder();
                 if (event.getClass().equals(GroupMessageEvent.class)){
                     mcb.append((new At(event.getSender().getId())));
                 }
 
-                mcb.append("您钓到了：\n\n");
                 int totalValue = 0;
-
-                for(int i = 0; i<itemNumber;i++){
-                    Fish fish = getFishFromCode(getItemIDRandomly());
+                for (Map.Entry<Integer, Integer> entry : fishList.entrySet()){
+                    Fish fish = getFishFromCode(entry.getKey());
+                    mcb.append("您钓到了：\n\n");
                     assert fish != null;
-                    FishingUtil.saveRecord(event.getSender().getId(),fish.code);
-                    mcb.append(fish.name).append("x1").append("，价值").append(String.valueOf(fish.price)).append("南瓜比索\n");
+                    mcb.append(fish.name).append("x").append(String.valueOf(entry.getValue())).append("，价值").append(String.valueOf(fish.price*entry.getValue())).append("南瓜比索\n");
                     totalValue = totalValue + fish.price;
                 }
 
@@ -100,10 +101,10 @@ public class Fishing{
         }, time*60000);
     }
 
-    public static int getItemIDRandomly(){
+    public static Map<Integer,Integer> getItemIDRandomly(int amount){
         List<Integer> Weight = new ArrayList<>();
         List<Fish> fishList = INSTANCE.loadedFishingList;
-
+        Map<Integer,Integer> fishMap = new HashMap<>();
         //用210-价格来作为每个物品的权重
         int totalWeight = 0;
         for (Fish fish: fishList){
@@ -111,25 +112,34 @@ public class Fishing{
             totalWeight = totalWeight + 210 - fish.price;
         }
 
-        Random random = new Random();
-        int randomNumber = random.nextInt(totalWeight);
+        for(int j=0;j<amount;j++) {
+            Random random = new Random();
+            int randomNumber = random.nextInt(totalWeight);
 
+            //随机一个数，依次减去每一条鱼的权重，如果小于0则返回该index
+            int randomIndex = -1;
 
-        //随机一个数，依次减去每一条鱼的权重，如果小于0则返回该index
-        int randomIndex = -1;
+            for (int i = 0; i < fishList.size(); i++) {
+                if ((randomNumber - Weight.get(i)) < 0) {
+                    randomIndex = i;
+                    break;
+                } else {
+                    randomNumber = randomNumber - Weight.get(i);
+                }
+            }
 
-        for (int i = 0 ; i<fishList.size(); i++){
-            if ((randomNumber-Weight.get(i))<0){
-                randomIndex = i;
-                break;
+            //防止出问题出现index=-1
+            if (randomIndex == -1) randomIndex = 0;
+            //通过index返回鱼的code
+            Fish fish = fishList.get(randomIndex);
+            if(fishMap.containsKey(fish.code)){
+                int amountOfFish = fishMap.get(fish.code);
+                fishMap.replace(fish.code, amountOfFish+1);
             } else {
-                randomNumber = randomNumber - Weight.get(i);
+                fishMap.put(fish.code, 1);
             }
         }
-
-        //通过index返回鱼的code
-        if (randomIndex == -1) randomIndex = 0;
-        return fishList.get(randomIndex).code;
+        return fishMap;
     }
 
     static Fish getFishFromCode (int code){

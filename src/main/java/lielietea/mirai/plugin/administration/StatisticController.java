@@ -57,7 +57,7 @@ public class StatisticController {
                 @Override
                 public void run() {
                     minuteCount.clear();
-                    System.out.println("分钟计数器已重置");
+                    System.out.println("GameCenter的分钟计数器已重置");
                 }
             }, 60 * 1000, 60 * 1000);
         }

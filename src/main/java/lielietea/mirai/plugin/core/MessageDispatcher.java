@@ -19,12 +19,14 @@ import java.util.concurrent.Executors;
 
 public class MessageDispatcher {
     final static int GROUP_MESSAGE_LIMIT_PER_MIN = 30;
-    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 5;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 6;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_DAY = 120;
     final static int DAILY_MESSAGE_LIMIT = 4800;
     final static MessageDispatcher INSTANCE = new MessageDispatcher();
     final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
     final CacheThreshold personalThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_MIN);
     final CacheThreshold dailyThreshold = new CacheThreshold(DAILY_MESSAGE_LIMIT);
+    final CacheThreshold personalDailyThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_DAY);
     final Timer thresholdReset1 = new Timer(true);
     final Timer thresholdReset2 = new Timer(true);
     final ExecutorService executor;
@@ -36,13 +38,16 @@ public class MessageDispatcher {
                                      public void run() {
                                          groupThreshold.clearCache();
                                          personalThreshold.clearCache();
+                                         System.out.println("MessageDispatcher的分钟计数器已经重置。");
                                      }
-                                 }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0),
-                StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
+                                 }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 0, 1),
+                StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0)); //本来是 1 0 0 0
         thresholdReset2.schedule(new TimerTask() {
                                      @Override
                                      public void run() {
                                          dailyThreshold.clearCache();
+                                         personalDailyThreshold.clearCache();
+                                         System.out.println("MessageDispatcher的每日计数器已经重置。");
                                      }
                                  }, StandardTimeUtil.getStandardFirstTime(0, 0, 1),
                 StandardTimeUtil.getPeriodLengthInMS(1, 0, 0, 0));
@@ -91,7 +96,7 @@ public class MessageDispatcher {
             if (groupThreshold.reachLimit(event.getSubject().getId()))
                 return true;
         }
-        return personalThreshold.reachLimit(event.getSender().getId());
+        return personalThreshold.reachLimit(event.getSender().getId()) || personalDailyThreshold.reachLimit(event.getSender().getId());
     }
 
     //添加到 Threshold 计数中
@@ -99,6 +104,7 @@ public class MessageDispatcher {
         if (messageChainPackage.getSource() instanceof Group)
             groupThreshold.count(messageChainPackage.getSource().getId());
         personalThreshold.count(messageChainPackage.getSender().getId());
+        personalDailyThreshold.reachLimit(messageChainPackage.getSender().getId());
         dailyThreshold.count(0);
     }
 

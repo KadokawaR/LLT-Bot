@@ -15,6 +15,8 @@ public class BlackJackPlayer {
     boolean isDouble;
     boolean hasAssurance;
     boolean hasFolded;
+    boolean hasBusted;
+    boolean hasSurrendered;
 
     //生成普通玩家
     public BlackJackPlayer(long id, int betNumber){
@@ -27,6 +29,8 @@ public class BlackJackPlayer {
         isDouble = false;
         hasAssurance = false;
         hasFolded = false;
+        hasBusted = false;
+        hasSurrendered = false;
     }
 
     //生成庄家
@@ -40,6 +44,8 @@ public class BlackJackPlayer {
         isDouble = false;
         hasAssurance = false;
         hasFolded = false;
+        hasBusted = false;
+        hasSurrendered = false;
     }
 
 
@@ -113,5 +119,21 @@ public class BlackJackPlayer {
 
     public void setHasFolded(boolean hasFolded) {
         this.hasFolded = hasFolded;
+    }
+
+    public boolean isHasBusted() {
+        return hasBusted;
+    }
+
+    public void setHasBusted(boolean hasBusted) {
+        this.hasBusted = hasBusted;
+    }
+
+    public boolean isHasSurrendered() {
+        return hasSurrendered;
+    }
+
+    public void setHasSurrendered(boolean hasSurrendered) {
+        this.hasSurrendered = hasSurrendered;
     }
 }

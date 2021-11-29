@@ -26,6 +26,7 @@ public class FishingUtil {
 
     static class FishingRecord{ List<SingleRecord> singleRecords;}
 
+    //用来把钓到的鱼的编号存在文件里，但是好像没什么用，作废了先放着
     public static FishingRecord openRecord() throws IOException {
         InputStreamReader is = new InputStreamReader(new FileInputStream(FISHING_RECORD_PATH));
         BufferedReader br = new BufferedReader(is);

@@ -52,6 +52,7 @@ public class BlackJack extends BlackJackUtils{
         }
     }
 
+    //更改赌注的金额
     public static void changeBet(MessageEvent event, int additionalBet){
         if (event.getClass().equals(GroupMessageEvent.class)) {
             int overwriteBet = additionalBet + getINSTANCE().globalGroupData.get(indexInTheList(event, getINSTANCE().globalGroupData)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getBet();
@@ -175,10 +176,20 @@ public class BlackJack extends BlackJackUtils{
                     }
 
                 } else {
-                    event.getSubject().sendMessage(YouDontHaveEnoughMoney);
+                    MessageChainBuilder mcb = new MessageChainBuilder();
+                    if (isGroupMessage(event)){
+                        mcb.append((new At(event.getSender().getId())));
+                    }
+                    mcb.append(YouDontHaveEnoughMoney);
+                    event.getSubject().sendMessage(mcb.asMessageChain());
                 }
             } else {
-                event.getSubject().sendMessage(NotRightBetNumber);
+                MessageChainBuilder mcb = new MessageChainBuilder();
+                if (isGroupMessage(event)){
+                    mcb.append((new At(event.getSender().getId())));
+                }
+                mcb.append(NotRightBetNumber);
+                event.getSubject().sendMessage(mcb.asMessageChain());
             }
         }
     }
@@ -331,6 +342,7 @@ public class BlackJack extends BlackJackUtils{
             }
         }
         event.getSubject().sendMessage(mcb.asMessageChain());
+        allowPlayerToOperate(event);
     }
 
     //解除禁止玩家操作
@@ -358,6 +370,7 @@ public class BlackJack extends BlackJackUtils{
 
     //开始玩家操作
     public static void playerOperation(MessageEvent event){
+        //todo:第一次进入operation阶段之后开始读秒60，60秒之后除了split的牌组全部fold
         if(bjOperation(event)!=null){
             if(operationAvailabilityCheck(event)) {
                 switch (bjOperation(event)) {
@@ -385,6 +398,18 @@ public class BlackJack extends BlackJackUtils{
                 }
             }
         }
+        //判定是否都fold
+        //都fold好之后进行split操作
+        //操作完全部不能operated之后开始庄家操作
+        //庄家操作完之后
+    }
+
+    //判定是否全员fold
+    public static boolean haveAllFolded(MessageEvent event){
+        if(isGroupMessage(event)){
+
+        }
+        return false;
     }
 
     //要玩家没有fold+可以操作的时候才能操作
@@ -436,9 +461,26 @@ public class BlackJack extends BlackJackUtils{
     //下注对子
     public static void pair(MessageEvent event){
         if (isGroupMessage(event)) {
-            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBetPair(true);
+            //下注对子扣钱
+            int bet = getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet();
+            //如果有钱就能扣款了
+            if(hasEnoughMoney(event,bet)) {
+                SenoritaCounter.minusMoney(event,bet);
+                getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBetPair(true);
+            } else {
+                //很遗憾地通知您 您没有钱
+                event.getSubject().sendMessage(new MessageChainBuilder().append((new At(event.getSender().getId()))).append(YouDontHaveEnoughMoney).asMessageChain());
+            }
         } else {
-            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBetPair(true);
+            int bet = getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet();
+            //如果有钱就能扣款了
+            if(hasEnoughMoney(event,bet)) {
+                SenoritaCounter.minusMoney(event,bet);
+                getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setBetPair(true);
+            } else {
+                //很遗憾地通知您 您没有钱
+                event.getSubject().sendMessage(YouDontHaveEnoughMoney);
+            }
         }
     }
 
@@ -448,12 +490,13 @@ public class BlackJack extends BlackJackUtils{
     //投降
     public static void surrender(MessageEvent event){
         if(isGroupMessage(event)){
-            SenoritaCounter.addMoney(event,getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet()/2);
+            //改变flag
+            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setHasSurrendered(true);
             MessageChainBuilder mcb = new MessageChainBuilder();
             mcb.append((new At(event.getSender().getId()))).append("降了，将会返还您一半的赌注。");
             event.getSubject().sendMessage(mcb.asMessageChain());
         } else {
-            SenoritaCounter.addMoney(event,getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).getBet()/2);
+            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexInTheList(event)).setHasSurrendered(true);
             event.getSubject().sendMessage("您投降了，将会返还您一半的赌注。");
         }
     }
