@@ -145,6 +145,7 @@ public class BancoDeEspana {
     //加钱！
     public boolean addMoney(long ID, double money, Currency kind){
         int index = 0;
+        touchAccount(ID);
         for ( BankAccount BA : getINSTANCE().bankRecord.bankAccountList){
             if (BA.ID == ID){
                 moneyCalculator(kind,index,money);
@@ -164,6 +165,7 @@ public class BancoDeEspana {
     //扣钱！不够返回false
     public boolean minusMoney(long ID, double money, Currency kind){
         int index = 0;
+        touchAccount(ID);
         for ( BankAccount BA : getINSTANCE().bankRecord.bankAccountList){
             if (BA.ID == ID) {
                 if (hasEnoughMoney(kind,money,index)){
@@ -187,6 +189,7 @@ public class BancoDeEspana {
     //扣钱！不够直接扣光
     public boolean minusMoneyMaybeAllIn(long ID, double money, Currency kind){
         int index = 0;
+        touchAccount(ID);
         for ( BankAccount BA : getINSTANCE().bankRecord.bankAccountList){
             if (BA.ID == ID) {
                 if (hasEnoughMoney(kind,money,index)){

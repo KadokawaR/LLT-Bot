@@ -78,13 +78,14 @@ public class Fishing{
 
                 MessageChainBuilder mcb = new MessageChainBuilder();
                 if (event.getClass().equals(GroupMessageEvent.class)){
-                    mcb.append((new At(event.getSender().getId())));
+                    mcb.append((new At(event.getSender().getId()))).append(" ");
                 }
+                mcb.append("您钓到了：\n\n");
 
                 int totalValue = 0;
+
                 for (Map.Entry<Integer, Integer> entry : fishList.entrySet()){
                     Fish fish = getFishFromCode(entry.getKey());
-                    mcb.append("您钓到了：\n\n");
                     assert fish != null;
                     mcb.append(fish.name).append("x").append(String.valueOf(entry.getValue())).append("，价值").append(String.valueOf(fish.price*entry.getValue())).append("南瓜比索\n");
                     totalValue = totalValue + fish.price;

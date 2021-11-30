@@ -14,7 +14,6 @@ public class BlackJackPlayer {
     boolean canOperate;
     boolean isDouble;
     boolean hasAssurance;
-    boolean hasFolded;
     boolean hasBusted;
     boolean hasSurrendered;
 
@@ -28,7 +27,6 @@ public class BlackJackPlayer {
         canOperate = false;
         isDouble = false;
         hasAssurance = false;
-        hasFolded = false;
         hasBusted = false;
         hasSurrendered = false;
     }
@@ -43,11 +41,17 @@ public class BlackJackPlayer {
         canOperate = false;
         isDouble = false;
         hasAssurance = false;
-        hasFolded = false;
         hasBusted = false;
         hasSurrendered = false;
     }
 
+    public void addCards(Integer card){
+        this.cards.add(card);
+    }
+
+    public boolean isBookmaker(){
+        return this.ID==0;
+    }
 
     public long getID() {
         return ID;
@@ -111,14 +115,6 @@ public class BlackJackPlayer {
 
     public void setHasAssurance(boolean hasAssurance) {
         this.hasAssurance = hasAssurance;
-    }
-
-    public boolean isHasFolded() {
-        return hasFolded;
-    }
-
-    public void setHasFolded(boolean hasFolded) {
-        this.hasFolded = hasFolded;
     }
 
     public boolean isHasBusted() {

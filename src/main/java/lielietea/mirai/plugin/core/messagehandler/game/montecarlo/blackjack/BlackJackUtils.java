@@ -11,13 +11,15 @@ import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enum
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.graalvm.compiler.phases.Phase;
 
 import java.util.*;
 
 public class BlackJackUtils {
 
-
+    static final int CARD_NUMBER = 4;
 
     //判定消息里面是否有触发关键词
     public static boolean isBlackJack(MessageEvent event){
@@ -86,7 +88,7 @@ public class BlackJackUtils {
     //生成四幅扑克牌组成的序列
     public static List<Integer> createPokerPile(){
         List<Integer> list = new ArrayList<>();
-        for(int i=1;i<=52*4;i++){ list.add(i); }
+        for(int i=1;i<=52*CARD_NUMBER;i++){ list.add(i); }
         Collections.shuffle(list);
         return list;
     }
@@ -174,4 +176,28 @@ public class BlackJackUtils {
     public static boolean isGroupMessage(MessageEvent event){
         return (event.getClass().equals(GroupMessageEvent.class));
     }
+
+    //BlackJackData应该是哪个MessageEvent下的data
+    public static List<BlackJackData> getGlobalData(MessageEvent event){
+        if(isGroupMessage(event)){
+            return BlackJack.getINSTANCE().globalGroupData;
+        }
+        return BlackJack.getINSTANCE().globalFriendData;
+    }
+
+    //给群聊的消息前面加AT
+    public static MessageChainBuilder mcbProcessor(MessageEvent event){
+        MessageChainBuilder mcb = new MessageChainBuilder();
+        if (isGroupMessage(event)){
+            mcb.append((new At(event.getSender().getId()))).append(" ");
+        }
+        return mcb;
+    }
+
+    //待用，用来替换
+    public static BlackJackPlayer getBlackJackPlayer(MessageEvent event){
+        return getGlobalData(event).get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event));
+    }
+
+
 }

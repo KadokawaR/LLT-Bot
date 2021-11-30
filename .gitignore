@@ -12,3 +12,6 @@
 /daemon/
 /native/
 /kotlin-profile/
+/src/test
+src/test/kotlin/RunMirai.kt
+src/test/kotlin/RunMirai.kt

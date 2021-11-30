@@ -51,7 +51,7 @@ public class SenoritaCounter {
                 mcb.append((new At(event.getSender().getId())));
             }
 
-            mcb.append("您的余额为：\n\n");
+            mcb.append(" 您的余额为：\n\n");
             mcb.append("南瓜比索：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.PumpkinPesos))).append("\n");
             mcb.append("Akaoni：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Akaoni))).append("\n");
             mcb.append("Antoninianus：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Antoninianus))).append("\n");
@@ -91,8 +91,24 @@ public class SenoritaCounter {
         BancoDeEspana.getINSTANCE().minusMoney(event.getSender().getId(),money,Currency.PumpkinPesos);
     }
 
+    public static void minusMoney(long ID, int money){
+        BancoDeEspana.getINSTANCE().minusMoney(ID,money,Currency.PumpkinPesos);
+    }
+
+    public static void minusMoneyMaybeAllIn(MessageEvent event, int money){
+        BancoDeEspana.getINSTANCE().minusMoneyMaybeAllIn(event.getSender().getId(),money,Currency.PumpkinPesos);
+    }
+
+    public static void minusMoneyMaybeAllIn(long ID, int money){
+        BancoDeEspana.getINSTANCE().minusMoneyMaybeAllIn(ID,money,Currency.PumpkinPesos);
+    }
+
     public static void addMoney(MessageEvent event, int money){
         BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(),money,Currency.PumpkinPesos);
+    }
+
+    public static void addMoney(long ID, int money){
+        BancoDeEspana.getINSTANCE().addMoney(ID,money,Currency.PumpkinPesos);
     }
 
     public static void go(MessageEvent event){
