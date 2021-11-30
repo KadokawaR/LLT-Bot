@@ -2,7 +2,7 @@ package lielietea.mirai.plugin.core.messagehandler.responder.help;
 
 import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
-import lielietea.mirai.plugin.exception.NoHandlerMethodMatchException;
+import lielietea.mirai.plugin.utils.exception.NoHandlerMethodMatchException;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 

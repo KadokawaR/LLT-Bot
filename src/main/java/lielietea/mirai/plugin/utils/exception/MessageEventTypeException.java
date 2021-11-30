@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.exception;
+package lielietea.mirai.plugin.utils.exception;
 
 import net.mamoe.mirai.event.events.MessageEvent;
 

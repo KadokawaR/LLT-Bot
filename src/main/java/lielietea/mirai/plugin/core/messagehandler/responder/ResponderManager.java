@@ -18,7 +18,7 @@ import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.Lotter
 import lielietea.mirai.plugin.core.messagehandler.responder.lovelypicture.LovelyImage;
 import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesSelector;
-import lielietea.mirai.plugin.exception.MessageEventTypeException;
+import lielietea.mirai.plugin.utils.exception.MessageEventTypeException;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import net.mamoe.mirai.event.events.*;
