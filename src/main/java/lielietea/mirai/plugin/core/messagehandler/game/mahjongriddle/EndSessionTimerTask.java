@@ -18,6 +18,7 @@ class EndSessionTimerTask extends TimerTask {
 
     @Override
     public void run() {
+        if(MahjongRiddle.riddleSessionHolder.get(event.getGroup().getId())==null) return;
         if (MahjongRiddle.riddleSessionHolder.get(event.getGroup().getId()).id == this.id //判断sessionID相等
                 && !MahjongRiddle.isAllTrue(MahjongRiddle.riddleSessionHolder.get(event.getGroup().getId()).isGuessed /*而且牌没有被全部猜出*/)) {
             try {

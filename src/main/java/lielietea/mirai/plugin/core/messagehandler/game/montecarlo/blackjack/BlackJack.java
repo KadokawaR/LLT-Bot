@@ -550,8 +550,6 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setCanOperate(false);
         }
         event.getSubject().sendMessage(mcbProcessor(event).append("您已经双倍下注。").asMessageChain());
-        getCardSendNotice(event,1);
-
     }
 
     //停牌
@@ -663,8 +661,20 @@ public class BlackJack extends BlackJackUtils {
     //能否双倍下注
     public static boolean canDouble(MessageEvent event) {
         List<Integer> cardList = getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards();
+        if((cardList.size()!=2)) return false;
         int cardPoint = cardPointCalculator(cardList);
-        if((cardList.size()!=2)||cardPoint!=11) return false;
+        boolean isAPlusTen = false;
+        if(cardPoint==21){
+            for (Integer card : cardList){
+                if(card%13==1){
+                    isAPlusTen=true;
+                    break;
+                }
+            }
+        }
+        if(!isAPlusTen){
+            if(cardPoint!=11) return false;
+        }
         return !getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).isDouble();
     }
 

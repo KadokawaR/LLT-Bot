@@ -32,7 +32,6 @@ public class MahjongRiddle {
         boolean[] isGuessed;
         int id;
     }
-
     static Timer timer = new Timer();
 
     //static final Timer timer = new Timer(true);
@@ -219,7 +218,7 @@ public class MahjongRiddle {
                 event.getSubject().sendMessage("麻将牌上的数字分别为：" + turnIntoChineseNum(rf));
 
                 //180s清空谜语重置标记
-                timer.schedule(new EndSessionTimerTask(sessionId,event), 180 * 1000);
+                timer.schedule(new EndSessionTimerTask(sessionId, event), 180 * 1000);
                 return riddleType.Start;
             }
         }

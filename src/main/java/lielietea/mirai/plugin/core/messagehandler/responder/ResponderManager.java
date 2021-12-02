@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.responder;
 
 
+import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MPSEStatistics;
 import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiDirtyWord;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiOverwatch;
@@ -47,6 +48,7 @@ public class ResponderManager {
                                String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
                                MessageUtil.notifyDevGroup(result);
+                               MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics());
                            }
                        },
                 StandardTimeUtil.getStandardFirstTime(0, 0, 1),
