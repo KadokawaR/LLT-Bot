@@ -18,11 +18,7 @@ public class MPSEProcessor {
         File dir = new File(FILE_DIR_PATH);
         File json = new File(FILE_PATH);
         if(!dir.exists()){
-            try {
-                dir.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            dir.mkdir();
         }
         if(!json.exists()){
             try {
@@ -35,7 +31,15 @@ public class MPSEProcessor {
     }
 
     public static DataList openData() throws IOException {
-        return new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(FILE_PATH)))), DataList.class);
+        touchDataFIle();
+        DataList dataList = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(FILE_PATH)))), DataList.class);
+        System.out.println(dataList);
+        if(dataList == null){
+            dataList = new DataList();
+            dataList.addDataIntoDatas(new Data(new Date()));
+        }
+        System.out.println(dataList);
+        return dataList;
     }
 
     public static void writeData(DataList dataList) throws IOException {
@@ -50,15 +54,5 @@ public class MPSEProcessor {
         return new Date(dateTime.getTime() + n * 60 * 1000L);
     }
 
-    public static void updateDataList(){
-        int groupMessageCount = MessagePostSendEventHandler.INSTANCE.groupMessageCount;
-        int friendMessageCount = MessagePostSendEventHandler.INSTANCE.FriendMessageCount;
-        int failedMessageCount = MessagePostSendEventHandler.INSTANCE.failedMessageCount;
-        Date date = new Date();
-        Date dateAWeekAgo = updateDaysByGetTime(date,-7);
-        Data data = new Data(date,friendMessageCount, groupMessageCount,failedMessageCount);
-        MessagePostSendEventHandler.getINSTANCE().dataList.datas.add(data);
-        MessagePostSendEventHandler.getINSTANCE().dataList.datas.removeIf(dt -> dt.date.before(dateAWeekAgo));
-    }
 
 }

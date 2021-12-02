@@ -15,12 +15,15 @@ public class MPSEStatistics extends MPSEProcessor{
         int groupMessageCount=0;
         int failedMessageCount=0;
         for(Data dt : dl.datas){
-            if(dt.date.after(hourAgo)){
-                friendMessageCount += dt.friendMessage;
-                groupMessageCount += dt.groupMessage;
-                failedMessageCount += dt.failedMessage;
+            if(dt.getDate().after(hourAgo)){
+                friendMessageCount += dt.getFriendMessage();
+                groupMessageCount += dt.getGroupMessage();
+                failedMessageCount += dt.getFailedMessage();
             }
         }
+        friendMessageCount += MessagePostSendEventHandler.getINSTANCE().friendMessageCount;
+        groupMessageCount += MessagePostSendEventHandler.getINSTANCE().groupMessageCount;
+        failedMessageCount += MessagePostSendEventHandler.getINSTANCE().failedMessageCount;
         return new Data(friendMessageCount,groupMessageCount,failedMessageCount);
     }
 
@@ -30,18 +33,21 @@ public class MPSEStatistics extends MPSEProcessor{
         int groupMessageCount=0;
         int failedMessageCount=0;
         for(Data dt : dl.datas){
-            friendMessageCount += dt.friendMessage;
-            groupMessageCount += dt.groupMessage;
-            failedMessageCount += dt.failedMessage;
+            friendMessageCount += dt.getFriendMessage();
+            groupMessageCount += dt.getGroupMessage();
+            failedMessageCount += dt.getFailedMessage();
         }
+        friendMessageCount += MessagePostSendEventHandler.getINSTANCE().friendMessageCount;
+        groupMessageCount += MessagePostSendEventHandler.getINSTANCE().groupMessageCount;
+        failedMessageCount += MessagePostSendEventHandler.getINSTANCE().failedMessageCount;
         return new Data(friendMessageCount,groupMessageCount,failedMessageCount);
     }
 
     public static String fromDataToString(Data data){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("好友").append("\t").append(data.friendMessage).append("\t");
-        stringBuilder.append("群组").append("\t").append(data.groupMessage).append("\t");
-        stringBuilder.append("失败").append("\t").append(data.failedMessage).append("\t");
+        stringBuilder.append("好友").append("\t").append(data.getFriendMessage()).append("\t");
+        stringBuilder.append("群组").append("\t").append(data.getGroupMessage()).append("\t");
+        stringBuilder.append("失败").append("\t").append(data.getFailedMessage()).append("\t");
         return stringBuilder.toString();
     }
 

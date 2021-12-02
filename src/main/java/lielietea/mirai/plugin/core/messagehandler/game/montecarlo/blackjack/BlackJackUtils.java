@@ -274,6 +274,18 @@ public class BlackJackUtils {
             event.getSubject().sendMessage("测试工具：已设置玩家三张牌是6 7 8");
         }
 
+        if(event.getMessage().contentToString().equals("/admindouble")){
+            List<Integer> cardList = new ArrayList<>();
+            cardList.add(1);
+            cardList.add(10);
+            if(isGroupMessage(event)){
+                BlackJack.getINSTANCE().globalGroupData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).setCards(cardList);
+            } else {
+                BlackJack.getINSTANCE().globalFriendData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).setCards(cardList);
+            }
+            event.getSubject().sendMessage("测试工具：已设置玩家前两张牌为10和A");
+        }
+
     }
 
 

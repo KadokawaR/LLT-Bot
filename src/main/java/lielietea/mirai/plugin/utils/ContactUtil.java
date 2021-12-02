@@ -1,6 +1,5 @@
 package lielietea.mirai.plugin.utils;
 
-import lielietea.mirai.plugin.administration.blacklist.BlacklistManager;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Friend;
@@ -22,6 +21,7 @@ public class ContactUtil {
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event){
+        /*
         if (BlacklistManager.getInstance().contains(event.getGroupId(), true)) {
             //提醒邀请者该群在黑名单中
             event.getInvitor().sendMessage("不好意思，此群在茶铺黑名单中。如果您觉得这是个错误，请联系开发组。");
@@ -31,17 +31,19 @@ public class ContactUtil {
                     + ") 尝试将我拉入群 " + event.getGroupName() + "(" + event.getGroupId() + ")。该群在我们的黑名单中。\n"
                     + BlacklistManager.getInstance().getSpecificInform(event.getGroupId(), true), event.getBot().getId());
         } else {
+         */
             //todo:更改最大群聊数量上限
             if(event.getBot().getGroups().getSize()>=GroupNumberLimit){
                 event.getInvitor().sendMessage("七筒的群聊数量已经接近上限，请稍后再尝试。");
             } else {
                 event.accept();
             }
-        }
+
     }
 
     // 决定是否接收好友请求
     public static void handleFriendRequest(NewFriendRequestEvent event){
+        /*
         if (BlacklistManager.getInstance().contains(event.getFromId(), true)) {
             // 拒绝该好友请求，但不加入黑名单
             event.reject(false);
@@ -51,8 +53,10 @@ public class ContactUtil {
                     + ((event.getFromGroupId()) == 0L ? "该好友请求并非来自群关系。" : "该好友请求来自群 " + event.getFromGroupId() + "。\n")
                     + BlacklistManager.getInstance().getSpecificInform(event.getFromId(), false), event.getBot().getId());
         } else {
+
+         */
             event.accept();
-        }
+
     }
 
     // 处理加群事件

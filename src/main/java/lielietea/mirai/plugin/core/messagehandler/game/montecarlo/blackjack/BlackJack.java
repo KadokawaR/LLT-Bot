@@ -606,7 +606,12 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setHasSplit(true);
         }
         //获得首张牌
-        Integer firstCard = getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(0);
+        Integer firstCard;
+        if(isGroupMessage(event)){
+            firstCard = getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(0);
+        } else {
+            firstCard = getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(0);
+        }
         List<Integer> firstPile = new ArrayList<>();
         List<Integer> secondPile = new ArrayList<>();
         firstPile.add(firstCard);
@@ -616,7 +621,11 @@ public class BlackJack extends BlackJackUtils {
             firstPile.add(getCard(event));
         }
         //第一个牌组抽完了，增加一个null作为分割
-        getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().add(null);
+        if(isGroupMessage(event)){
+            getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().add(null);
+        } else {
+            getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().add(null);
+        }
         //抽第二组
         while(cardPointCalculator(secondPile)<17){
             secondPile.add(getCard(event));
@@ -760,9 +769,9 @@ public class BlackJack extends BlackJackUtils {
     //Split抽卡操作 先抽卡，给牌堆+1，然后发送消息
     public static void splitGetCardSendNotice(MessageEvent event) {
         MessageChainBuilder mcb = mcbProcessor(event);
-        mcb.append("您的原始牌为：\n").append(getPoker(getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(0))).append("\n")
+        mcb.append("您的原始牌为：\n").append(getPoker(getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(0))).append(" ")
                 .append(getPoker(getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(0)));
-        mcb.append("您两个牌堆抽到的牌分别是：\n牌堆I：");
+        mcb.append("\n您两个牌堆抽到的牌分别是：\n牌堆I：");
         int nullLocation=0;
         int cardListSize = getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().size();
         for(Integer card : getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards()){
@@ -770,7 +779,7 @@ public class BlackJack extends BlackJackUtils {
             nullLocation++;
         }
         //输出第一组牌
-        for(int index=1;index<nullLocation;index++){
+        for(int index=2;index<nullLocation;index++){
             mcb.append(" ").append(getPoker(getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards().get(index)));
         }
         mcb.append("\n牌堆II：");
@@ -865,7 +874,7 @@ public class BlackJack extends BlackJackUtils {
 
     public static int calculateSplitPoint(MessageEvent event, long ID) {
         int bookmakersPoints = cardPointCalculator(getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfTheBookMaker(event)).getCards());
-        if(bookmakersPoints>21) bookmakersPoints=0;
+        if(bookmakersPoints>21) bookmakersPoints=1;
         List<Integer> playersPointsList1 = new ArrayList<>();
         List<Integer> playersPointsList2 = new ArrayList<>();
         int firstCard = getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event,ID)).getCards().get(0);
@@ -885,7 +894,11 @@ public class BlackJack extends BlackJackUtils {
         for(int index=nullLocation+1;index<cardListSize;index++){
             playersPointsList2.add(getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event,ID)).getCards().get(index));
         }
-        return calculateBigOrSmall(bookmakersPoints, cardPointCalculator(playersPointsList1)) + calculateBigOrSmall(bookmakersPoints, cardPointCalculator(playersPointsList2));
+        int playersPoints1 = cardPointCalculator(playersPointsList1);
+        int playersPoints2 = cardPointCalculator(playersPointsList2);
+        if(playersPoints1>21) playersPoints1=0;
+        if(playersPoints2>21) playersPoints2=0;
+        return calculateBigOrSmall(bookmakersPoints, playersPoints1) + calculateBigOrSmall(bookmakersPoints, playersPoints2);
     }
 
     //比大小返回

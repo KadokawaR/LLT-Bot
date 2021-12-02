@@ -14,4 +14,16 @@ public class DataList {
     DataList(){
         this.datas = new ArrayList<>();
     }
+
+    public void addDataIntoDatas(Data data){
+        this.datas.add(data);
+    }
+
+    public List<Data> getDatas() {
+        return datas;
+    }
+
+    public void setDatas(List<Data> datas) {
+        this.datas = datas;
+    }
 }

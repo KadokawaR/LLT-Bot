@@ -4,17 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class BankAccount {
     long ID;
-    @SerializedName("pk")
-    long pumpkinPesos;
-    @SerializedName("ak")
-    double akaoni;
-    @SerializedName("an")
-    double antoninianus;
-    @SerializedName("ad")
-    double adventurers;
-    @SerializedName("ai")
-    String additionalInfo;
-
+    @SerializedName(value = "pk",alternate = {"pumpkinPesos"}) long pumpkinPesos;
+    @SerializedName(value = "ak",alternate = {"akaoni"}) double akaoni;
+    @SerializedName(value = "an",alternate = {"antoninianus"}) double antoninianus;
+    @SerializedName(value = "ad",alternate = {"adventurers"}) double adventurers;
+    @SerializedName(value = "ai",alternate = {"additionalInfo"}) String additionalInfo;
 
     public BankAccount(long id){
         ID = id;
