@@ -2,13 +2,10 @@ package lielietea.mirai.plugin.core.messagehandler.game.bancodeespana;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lielietea.mirai.plugin.core.messagehandler.game.fish.FishingUtil;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -25,10 +22,7 @@ public class BancoDeEspana {
     public BankRecord bankRecord;
 
     public static void initialize() throws IOException {
-        //if (!file.exists()) { try { file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
         getINSTANCE().bankRecord = openRecord();
-        System.out.println("bankRecord.tostring: "+getINSTANCE().bankRecord.toString());
-        System.out.println("initialize: "+Arrays.toString(getINSTANCE().bankRecord.bankAccountList.toArray()));
     }
 
     BancoDeEspana(){}
@@ -46,7 +40,6 @@ public class BancoDeEspana {
     public static BancoDeEspana getINSTANCE() {
         return INSTANCE;
     }
-
 
     //读取记录
     public static BankRecord openRecord() throws IOException {
@@ -75,7 +68,7 @@ public class BancoDeEspana {
     }
 
     //序列化+写入单例
-    void serialize() throws IOException {
+    void serialize() {
         //BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(BANK_RECORD_PATH), StandardCharsets.UTF_8));
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonString = gson.toJson(getINSTANCE().bankRecord);
@@ -108,8 +101,8 @@ public class BancoDeEspana {
             case PumpkinPesos: getINSTANCE().bankRecord.bankAccountList.get(index).pumpkinPesos+=(long)money; return;
             case Akaoni: getINSTANCE().bankRecord.bankAccountList.get(index).akaoni+=money; return;
             case Antoninianus: getINSTANCE().bankRecord.bankAccountList.get(index).antoninianus+=money; return;
-            case Adventurers: getINSTANCE().bankRecord.bankAccountList.get(index).adventurers+=money;; return;
-            case Other: otherCurrencyProtocol(index, money); return;
+            case Adventurers: getINSTANCE().bankRecord.bankAccountList.get(index).adventurers+=money; return;
+            case Other: otherCurrencyProtocol(index, money);
         }
     }
 
@@ -119,8 +112,8 @@ public class BancoDeEspana {
             case PumpkinPesos: getINSTANCE().bankRecord.bankAccountList.get(index).pumpkinPesos=(long)money; return;
             case Akaoni: getINSTANCE().bankRecord.bankAccountList.get(index).akaoni=money; return;
             case Antoninianus: getINSTANCE().bankRecord.bankAccountList.get(index).antoninianus=money; return;
-            case Adventurers: getINSTANCE().bankRecord.bankAccountList.get(index).adventurers=money;; return;
-            case Other: otherCurrencyProtocol(index, money); return;
+            case Adventurers: getINSTANCE().bankRecord.bankAccountList.get(index).adventurers=money; return;
+            case Other: otherCurrencyProtocol(index, money);
         }
     }
 

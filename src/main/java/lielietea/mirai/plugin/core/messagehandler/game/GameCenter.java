@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.game;
 
-import lielietea.mirai.plugin.administration.StatisticController;
+import lielietea.mirai.plugin.administration.statistics.StatisticController;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPack;
 import lielietea.mirai.plugin.core.messagehandler.game.mahjongriddle.MahjongRiddleHandler;
 import lielietea.mirai.plugin.utils.IdentityUtil;

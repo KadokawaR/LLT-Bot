@@ -48,6 +48,23 @@ public class BroadcastSystem {
         }
     }
 
+    public static void directlySendToFriend(FriendMessageEvent event) {
+        String message = event.getMessage().contentToString();
+        if (message.contains("/broadcastf ") && IdentityUtil.isAdmin(event)) {
+            String[] splitMessage = message.split(" ");
+            if (splitMessage.length != 3) {
+                event.getSubject().sendMessage("请使用空格分割/broadcastf指示器、群号和消息");
+                return;
+            }
+            if (!splitMessage[0].equals("/broadcastf")) {
+                event.getSubject().sendMessage("/broadcastf指示器使用不正确");
+                return;
+            }
+            Objects.requireNonNull(event.getBot().getFriend(Long.parseLong(splitMessage[1]))).sendMessage(splitMessage[2]);
+        }
+    }
+
+
     public static void sendToAllFriends(FriendMessageEvent event) throws InterruptedException {
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast2f ") && IdentityUtil.isAdmin(event)) {
@@ -67,7 +84,7 @@ public class BroadcastSystem {
     //broadcast helper
     public static void broadcastHelper(MessageEvent event) {
         if (event.getMessage().contentToString().contains("/broadcasthelper") && IdentityUtil.isAdmin(event)) {
-            event.getSubject().sendMessage("/broadcast2f+空格+消息，发送给所有好友\n/broadcast2g+空格+消息，发送给所有群\n/broadcast+空格+群号+空格+消息，发送给指定群");
+            event.getSubject().sendMessage("/broadcast2f+空格+消息，发送给所有好友\n/broadcast2g+空格+消息，发送给所有群\n/broadcast+空格+群号+空格+消息，发送给指定群\n/broadcastf+空格+好友+空格+消息，发送给指定好友");
         }
     }
 }

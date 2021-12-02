@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlackJackData {
+
     long ID; // 如果是好友消息则为好友ID
     List<BlackJackPlayer> blackJackPlayerList;
     BlackJackPhase phase;
@@ -46,7 +47,7 @@ public class BlackJackData {
     }
 
     public void addBlackJackPlayerList(BlackJackPlayer e) {
-        this.blackJackPlayerList.add(e);
+        blackJackPlayerList.add(e);
     }
 
     public void setBlackJackPlayerList(List<BlackJackPlayer> blackJackPlayerList) {

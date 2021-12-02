@@ -29,7 +29,6 @@ public class Fishing{
     static final List<Long> isInFishingProcessFlag = new ArrayList<>();
 
     final List<Fish> loadedFishingList;
-    static final Timer timerFishing = new Timer(true);
 
     Fishing() {
         loadedFishingList = new ArrayList<>();
@@ -69,13 +68,12 @@ public class Fishing{
         int time = 3+random.nextInt(4);
         int itemNumber = 3+random.nextInt(6);
         event.getSubject().sendMessage("本次钓鱼预计时间为"+time+"分钟。");
-        timerFishing.schedule(new TimerTask() {
+        final Timer[] timer = {new Timer()};
+        timer[0].schedule(new TimerTask() {
             @Override
             public void run() {
-
                 //随机生成包含鱼的code和数量的Map
                 Map<Integer,Integer> fishList = getItemIDRandomly(itemNumber);
-
                 MessageChainBuilder mcb = new MessageChainBuilder();
                 if (event.getClass().equals(GroupMessageEvent.class)){
                     mcb.append((new At(event.getSender().getId()))).append(" ");
@@ -83,12 +81,11 @@ public class Fishing{
                 mcb.append("您钓到了：\n\n");
 
                 int totalValue = 0;
-
                 for (Map.Entry<Integer, Integer> entry : fishList.entrySet()){
                     Fish fish = getFishFromCode(entry.getKey());
                     assert fish != null;
                     mcb.append(fish.name).append("x").append(String.valueOf(entry.getValue())).append("，价值").append(String.valueOf(fish.price*entry.getValue())).append("南瓜比索\n");
-                    totalValue = totalValue + fish.price;
+                    totalValue = totalValue + fish.price*entry.getValue();
                 }
 
                 mcb.append("\n共值").append(String.valueOf(totalValue)).append("南瓜比索。");
@@ -98,8 +95,11 @@ public class Fishing{
                 event.getSubject().sendMessage(mcb.asMessageChain());
                 //解除正在钓鱼的flag
                 isInFishingProcessFlag.remove(event.getSender().getId());
+                timer[0].cancel();
+                timer[0] = null;
+
             }
-        }, time*60000);
+        }, time*60*1000);
     }
 
     public static Map<Integer,Integer> getItemIDRandomly(int amount){

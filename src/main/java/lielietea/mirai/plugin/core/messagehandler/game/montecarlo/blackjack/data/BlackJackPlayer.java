@@ -33,7 +33,7 @@ public class BlackJackPlayer {
 
     //生成庄家
     public BlackJackPlayer(boolean bookmaker){
-        ID = 0;
+        if(bookmaker){ ID = 0; }
         cards = new ArrayList<>();
         bet = 0;
         betPair = false;

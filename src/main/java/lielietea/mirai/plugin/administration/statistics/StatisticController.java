@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.administration;
+package lielietea.mirai.plugin.administration.statistics;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -60,15 +60,6 @@ public class StatisticController {
                     System.out.println("GameCenter的分钟计数器已重置");
                 }
             }, 60 * 1000, 60 * 1000);
-        }
-    }
-
-    /**
-     * 读取statistics
-     */
-    public static void getStatistics(FriendMessageEvent event) {
-        if (IdentityUtil.isAdmin(event) && event.getMessage().contentToString().contains("/statistics")) {
-            event.getSubject().sendMessage("正在重写中");
         }
     }
 }

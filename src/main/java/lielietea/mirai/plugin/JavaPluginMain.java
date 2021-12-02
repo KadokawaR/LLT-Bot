@@ -2,10 +2,10 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
-import lielietea.mirai.plugin.administration.StatisticController;
-import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspana;
+import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.fish.Fishing;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.BlackJack;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.FurryGamesIndex;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
@@ -44,7 +44,7 @@ public final class JavaPluginMain extends JavaPlugin {
     static final Logger logger = LogManager.getLogger(JavaPluginMain.class);
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "0.1.1")
+        super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "1.1.1")
                 .info("LieLieTea QQ Group Bot")
                 .build());
     }
@@ -54,8 +54,6 @@ public final class JavaPluginMain extends JavaPlugin {
         getLogger().info("日志");
 
         ResponderManager.getINSTANCE().ini();
-
-        StatisticController.resetMinuteCount();
 
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
@@ -115,6 +113,11 @@ public final class JavaPluginMain extends JavaPlugin {
             //银行功能
             SenoritaCounter.go(event);
 
+            //blackjack
+            BlackJack.go(event);
+
+            //MPSE 消息统计
+            MessagePostSendEventHandler.getMPSEStatistics(event);
 
         });
 
@@ -124,6 +127,12 @@ public final class JavaPluginMain extends JavaPlugin {
         //群成员入群自动欢迎
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎。"));
 
+
+        //计数
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
+
+        //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
 
             //所有消息之后都集中到这个地方处理
@@ -141,6 +150,7 @@ public final class JavaPluginMain extends JavaPlugin {
             }
 
             BroadcastSystem.directlySendToGroup(event);
+            BroadcastSystem.directlySendToFriend(event);
 
             try {
                 BroadcastSystem.sendToAllFriends(event);
@@ -150,14 +160,17 @@ public final class JavaPluginMain extends JavaPlugin {
 
             BroadcastSystem.broadcastHelper(event);
 
-            StatisticController.getStatistics(event);
-
             //钓鱼了
             Fishing.go(event);
 
             //银行功能
             SenoritaCounter.go(event);
 
+            //blackjack
+            BlackJack.go(event);
+
+            //MPSE 消息统计
+            MessagePostSendEventHandler.getMPSEStatistics(event);
         });
     }
 

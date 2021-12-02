@@ -33,7 +33,9 @@ public class MahjongRiddle {
         int id;
     }
 
-    static final Timer timer = new Timer(true);
+    static Timer timer = new Timer();
+
+    //static final Timer timer = new Timer(true);
     static final Map<Long, RiddleFactor> riddleSessionHolder = new HashMap<>();
 
     static final ArrayList<String> chineseNum = new ArrayList<>(Arrays.asList(
@@ -217,7 +219,7 @@ public class MahjongRiddle {
                 event.getSubject().sendMessage("麻将牌上的数字分别为：" + turnIntoChineseNum(rf));
 
                 //180s清空谜语重置标记
-                timer.schedule(new EndSessionTimerTask(sessionId, event), 180 * 1000);
+                timer.schedule(new EndSessionTimerTask(sessionId,event), 180 * 1000);
                 return riddleType.Start;
             }
         }
@@ -229,16 +231,12 @@ public class MahjongRiddle {
                 //检测这次结束之后是否全中，全中了则删除该flag
                 if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
                     event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
-                    BufferedImage img = null;
-                    img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
+                    BufferedImage img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
                     sendTileImage(img, event);
                     MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
                     return riddleType.Congratulation;
                 }
-                event.getSubject().sendMessage("中了!");
-                BufferedImage img = null;
-                img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
-                sendTileImage(img, event);
+                event.getSubject().sendMessage((new At(event.getSender().getId())).plus("中了!"));
                 return riddleType.Get;
             }
 

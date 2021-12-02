@@ -30,6 +30,5 @@ class EndSessionTimerTask extends TimerTask {
             //清空该Session
             MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
         }
-
     }
 }
