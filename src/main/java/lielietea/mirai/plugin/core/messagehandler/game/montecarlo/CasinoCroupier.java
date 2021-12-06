@@ -16,8 +16,6 @@ public class CasinoCroupier {
         return INSTANCE;
     }
 
-
-
     void wtf(){
 
     }

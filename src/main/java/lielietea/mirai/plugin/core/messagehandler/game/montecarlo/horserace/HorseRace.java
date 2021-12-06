@@ -1,0 +1,24 @@
+package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.horserace;
+
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.CasinoCroupier;
+import lielietea.mirai.plugin.utils.fileutils.Touch;
+
+import java.io.File;
+
+public class HorseRace {
+    private static final HorseRace INSTANCE;
+    final private static String HORSE_RACE_RECORD_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "horserace.json";
+
+    static {
+        INSTANCE = new HorseRace();
+        Touch.file(HORSE_RACE_RECORD_PATH);
+    }
+
+    public static HorseRace getINSTANCE() {
+        return INSTANCE;
+    }
+
+    void wtf(){
+
+    }
+}

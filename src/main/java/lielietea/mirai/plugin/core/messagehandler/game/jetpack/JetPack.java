@@ -6,14 +6,17 @@ import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPackUtil.*;
 
 public class JetPack extends BaiduAPI {
 
-    static final Timer timerJP = new Timer(true);
-    static final Timer timerILP = new Timer(true);
     static final Map<Long, JetPackUtil.locationRecord> isInLaunchProcess = new HashMap<>();
+    static final List<Long> hasCancelled = new ArrayList<>();
+    static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     public static void start(MessageEvent event) throws Exception {
         if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().contains("/yes") || event.getMessage().contentToString().contains("/no") || event.getMessage().contentToString().contains("/location") || event.getMessage().contentToString().contains("/abort") || event.getMessage().contentToString().contains("/landing") || event.getMessage().contentToString().contains("/record")) {
@@ -64,7 +67,7 @@ public class JetPack extends BaiduAPI {
                             isInLaunchProcess.put(event.getSender().getId(), lr);
 
                             //180s清空isInLaunchProcess标记
-                            timerILP.schedule(new TimerTask() {
+                            executor.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
                                     if (isInLaunchProcess.containsKey(event.getSender().getId())) {
@@ -72,7 +75,7 @@ public class JetPack extends BaiduAPI {
                                     }
                                     isInLaunchProcess.remove(event.getSender().getId());
                                 }
-                            }, 180 * 1000);
+                            }, 180,TimeUnit.SECONDS);
 
                         } else {
                             event.getSubject().sendMessage("七筒觉得你的地址有点不太靠谱，请重新输入。");
@@ -95,12 +98,16 @@ public class JetPack extends BaiduAPI {
                     event.getSubject().sendMessage("七筒正在使用喷气背包前往" + destinationName + "，预计抵达时间：" + JetPackUtil.getEstimatedArrivalTime(loc2, loc3, sdf.format(dateNow)));
                     isInLaunchProcess.remove(event.getSender().getId());
                     //抵达之后告知
-                    timerJP.schedule(new TimerTask() {
+                    executor.schedule(new TimerTask() {
                         @Override
                         public void run() {
+                            if(hasCancelled.contains(event.getSubject().getId())){
+                                hasCancelled.remove(event.getSubject().getId());
+                                return;
+                            }
                             event.getSubject().sendMessage("七筒已经抵达飞行目的地：" + destinationName + "，飞行时长为" + (int) flyingDurationM + "分钟");
                         }
-                    }, flyingDuration);
+                    }, flyingDuration, TimeUnit.MILLISECONDS);
                 } else {
                     event.getSubject().sendMessage("噢，看样子有人抢先飞行了。");
                 }
@@ -128,10 +135,10 @@ public class JetPack extends BaiduAPI {
                 Write.append(JetPackUtil.convertLocationRecord(newRecord), TXT_PATH);
                 if (!C2AToString(currentLocation).contains("目前暂不清楚七筒的位置。")) {
                     event.getSubject().sendMessage(C2AToString(currentLocation) + "，已经成功迫降。");
-                    timerJP.cancel();
+                    hasCancelled.add(event.getSubject().getId());
                 } else {
                     event.getSubject().sendMessage("七筒已经成功迫降。");
-                    timerJP.cancel();
+                    hasCancelled.add(event.getSubject().getId());
                 }
             }
             //获得完整的飞行记录
