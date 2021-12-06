@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.core;
 
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
@@ -58,6 +59,8 @@ public class MessageDispatcher {
     }
 
     public void handleMessage(MessageEvent event) {
+        //如果是bot就不响应
+        if(IdentityUtil.isBot(event)) return;
         //首先需要没有达到消息数限制
         if (!reachLimit(event)) {
             //最先交由ResponderManager处理

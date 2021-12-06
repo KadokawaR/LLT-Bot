@@ -1,12 +1,20 @@
 package lielietea.mirai.plugin.administration.statistics.MPSEHandler;
 
+import com.google.gson.annotations.SerializedName;
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+
 import java.util.Date;
 
 public class Data {
+    @SerializedName(value = "frM",alternate = {"friendMessage"})
     private int friendMessage;
+    @SerializedName(value = "grM",alternate = {"groupMessage"})
     private int groupMessage;
+    @SerializedName(value = "faM",alternate = {"failedMessage"})
     private int failedMessage;
+    @SerializedName(value = "dt",alternate = {"date"})
     private Date date;
+    private MultiBotHandler.BotName bn;
 
     Data(){
         this.friendMessage = 0;
@@ -15,25 +23,28 @@ public class Data {
         this.date = null;
     }
 
-    Data(Date date){
+    Data(Date date, MultiBotHandler.BotName bn){
         this.friendMessage = 0;
         this.groupMessage = 0;
         this.failedMessage = 0;
         this.date = date;
+        this.bn = bn;
     }
 
-    Data(Date date, int friendMessage, int groupMessage, int failedMessage){
+    Data(Date date, int friendMessage, int groupMessage, int failedMessage, MultiBotHandler.BotName bn){
         this.friendMessage = friendMessage;
         this.groupMessage = groupMessage;
         this.failedMessage = failedMessage;
         this.date = date;
+        this.bn = bn;
     }
 
-    Data(int friendMessage, int groupMessage, int failedMessage){
+    Data(int friendMessage, int groupMessage, int failedMessage, MultiBotHandler.BotName bn){
         this.friendMessage = friendMessage;
         this.groupMessage = groupMessage;
         this.failedMessage = failedMessage;
         this.date = null;
+        this.bn = bn;
     }
 
     public int getFriendMessage() {
@@ -66,5 +77,13 @@ public class Data {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public MultiBotHandler.BotName getBn() {
+        return bn;
+    }
+
+    public void setBn(MultiBotHandler.BotName bn) {
+        this.bn = bn;
     }
 }

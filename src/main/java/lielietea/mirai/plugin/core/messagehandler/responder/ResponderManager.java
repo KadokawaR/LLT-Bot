@@ -22,6 +22,7 @@ import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesS
 import lielietea.mirai.plugin.utils.exception.MessageEventTypeException;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.*;
 
 import java.util.*;
@@ -47,8 +48,11 @@ public class ResponderManager {
                            public void run() {
                                String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
-                               MessageUtil.notifyDevGroup(result);
-                               MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics());
+                               MessageUtil.notifyDevGroup(result,3628496803L);
+                               for(Bot bot: Bot.getInstances()){
+                                   MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()));
+                               }
+
                            }
                        },
                 StandardTimeUtil.getStandardFirstTime(0, 0, 1),

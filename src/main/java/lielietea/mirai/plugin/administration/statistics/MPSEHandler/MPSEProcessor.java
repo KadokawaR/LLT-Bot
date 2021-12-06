@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.messagehandler.game.fish.FishingUtil;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Write;
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+import net.mamoe.mirai.Bot;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -33,12 +35,10 @@ public class MPSEProcessor {
     public static DataList openData() throws IOException {
         touchDataFIle();
         DataList dataList = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(FILE_PATH)))), DataList.class);
-        System.out.println(dataList);
         if(dataList == null){
             dataList = new DataList();
-            dataList.addDataIntoDatas(new Data(new Date()));
+            dataList.addDataIntoDatas(new Data(new Date(), MultiBotHandler.BotName.Chitung));
         }
-        System.out.println(dataList);
         return dataList;
     }
 

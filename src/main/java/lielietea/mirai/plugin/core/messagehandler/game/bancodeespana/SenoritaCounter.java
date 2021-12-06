@@ -51,11 +51,11 @@ public class SenoritaCounter {
                 mcb.append((new At(event.getSender().getId())));
             }
 
-            mcb.append(" 您的余额为：\n\n");
-            mcb.append("南瓜比索：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.PumpkinPesos))).append("\n");
-            mcb.append("Akaoni：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Akaoni))).append("\n");
-            mcb.append("Antoninianus：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Antoninianus))).append("\n");
-            mcb.append("Adventurer's：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Adventurers)));
+            mcb.append("您的余额为");
+            mcb.append(" ").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.PumpkinPesos))).append(" 南瓜比索");
+            //mcb.append("Akaoni：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Akaoni))).append("\n");
+            //mcb.append("Antoninianus：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Antoninianus))).append("\n");
+            //mcb.append("Adventurer's：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Adventurers)));
             event.getSubject().sendMessage(mcb.asMessageChain());
         }
     }
@@ -78,6 +78,10 @@ public class SenoritaCounter {
                 }
             }
         }
+    }
+
+    public static void givePlayerMoney(MessageEvent event){
+        if(!IdentityUtil.isAdmin(event)) return;
     }
 
     public static boolean hasEnoughMoney(MessageEvent event, int money){

@@ -4,6 +4,7 @@ import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCou
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackPhase;
+import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
@@ -23,6 +24,8 @@ public class BlackJack extends BlackJackUtils {
     static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表如下：\n\n要牌 or /deal\n双倍下注 or /double\n停牌 or /fold\n下注对子 or /pair\n分牌 or /split\n买保险 or /assurance\n投降 or /surrender\n";
     static final String BustNotice = "您爆牌了。";
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
+
+    static final String BLACKJACK_INTRO_PATH = "pics/casino/blackjack.png";
 
     public List<BlackJackData> globalGroupData = new ArrayList<>();
     public List<BlackJackData> globalFriendData = new ArrayList<>();
@@ -86,6 +89,7 @@ public class BlackJack extends BlackJackUtils {
         }
 
         event.getSubject().sendMessage(BlackJackRules);
+        ImageSender.sendInternalImage(event.getSubject(),BLACKJACK_INTRO_PATH);
         cancelInSixtySeconds(event);
     }
 
@@ -142,6 +146,7 @@ public class BlackJack extends BlackJackUtils {
     public static void checkBet(MessageEvent event) {
         if (!isBet(event)) return;
         if (!isInGamingProcess(event)) return;
+        if(getGlobalData(event).get(indexInTheList(event)).getPhase()==BlackJackPhase.Operation) return;
         //判定数值是否正确
         Integer bet = getBet(event);
         System.out.println("收到下注"+bet);
@@ -204,6 +209,7 @@ public class BlackJack extends BlackJackUtils {
             //写入赌注
             addNewPlayer(event, bet);
             //进入发牌操作
+            changePhase(event, BlackJackPhase.Operation);
             cardShuffle(event);
             dealCards(event);
             showTheCards(event);

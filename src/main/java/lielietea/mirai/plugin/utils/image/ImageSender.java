@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.utils.image;
 
+import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.utils.ExternalResource;
@@ -51,5 +52,14 @@ public class ImageSender {
         ImageIO.write(image, "png", imOut);
         is = new ByteArrayInputStream(bs.toByteArray());
         contact.sendMessage(Contact.uploadImage(contact, is));
+    }
+
+    public static void sendInternalImage(Contact contact, String internalPicPath){
+        try (InputStream img = ImageSender.class.getResourceAsStream(internalPicPath)) {
+            assert img != null;
+            contact.sendMessage(Contact.uploadImage(contact, img));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

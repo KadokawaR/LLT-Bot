@@ -77,8 +77,13 @@ public class BancoDeEspana {
 
     //如没有该ID则新建账户
     public static void touchAccount(long ID){
+        //每进行一次操作都读取一次记录，保证多Bot情况下不构成冲突
+        try {
+            getINSTANCE().bankRecord=openRecord();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (!accountExists(ID)) {
-            //BankAccount BA = new BankAccount(ID);
             BankAccount BA = new BankAccount(ID);
             getINSTANCE().bankRecord.bankAccountList.add(BA);
         }

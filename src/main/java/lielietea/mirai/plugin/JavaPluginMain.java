@@ -16,6 +16,7 @@ import lielietea.mirai.plugin.core.MessageDispatcher;
 import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.IdentityUtil;
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.MemberPermission;
@@ -86,6 +87,8 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
+            if(!MultiBotHandler.canAnswerFriend(event.getBot().getId())) return;
+
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);
             //管理员功能
@@ -134,6 +137,8 @@ public final class JavaPluginMain extends JavaPlugin {
 
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
+
+            if(!MultiBotHandler.canAnswerGroup(event.getBot().getId())) return;
 
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);

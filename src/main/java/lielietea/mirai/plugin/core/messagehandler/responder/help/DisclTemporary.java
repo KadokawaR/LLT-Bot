@@ -24,7 +24,7 @@ public class DisclTemporary {
 
     public static void send(Contact contact){
         final String disclaimerPicPath = "/pics/help/Disclaimer.png";
-        try (InputStream img = FortuneTeller.class.getResourceAsStream(disclaimerPicPath)) {
+        try (InputStream img = DisclTemporary.class.getResourceAsStream(disclaimerPicPath)) {
             assert img != null;
             contact.sendMessage(Contact.uploadImage(contact, img));
         } catch (IOException e) {
