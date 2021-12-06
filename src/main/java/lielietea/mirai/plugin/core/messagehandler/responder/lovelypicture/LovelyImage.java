@@ -5,6 +5,7 @@ import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
 import lielietea.mirai.plugin.utils.exception.NoHandlerMethodMatchException;
 import lielietea.mirai.plugin.utils.image.AnimalImageURLResolver;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -14,7 +15,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 
-public class LovelyImage implements MessageResponder<GroupMessageEvent> {
+public class LovelyImage implements MessageResponder<MessageEvent> {
 
     static class ImageSource {
         static final String DOG_CEO_HUSKY = "https://dog.ceo/api/breed/husky/images/random";
@@ -39,7 +40,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
     static final Pattern DOBERMAN_REG_PATTERN = Pattern.compile("(((/[Dd]obermann?)|([oO][kK] 杜宾))|(((来点)|/)(杜宾)))");
     static final Pattern SAMOYED_REG_PATTERN = Pattern.compile("((/[Ss]amoyed)|([oO][kK] 萨摩耶))|(((来点)|/)(萨摩耶))");
 
-    static final Map<Pattern, Function<GroupMessageEvent, MessageChainPackage>> PATTERN_SUPPLIER_MAP = new HashMap<>();
+    static final Map<Pattern, Function<MessageEvent, MessageChainPackage>> PATTERN_SUPPLIER_MAP = new HashMap<>();
 
     static {
         {
@@ -69,50 +70,51 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
     }
 
 
-    static MessageChainPackage getDog(GroupMessageEvent event) {
+    static MessageChainPackage getDog(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.RANDOM_DOG, "狗", AnimalImageURLResolver.Source.RADNOM_DOG));
         return MessageChainPackage.getDefaultImpl(event, "正在获取狗狗>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getShiba(GroupMessageEvent event) {
+    static MessageChainPackage getShiba(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.SHIBE_ONLINE_SHIBA, "柴犬", AnimalImageURLResolver.Source.SHIBE_ONLINE));
         return MessageChainPackage.getDefaultImpl(event, "正在获取柴犬>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getHusky(GroupMessageEvent event) {
+    static MessageChainPackage getHusky(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_HUSKY, "哈士奇", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取哈士奇>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getBernese(GroupMessageEvent event) {
+    static MessageChainPackage getBernese(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_BERNESE, "伯恩山", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取伯恩山>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getMalamute(GroupMessageEvent event) {
+    static MessageChainPackage getMalamute(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_MALAMUTE, "阿拉斯加", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取阿拉斯加>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getGSD(GroupMessageEvent event) {
+    static MessageChainPackage getGSD(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_GSD, "德牧", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取德牧>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getSamoyed(GroupMessageEvent event) {
+    static MessageChainPackage getSamoyed(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_SAMOYED, "萨摩耶", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取萨摩耶>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getDoberman(GroupMessageEvent event) {
+    static MessageChainPackage getDoberman(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.DOG_CEO_DOBERMAN, "杜宾", AnimalImageURLResolver.Source.DOG_CEO));
         return MessageChainPackage.getDefaultImpl(event, "正在获取杜宾>>>>>>>", INSTANCE);
     }
 
-    static MessageChainPackage getCat(GroupMessageEvent event) {
+    static MessageChainPackage getCat(MessageEvent event) {
         INSTANCE.executor.submit(new AnimalImagePusher(event, ImageSource.SHIBE_ONLINE_CAT, "猫", AnimalImageURLResolver.Source.SHIBE_ONLINE));
         return MessageChainPackage.getDefaultImpl(event, "正在获取猫咪>>>>>>>", INSTANCE);
     }
+
 
     @Override
     public String getName() {
@@ -121,7 +123,7 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
 
 
     @Override
-    public boolean match(GroupMessageEvent event) {
+    public boolean match(MessageEvent event) {
         for (Pattern pattern : PATTERN_SUPPLIER_MAP.keySet()) {
             if (pattern.matcher(event.getMessage().contentToString()).matches())
                 return true;
@@ -130,8 +132,8 @@ public class LovelyImage implements MessageResponder<GroupMessageEvent> {
     }
 
     @Override
-    public MessageChainPackage handle(GroupMessageEvent event) throws NoHandlerMethodMatchException {
-        for (Map.Entry<Pattern, Function<GroupMessageEvent, MessageChainPackage>> entry : PATTERN_SUPPLIER_MAP.entrySet()) {
+    public MessageChainPackage handle(MessageEvent event) throws NoHandlerMethodMatchException {
+        for (Map.Entry<Pattern, Function<MessageEvent, MessageChainPackage>> entry : PATTERN_SUPPLIER_MAP.entrySet()) {
             if (entry.getKey().matcher(event.getMessage().contentToString()).matches()) {
                 return entry.getValue().apply(event);
             }

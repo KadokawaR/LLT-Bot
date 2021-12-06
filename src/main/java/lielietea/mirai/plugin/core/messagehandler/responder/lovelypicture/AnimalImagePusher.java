@@ -5,18 +5,19 @@ import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.utils.image.AnimalImageURLResolver;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 
 class AnimalImagePusher implements Runnable {
-    final GroupMessageEvent event;
+    final MessageEvent event;
     final String imageSource;
     final AnimalImageURLResolver.Source uRLResolver;
     final String type;
 
-    public AnimalImagePusher(GroupMessageEvent event, String imageSource, String type, AnimalImageURLResolver.Source uRLResolver) {
+    public AnimalImagePusher(MessageEvent event, String imageSource, String type, AnimalImageURLResolver.Source uRLResolver) {
         this.event = event;
         this.imageSource = imageSource;
         this.type = type;

@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.core.messagehandler.responder.mahjong;
 import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
@@ -12,9 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class FortuneTeller implements MessageResponder<GroupMessageEvent> {
+public class FortuneTeller implements MessageResponder<MessageEvent> {
 
-    static final List<MessageResponder.MessageType> TYPES = new ArrayList<>(Collections.singletonList(MessageResponder.MessageType.GROUP));
+    static final List<MessageResponder.MessageType> types = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
 
     public static int getMahjongOfTheDay(MessageEvent event) {
         //获取当日幸运数字
@@ -85,16 +86,17 @@ public class FortuneTeller implements MessageResponder<GroupMessageEvent> {
     @NotNull
     @Override
     public List<MessageType> types() {
-        return TYPES;
+        return types;
     }
 
     @Override
-    public boolean match(GroupMessageEvent event) {
+    public boolean match(MessageEvent event) {
         return event.getMessage().contentToString().equals("麻将") || event.getMessage().contentToString().contains("求签");
     }
 
+
     @Override
-    public MessageChainPackage handle(GroupMessageEvent event) {
+    public MessageChainPackage handle(MessageEvent event) {
         MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, this);
         builder.addTask(() -> {
             final String mahjongPicPath = "/pics/mahjong/" + getMahjong(getMahjongOfTheDay(event)) + ".png";

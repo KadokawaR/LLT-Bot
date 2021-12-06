@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler;
 
+import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
 import lielietea.mirai.plugin.core.MessageChainPackage;
 import net.mamoe.mirai.event.events.MessageEvent;
 
