@@ -54,12 +54,4 @@ public class ImageSender {
         contact.sendMessage(Contact.uploadImage(contact, is));
     }
 
-    public static void sendInternalImage(Contact contact, String internalPicPath){
-        try (InputStream img = ImageSender.class.getResourceAsStream(internalPicPath)) {
-            assert img != null;
-            contact.sendMessage(Contact.uploadImage(contact, img));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -7,7 +7,7 @@ public class Touch {
 
     public static boolean file(String path){
         File file = new File(path);
-
+        boolean res = file.exists();
         if(!file.exists()){
             try {
                 file.createNewFile();
@@ -15,16 +15,16 @@ public class Touch {
                 e.printStackTrace();
             }
         }
-        return file.exists();
+        return res;
     }
 
     public static boolean dir(String path){
         File file = new File(path);
-
+        boolean res = file.exists();
         if(!file.exists()){
             file.mkdir();
         }
-        return file.exists();
+        return res;
     }
 
 }

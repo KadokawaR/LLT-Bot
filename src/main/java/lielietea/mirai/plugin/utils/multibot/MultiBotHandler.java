@@ -19,7 +19,7 @@ public class MultiBotHandler {
         Chitung(340865180L),     //红七筒
         Chitung2(3628496803L),   //蓝七筒
         Chitung3(384087036L),    //引号
-        Chitung4(2429465624L );  //咕咕咕
+        Chitung4(2429465624L );  //黄七筒
 
         private final long value;
 
@@ -45,13 +45,9 @@ public class MultiBotHandler {
     MultiBotHandler(){}
 
     private static final MultiBotHandler INSTANCE;
+
     static {
         INSTANCE = new MultiBotHandler();
-        try {
-            initialize();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public BotConfigList botConfigList;
@@ -60,10 +56,14 @@ public class MultiBotHandler {
         return INSTANCE;
     }
 
-    public static void initialize() throws IOException {
+    public static void initialize(){
         getINSTANCE().botConfigList = new BotConfigList();
         if(Touch.file(BOT_CONFIGURATION_PATH)){
-            getINSTANCE().botConfigList = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(BOT_CONFIGURATION_PATH)))), BotConfigList.class);
+            try {
+                getINSTANCE().botConfigList = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(BOT_CONFIGURATION_PATH)))), BotConfigList.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             for (BotName bt : BotName.values()) {
                 getINSTANCE().botConfigList.botConfigs.add(new BotConfig(bt.getValue()));

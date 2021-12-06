@@ -14,6 +14,7 @@ public class Data {
     private int failedMessage;
     @SerializedName(value = "dt",alternate = {"date"})
     private Date date;
+    @SerializedName(value = "bn")
     private MultiBotHandler.BotName bn;
 
     Data(){

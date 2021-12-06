@@ -56,6 +56,8 @@ public final class JavaPluginMain extends JavaPlugin {
 
         ResponderManager.getINSTANCE().ini();
 
+        MultiBotHandler.getINSTANCE().initialize();
+
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
         });
@@ -87,7 +89,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
-            if(!MultiBotHandler.canAnswerFriend(event.getBot().getId())) return;
+            if(!MultiBotHandler.canAnswerGroup(event.getBot().getId())) return;
 
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);
@@ -95,10 +97,6 @@ public final class JavaPluginMain extends JavaPlugin {
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter
             GameCenter.handle(event);
-
-            //临时图片版本funct和helper
-            DisclTemporary.handle(event);
-            FunctTemporary.handle(event);
 
             //有关戳一戳的功能
             Nudge.mentionNudge(event);
@@ -138,7 +136,7 @@ public final class JavaPluginMain extends JavaPlugin {
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
 
-            if(!MultiBotHandler.canAnswerGroup(event.getBot().getId())) return;
+            if(!MultiBotHandler.canAnswerFriend(event.getBot().getId())) return;
 
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);

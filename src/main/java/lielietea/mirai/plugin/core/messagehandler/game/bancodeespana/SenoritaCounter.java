@@ -61,7 +61,8 @@ public class SenoritaCounter {
     }
 
     public static void moneyLaundry(MessageEvent event){
-        if ((IdentityUtil.isAdmin(event))&&(event.getMessage().contentToString().contains("/laundry "))){
+        if(!IdentityUtil.isAdmin(event)) return;
+        if (event.getMessage().contentToString().contains("/laundry ")){
             //如果有负号就是扣钱了
             if (event.getMessage().contentToString().contains("-")){
                 String amount = event.getMessage().contentToString().replace("/laundry -", "");
@@ -78,6 +79,18 @@ public class SenoritaCounter {
                 }
             }
         }
+
+        if(event.getMessage().contentToString().contains("/set ")){
+            String message = event.getMessage().contentToString();
+            String[] messageSplit = message.split(" ");
+            if(messageSplit.length!=3){
+                event.getSubject().sendMessage("设置金额失败。");
+                return;
+            }
+            BancoDeEspana.getINSTANCE().moneySetter(Currency.PumpkinPesos,Long.parseLong(messageSplit[1]),Double.parseDouble(messageSplit[2]));
+            event.getSubject().sendMessage("已设置成功。");
+        }
+
     }
 
     public static void givePlayerMoney(MessageEvent event){

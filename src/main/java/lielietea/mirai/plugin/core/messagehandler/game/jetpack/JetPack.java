@@ -1,10 +1,14 @@
 package lielietea.mirai.plugin.core.messagehandler.game.jetpack;
 
+import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import lielietea.mirai.plugin.utils.image.ImageSender;
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.MessageEvent;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,9 +21,10 @@ public class JetPack extends BaiduAPI {
     static final Map<Long, JetPackUtil.locationRecord> isInLaunchProcess = new HashMap<>();
     static final List<Long> hasCancelled = new ArrayList<>();
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    static final String JETPACK_INTRO_PATH = "/pics/jetpack/jetpack.png";
 
     public static void start(MessageEvent event) throws Exception {
-        if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().contains("/yes") || event.getMessage().contentToString().contains("/no") || event.getMessage().contentToString().contains("/location") || event.getMessage().contentToString().contains("/abort") || event.getMessage().contentToString().contains("/landing") || event.getMessage().contentToString().contains("/record")) {
+        if (event.getMessage().contentToString().equals("/jetpack") || event.getMessage().contentToString().equals("/yes") || event.getMessage().contentToString().equals("/no") || event.getMessage().contentToString().equals("/location") || event.getMessage().contentToString().equals("/abort") || event.getMessage().contentToString().equals("/landing") || event.getMessage().contentToString().equals("/record")) {
             List<JetPackUtil.locationRecord> recordMap = JetPackUtil.readRecord();
             Date arrivalTime;
             Location loc1;
@@ -51,7 +56,13 @@ public class JetPack extends BaiduAPI {
 
             //初始化的jetpack指令
             if (event.getMessage().contentToString().equals("/jetpack") || event.getMessage().contentToString().equals("/jetpack ")) {
-                event.getSubject().sendMessage("喷气背包时间到！\n\n七筒可以使用喷气背包飞抵任何地方。但目前七筒还没有办护照，所以暂时不能出国。输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者当前的飞行路线。\n\n请注意，输入的地点七筒不一定能够识别，所以请按照诸如“上海市徐家汇”、“长沙市坡子街茶颜悦色”、“上海市交通路与双汇路路口”、“长沙市五一广场”的格式输入地点。只有置信度相对高的地点七筒才能够到达。");
+                event.getSubject().sendMessage("喷气背包时间到！\n\n输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者当前的飞行路线。");
+                try (InputStream img = JetPack.class.getResourceAsStream(JETPACK_INTRO_PATH)) {
+                    assert img != null;
+                    event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             //用/jetpack + 地址来尝试构建新飞行
@@ -125,6 +136,7 @@ public class JetPack extends BaiduAPI {
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(recordMap.get(recordMap.size() - 1).lng, recordMap.get(recordMap.size() - 1).lat, recordMap.get(recordMap.size() - 1).locationName, JetPackUtil.sdf.format(dateNow));
                 Write.append(JetPackUtil.convertLocationRecord(newRecord), TXT_PATH);
                 event.getSubject().sendMessage("飞行已经被终止，七筒提前抵达目的地。");
+                return;
             }
             //迫降在当地 写入两条记录
             if (event.getMessage().contentToString().contains("/landing") && IdentityUtil.isAdmin(event)) {
@@ -136,18 +148,24 @@ public class JetPack extends BaiduAPI {
                 if (!C2AToString(currentLocation).contains("目前暂不清楚七筒的位置。")) {
                     event.getSubject().sendMessage(C2AToString(currentLocation) + "，已经成功迫降。");
                     hasCancelled.add(event.getSubject().getId());
+                    return;
                 } else {
                     event.getSubject().sendMessage("七筒已经成功迫降。");
                     hasCancelled.add(event.getSubject().getId());
+                    return;
                 }
             }
-            //获得完整的飞行记录
-            if (event.getMessage().contentToString().contains("/record") && IdentityUtil.isAdmin(event)) {
+            //获得最后25条飞行记录
+            if (event.getMessage().contentToString().contains("/record")) {
                 StringBuilder recordStr = new StringBuilder();
-                for (locationRecord lr : JetPackUtil.readRecord()) {
-                    recordStr.append(lr.locationName).append(",").append(lr.lng).append(",").append(lr.lat).append("\n");
+                List<locationRecord> lrList = JetPackUtil.readRecord();
+                int lrListSize = lrList.size();
+                int index = 0;
+                for (locationRecord lr : lrList) {
+                    if(index>=lrListSize-25) recordStr.append(lr.locationName).append(",").append((double) Math.round(lr.lng * 100) / 100).append(",").append((double) Math.round(lr.lat * 100) / 100).append("\n");
+                    index+=1;
                 }
-                event.getSender().sendMessage(recordStr.toString());
+                event.getSubject().sendMessage(recordStr.toString());
             }
         }
     }

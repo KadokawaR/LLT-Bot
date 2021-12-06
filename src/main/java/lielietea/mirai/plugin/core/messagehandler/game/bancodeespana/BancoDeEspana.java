@@ -64,6 +64,7 @@ public class BancoDeEspana {
         } finally {
             writeLock.unlock();
         }
+        getINSTANCE().bankRecord=openRecord();
 
     }
 
@@ -118,6 +119,58 @@ public class BancoDeEspana {
             case Akaoni: getINSTANCE().bankRecord.bankAccountList.get(index).akaoni=money; return;
             case Antoninianus: getINSTANCE().bankRecord.bankAccountList.get(index).antoninianus=money; return;
             case Adventurers: getINSTANCE().bankRecord.bankAccountList.get(index).adventurers=money; return;
+            case Other: otherCurrencyProtocol(index, money);
+        }
+    }
+
+    public void moneySetter(Currency kind, long ID, double money){
+        touchAccount(ID);
+        int index=0;
+        for(BankAccount BA : getINSTANCE().bankRecord.bankAccountList){
+            if (BA.ID==ID) break;
+            index+=1;
+        }
+        switch(kind){
+            case PumpkinPesos: {
+                getINSTANCE().bankRecord.bankAccountList.get(index).pumpkinPesos=(long)money;
+                //保存记录
+                try {
+                    writeRecord();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            case Akaoni: {
+                getINSTANCE().bankRecord.bankAccountList.get(index).akaoni=(long)money;
+                //保存记录
+                try {
+                    writeRecord();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            case Antoninianus: {
+                getINSTANCE().bankRecord.bankAccountList.get(index).antoninianus=(long)money;
+                //保存记录
+                try {
+                    writeRecord();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            case Adventurers: {
+                getINSTANCE().bankRecord.bankAccountList.get(index).adventurers=(long)money;
+                //保存记录
+                try {
+                    writeRecord();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
             case Other: otherCurrencyProtocol(index, money);
         }
     }
@@ -201,6 +254,12 @@ public class BancoDeEspana {
                     return true;
                 } else {
                     moneySetter(kind,index,0);
+                    //保存记录
+                    try {
+                        writeRecord();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             index += 1;

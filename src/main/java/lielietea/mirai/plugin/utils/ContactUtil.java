@@ -104,7 +104,7 @@ public class ContactUtil {
 
     // 向开发者发送退群提醒
     static void notifyDevWhenLeaveGroup(BotLeaveEvent event) {
-        MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "） 离开。");
+        MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "） 离开。",event.getBot().getId());
     }
 
     enum JoinGroupSourceType {

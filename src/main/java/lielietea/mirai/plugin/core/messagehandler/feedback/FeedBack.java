@@ -22,7 +22,7 @@ public class FeedBack implements MessageHandler<MessageEvent> {
     @Override
     public MessageChainPackage handle(MessageEvent event) {
         MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, this);
-        builder.addTask(() -> MessageUtil.notifyDevGroup("来自" + event.getSender().getId() + " - " + event.getSenderName() + "的反馈意见：\n\n" + event.getMessage().contentToString()));
+        builder.addTask(() -> MessageUtil.notifyDevGroup("来自" + event.getSender().getId() + " - " + event.getSenderName() + "的反馈意见：\n\n" + event.getMessage().contentToString(),event.getBot().getId()));
         builder.addMessage("您的意见我们已经收到。");
         return builder.build();
     }

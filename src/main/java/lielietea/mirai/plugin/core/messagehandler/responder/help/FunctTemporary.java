@@ -20,14 +20,14 @@ public class FunctTemporary implements MessageResponder<MessageEvent> {
 
     @Override
     public boolean match(MessageEvent event){
-        return event.getMessage().contentToString().contains("/funct")||event.getMessage().contentToString().contains("/功能");
+        return event.getMessage().contentToString().equals("/funct")||event.getMessage().contentToString().equals("查看功能");
     }
 
     @Override
     public MessageChainPackage handle(MessageEvent event){
         MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, this);
         if (match(event)){
-            send(event);
+            send(event.getSubject());
         }
         return builder.build();
     }
@@ -37,11 +37,11 @@ public class FunctTemporary implements MessageResponder<MessageEvent> {
         return "功能";
     }
 
-    public static void send(MessageEvent event){
+    public static void send(Contact contact){
         final String functionPicPath = "/pics/help/Function.png";
         try (InputStream img = FortuneTeller.class.getResourceAsStream(functionPicPath)) {
             assert img != null;
-            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
+            contact.sendMessage(Contact.uploadImage(contact, img));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,7 +49,5 @@ public class FunctTemporary implements MessageResponder<MessageEvent> {
 
     @NotNull
     @Override
-    public List<MessageType> types() {
-        return types;
-    }
+    public List<MessageType> types() { return types; }
 }

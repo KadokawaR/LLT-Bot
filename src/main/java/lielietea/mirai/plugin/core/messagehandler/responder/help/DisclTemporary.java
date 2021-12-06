@@ -15,6 +15,7 @@ import java.util.List;
 public class DisclTemporary implements MessageResponder<MessageEvent> {
 
     static final List<MessageType> types = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
+
     @Override
     public boolean match(MessageEvent event){
         return event.getMessage().contentToString().contains("/discl")||event.getMessage().contentToString().contains("/免责协议");

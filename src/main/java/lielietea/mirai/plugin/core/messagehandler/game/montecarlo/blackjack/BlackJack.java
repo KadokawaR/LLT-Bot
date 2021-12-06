@@ -4,13 +4,17 @@ import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCou
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackPhase;
+import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
 import lielietea.mirai.plugin.utils.image.ImageSender;
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class BlackJack extends BlackJackUtils {
@@ -25,7 +29,7 @@ public class BlackJack extends BlackJackUtils {
     static final String BustNotice = "您爆牌了。";
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
 
-    static final String BLACKJACK_INTRO_PATH = "pics/casino/blackjack.png";
+    static final String BLACKJACK_INTRO_PATH = "/pics/casino/blackjack.png";
 
     public List<BlackJackData> globalGroupData = new ArrayList<>();
     public List<BlackJackData> globalFriendData = new ArrayList<>();
@@ -89,7 +93,12 @@ public class BlackJack extends BlackJackUtils {
         }
 
         event.getSubject().sendMessage(BlackJackRules);
-        ImageSender.sendInternalImage(event.getSubject(),BLACKJACK_INTRO_PATH);
+        try (InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH)) {
+            assert img != null;
+            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         cancelInSixtySeconds(event);
     }
 
@@ -151,6 +160,20 @@ public class BlackJack extends BlackJackUtils {
         Integer bet = getBet(event);
         System.out.println("收到下注"+bet);
         if (bet == null) {
+            MessageChainBuilder mcb = mcbProcessor(event);
+            mcb.append(NotRightBetNumber);
+            event.getSubject().sendMessage(mcb.asMessageChain());
+            return;
+        }
+
+        if (bet<=0) {
+            MessageChainBuilder mcb = mcbProcessor(event);
+            mcb.append(NotRightBetNumber);
+            event.getSubject().sendMessage(mcb.asMessageChain());
+            return;
+        }
+
+        if (bet>999999) {
             MessageChainBuilder mcb = mcbProcessor(event);
             mcb.append(NotRightBetNumber);
             event.getSubject().sendMessage(mcb.asMessageChain());
@@ -661,7 +684,7 @@ public class BlackJack extends BlackJackUtils {
     //能否分牌
     public static boolean canSplitTheCards(MessageEvent event) {
         List<Integer> cardList = getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getCards();
-        return (cardList.size() == 2) && cardList.get(0).equals(cardList.get(1));
+        return (cardList.size() == 2) && cardPointCalculator(cardList.get(0)) == (cardPointCalculator(cardList.get(1)));
     }
 
     //能否双倍下注

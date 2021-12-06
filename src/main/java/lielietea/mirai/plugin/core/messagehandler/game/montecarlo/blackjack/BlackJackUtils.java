@@ -249,10 +249,10 @@ public class BlackJackUtils {
         if(event.getMessage().contentToString().equals("/adminsplit")){
             if(isGroupMessage(event)){
                 Integer firstCard = BlackJack.getINSTANCE().globalGroupData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).getCards().get(0);
-                BlackJack.getINSTANCE().globalGroupData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).getCards().set(1,firstCard);
+                BlackJack.getINSTANCE().globalGroupData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).getCards().set(1,firstCard+13);
             } else {
                 Integer firstCard = BlackJack.getINSTANCE().globalFriendData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).getCards().get(0);
-                BlackJack.getINSTANCE().globalFriendData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).getCards().set(1,firstCard);
+                BlackJack.getINSTANCE().globalFriendData.get(BlackJack.indexInTheList(event)).getBlackJackPlayerList().get(BlackJack.indexOfThePlayer(event)).getCards().set(1,firstCard+13);
             }
             event.getSubject().sendMessage("测试工具：已设置玩家前两张牌相同");
         }

@@ -12,6 +12,8 @@ import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.dinne
 import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.dinnerpicker.PizzaPicker;
 import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.drinkpicker.DrinkPicker;
 import lielietea.mirai.plugin.core.messagehandler.responder.fursona.FursonaPunk;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.core.messagehandler.responder.help.Help;
 import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.LotteryBummerMessageHandler;
 import lielietea.mirai.plugin.core.messagehandler.responder.lotterywinner.LotteryC4MessageHandler;
@@ -22,6 +24,7 @@ import lielietea.mirai.plugin.core.messagehandler.responder.overwatch.HeroLinesS
 import lielietea.mirai.plugin.utils.exception.MessageEventTypeException;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.*;
 
@@ -48,7 +51,7 @@ public class ResponderManager {
                            public void run() {
                                String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
-                               MessageUtil.notifyDevGroup(result,3628496803L);
+                               MessageUtil.notifyDevGroup(result, MultiBotHandler.BotName.Chitung.getValue());
                                for(Bot bot: Bot.getInstances()){
                                    MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()));
                                }
@@ -141,6 +144,8 @@ public class ResponderManager {
         register(AntiDirtyWord::new);
         register(Greeting::new);
         register(HeroLinesSelector::new);
+        register(FunctTemporary::new);
+        register(DisclTemporary::new);
         register(LovelyImage::getINSTANCE);
     }
 
