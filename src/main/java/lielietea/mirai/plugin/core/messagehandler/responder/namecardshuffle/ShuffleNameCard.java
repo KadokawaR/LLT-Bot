@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.core.messagehandler.responder.namecardshuffle;
 
 import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Member;
+import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 
@@ -44,6 +45,12 @@ public class ShuffleNameCard {
                 event.getGroup().sendMessage("七筒暂时没有管理员权限，请授予七筒管理员权限。");
             }
 
+        }
+    }
+
+    static class botPermissionChecker {
+        public static boolean check(GroupMessageEvent event) {
+            return ((event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR)) || (event.getGroup().getBotPermission().equals(MemberPermission.OWNER)));
         }
     }
 }
