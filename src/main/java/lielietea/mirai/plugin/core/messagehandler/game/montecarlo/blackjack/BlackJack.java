@@ -19,13 +19,13 @@ import java.util.*;
 
 public class BlackJack extends BlackJackUtils {
 
-    static final String BlackJackRules = "里格斯公司邀请您参与本局二十一点，请在60秒之内下注。";
-    static final String BlackJackStops = "本局二十一点已经取消。";
-    static final String NotRightBetNumber = "下注指令不正确，请重新再尝试";
+    static final String BlackJackRules = "里格斯公司邀请您参与本局 Blackjack，请在60秒之内输入 /bet+数字 参与游戏。";
+    static final String BlackJackStops = "本局 Roulette 已经取消。";
+    static final String NotRightBetNumber = "/bet 指令不正确，请重新再尝试";
     static final String YouDontHaveEnoughMoney = "操作失败，请检查您的南瓜比索数量。";
-    static final String StartBetNotice = "下注阶段已经开始，预计在60秒之内结束。可以通过/bet+金额反复追加下注。";
-    static final String EndBetNotice = "下注阶段已经结束。";
-    static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表如下：\n\n要牌 or /deal\n双倍下注 or /double\n停牌 or /fold\n下注对子 or /pair\n分牌 or /split\n买保险 or /assurance\n投降 or /surrender\n";
+    static final String StartBetNotice = "Bet 阶段已经开始，预计在60秒之内结束。可以通过/bet+金额反复追加 bet。";
+    static final String EndBetNotice = "Bet 阶段已经结束。";
+    static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表请参考说明书。";
     static final String BustNotice = "您爆牌了。";
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
 

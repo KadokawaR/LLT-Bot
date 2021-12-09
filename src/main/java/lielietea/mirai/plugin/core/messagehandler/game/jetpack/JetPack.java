@@ -24,7 +24,7 @@ public class JetPack extends BaiduAPI {
     static final String JETPACK_INTRO_PATH = "/pics/jetpack/jetpack.png";
 
     public static void start(MessageEvent event) throws Exception {
-        if (event.getMessage().contentToString().equals("/jetpack") || event.getMessage().contentToString().equals("/yes") || event.getMessage().contentToString().equals("/no") || event.getMessage().contentToString().equals("/location") || event.getMessage().contentToString().equals("/abort") || event.getMessage().contentToString().equals("/landing") || event.getMessage().contentToString().equals("/record")) {
+        if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().equals("/yes") || event.getMessage().contentToString().equals("/no") || event.getMessage().contentToString().equals("/location") || event.getMessage().contentToString().equals("/abort") || event.getMessage().contentToString().equals("/landing") || event.getMessage().contentToString().equals("/record")) {
             List<JetPackUtil.locationRecord> recordMap = JetPackUtil.readRecord();
             Date arrivalTime;
             Location loc1;

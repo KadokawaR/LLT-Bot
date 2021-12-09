@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.MessagePostSendEvent;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,8 +56,12 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
         if (event.getReceipt() == null) {
             updateCount(MultiBotHandler.BotName.get(event.getBot().getId()),MessageKind.FailedMessage,1);
             System.out.println("failedMessageCount++");
-            MessageUtil.notifyDevGroup(Objects.requireNonNull(event.getException()).getMessage());
-            MessageUtil.notifyDevGroup(Objects.requireNonNull(event.getReceipt().getSource().contentToString()));
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            mcb.append("getException().getMessage").append(Objects.requireNonNull(event.getException()).getMessage()).append("\n");
+            mcb.append("getReceipt().getSource().contentToString()").append(event.getReceipt().getSource().contentToString()).append("\n");
+            mcb.append("getMessage().contentToString()").append(event.getMessage().contentToString()).append("\n");
+            mcb.append("getTarget().getId()").append(String.valueOf(event.getTarget().getId()));
+            MessageUtil.notifyDevGroup(mcb.toString());
             return;
         }
 

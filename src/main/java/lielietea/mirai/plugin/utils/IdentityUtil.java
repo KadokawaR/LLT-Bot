@@ -16,7 +16,8 @@ public class IdentityUtil {
 
     static final Set<Long> adminList = ImmutableSet.of(
             2955808839L, //KADOKAWA
-            1811905537L //MARBLEGATE
+            1811905537L, //MARBLEGATE
+            493624254L   //感谢咕咕科提供账号
     );
 
     public static boolean isBot(long id){

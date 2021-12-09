@@ -5,6 +5,7 @@ import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.fish.Fishing;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.CasinoCroupier;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.BlackJack;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.FurryGamesIndex;
@@ -89,12 +90,15 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
-            if(!MultiBotHandler.canAnswerGroup(event.getBot().getId())) return;
+            if(!MultiBotHandler.canAnswerGroup(event)) return;
 
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
+            //多账户管理
+            MultiBotHandler.react(event);
+
             //GameCenter
             GameCenter.handle(event);
 
@@ -114,8 +118,8 @@ public final class JavaPluginMain extends JavaPlugin {
             //银行功能
             SenoritaCounter.go(event);
 
-            //blackjack
-            BlackJack.go(event);
+            //Casino
+            CasinoCroupier.handle(event);
 
             //MPSE 消息统计
             MessagePostSendEventHandler.getMPSEStatistics(event);
@@ -136,14 +140,15 @@ public final class JavaPluginMain extends JavaPlugin {
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
 
-            if(!MultiBotHandler.canAnswerFriend(event.getBot().getId())) return;
+            if(!MultiBotHandler.canAnswerFriend(event)) return;
 
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);
 
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
-
+            //多账户管理
+            MultiBotHandler.react(event);
 
             //BroadcastSystem
             try {
@@ -169,8 +174,8 @@ public final class JavaPluginMain extends JavaPlugin {
             //银行功能
             SenoritaCounter.go(event);
 
-            //blackjack
-            BlackJack.go(event);
+            //Casino
+            CasinoCroupier.handle(event);
 
             //MPSE 消息统计
             MessagePostSendEventHandler.getMPSEStatistics(event);
