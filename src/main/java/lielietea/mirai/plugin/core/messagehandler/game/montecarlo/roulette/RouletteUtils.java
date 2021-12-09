@@ -60,7 +60,7 @@ public class RouletteUtils extends IndicatorProcessor{
     static String feedbeckBetStatus(List<RouletteBet> betList){
         if(isAllWrong(betList)) return "未获得有效下注。";
         StringBuilder sb = new StringBuilder();
-        sb.append("收到：\n");
+        sb.append("已收到：\n");
         boolean hasUsedWrongIndicator = false;
         for(RouletteBet rb: betList){
             if(rb.indicator.equals(Indicator.Wrong)){
@@ -77,89 +77,72 @@ public class RouletteUtils extends IndicatorProcessor{
                 sb.append("下在").append(rb.location).append("的").append(rb.indicator.getName()).append("\n");
             }
         }
-        sb.append("共计").append(getBetAmount(betList)).append("注");
         if(hasUsedWrongIndicator){
-            sb.append("\n\n存在指示器使用错误，请仔细阅读说明书。");
+            sb.append("\n存在指示器使用错误，请仔细阅读说明书。");
         }
         return sb.toString();
     }
 
-    //设置新Table;
-    static Table<Long,Integer,Integer> setNewTable(List<Long> playerList){
-        Table<Long,Integer,Integer> playersTable = HashBasedTable.create();
-        for(Long ID:playerList){
-            for(int i=0;i<37;i++){
-                playersTable.put(ID,i,0);
-            }
-        }
-        return playersTable;
-    }
-
-    //设置FriendSettleAccount里面的新类
-    static Map<Integer,Integer> setNewMap(){
-        Map<Integer,Integer> playersMap = new HashMap<>();
+    //设置FriendSettleAccount
+    static void setNewTableForFriend(MessageEvent event){
         for(int i=0;i<37;i++){
-            playersMap.put(i,0);
+            Roulette.getINSTANCE().FriendSettleAccount.put(event.getSubject().getId(),i,0);
         }
-        return playersMap;
     }
 
-    //根据下注往Table里面塞赌注
-    static Table<Long,Integer,Integer> updateTable(Table<Long,Integer,Integer> originalTable, List<RouletteBet> rouletteBetList, long ID){
-        Table<Long,Integer,Integer> newTable = originalTable;
-        for(RouletteBet rb:rouletteBetList){
-            Set<Integer> someSet = new HashSet<>();
-            switch(rb.indicator){
-                case Black: someSet.addAll(RouletteAreas.Black);
-                case Red: someSet.addAll(RouletteAreas.Red);
-                case Odd: someSet.addAll(RouletteAreas.getOddArea());
-                case Even: someSet.addAll(RouletteAreas.getEvenArea());
-                case Line: someSet.addAll(RouletteAreas.getLineArea(rb.location));
-                case Column: someSet.addAll(RouletteAreas.getColumnArea(rb.location));
-                case Four: someSet.addAll(RouletteAreas.getFourArea(rb.location));
-                case Six: someSet.addAll(RouletteAreas.getSixArea(rb.location));
-                case Part: someSet.addAll(RouletteAreas.getPartArea(rb.location));
-                case Half: someSet.addAll(RouletteAreas.getHalfArea(rb.location));
-                case Number: someSet.add(rb.location);
-            }
-
-            Iterator<Integer> it = someSet.iterator();
-            while(it.hasNext()){
-                int itNext = it.next();
-                int originalValue = newTable.get(ID,itNext);
-                newTable.put(ID,it.next(),originalValue+rb.indicator.getTime());
-            }
+    //设置GroupSettleAccount
+    static void setNewMapForGroup(MessageEvent event){
+        Table <Long,Integer,Integer> tempTable = HashBasedTable.create();
+        for(int i=0;i<37;i++){
+            tempTable.put(event.getSender().getId(),i,0);
         }
-        return newTable;
+        Roulette.getINSTANCE().GroupSettleAccount.put(event.getSubject().getId(),tempTable);
     }
 
-    //根据下注往Map里面塞赌注
-    static Map<Long,Table<Long,Integer,Integer>> updateMap(Map<Long,Table<Long,Integer,Integer>> originalMap, List<RouletteBet> rouletteBetList, long playerID, long groupID){
-        Map<Long,Table<Long,Integer,Integer>> newMap = originalMap;
+    //根据下注往Table里面塞赌注 Friend
+    static void updateTable(List<RouletteBet> rouletteBetList, long ID){
+        Table<Long,Integer,Integer> newTable;
+        newTable = Roulette.getINSTANCE().FriendSettleAccount;
         for(RouletteBet rb:rouletteBetList){
-            Set<Integer> someSet = new HashSet<>();
-            switch(rb.indicator){
-                case Black: someSet.addAll(RouletteAreas.Black);
-                case Red: someSet.addAll(RouletteAreas.Red);
-                case Odd: someSet.addAll(RouletteAreas.getOddArea());
-                case Even: someSet.addAll(RouletteAreas.getEvenArea());
-                case Line: someSet.addAll(RouletteAreas.getLineArea(rb.location));
-                case Column: someSet.addAll(RouletteAreas.getColumnArea(rb.location));
-                case Four: someSet.addAll(RouletteAreas.getFourArea(rb.location));
-                case Six: someSet.addAll(RouletteAreas.getSixArea(rb.location));
-                case Part: someSet.addAll(RouletteAreas.getPartArea(rb.location));
-                case Half: someSet.addAll(RouletteAreas.getHalfArea(rb.location));
-                case Number: someSet.add(rb.location);
-            }
-
-            Iterator<Integer> it = someSet.iterator();
-            while(it.hasNext()){
-                int itNext = it.next();
-                int originalValue = newMap.get(groupID).get(playerID,itNext);
-                newMap.get(groupID).put(playerID,it.next(),originalValue+rb.indicator.getTime());
+            Set<Integer> someSet;
+            someSet=getSet(rb.location,rb.indicator);
+            for (int itNext : someSet) {
+                Integer originalValue = newTable.get(ID, itNext);
+                newTable.put(ID, itNext, originalValue + rb.indicator.getTime());
             }
         }
-        return newMap;
+    }
+
+    //根据下注往Map里面塞赌注 Group
+    static void updateMap(List<RouletteBet> rouletteBetList, long playerID, long groupID){
+        for(RouletteBet rb:rouletteBetList){
+            Set<Integer> someSet;
+            someSet=getSet(rb.location,rb.indicator);
+            for (int itNext : someSet) {
+                Integer originalValue = Roulette.getINSTANCE().GroupSettleAccount.get(groupID).get(playerID, itNext);
+                Roulette.getINSTANCE().GroupSettleAccount.get(groupID).put(playerID, itNext, rb.indicator.getTime() + originalValue);
+            }
+        }
+    }
+
+    static Set<Integer> getSet(Integer location,Indicator indicator){
+        Set<Integer> someSet = new HashSet<>();
+        System.out.println("开始获得 Set<Integer>");
+        System.out.println("指示器是"+indicator+" 位置是"+location);
+        switch(indicator){
+            case Black: someSet.addAll(RouletteAreas.Black); break;
+            case Red: someSet.addAll(RouletteAreas.Red); break;
+            case Odd: someSet.addAll(RouletteAreas.getOddArea()); break;
+            case Even: someSet.addAll(RouletteAreas.getEvenArea()); break;
+            case Line: someSet.addAll(RouletteAreas.getLineArea(location)); break;
+            case Column: someSet.addAll(RouletteAreas.getColumnArea(location)); break;
+            case Four: someSet.addAll(RouletteAreas.getFourArea(location)); break;
+            case Six: someSet.addAll(RouletteAreas.getSixArea(location)); break;
+            case Part: someSet.addAll(RouletteAreas.getPartArea(location)); break;
+            case Half: someSet.addAll(RouletteAreas.getHalfArea(location)); break;
+            case Number: someSet.add(location); break;
+        }
+        return someSet;
     }
 
 }

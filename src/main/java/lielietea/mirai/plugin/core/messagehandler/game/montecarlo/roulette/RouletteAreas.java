@@ -34,7 +34,8 @@ public class RouletteAreas {
     public static Set<Integer> getLineArea(Integer location){
         Set<Integer> res = new HashSet<>();
         res.add(location);
-        switch(location%3){
+        int remainder = location%3;
+        switch(remainder){
             case 0:
                 res.add(location-1);
                 res.add(location-2);
