@@ -1,6 +1,5 @@
 package lielietea.mirai.plugin.core.messagehandler.game.bancodeespana;
 
-import lielietea.mirai.plugin.administration.AdminTools;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -57,6 +56,22 @@ public class SenoritaCounter {
             //mcb.append("Antoninianus：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Antoninianus))).append("\n");
             //mcb.append("Adventurer's：").append(String.valueOf(getCertainNumber(event.getSender().getId(), Currency.Adventurers)));
             event.getSubject().sendMessage(mcb.asMessageChain());
+            return;
+        }
+
+        if(IdentityUtil.isAdmin(event)&&event.getMessage().contentToString().contains("/bank ")){
+            String message = event.getMessage().contentToString();
+            String[] messageSplit = message.split(" ");
+            if(messageSplit.length!=2){
+                event.getSubject().sendMessage("查询格式错误。");
+                return;
+            }
+            Double money = getCertainNumber(Long.parseLong(messageSplit[1]), Currency.PumpkinPesos);
+            if(money==null){
+                event.getSubject().sendMessage("未能查询该用户");
+            } else {
+                event.getSubject().sendMessage("该用户的银行余额是"+money+"南瓜比索。");
+            }
         }
     }
 

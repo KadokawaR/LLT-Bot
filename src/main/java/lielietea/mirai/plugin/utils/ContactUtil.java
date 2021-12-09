@@ -8,6 +8,7 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ContactUtil {
     public static final String JOIN_GROUP = "七爷来了！这里是烈烈茶店长七筒。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。";
@@ -19,7 +20,7 @@ public class ContactUtil {
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event) {
-
+        if(IdentityUtil.isAdmin(Objects.requireNonNull(event.getInvitor()).getId())) event.accept();
         if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
             event.getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
         } else {
@@ -30,6 +31,7 @@ public class ContactUtil {
 
     // 决定是否接收好友请求
     public static void handleFriendRequest(NewFriendRequestEvent event) {
+        if(IdentityUtil.isAdmin(event.getFromId())) event.accept();
         if (!MultiBotHandler.canAcceptFriend(event.getBot().getId())) return;
         event.accept();
     }
