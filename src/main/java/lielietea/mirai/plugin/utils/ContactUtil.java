@@ -20,9 +20,13 @@ public class ContactUtil {
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event) {
-        if(IdentityUtil.isAdmin(Objects.requireNonNull(event.getInvitor()).getId())) event.accept();
+        if(IdentityUtil.isAdmin(Objects.requireNonNull(event.getInvitor()).getId())) {
+            event.accept();
+            return;
+        }
         if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
             event.getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+            event.ignore();
         } else {
             event.accept();
         }
@@ -32,12 +36,23 @@ public class ContactUtil {
     // 决定是否接收好友请求
     public static void handleFriendRequest(NewFriendRequestEvent event) {
         if(IdentityUtil.isAdmin(event.getFromId())) event.accept();
-        if (!MultiBotHandler.canAcceptFriend(event.getBot().getId())) return;
+        if (!MultiBotHandler.canAcceptFriend(event.getBot().getId())) {
+            event.reject(false);
+            return;
+        }
         event.accept();
     }
 
     // 处理加群事件
     public static void handleJoinGroup(BotJoinGroupEvent event) {
+        if(!MultiBotHandler.canAcceptGroup(event.getBot().getId())){
+            ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+            event.getGroup().quit();
+            String content = "由于目前Bot不接受添加群聊，已从 "+event.getGroup().getName()+"("+event.getGroup().getId()+")"+"出逃。";
+            MessageUtil.notifyDevGroup(content,event.getBot().getId());
+            return;
+        }
+
         // 正常通过群邀请加群
         sendNoticeWhenJoinGroup(event);
         notifyDevWhenJoinGroup(event, JoinGroupSourceType.INVITE);

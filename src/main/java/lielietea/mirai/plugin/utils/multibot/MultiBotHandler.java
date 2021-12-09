@@ -21,10 +21,10 @@ public class MultiBotHandler {
 
     final static String BOT_CONFIGURATION_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "botconfig.json";
     public enum BotName{
-        Chitung(340865180L),     //红七筒
-        Chitung2(3628496803L),   //蓝七筒
-        Chitung3(384087036L),    //引号
-        Chitung4(2429465624L );  //黄七筒
+        //Chitung(340865180L),     //红七筒
+        Chitung1(3628496803L),   //蓝七筒
+        Chitung2(2429465624L ),  //黄七筒
+        Chitung3(3582637350L);    //绿七筒
 
         private final long value;
 
@@ -53,6 +53,7 @@ public class MultiBotHandler {
 
     static {
         INSTANCE = new MultiBotHandler();
+        initialize();
     }
 
     public BotConfigList botConfigList;
@@ -70,6 +71,9 @@ public class MultiBotHandler {
                 e.printStackTrace();
             }
         } else {
+            for (BotName bt : BotName.values()) {
+                getINSTANCE().botConfigList.botConfigs.add(new BotConfig(bt.getValue()));
+            }
             writeRecord();
         }
     }
@@ -84,9 +88,6 @@ public class MultiBotHandler {
     }
 
     public static void writeRecord(){
-        for (BotName bt : BotName.values()) {
-            getINSTANCE().botConfigList.botConfigs.add(new BotConfig(bt.getValue()));
-        }
         String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(getINSTANCE().botConfigList);
         Write.cover(jsonString, BOT_CONFIGURATION_PATH);
     }
@@ -109,6 +110,7 @@ public class MultiBotHandler {
                 sb.append("\n").append(bot.getId()).append(" ").append(bot.getNick());
             }
         }
+        if(Bot.getInstances().size()==1) sb.append("\n\n艹 我们没号了，你先别加群了。");
         return sb.toString();
     }
 
@@ -153,19 +155,36 @@ public class MultiBotHandler {
                 event.getSubject().sendMessage("/config指示器使用错误。");
                 return;
             }
+            if(Boolean.parseBoolean(messageSplit[2]) &&!messageSplit[2].contains("r")){
+                event.getSubject().sendMessage("Boolean设置错误。");
+                return;
+            }
+            if(!Boolean.parseBoolean(messageSplit[2]) &&!messageSplit[2].contains("a")){
+                event.getSubject().sendMessage("Boolean设置错误。");
+                return;
+            }
+
             getINSTANCE().botConfigList = readRecord();
             switch(messageSplit[1]){
                 case "1":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAcceptFriend(Boolean.getBoolean(messageSplit[2]));
+                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAcceptFriend(Boolean.parseBoolean(messageSplit[2]));
+                    event.getSubject().sendMessage("已设置acceptFriend为"+Boolean.parseBoolean(messageSplit[2]));
+                    break;
                 }
                 case "2":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAcceptGroup(Boolean.getBoolean(messageSplit[2]));
+                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAcceptGroup(Boolean.parseBoolean(messageSplit[2]));
+                    event.getSubject().sendMessage("已设置acceptGroup为"+Boolean.parseBoolean(messageSplit[2]));
+                    break;
                 }
                 case "3":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerFriend(Boolean.getBoolean(messageSplit[2]));
+                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
+                    event.getSubject().sendMessage("已设置answerFriend为"+Boolean.parseBoolean(messageSplit[2]));
+                    break;
                 }
                 case "4":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerGroup(Boolean.getBoolean(messageSplit[2]));
+                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
+                    event.getSubject().sendMessage("已设置answerGroup为"+Boolean.parseBoolean(messageSplit[2]));
+                    break;
                 }
             }
             writeRecord();

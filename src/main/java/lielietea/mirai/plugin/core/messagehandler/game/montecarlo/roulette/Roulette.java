@@ -3,12 +3,16 @@ package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.roulette;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.BlackJack;
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +43,7 @@ public class Roulette extends RouletteUtils{
 
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-    static final int GAP_SECONDS = 30;
+    static final int GAP_SECONDS = 60;
 
     static final String RouletteRules = "里格斯公司邀请您参与本局 Roulette，请在60秒之内输入 /bet+数字 参与游戏。";
     static final String RouletteStops = "本局 Roulette 已经取消。";
@@ -50,6 +54,9 @@ public class Roulette extends RouletteUtils{
     static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表请参考说明书。";
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
 
+    static final String ROULETTE_INTRO_PATH = "/pics/casino/roulette.png";
+    static final String ROULETTE_INSTRUCTIONS_PATH = "/pics/casino/roulette_instructions.png";
+
     public static void go(MessageEvent event){
         start(event);
         preBet(event);
@@ -59,6 +66,14 @@ public class Roulette extends RouletteUtils{
     public static void start(MessageEvent event){
         if(!isRoulette(event)) return;
         event.getSubject().sendMessage(RouletteRules);
+
+        try (InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH)) {
+            assert img != null;
+            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if(isGroupMessage(event)){
             getINSTANCE().GroupStatusMap.put(event.getSubject().getId(),StatusType.Callin);
         } else {
@@ -240,6 +255,14 @@ public class Roulette extends RouletteUtils{
             getINSTANCE().FriendStatusMap.put(event.getSubject().getId(),StatusType.Bet);
         }
         event.getSubject().sendMessage(new MessageChainBuilder().append(EndBetNotice).append(StartOperateNotice).asMessageChain());
+
+        try (InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INSTRUCTIONS_PATH)) {
+            assert img != null;
+            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         executor.schedule(new EndBet(event),GAP_SECONDS*2,TimeUnit.SECONDS);
     }
 

@@ -9,7 +9,6 @@ public class IdentityUtil {
     static final Set<Long> botList = ImmutableSet.of(
             340865180L, // 本体
             3628496803L, // 欧洲测试服务
-            384087036L, // 客服：引号
             3621269439L, //wymTbot 维护者 1875018140
             736951095L //未知
     );

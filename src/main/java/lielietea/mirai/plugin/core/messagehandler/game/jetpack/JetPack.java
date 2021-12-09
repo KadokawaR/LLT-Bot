@@ -162,7 +162,7 @@ public class JetPack extends BaiduAPI {
                 int lrListSize = lrList.size();
                 int index = 0;
                 for (locationRecord lr : lrList) {
-                    if(index>=lrListSize-25) recordStr.append(lr.locationName).append(",").append((double) Math.round(lr.lng * 100) / 100).append(",").append((double) Math.round(lr.lat * 100) / 100).append("\n");
+                    if(index>=lrListSize-10) recordStr.append(lr.locationName).append(",").append((double) Math.round(lr.lng * 100) / 100).append(",").append((double) Math.round(lr.lat * 100) / 100).append("\n");
                     index+=1;
                 }
                 event.getSubject().sendMessage(recordStr.toString());

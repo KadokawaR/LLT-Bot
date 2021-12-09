@@ -37,7 +37,7 @@ public class MPSEProcessor {
         DataList dataList = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(FILE_PATH)))), DataList.class);
         if(dataList == null){
             dataList = new DataList();
-            dataList.addDataIntoDatas(new Data(new Date(), MultiBotHandler.BotName.Chitung));
+            dataList.addDataIntoDatas(new Data(new Date(), MultiBotHandler.BotName.Chitung1));
         }
         return dataList;
     }

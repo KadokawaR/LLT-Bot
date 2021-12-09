@@ -51,7 +51,7 @@ public class ResponderManager {
                            public void run() {
                                String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
                                //Notify Devs
-                               MessageUtil.notifyDevGroup(result, MultiBotHandler.BotName.Chitung.getValue());
+                               MessageUtil.notifyDevGroup(result, MultiBotHandler.BotName.Chitung1.getValue());
                                for(Bot bot: Bot.getInstances()){
                                    MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()));
                                }
