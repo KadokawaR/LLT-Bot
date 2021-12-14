@@ -92,13 +92,10 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.add(new BlackJackData(event.getSubject().getId()));
         }
 
-        event.getSubject().sendMessage(BlackJackRules);
-        try (InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH)) {
-            assert img != null;
-            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH);
+        assert img != null;
+        event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
+
         cancelInSixtySeconds(event);
     }
 
@@ -476,19 +473,14 @@ public class BlackJack extends BlackJackUtils {
     public static void playerOperation(MessageEvent event) {
         if (bjOperation(event) == null) return;
         if (!isInGamingProcess(event)) return;
-        System.out.println("可否进行操作："+String.valueOf(operationAvailabilityCheck(event)));
         if (!operationAvailabilityCheck(event)) return;
 
         //主操作
-        System.out.println("开始主操作");
         startOperation(event);
         //操作完之后判定是否都fold
-        System.out.println("是否都fold："+String.valueOf(haveAllFolded(event)));
         if (!haveAllFolded(event)) return;
-        System.out.println("取消 endOperationTimer");
         endOperationTimer(event);
         //结算了
-        System.out.println("开始结算");
         resultCalculator(event);
     }
 

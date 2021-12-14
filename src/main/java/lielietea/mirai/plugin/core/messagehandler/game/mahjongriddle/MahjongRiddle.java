@@ -62,13 +62,24 @@ public class MahjongRiddle {
 
     //用一个String生成连图
     public static BufferedImage getTileImage(String[] Tiles) throws IOException {
+
+        boolean randomBool = new Random().nextBoolean();
         BufferedImage img0 = null;
+
         for (String tile : Tiles) {
-            String MAHJONG_PIC_PATH = "/pics/mahjong/" + tile + ".png";
+            String MAHJONG_PIC_PATH = "/pics/mahjong/";
+
+            if(randomBool){
+                MAHJONG_PIC_PATH += "Red/";
+            } else {
+                MAHJONG_PIC_PATH += "Yellow/";
+            }
+            MAHJONG_PIC_PATH = MAHJONG_PIC_PATH + tile + ".png";
+
             InputStream is = MahjongRiddle.class.getResourceAsStream(MAHJONG_PIC_PATH);
             BufferedImage img = ImageIO.read(is);
             int w1 = 0;
-            int h1 = 480;
+            int h1 = img.getHeight();
             if (img0 != null) {
                 w1 = img0.getWidth();
             }

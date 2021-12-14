@@ -7,6 +7,7 @@ import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -97,22 +98,28 @@ public class FortuneTeller implements MessageResponder<MessageEvent> {
 
     @Override
     public MessageChainPackage handle(MessageEvent event) {
-        MessageChainPackage.Builder builder = new MessageChainPackage.Builder(event, this);
-        builder.addTask(() -> {
-            final String mahjongPicPath = "/pics/mahjong/" + getMahjong(getMahjongOfTheDay(event)) + ".png";
-            try (InputStream img = FortuneTeller.class.getResourceAsStream(mahjongPicPath)) {
-                assert img != null;
-                event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        if(event.getClass().equals(GroupMessageEvent.class)){
-            builder.addMessage(new At(event.getSender().getId()).plus(whatDoesMahjongSay(event)));
+        String mahjongPicPath = "/pics/mahjong/";
+        if(new Random().nextBoolean()){
+            mahjongPicPath += "Red/";
         } else {
-            builder.addMessage(whatDoesMahjongSay(event));
+            mahjongPicPath += "Yellow/";
         }
-        return builder.build();
+        mahjongPicPath += getMahjong(getMahjongOfTheDay(event)) + ".png";
+
+        try (InputStream img = FortuneTeller.class.getResourceAsStream(mahjongPicPath)) {
+            assert img != null;
+            if(event.getClass().equals(GroupMessageEvent.class)){
+                MessageChainBuilder mcb = new MessageChainBuilder();
+                return MessageChainPackage.getDefaultImpl(event,mcb.append(new At(event.getSender().getId())).append(whatDoesMahjongSay(event)).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain(),this);
+            } else {
+                MessageChainBuilder mcb = new MessageChainBuilder();
+                return MessageChainPackage.getDefaultImpl(event,mcb.append(whatDoesMahjongSay(event)).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain(),this);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("求签发送出故障");
+        }
+        return null;
     }
 
     @Override

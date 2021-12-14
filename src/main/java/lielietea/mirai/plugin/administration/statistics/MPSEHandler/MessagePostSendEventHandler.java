@@ -9,9 +9,7 @@ import net.mamoe.mirai.event.events.MessagePostSendEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,10 +33,10 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
     static {
         INSTANCE = new MessagePostSendEventHandler();
         getINSTANCE().messageCountTable = HashBasedTable.create();
-        for(MultiBotHandler.BotName bn: MultiBotHandler.BotName.values()){
-            getINSTANCE().messageCountTable.put(bn, MessageKind.FriendMessage, 0);
-            getINSTANCE().messageCountTable.put(bn, MessageKind.GroupMessage, 0);
-            getINSTANCE().messageCountTable.put(bn, MessageKind.FailedMessage, 0);
+        for(Bot bot: Bot.getInstances()){
+            getINSTANCE().messageCountTable.put(Objects.requireNonNull(MultiBotHandler.BotName.get(bot.getId())), MessageKind.FriendMessage, 0);
+            getINSTANCE().messageCountTable.put(Objects.requireNonNull(MultiBotHandler.BotName.get(bot.getId())), MessageKind.GroupMessage, 0);
+            getINSTANCE().messageCountTable.put(Objects.requireNonNull(MultiBotHandler.BotName.get(bot.getId())), MessageKind.FailedMessage, 0);
         }
         executor.schedule(mainTask, 1, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(mainTask, 5, 5, TimeUnit.MINUTES);
@@ -57,10 +55,8 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
             updateCount(MultiBotHandler.BotName.get(event.getBot().getId()),MessageKind.FailedMessage,1);
             System.out.println("failedMessageCount++");
             MessageChainBuilder mcb = new MessageChainBuilder();
-            mcb.append("getException().getMessage").append(Objects.requireNonNull(event.getException()).getMessage()).append("\n");
-            mcb.append("getReceipt().getSource().contentToString()").append(event.getReceipt().getSource().contentToString()).append("\n");
-            mcb.append("getMessage().contentToString()").append(event.getMessage().contentToString()).append("\n");
-            mcb.append("getTarget().getId()").append(String.valueOf(event.getTarget().getId()));
+            mcb.append(Objects.requireNonNull(event.getException()).getMessage()).append("\n");
+            mcb.append(String.valueOf(event.getTarget().getId()));
             MessageUtil.notifyDevGroup(mcb.toString());
             return;
         }
@@ -101,8 +97,8 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
             try {
                 getINSTANCE().dataList = openData();
                 System.out.println("获得opendata");
-                for(MultiBotHandler.BotName bn: MultiBotHandler.BotName.values()){
-                    updateDataList(bn.getValue());
+                for(Bot bot : Bot.getInstances()){
+                    updateDataList(bot.getId());
                 }
                 System.out.println("更新data");
                 writeData(getINSTANCE().dataList);

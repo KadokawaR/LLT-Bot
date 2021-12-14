@@ -53,7 +53,7 @@ public class ResponderManager {
                                //Notify Devs
                                MessageUtil.notifyDevGroup(result, MultiBotHandler.BotName.Chitung1.getValue());
                                for(Bot bot: Bot.getInstances()){
-                                   MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()));
+                                   MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()), bot.getId());
                                }
 
                            }

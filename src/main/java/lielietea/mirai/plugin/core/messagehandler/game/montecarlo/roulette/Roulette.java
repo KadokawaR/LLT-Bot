@@ -64,15 +64,11 @@ public class Roulette extends RouletteUtils{
     }
 
     public static void start(MessageEvent event){
-        if(!isRoulette(event)) return;
-        event.getSubject().sendMessage(RouletteRules);
 
-        try (InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH)) {
-            assert img != null;
-            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(!isRoulette(event)) return;
+        InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH);
+        assert img != null;
+        event.getSubject().sendMessage(new MessageChainBuilder().append(RouletteRules).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
 
         if(isGroupMessage(event)){
             getINSTANCE().GroupStatusMap.put(event.getSubject().getId(),StatusType.Callin);
@@ -92,7 +88,7 @@ public class Roulette extends RouletteUtils{
 
         @Override
         public void run() {
-            boolean isStillInCallin=false;
+            boolean isStillInCallin;
             if(isGroupMessage(event)){
                 isStillInCallin = getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Callin);
             } else {
@@ -230,7 +226,7 @@ public class Roulette extends RouletteUtils{
 
     static class EndPreBet implements Runnable{
 
-        private MessageEvent event;
+        private final MessageEvent event;
         EndPreBet(MessageEvent event){
             this.event = event;
         }
@@ -267,7 +263,7 @@ public class Roulette extends RouletteUtils{
     }
 
     static class EndBet implements Runnable{
-        private MessageEvent event;
+        private final MessageEvent event;
         EndBet(MessageEvent event){
             this.event = event;
         }

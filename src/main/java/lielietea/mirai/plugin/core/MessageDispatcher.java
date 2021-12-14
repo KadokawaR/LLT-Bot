@@ -18,9 +18,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MessageDispatcher {
-    final static int GROUP_MESSAGE_LIMIT_PER_MIN = 30;
-    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 6;
-    final static int PERSONAL_MESSAGE_LIMIT_PER_DAY = 120;
+    final static int GROUP_MESSAGE_LIMIT_PER_MIN = 12;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 3;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_DAY = 60;
     final static int DAILY_MESSAGE_LIMIT = 4800;
     final static MessageDispatcher INSTANCE = new MessageDispatcher();
     final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
@@ -59,8 +59,6 @@ public class MessageDispatcher {
     }
 
     public void handleMessage(MessageEvent event) {
-        //如果是bot就不响应
-        if(IdentityUtil.isBot(event)) return;
         //首先需要没有达到消息数限制
         if (!reachLimit(event)) {
             //最先交由ResponderManager处理
