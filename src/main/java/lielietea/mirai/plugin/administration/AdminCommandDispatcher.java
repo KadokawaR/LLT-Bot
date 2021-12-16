@@ -28,6 +28,7 @@ public class AdminCommandDispatcher {
         AdminTools.getINSTANCE().handleAdminCommand(event);
         //MPSE 消息统计
         MessagePostSendEventHandler.getMPSEStatistics(event);
+        MessagePostSendEventHandler.checkBreaker(event);
         //多账户管理
         MultiBotHandler.react(event);
         //GameCenter统计

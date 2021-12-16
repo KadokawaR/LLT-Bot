@@ -8,6 +8,7 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -56,13 +57,13 @@ public class ContactUtil {
             event.getGroup().sendMessage("反正是开发组，咱没话说。");
             return;
         }
-        executor.scheduleWithFixedDelay(() -> {
+        executor.schedule(() -> {
             //管理员判定
             if(!IdentityUtil.isAdmin(((BotJoinGroupEvent.Invite) event).getInvitor().getId())) {
                 if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
                     ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     event.getGroup().quit();
-                    String content = "由于目前Bot不接受添加群聊，已从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
+                    String content = "由于目前Bot不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
                     return;
                 }
@@ -77,7 +78,17 @@ public class ContactUtil {
             }
 
             //检测是否有其他七筒
-            quitWhenFindAnotherChitung(event);
+            for(NormalMember nm:event.getGroup().getMembers()){
+                for(Bot bot:Bot.getInstances()){
+                    if (bot.getId()==(event.getBot().getId())) continue;
+                    if (nm.getId()==bot.getId()){
+                        if(nm.getId()<bot.getId()) continue;//很重要的判定！两个七筒只有一个退群！
+                        event.getGroup().sendMessage("检测到其他在线七筒账户在此群聊中，本机器人将自动退群。");
+                        executor.schedule(() -> event.getGroup().quit(),15,TimeUnit.SECONDS);
+                        return;
+                    }
+                }
+            }
 
             // 正常通过群邀请加群
             sendNoticeWhenJoinGroup(event,IdentityUtil.containsUnusedBot(event.getGroup()));
@@ -90,8 +101,7 @@ public class ContactUtil {
                 e.printStackTrace();
             }
             DisclTemporary.send(event.getGroup());
-        },0,15,TimeUnit.SECONDS);
-
+        },0,TimeUnit.SECONDS);
 
     }
 
@@ -148,25 +158,9 @@ public class ContactUtil {
 
     // 向开发者发送退群提醒
     static void notifyDevWhenLeaveGroup(BotLeaveEvent event) {
-        MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "） 离开。",event.getBot().getId());
-    }
-
-    //如果检测到有其他账号，立马跑路
-    static void quitWhenFindAnotherChitung(BotJoinGroupEvent event){
-        for(NormalMember nm:event.getGroup().getMembers()){
-            for(Bot bot:Bot.getInstances()){
-                if (bot.getId()==(event.getBot().getId())) continue;
-                if (nm.getId()==bot.getId()){
-                    event.getGroup().sendMessage("检测到其他在线七筒账户在此群聊中，本机器人将自动退群。");
-                    executor.scheduleWithFixedDelay(new Runnable() {
-                        @Override
-                        public void run() {
-                            event.getGroup().quit();
-                        }
-                    },0,15,TimeUnit.SECONDS);
-
-                }
-            }
+        //todo:Mirai开发者告知这个写法可能不稳定
+        if(event instanceof  BotLeaveEvent.Kick) {
+            MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "） 离开。", event.getBot().getId());
         }
     }
 

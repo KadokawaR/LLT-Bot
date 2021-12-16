@@ -68,7 +68,7 @@ public class Roulette extends RouletteUtils{
         InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH);
         assert img != null;
         GameCenterCount.count(GameCenterCount.Functions.RouletteStart);
-        event.getSubject().sendMessage(new MessageChainBuilder().append(RouletteRules).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
+        event.getSubject().sendMessage(new MessageChainBuilder().append(RouletteRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
 
         if(isGroupMessage(event)){
             getINSTANCE().GroupStatusMap.put(event.getSubject().getId(),StatusType.Callin);

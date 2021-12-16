@@ -93,7 +93,7 @@ public class BlackJack extends BlackJackUtils {
         InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH);
         assert img != null;
         GameCenterCount.count(GameCenterCount.Functions.BlackjackStart);
-        event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
+        event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
 
         cancelInSixtySeconds(event);
     }

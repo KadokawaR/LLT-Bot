@@ -21,7 +21,7 @@ public class GameCenterCount {
         for(Functions funct:Functions.values()){
             countMap.put(funct,0);
         }
-        executor.scheduleAtFixedRate(new AutoClear(),(long)0.1,6, TimeUnit.HOURS);
+        executor.scheduleAtFixedRate(new AutoClear(),6,6, TimeUnit.HOURS);
 
     }
     static public GameCenterCount getINSTANCE() {

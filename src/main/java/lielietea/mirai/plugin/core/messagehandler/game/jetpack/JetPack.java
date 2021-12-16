@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.utils.fileutils.Write;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,19 @@ public class JetPack extends BaiduAPI {
     public static void start(MessageEvent event){
         if(TEMP_SOLUTION_REG.matcher(event.getMessage().contentToString()).matches()) return;
         if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().equals("/yes") || event.getMessage().contentToString().equals("/no") || event.getMessage().contentToString().equals("/location") || event.getMessage().contentToString().equals("/abort") || event.getMessage().contentToString().equals("/landing") || event.getMessage().contentToString().equals("/record")) {
+            //初始化的jetpack指令
+            if (event.getMessage().contentToString().equals("/jetpack") || event.getMessage().contentToString().equals("/jetpack ")) {
+                GameCenterCount.count(GameCenterCount.Functions.JetpackInfo);
+                try (InputStream img = JetPack.class.getResourceAsStream(JETPACK_INTRO_PATH)) {
+                    assert img != null;
+                    MessageChainBuilder mcb = new MessageChainBuilder();
+                    event.getSubject().sendMessage(mcb.append("喷气背包时间到！\n\n输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者当前的飞行路线。\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+
             List<JetPackUtil.locationRecord> recordMap = JetPackUtil.readRecord();
             Date arrivalTime = null;
             Location loc1;
@@ -62,19 +76,6 @@ public class JetPack extends BaiduAPI {
                     }
                     event.getSubject().sendMessage(currentLocationStr + "。" + "七筒正在前往" + destinationName + "，预计抵达时间：" + JetPackUtil.sdf.format(arrivalTime));
                 }
-            }
-
-            //初始化的jetpack指令
-            if (event.getMessage().contentToString().equals("/jetpack") || event.getMessage().contentToString().equals("/jetpack ")) {
-                GameCenterCount.count(GameCenterCount.Functions.JetpackInfo);
-                event.getSubject().sendMessage("喷气背包时间到！\n\n输入/jetpack+空格+任意地点，七筒便可以直接飞行到目的地。输入/location查询七筒目前所在的位置，或者当前的飞行路线。");
-                try (InputStream img = JetPack.class.getResourceAsStream(JETPACK_INTRO_PATH)) {
-                    assert img != null;
-                    event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return;
             }
 
             //用/jetpack + 地址来尝试构建新飞行
