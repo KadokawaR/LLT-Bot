@@ -5,6 +5,7 @@ import lielietea.mirai.plugin.utils.json.JsonFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 
 public class BaiduAPI {
@@ -89,15 +90,28 @@ public class BaiduAPI {
     }
 
     //通过地址来返回坐标结果
-    public static AddrToCoord getCoord(String address) throws Exception {
+    public static AddrToCoord getCoord(String address){
         String LOCATION_PATH = "https://api.map.baidu.com/geocoding/v3/?address=" + address + "&output=json&ak=" + DEV_KEY;
-        if (JsonFile.read(LOCATION_PATH).contains("无相关结果")) {
-            return null;
+        try {
+            if (JsonFile.read(LOCATION_PATH).contains("无相关结果")) {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (getJsonUrlAddr(LOCATION_PATH).status != 0) {
-            return null;
+        try {
+            if (getJsonUrlAddr(LOCATION_PATH).status != 0) {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return getJsonUrlCoord(LOCATION_PATH);
+        try {
+            return getJsonUrlCoord(LOCATION_PATH);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //解析百度地图逆编码返回的json
@@ -140,14 +154,24 @@ public class BaiduAPI {
     }
 
     //通过坐标和缩放范围返回一张静态的地图图片，默认大小为800*600
-    public static BufferedImage getStaticImage(Location location, int zoomLevel) throws Exception {
+    public static BufferedImage getStaticImage(Location location, int zoomLevel){
         String STATIC_IMAGE_PATH = "https://api.map.baidu.com/staticimage/v2?ak=" + DEV_KEY + "&mcode=666666&center=" + location.lng + "," + location.lat + "&width=800&height=600&zoom=" + zoomLevel;
-        return ImageIO.read(JsonFile.getInputStream(STATIC_IMAGE_PATH));
+        try {
+            return ImageIO.read(JsonFile.getInputStream(STATIC_IMAGE_PATH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //将CoordToAddr里面的内容组合成省市镇
-    public static String C2AToString(Location location) throws Exception {
-        CoordToAddr c2a = getAddr(location);
+    public static String C2AToString(Location location){
+        CoordToAddr c2a = null;
+        try {
+            c2a = getAddr(location);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String result = "";
         assert c2a != null;
         if (c2a.status == 0) {

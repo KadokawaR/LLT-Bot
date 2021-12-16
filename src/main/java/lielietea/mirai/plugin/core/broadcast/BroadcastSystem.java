@@ -11,8 +11,21 @@ import java.util.Objects;
 
 public class BroadcastSystem {
 
-    public static void sendToAllGroups(MessageEvent event, String message) throws InterruptedException {
-        sendToCertainGroups(event, message, event.getBot().getGroups());
+    public static void handle(FriendMessageEvent event){
+        if(!IdentityUtil.isAdmin(event)) return;
+        BroadcastSystem.sendToAllGroups(event);
+        BroadcastSystem.directlySendToGroup(event);
+        BroadcastSystem.directlySendToFriend(event);
+        BroadcastSystem.sendToAllFriends(event);
+        BroadcastSystem.broadcastHelper(event);
+    }
+
+    public static void sendToAllGroups(MessageEvent event, String message){
+        try {
+            sendToCertainGroups(event, message, event.getBot().getGroups());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void sendToCertainGroups(MessageEvent event, String message, ContactList<Group> groupContactList) throws InterruptedException {
@@ -23,7 +36,7 @@ public class BroadcastSystem {
     }
 
     //测试广播消息
-    public static void sendToAllGroups(FriendMessageEvent event) throws InterruptedException {
+    public static void sendToAllGroups(FriendMessageEvent event){
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast2g ") && IdentityUtil.isAdmin(event)) {
             message = message.replace("/broadcast2g ", "");
@@ -65,11 +78,15 @@ public class BroadcastSystem {
     }
 
 
-    public static void sendToAllFriends(FriendMessageEvent event) throws InterruptedException {
+    public static void sendToAllFriends(FriendMessageEvent event){
         String message = event.getMessage().contentToString();
         if (message.contains("/broadcast2f ") && IdentityUtil.isAdmin(event)) {
             message = message.replace("/broadcast2f ", "");
-            sendToCertainFriends(event, message, event.getBot().getFriends());
+            try {
+                sendToCertainFriends(event, message, event.getBot().getFriends());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Objects.requireNonNull(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).sendMessage("好友广播已完成。");
         }
     }

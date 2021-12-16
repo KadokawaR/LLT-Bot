@@ -1,11 +1,10 @@
 package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack;
 
+import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackPhase;
-import lielietea.mirai.plugin.core.messagehandler.responder.mahjong.FortuneTeller;
-import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -13,7 +12,6 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -94,6 +92,7 @@ public class BlackJack extends BlackJackUtils {
 
         InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH);
         assert img != null;
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackStart);
         event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
 
         cancelInSixtySeconds(event);
@@ -153,9 +152,11 @@ public class BlackJack extends BlackJackUtils {
         if (!isBet(event)) return;
         if (!isInGamingProcess(event)) return;
         if(getGlobalData(event).get(indexInTheList(event)).getPhase()==BlackJackPhase.Operation) return;
+
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackBet);
+
         //判定数值是否正确
         Integer bet = getBet(event);
-        System.out.println("收到下注"+bet);
         if (bet == null) {
             MessageChainBuilder mcb = mcbProcessor(event);
             mcb.append(NotRightBetNumber);
@@ -486,6 +487,7 @@ public class BlackJack extends BlackJackUtils {
 
     //playOperation里面使用的Switch
     public static void startOperation(MessageEvent event) {
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
         switch (Objects.requireNonNull(bjOperation(event))) {
             case Assurance:
                 assurance(event);

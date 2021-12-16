@@ -5,11 +5,14 @@ import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ContactUtil {
@@ -19,6 +22,8 @@ public class ContactUtil {
             "本项目在运作时，不可避免地会使用到您的QQ号、QQ昵称、群号、群昵称等信息。后台不会收集具体的聊天内容，如果您对此有所疑问，请停止使用本项目。基于维持互联网秩序的考量，请勿恶意使用本项目。本项目有权停止对任何对象的服务，任何解释权均归本项目开发组所有。\n" +
             "\n" +
             "本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的 Mirai (https://github.com/mamoe/mirai) ，基于 Apache License 2.0 协议的谷歌 Gson (https://github.com/google/gson) ，清华大学开放中文词库 (http://thuocl.thunlp.org/) ，动物图片来自互联网开源动物图片API Shibe.online(shibes as a service)、Dog.ceo (The internet's biggest collection of open source dog pictures.)、random.dog (Hello World, This Is Dog)。\n";
+
+    static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event) {
@@ -47,25 +52,46 @@ public class ContactUtil {
 
     // 处理加群事件
     public static void handleJoinGroup(BotJoinGroupEvent event) {
-        if(!MultiBotHandler.canAcceptGroup(event.getBot().getId())){
-            ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
-            event.getGroup().quit();
-            String content = "由于目前Bot不接受添加群聊，已从 "+event.getGroup().getName()+"("+event.getGroup().getId()+")"+"出逃。";
-            MessageUtil.notifyDevGroup(content,event.getBot().getId());
+        if(IdentityUtil.DevGroup.DEFAULT.isDevGroup(event.getGroupId())){
+            event.getGroup().sendMessage("反正是开发组，咱没话说。");
             return;
         }
+        executor.scheduleWithFixedDelay(() -> {
+            //管理员判定
+            if(!IdentityUtil.isAdmin(((BotJoinGroupEvent.Invite) event).getInvitor().getId())) {
+                if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
+                    ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                    event.getGroup().quit();
+                    String content = "由于目前Bot不接受添加群聊，已从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
+                    MessageUtil.notifyDevGroup(content, event.getBot().getId());
+                    return;
+                }
 
-        // 正常通过群邀请加群
-        sendNoticeWhenJoinGroup(event);
-        notifyDevWhenJoinGroup(event, JoinGroupSourceType.INVITE);
+                if (event.getGroup().getMembers().getSize() <= 10) {
+                    ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage("七筒目前不接受加入10人以下的群聊。");
+                    event.getGroup().quit();
+                    String content = ((BotJoinGroupEvent.Invite) event).getInvitor().getNick() + "(" + ((BotJoinGroupEvent.Invite) event).getInvitor().getId() + ")尝试邀请七筒加入一个少于10人的群聊。";
+                    MessageUtil.notifyDevGroup(content, event.getBot().getId());
+                    return;
+                }
+            }
 
-        event.getGroup().sendMessage(JOIN_GROUP);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        DisclTemporary.send(event.getGroup());
+            //检测是否有其他七筒
+            quitWhenFindAnotherChitung(event);
+
+            // 正常通过群邀请加群
+            sendNoticeWhenJoinGroup(event,IdentityUtil.containsUnusedBot(event.getGroup()));
+            notifyDevWhenJoinGroup(event, JoinGroupSourceType.INVITE);
+
+            event.getGroup().sendMessage(JOIN_GROUP);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            DisclTemporary.send(event.getGroup());
+        },0,15,TimeUnit.SECONDS);
+
 
     }
 
@@ -77,7 +103,7 @@ public class ContactUtil {
 
     // 处理加为好友事件
     public static void handleAddFriend(FriendAddEvent event) {
-        Executors.newScheduledThreadPool(1).schedule(() -> {
+        executor.schedule(() -> {
             event.getFriend().sendMessage(JOIN_GROUP);
             DisclTemporary.send(event.getFriend());
         },15, TimeUnit.SECONDS);
@@ -108,8 +134,10 @@ public class ContactUtil {
     }
 
     // 加群后发送Bot提示
-    static void sendNoticeWhenJoinGroup(BotJoinGroupEvent event) {
-        event.getGroup().getOwner().sendMessage("您好，七筒已经加入了您的群" + event.getGroup().getName() + " - " + event.getGroup().getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。");
+    static void sendNoticeWhenJoinGroup(BotJoinGroupEvent event,boolean containsOldChitung) {
+        String message = "您好，七筒已经加入了您的群" + event.getGroup().getName() + " - " + event.getGroup().getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。";
+        if(containsOldChitung) message+="\n\n检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。";
+        event.getGroup().getOwner().sendMessage(message);
     }
 
     // 向开发者发送加群提醒
@@ -121,6 +149,25 @@ public class ContactUtil {
     // 向开发者发送退群提醒
     static void notifyDevWhenLeaveGroup(BotLeaveEvent event) {
         MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "） 离开。",event.getBot().getId());
+    }
+
+    //如果检测到有其他账号，立马跑路
+    static void quitWhenFindAnotherChitung(BotJoinGroupEvent event){
+        for(NormalMember nm:event.getGroup().getMembers()){
+            for(Bot bot:Bot.getInstances()){
+                if (bot.getId()==(event.getBot().getId())) continue;
+                if (nm.getId()==bot.getId()){
+                    event.getGroup().sendMessage("检测到其他在线七筒账户在此群聊中，本机器人将自动退群。");
+                    executor.scheduleWithFixedDelay(new Runnable() {
+                        @Override
+                        public void run() {
+                            event.getGroup().quit();
+                        }
+                    },0,15,TimeUnit.SECONDS);
+
+                }
+            }
+        }
     }
 
     enum JoinGroupSourceType {
