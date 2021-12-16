@@ -1,6 +1,5 @@
-package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
+package lielietea.mirai.plugin.utils;
 
-import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.NudgeEvent;
 

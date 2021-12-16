@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
+package lielietea.mirai.plugin.core.messagehandler.responder.basic;
 
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.MessageDispatcher;

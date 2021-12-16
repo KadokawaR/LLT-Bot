@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
+package lielietea.mirai.plugin.core.messagehandler.responder.basic;
 
 import com.google.gson.Gson;
 
@@ -28,14 +28,6 @@ class AutoReplyLinesCluster {
     }
 
     AutoReplyLinesCluster() {
-    }
-
-    public static boolean loadReplyLinesFromPreset() {
-        InputStream is = AutoReplyLinesCluster.class.getResourceAsStream(DEFAULT_AUTOREPLY_JSON_PATH);
-        assert is != null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        INSTANCE = gson.fromJson(br, AutoReplyLinesCluster.class);
-        return true;
     }
 
     public static AutoReplyLinesCluster getInstance() {
@@ -74,5 +66,4 @@ class AutoReplyLinesCluster {
         ANTI_DIRTY_WORDS,
         GOODBYE
     }
-
 }
