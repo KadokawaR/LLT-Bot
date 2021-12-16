@@ -8,6 +8,12 @@ import java.util.Date;
 
 public class MPSEStatistics extends MPSEProcessor{
 
+    final static int DAILY_THRESHOLD = 5000;
+    final static int HALF_DAY_THRESHOLD = 3000;
+    final static int SIX_HOUR_THRESHOLD = 1500;
+    final static int THREE_HOUR_THRESHOLD = 1000;
+    final static int ONE_HOUR_THRESHOLD = 500;
+
     public static Data getXHourMPSEData(int hour,long botID){
         DataList dl = MessagePostSendEventHandler.getINSTANCE().dataList;
         Date now = new Date();
@@ -72,5 +78,13 @@ public class MPSEStatistics extends MPSEProcessor{
         stringBuilder.append("3 hour\t").append(fromDataToString(getXHourMPSEData(3,botID))).append("\n");
         stringBuilder.append("1 hour\t").append(fromDataToString(getXHourMPSEData(1,botID)));
         return stringBuilder.toString();
+    }
+
+    public static boolean triggeredBreaker(long BotID){
+        return getXHourMPSEData(24,BotID).getGroupMessage()>=DAILY_THRESHOLD||
+                getXHourMPSEData(12,BotID).getGroupMessage()>=HALF_DAY_THRESHOLD||
+                getXHourMPSEData(6,BotID).getGroupMessage()>=SIX_HOUR_THRESHOLD||
+                getXHourMPSEData(3,BotID).getGroupMessage()>=THREE_HOUR_THRESHOLD||
+                getXHourMPSEData(1,BotID).getGroupMessage()>=ONE_HOUR_THRESHOLD;
     }
 }

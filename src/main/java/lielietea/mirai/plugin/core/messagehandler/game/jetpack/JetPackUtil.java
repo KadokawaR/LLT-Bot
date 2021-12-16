@@ -43,18 +43,31 @@ public class JetPackUtil {
     }
 
     //以sdf格式返回预计抵达时间的String
-    public static String getEstimatedArrivalTime(BaiduAPI.Location loc1, BaiduAPI.Location loc2, String departureTime) throws ParseException {
-        Date date = sdf.parse(departureTime);
+    public static String getEstimatedArrivalTime(BaiduAPI.Location loc1, BaiduAPI.Location loc2, String departureTime){
+        Date date = null;
+        try {
+            date = sdf.parse(departureTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         double flightDuration = getFlightDuration(loc1, loc2);
+        assert date != null;
         long time_ms = date.getTime();
         time_ms += flightDuration * 60 * 1000;
         return sdf.format(new Date(time_ms));
     }
 
     //获得七筒飞行当前的地理坐标
-    public static BaiduAPI.Location getCurrentLocation(BaiduAPI.Location loc1, BaiduAPI.Location loc2, String departureTimeStr) throws ParseException {
-        Date actualArrivalTime = sdf.parse(getEstimatedArrivalTime(loc1, loc2, departureTimeStr));
-        Date departureTime = sdf.parse(departureTimeStr);
+    public static BaiduAPI.Location getCurrentLocation(BaiduAPI.Location loc1, BaiduAPI.Location loc2, String departureTimeStr){
+        Date actualArrivalTime = null;
+        Date departureTime = null;
+        try {
+            actualArrivalTime = sdf.parse(getEstimatedArrivalTime(loc1, loc2, departureTimeStr));
+            departureTime = sdf.parse(departureTimeStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         Date now = new Date();
 
         long actualArrivalTime_ms = actualArrivalTime.getTime();
@@ -83,13 +96,23 @@ public class JetPackUtil {
     }
 
     //读取txt文件返回Map
-    public static List<locationRecord> readRecord() throws IOException {
+    public static List<locationRecord> readRecord(){
         List<locationRecord> locMap = new ArrayList<>();
-        InputStreamReader is = new InputStreamReader(new FileInputStream(TXT_PATH));
+        InputStreamReader is = null;
+        try {
+            is = new InputStreamReader(new FileInputStream(TXT_PATH));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        assert is != null;
         BufferedReader br = new BufferedReader(is);
-        String str;
+        String str = null;
         while (true) {
-            str = br.readLine();
+            try {
+                str = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (str == null) {
                 break;
             }

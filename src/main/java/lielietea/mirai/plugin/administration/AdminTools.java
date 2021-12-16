@@ -21,7 +21,7 @@ public class AdminTools {
         return INSTANCE;
     }
 
-    public void handleAdminCommand(FriendMessageEvent event) {
+    public void handleAdminCommand(MessageEvent event) {
         if (event.getMessage().contentToString().contains("/group")) {
             try {
                 getGroupList(event);
@@ -80,7 +80,7 @@ public class AdminTools {
         return allGroupInfo2;
     }
 
-    void getGroupList(FriendMessageEvent event) throws InterruptedException {
+    void getGroupList(MessageEvent event) throws InterruptedException {
         if (IdentityUtil.isAdmin(event)) {
             Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
             int size = event.getBot().getGroups().getSize();
@@ -109,7 +109,7 @@ public class AdminTools {
         return allFriendInfo + "\n好友ID " + next.getId() + "\n好友名称 " + next.getNick() + "\n";
     }
 
-    void getFriendList(FriendMessageEvent event) throws InterruptedException {
+    void getFriendList(MessageEvent event) throws InterruptedException {
         if (IdentityUtil.isAdmin(event)) {
             Iterator<Friend> listIter = event.getBot().getFriends().stream().iterator();
             int size = event.getBot().getFriends().getSize();
@@ -133,21 +133,21 @@ public class AdminTools {
         }
     }
 
-    void getFriendNum(FriendMessageEvent event) {
+    void getFriendNum(MessageEvent event) {
         if (IdentityUtil.isAdmin(event)) {
             int size = event.getBot().getFriends().getSize();
             event.getSubject().sendMessage("七筒目前的好友数量是：" + size);
         }
     }
 
-    void getGroupNum(FriendMessageEvent event) {
+    void getGroupNum(MessageEvent event) {
         if (IdentityUtil.isAdmin(event)) {
             int size = event.getBot().getGroups().getSize();
             event.getSubject().sendMessage("七筒目前的群数量是：" + size);
         }
     }
 
-    void getCoverage(FriendMessageEvent event) {
+    void getCoverage(MessageEvent event) {
         if (IdentityUtil.isAdmin(event)) {
             Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
             ArrayList<Long> list = new ArrayList<>();

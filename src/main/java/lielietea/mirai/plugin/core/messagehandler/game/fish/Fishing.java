@@ -1,12 +1,12 @@
 package lielietea.mirai.plugin.core.messagehandler.game.fish;
 
 import com.google.gson.Gson;
+import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspana;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.Currency;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPackUtil;
-import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.roulette.Roulette;
-import lielietea.mirai.plugin.utils.IdentityUtil;
+import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -24,6 +24,7 @@ import java.util.*;
 public class Fishing extends FishingUtil{
 
     public static final int FISHING_COST = 800;
+    public static final int MAX_COUNT_IN_ONE_HOUR = 40;
 
     public enum Time{
         Day,
@@ -61,9 +62,11 @@ public class Fishing extends FishingUtil{
     static final List<Long> isInFishingProcessFlag = new ArrayList<>();
 
     final List<Fish> loadedFishingList;
+    List<Date> fishRecord;
 
     Fishing() {
         loadedFishingList = new ArrayList<>();
+        fishRecord = new ArrayList<>();
         String FISHINGLIST_PATH = "/fishing/FishingList.json";
         InputStream is = JetPackUtil.class.getResourceAsStream(FISHINGLIST_PATH);
         assert is != null;
@@ -84,8 +87,9 @@ public class Fishing extends FishingUtil{
     static final String HANDBOOK_PATH = "/pics/fishing/handbook.png";
 
     public static void go(MessageEvent event){
-        if(event.getMessage().contentToString().equals("/fishinfo")){
+        if(event.getMessage().contentToString().equals("/fishhelp")){
 
+            GameCenterCount.count(GameCenterCount.Functions.FishingInfo);
             try (InputStream img = Fishing.class.getResourceAsStream(FISH_INFO_PATH)) {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
@@ -97,6 +101,7 @@ public class Fishing extends FishingUtil{
         }
 
         if(event.getMessage().contentToString().equals("/handbook")){
+            GameCenterCount.count(GameCenterCount.Functions.FishingHandbook);
             try (InputStream img = Fishing.class.getResourceAsStream(HANDBOOK_PATH)) {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
@@ -107,6 +112,7 @@ public class Fishing extends FishingUtil{
         }
 
         if(event.getMessage().contentToString().equals("/collection")){
+            GameCenterCount.count(GameCenterCount.Functions.FishingCollection);
             MessageChainBuilder mcb = mcbProcessor(event);
             mcb.append("您的图鉴完成度目前为").append(String.valueOf(handbookProportion(event.getSender().getId()))).append("%\n\n");
             try {
@@ -121,6 +127,7 @@ public class Fishing extends FishingUtil{
         if (event.getMessage().contentToString().contains("/fish")){
             if (!isInFishingProcessFlag.contains(event.getSender().getId())){
                 isInFishingProcessFlag.add(event.getSender().getId());
+                GameCenterCount.count(GameCenterCount.Functions.FishingGo);
                 getFish(event,getWater(event.getMessage().contentToString()));
             } else {
                 MessageChainBuilder mcb = new MessageChainBuilder();
@@ -128,6 +135,7 @@ public class Fishing extends FishingUtil{
                     mcb.append((new At(event.getSender().getId()))).append(" ");
                 }
                 mcb.append("上次抛竿还在进行中。");
+                GameCenterCount.count(GameCenterCount.Functions.FishingNotReadyYet);
                 event.getSubject().sendMessage(mcb.asMessageChain());
             }
         }
@@ -135,11 +143,19 @@ public class Fishing extends FishingUtil{
     }
 
     public static void getFish(MessageEvent event,Waters waters){
-        Random random = new Random();
-        int time = 3+random.nextInt(4);
-        int itemNumber = 3+random.nextInt(2);
         MessageChainBuilder mcb = mcbProcessor(event);
-        if(IdentityUtil.isAdmin(event)) time=0;
+        Random random = new Random();
+        int recordInOneHour = fishInOneHour(updateRecord(getINSTANCE().fishRecord));
+        if(recordInOneHour>=MAX_COUNT_IN_ONE_HOUR){
+            mcb.append("已经触发熔断，请一个小时之后再尝试钓鱼。");
+            return;
+        }
+        int time = 3+random.nextInt(4)+(int)(recordInOneHour*0.5);//线性增加时间
+        int itemNumber = 3+random.nextInt(2);
+
+        getINSTANCE().fishRecord.add(new Date());
+
+
 
         //非常规水域进行扣费
         if(!waters.equals(Waters.General)){

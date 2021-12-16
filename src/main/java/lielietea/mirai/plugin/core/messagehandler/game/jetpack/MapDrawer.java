@@ -63,11 +63,16 @@ public class MapDrawer extends BaiduAPI {
         return originImage;
     }
 
-    public static BufferedImage drawAvatar(BufferedImage originImage) throws IOException {
-        return ImageCreater.addImageAtCenter(originImage, ImageCreater.getImageFromResource("/pics/jetpack/avatar-circle-100-100.png"));
+    public static BufferedImage drawAvatar(BufferedImage originImage){
+        try {
+            return ImageCreater.addImageAtCenter(originImage, ImageCreater.getImageFromResource("/pics/jetpack/avatar-circle-100-100.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static BufferedImage drawTrack(Location loc1, Location loc2, Location currentLocation, int zoomLevel, BufferedImage ground) throws Exception {
+    public static BufferedImage drawTrack(Location loc1, Location loc2, Location currentLocation, int zoomLevel, BufferedImage ground){
 
         double tan = (loc2.lat - loc1.lat) / (loc2.lng - loc1.lng);
         double point1x, point2x, point1y, point2y;
@@ -99,8 +104,14 @@ public class MapDrawer extends BaiduAPI {
         points[2] = point2x;
         points[3] = point2y;
 
-        double[] points2 = replacePoints(points, loc1, currentLocation, zoomLevel);
-        double[] points3 = replacePoints(points2, loc2, currentLocation, zoomLevel);
+        double[] points2 = new double[0];
+        double[] points3 = new double[0];
+        try {
+            points2 = replacePoints(points, loc1, currentLocation, zoomLevel);
+            points3 = replacePoints(points2, loc2, currentLocation, zoomLevel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         float[] dashingPattern1 = {15f, 15f};
         Stroke stroke1 = new BasicStroke(6f, BasicStroke.CAP_BUTT,
