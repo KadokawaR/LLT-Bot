@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.game.bancodeespana;
+package lielietea.mirai.plugin.core.bancodeespana;
 
 import java.util.List;
 

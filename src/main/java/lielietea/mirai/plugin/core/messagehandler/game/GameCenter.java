@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.messagehandler.game;
 
-import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.fish.Fishing;
 import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPack;
 import lielietea.mirai.plugin.core.messagehandler.game.mahjongriddle.MahjongRiddle;
