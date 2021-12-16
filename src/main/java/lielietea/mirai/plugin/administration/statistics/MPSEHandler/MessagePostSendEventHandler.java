@@ -5,14 +5,11 @@ import com.google.common.collect.Table;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessagePostSendEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,7 +23,6 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
     Table<MultiBotHandler.BotName,MessageKind,Integer> messageCountTable;
 
     DataList dataList = new DataList();
-    Map<Long,Boolean> triggerBreakMap = new HashMap<>();
     static MainTask mainTask = new MainTask();
 
     MessagePostSendEventHandler() {
@@ -41,7 +37,6 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
             getINSTANCE().messageCountTable.put(Objects.requireNonNull(MultiBotHandler.BotName.get(bot.getId())), MessageKind.FriendMessage, 0);
             getINSTANCE().messageCountTable.put(Objects.requireNonNull(MultiBotHandler.BotName.get(bot.getId())), MessageKind.GroupMessage, 0);
             getINSTANCE().messageCountTable.put(Objects.requireNonNull(MultiBotHandler.BotName.get(bot.getId())), MessageKind.FailedMessage, 0);
-            getINSTANCE().triggerBreakMap.put(bot.getId(),false);
         }
         executor.schedule(mainTask, 1, TimeUnit.SECONDS);
         executor.scheduleAtFixedRate(mainTask, 5, 5, TimeUnit.MINUTES);
@@ -104,10 +99,6 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
                 System.out.println("获得opendata");
                 for(Bot bot : Bot.getInstances()){
                     updateDataList(bot.getId());
-                    getINSTANCE().triggerBreakMap.put(bot.getId(),triggeredBreaker(bot.getId()));
-                    if(triggeredBreaker(bot.getId())){
-                        MessageUtil.notifyDevGroup("已触发消息熔断机制。",bot.getId());
-                    }
                 }
                 System.out.println("更新data");
                 writeData(getINSTANCE().dataList);
@@ -129,8 +120,5 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
         FailedMessage
     }
 
-    public static boolean botHasTriggeredBreak(GroupMessageEvent event){
-        return getINSTANCE().triggerBreakMap.get(event.getBot().getId());
-    }
 
 }

@@ -24,8 +24,6 @@ public class FishingUtil {
 
     final static String FISHING_RECORD_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "fishrecord.json";
 
-    final static int FISH_RECORD_IN_X_HOUR = 2;
-
     static class SingleRecord{
         long ID;
         List<Integer>  recordList;
@@ -286,18 +284,6 @@ public class FishingUtil {
         }
 
         return (int)usersRecordList.size()*100/72;
-    }
-
-    //钓鱼人数统计
-    static int fishInOneHour(List<Date> fishRecord){
-        return fishRecord.size();
-    }
-
-    //更新Map
-    static List<Date> updateRecord(List<Date> fishRecord){
-        Date date = new Date();
-        fishRecord.removeIf(d -> date.before(new Date(date.getTime() - FISH_RECORD_IN_X_HOUR * 60 * 60 * 1000)));
-        return fishRecord;
     }
 
 }

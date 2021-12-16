@@ -2,9 +2,10 @@ package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.roulette;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.BlackJack;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
@@ -67,7 +68,6 @@ public class Roulette extends RouletteUtils{
         if(!isRoulette(event)) return;
         InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH);
         assert img != null;
-        GameCenterCount.count(GameCenterCount.Functions.RouletteStart);
         event.getSubject().sendMessage(new MessageChainBuilder().append(RouletteRules).append("\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
 
         if(isGroupMessage(event)){
@@ -139,13 +139,13 @@ public class Roulette extends RouletteUtils{
     public static void preBet(MessageEvent event) {
         if (!isBet(event)) return;
         if (!isInGamingProcess(event)) return;
-        GameCenterCount.count(GameCenterCount.Functions.RouletteBet);
         if (getBet(event.getMessage().contentToString()) > 999999 || getBet(event.getMessage().contentToString()) <= 0 || getBet(event.getMessage().contentToString()) == null) {
             MessageChainBuilder mcb = mcbProcessor(event);
             event.getSubject().sendMessage(mcb.append(NotRightBetNumber).asMessageChain());
             return;
         }
         Integer bet = getBet(event.getMessage().contentToString());
+        System.out.println("收到赌注"+bet);
         //没有足够多的钱
         if (!hasEnoughMoney(event, bet)) {
             MessageChainBuilder mcb = mcbProcessor(event);
@@ -209,11 +209,13 @@ public class Roulette extends RouletteUtils{
         //第一次进
         if (isGroupMessage(event)) {
             if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Callin)) {
+                System.out.println("第一次进");
                 getINSTANCE().GroupStatusMap.put(event.getSubject().getId(), StatusType.PreBet);
                 executor.schedule(new EndPreBet(event),  GAP_SECONDS, TimeUnit.SECONDS);
                 event.getSubject().sendMessage(StartBetNotice);
             }
         } else {
+            System.out.println("第一次进");
             if (getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Callin)) {
                 getINSTANCE().FriendStatusMap.put(event.getSubject().getId(), StatusType.PreBet);
                 executor.schedule(new EndPreBet(event), GAP_SECONDS, TimeUnit.SECONDS);
@@ -335,8 +337,7 @@ public class Roulette extends RouletteUtils{
 
         if(!hasIndicator(event.getMessage().contentToString())) return;
 
-        GameCenterCount.count(GameCenterCount.Functions.RouletteOperations);
-
+        System.out.println("开始了Bet");
         List<RouletteBet> rouletteBetList = processString(event.getMessage().contentToString());
         List<RouletteBet> trueBetList = getDeFactoBets(rouletteBetList);
         int betAmount = getBetAmount(trueBetList);

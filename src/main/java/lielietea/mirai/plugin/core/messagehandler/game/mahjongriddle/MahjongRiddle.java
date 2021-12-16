@@ -200,7 +200,7 @@ public class MahjongRiddle {
         return shuziStr.toString();
     }
 
-    public static void riddleStart(GroupMessageEvent event){
+    public static riddleType riddleStart(GroupMessageEvent event) throws IOException {
 
         //lock.lock();
         //try{
@@ -230,7 +230,7 @@ public class MahjongRiddle {
 
                 //180s清空谜语重置标记
                 timer.schedule(new EndSessionTimerTask(sessionId, event), 180 * 1000);
-                return;
+                return riddleType.Start;
             }
         }
 
@@ -241,26 +241,29 @@ public class MahjongRiddle {
                 //检测这次结束之后是否全中，全中了则删除该flag
                 if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
                     event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));
-                    BufferedImage img = null;
-                    try {
-                        img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        sendTileImage(img, event);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    BufferedImage img = getTileImage(displayAnswer(riddleSessionHolder.get(event.getGroup().getId()).isGuessed, resolveRandomTiles(riddleSessionHolder.get(event.getGroup().getId()).answerNum)));
+                    sendTileImage(img, event);
                     MahjongRiddle.riddleSessionHolder.remove(event.getGroup().getId());
-                    return;
+                    return riddleType.Congratulation;
                 }
                 event.getSubject().sendMessage((new At(event.getSender().getId())).plus("中了!"));
-                return;
+                return riddleType.Get;
             }
 
         }
-;
+        //} finally {
+        //    lock.lock();
+        //}
+        return riddleType.Nothing;
     }
 
+    public static UUID getUUID(String name) {
+        return UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String getName() {
+        return "猜麻将";
+    }
+
+    public enum riddleType {Start, Get, Congratulation, Nothing}
 }

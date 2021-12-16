@@ -1,9 +1,9 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
 
-import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
-import lielietea.mirai.plugin.core.MessageDispatcher;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import lielietea.mirai.plugin.utils.image.ImageSender;
-import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class FurryGamesIndex{
+public class FurryGamesIndex {
     public static final String FGIUrl = "https://furrygames.top/";
     public static final String FGIListUrl = "https://furrygames.top/zh-cn/list.html";
 
@@ -107,12 +107,10 @@ public class FurryGamesIndex{
                 return null;
             } else {
                 String gameDescription = getGameDescription(gameURL);
-                String newGameDescription = gameDescription.substring(0,150);
-                if (newGameDescription!=gameDescription) newGameDescription+="……";
                 String gameImageURL = getGameImageURL(gameURL);
                 result[0] = name;
                 result[1] = gameURL;
-                result[2] = newGameDescription;
+                result[2] = gameDescription;
                 result[3] = gameImageURL;
             }
         }
@@ -142,10 +140,8 @@ public class FurryGamesIndex{
         return null;
     }
 
-    public static void search(MessageEvent event){
-        if(event.getMessage().contentToString().toLowerCase().contains("/fgi random")){
-            MessageDispatcher.addToThreshold(event);//添加count
-            GameCenterCount.count(GameCenterCount.Functions.FurryGameIndexRandom);
+    public static void search(GroupMessageEvent event) throws MalformedURLException {
+        if(event.getMessage().contentToString().contains("/fgi random")){
             StringBuilder sb = new StringBuilder();
             String[] gameInfo = getGameInfo("",true);
             sb.append(gameInfo[0])
@@ -155,20 +151,13 @@ public class FurryGamesIndex{
                     .append(gameInfo[1]);
             event.getSubject().sendMessage(sb.toString());
 
-            URL url = null;
-            try {
-                url = new URL(gameInfo[3]);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            URL url = new URL(gameInfo[3]);
             ImageSender.sendImageFromURL(event.getSubject(),url);
 
             return;
         }
 
         if (event.getMessage().contentToString().contains("/fgi ")||event.getMessage().contentToString().contains("/FGI ")){
-            MessageDispatcher.addToThreshold(event);//添加count
-            GameCenterCount.count(GameCenterCount.Functions.FurryGameIndexSearch);
             String givenGameName = event.getMessage().contentToString().replace("/fgi ","").replace("/FGI ","");
             StringBuilder sb = new StringBuilder();
 
@@ -187,12 +176,7 @@ public class FurryGamesIndex{
                     event.getSubject().sendMessage(sb.toString());
                 }
                 if (gameInfo[3]!=null){
-                    URL url = null;
-                    try {
-                        url = new URL(gameInfo[3]);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
+                    URL url = new URL(gameInfo[3]);
                     ImageSender.sendImageFromURL(event.getSubject(),url);
                 }
             }

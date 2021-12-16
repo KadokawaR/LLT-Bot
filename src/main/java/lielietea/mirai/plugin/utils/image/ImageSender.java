@@ -44,21 +44,12 @@ public class ImageSender {
 
     }
 
-    public static void sendImageFromBufferedImage(Contact contact, BufferedImage image){
+    public static void sendImageFromBufferedImage(Contact contact, BufferedImage image) throws IOException {
         InputStream is;
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
-        ImageOutputStream imOut = null;
-        try {
-            imOut = ImageIO.createImageOutputStream(bs);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            assert imOut != null;
-            ImageIO.write(image, "png", imOut);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ImageOutputStream imOut;
+        imOut = ImageIO.createImageOutputStream(bs);
+        ImageIO.write(image, "png", imOut);
         is = new ByteArrayInputStream(bs.toByteArray());
         contact.sendMessage(Contact.uploadImage(contact, is));
     }

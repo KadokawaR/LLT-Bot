@@ -18,15 +18,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MessageDispatcher {
-    final static int GROUP_MESSAGE_LIMIT_PER_MIN = 10;
-    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 5;
-    final static int PERSONAL_MESSAGE_LIMIT_PER_DAY = 40;
+    final static int GROUP_MESSAGE_LIMIT_PER_MIN = 12;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_MIN = 3;
+    final static int PERSONAL_MESSAGE_LIMIT_PER_DAY = 60;
     final static int DAILY_MESSAGE_LIMIT = 4800;
     final static MessageDispatcher INSTANCE = new MessageDispatcher();
-    static final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
-    static final CacheThreshold personalThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_MIN);
-    static final CacheThreshold dailyThreshold = new CacheThreshold(DAILY_MESSAGE_LIMIT);
-    static final CacheThreshold personalDailyThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_DAY);
+    final CacheThreshold groupThreshold = new CacheThreshold(GROUP_MESSAGE_LIMIT_PER_MIN);
+    final CacheThreshold personalThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_MIN);
+    final CacheThreshold dailyThreshold = new CacheThreshold(DAILY_MESSAGE_LIMIT);
+    final CacheThreshold personalDailyThreshold = new CacheThreshold(PERSONAL_MESSAGE_LIMIT_PER_DAY);
     final Timer thresholdReset1 = new Timer(true);
     final Timer thresholdReset2 = new Timer(true);
     final ExecutorService executor;
@@ -41,7 +41,7 @@ public class MessageDispatcher {
                                          System.out.println("MessageDispatcher的分钟计数器已经重置。");
                                      }
                                  }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 0, 1),
-                StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0));
+                StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0)); //本来是 1 0 0 0
         thresholdReset2.schedule(new TimerTask() {
                                      @Override
                                      public void run() {
@@ -104,15 +104,7 @@ public class MessageDispatcher {
         if (messageChainPackage.getSource() instanceof Group)
             groupThreshold.count(messageChainPackage.getSource().getId());
         personalThreshold.count(messageChainPackage.getSender().getId());
-        personalDailyThreshold.count(messageChainPackage.getSender().getId());
-        dailyThreshold.count(0);
-    }
-
-    public static void addToThreshold(MessageEvent event) {
-        if (event instanceof GroupMessageEvent)
-            groupThreshold.count(event.getSubject().getId());
-        personalThreshold.count(event.getSender().getId());
-        personalDailyThreshold.count(event.getSender().getId());
+        personalDailyThreshold.reachLimit(messageChainPackage.getSender().getId());
         dailyThreshold.count(0);
     }
 

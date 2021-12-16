@@ -1,13 +1,13 @@
 package lielietea.mirai.plugin.utils;
 
 import com.google.common.collect.ImmutableSet;
-import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.Set;
 
 public class IdentityUtil {
     static final Set<Long> botList = ImmutableSet.of(
+            340865180L, // 本体
             3628496803L, // 欧洲测试服务
             3621269439L, //wymTbot 维护者 1875018140
             736951095L //未知
@@ -17,10 +17,6 @@ public class IdentityUtil {
             2955808839L, //KADOKAWA
             1811905537L, //MARBLEGATE
             493624254L   //感谢咕咕科提供账号
-    );
-
-    static final Set<Long> unusedBotList = ImmutableSet.of(
-            340865180L
     );
 
     public static boolean isBot(long id){
@@ -33,13 +29,6 @@ public class IdentityUtil {
 
     public static boolean isAdmin(long id){
         return adminList.contains(id);
-    }
-
-    public static boolean containsUnusedBot(Group group){
-        for(Long ID:unusedBotList){
-            if (group.getMembers().contains(ID)) return true;
-        }
-        return false;
     }
 
     public static boolean isAdmin(MessageEvent event){
@@ -57,13 +46,6 @@ public class IdentityUtil {
 
         public long getID(){
             return groupId;
-        }
-
-        public boolean isDevGroup(long ID){
-            for(DevGroup dg:DevGroup.values()){
-                if (ID==dg.getID()) return true;
-            }
-            return false;
         }
     }
 }

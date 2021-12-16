@@ -3,13 +3,19 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
+import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.messagehandler.game.fish.Fishing;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.CasinoCroupier;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.BlackJack;
 import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
+import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.FurryGamesIndex;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
+import lielietea.mirai.plugin.core.messagehandler.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.MessageDispatcher;
 import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
-import lielietea.mirai.plugin.utils.GroupPolice;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
@@ -20,6 +26,7 @@ import net.mamoe.mirai.event.events.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.MalformedURLException;
 import java.util.Optional;
 
 /*
@@ -48,10 +55,8 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        GroupPolice.getINSTANCE().ini();
         ResponderManager.getINSTANCE().ini();
 
-        // 上线事件
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
         });
@@ -85,14 +90,37 @@ public final class JavaPluginMain extends JavaPlugin {
 
             if(!MultiBotHandler.canAnswerGroup(event)) return;
             if(IdentityUtil.isBot(event)) return;
-            if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
-
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
+            //多账户管理
+            MultiBotHandler.react(event);
+
             //GameCenter
             GameCenter.handle(event);
+
+            //有关戳一戳的功能
+            Nudge.mentionNudge(event);
+
+            //测试功能：Furry Games Index
+            try {
+                FurryGamesIndex.search(event);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            //钓鱼了
+            Fishing.go(event);
+
+            //银行功能
+            SenoritaCounter.go(event);
+
+            //Casino
+            CasinoCroupier.handle(event);
+
+            //MPSE 消息统计
+            MessagePostSendEventHandler.getMPSEStatistics(event);
 
         });
 
@@ -115,13 +143,41 @@ public final class JavaPluginMain extends JavaPlugin {
 
             //所有消息之后都集中到这个地方处理
             MessageDispatcher.getINSTANCE().handleMessage(event);
+
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
-            //GameCenter
-            GameCenter.handle(event);
-            //广播
-            BroadcastSystem.handle(event);
+            //多账户管理
+            MultiBotHandler.react(event);
 
+            //BroadcastSystem
+            try {
+                BroadcastSystem.sendToAllGroups(event);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
+
+            BroadcastSystem.directlySendToGroup(event);
+            BroadcastSystem.directlySendToFriend(event);
+
+            try {
+                BroadcastSystem.sendToAllFriends(event);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
+
+            BroadcastSystem.broadcastHelper(event);
+
+            //钓鱼了
+            Fishing.go(event);
+
+            //银行功能
+            SenoritaCounter.go(event);
+
+            //Casino
+            CasinoCroupier.handle(event);
+
+            //MPSE 消息统计
+            MessagePostSendEventHandler.getMPSEStatistics(event);
         });
     }
 
