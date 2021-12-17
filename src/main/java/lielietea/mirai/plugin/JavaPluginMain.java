@@ -3,12 +3,12 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
+import lielietea.mirai.plugin.core.responder.ResponderCenter;
 import lielietea.mirai.plugin.utils.Nudge;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
-import lielietea.mirai.plugin.core.MessageDispatcher;
-import lielietea.mirai.plugin.core.messagehandler.game.GameCenter;
-import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
+import lielietea.mirai.plugin.core.game.GameCenter;
+import lielietea.mirai.plugin.core.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.GroupPolice;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
@@ -93,8 +93,8 @@ public final class JavaPluginMain extends JavaPlugin {
             if(IdentityUtil.isBot(event)) return;
             if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
 
-            //所有消息之后都集中到这个地方处理
-            MessageDispatcher.getINSTANCE().handleMessage(event);
+            //ResponderCenter
+            ResponderCenter.getINSTANCE().handleMessage(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter
@@ -119,8 +119,8 @@ public final class JavaPluginMain extends JavaPlugin {
             if(!MultiBotHandler.canAnswerFriend(event)) return;
             if(IdentityUtil.isBot(event)) return;
 
-            //所有消息之后都集中到这个地方处理
-            MessageDispatcher.getINSTANCE().handleMessage(event);
+            //ResponderCenter
+            ResponderCenter.getINSTANCE().handleMessage(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter
@@ -134,7 +134,7 @@ public final class JavaPluginMain extends JavaPlugin {
     @Override
     public void onDisable() {
         ResponderManager.getINSTANCE().close();
-        MessageDispatcher.getINSTANCE().close();
+        ResponderCenter.getINSTANCE().close();
         AdminCommandDispatcher.getInstance().close();
     }
 }

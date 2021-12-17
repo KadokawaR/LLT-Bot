@@ -1,10 +1,16 @@
 package lielietea.mirai.plugin.administration.statistics.MPSEHandler;
 
+import lielietea.mirai.plugin.core.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.IdentityUtil;
+import lielietea.mirai.plugin.utils.MessageUtil;
+import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MPSEStatistics extends MPSEProcessor{
 
@@ -13,6 +19,21 @@ public class MPSEStatistics extends MPSEProcessor{
     final static int SIX_HOUR_THRESHOLD = 1500;
     final static int THREE_HOUR_THRESHOLD = 1000;
     final static int ONE_HOUR_THRESHOLD = 500;
+    static final Timer TIMER = new Timer(true);
+
+    static{
+        TIMER.schedule(new TimerTask() {
+                           @Override
+                           public void run() {
+                               for(Bot bot: Bot.getInstances()){
+                                   MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()), bot);
+                               }
+
+                           }
+                       },
+                StandardTimeUtil.getStandardFirstTime(0, 0, 1),
+                StandardTimeUtil.getPeriodLengthInMS(0, 6, 0, 0));
+    }
 
     public static Data getXHourMPSEData(int hour,long botID){
         DataList dl = MessagePostSendEventHandler.getINSTANCE().dataList;

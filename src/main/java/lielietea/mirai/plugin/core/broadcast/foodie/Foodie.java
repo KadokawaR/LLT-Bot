@@ -4,7 +4,8 @@ import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
 
-// FIXME 这里总得处理一下
+//FIXME 这里总得处理一下
+// - 我凑，真的有人在意这个玩意儿吗
 public class Foodie {
     static final Timer timer = new Timer(true);
     static final Map<Long, Boolean> foodieActivationFlags = new HashMap<>();
