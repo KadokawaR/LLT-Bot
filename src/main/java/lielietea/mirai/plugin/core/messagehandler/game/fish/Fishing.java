@@ -6,10 +6,6 @@ import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.bancodeespana.BancoDeEspana;
 import lielietea.mirai.plugin.core.bancodeespana.Currency;
 import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
-
-import lielietea.mirai.plugin.core.bancodeespana.BancoDeEspana;
-import lielietea.mirai.plugin.core.bancodeespana.Currency;
-import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
