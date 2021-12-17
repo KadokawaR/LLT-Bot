@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
+package lielietea.mirai.plugin.core.messagehandler.responder.basic;
 
 import lielietea.mirai.plugin.core.MessageChainPackage;
 import lielietea.mirai.plugin.core.messagehandler.responder.MessageResponder;

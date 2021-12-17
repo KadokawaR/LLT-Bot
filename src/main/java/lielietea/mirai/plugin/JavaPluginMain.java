@@ -3,7 +3,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
-import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Nudge;
+import lielietea.mirai.plugin.utils.Nudge;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.MessageDispatcher;

@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.core;
 
 import lielietea.mirai.plugin.core.messagehandler.feedback.FeedBack;
 import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
-import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
@@ -38,7 +37,6 @@ public class MessageDispatcher {
                                      public void run() {
                                          groupThreshold.clearCache();
                                          personalThreshold.clearCache();
-                                         System.out.println("MessageDispatcher的分钟计数器已经重置。");
                                      }
                                  }, StandardTimeUtil.getPeriodLengthInMS(0, 0, 0, 1),
                 StandardTimeUtil.getPeriodLengthInMS(0, 0, 1, 0));
@@ -72,9 +70,6 @@ public class MessageDispatcher {
                     handleMessageChainPackage(temp);
                 }
             }
-
-            //然后交由GameManager处理
-            //TODO:GameManager还没改写
 
             //最后交由Feedback处理
             if (!handled) {
@@ -118,12 +113,10 @@ public class MessageDispatcher {
 
 
     public void handleMessageChainPackage(MessageChainPackage messageChainPackage) {
-        //首先加告知StatisticController
-        //TODO: Add Hook To StatisticController
+        // Well 本来statistic是要在这里处理的，不过已经有 MSPE 处理了
+        // 所以 MessageChainPackage 这个玩意是否还有必要？
 
-        //TODO 如何处理 MessagePackage自带的Note？
-
-        //最后加入线程池
+        //加入线程池
         executor.submit(messageChainPackage::execute);
     }
 

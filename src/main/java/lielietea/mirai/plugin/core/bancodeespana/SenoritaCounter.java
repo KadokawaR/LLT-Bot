@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.game.bancodeespana;
+package lielietea.mirai.plugin.core.bancodeespana;
 
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.utils.IdentityUtil;
@@ -41,7 +41,7 @@ public class SenoritaCounter {
         return null;
     }
 
-    //
+
     public static void checkMoney(MessageEvent event){
         if (event.getMessage().contentToString().equals("/bank")||event.getMessage().contentToString().equals("查询余额")){
             BancoDeEspana.touchAccount(event.getSender().getId());
@@ -109,10 +109,6 @@ public class SenoritaCounter {
             event.getSubject().sendMessage("已设置成功。");
         }
 
-    }
-
-    public static void givePlayerMoney(MessageEvent event){
-        if(!IdentityUtil.isAdmin(event)) return;
     }
 
     public static boolean hasEnoughMoney(MessageEvent event, int money){

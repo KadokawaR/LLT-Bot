@@ -2,7 +2,6 @@ package lielietea.mirai.plugin.utils.multibot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BankRecord;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Touch;
@@ -14,8 +13,6 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MultiBotHandler {
 

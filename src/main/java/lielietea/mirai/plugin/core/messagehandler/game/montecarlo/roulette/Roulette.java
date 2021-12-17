@@ -3,7 +3,7 @@ package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.roulette;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
-import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;

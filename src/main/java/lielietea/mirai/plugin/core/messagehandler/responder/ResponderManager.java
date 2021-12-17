@@ -3,10 +3,10 @@ package lielietea.mirai.plugin.core.messagehandler.responder;
 
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MPSEStatistics;
 import lielietea.mirai.plugin.core.MessageChainPackage;
-import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiDirtyWord;
-import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.AntiOverwatch;
-import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Goodbye;
-import lielietea.mirai.plugin.core.messagehandler.responder.autoreply.Greeting;
+import lielietea.mirai.plugin.core.messagehandler.responder.basic.AntiDirtyWord;
+import lielietea.mirai.plugin.core.messagehandler.responder.basic.AntiOverwatch;
+import lielietea.mirai.plugin.core.messagehandler.responder.basic.Goodbye;
+import lielietea.mirai.plugin.core.messagehandler.responder.basic.Greeting;
 import lielietea.mirai.plugin.core.messagehandler.responder.dice.PlayDice;
 import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.dinnerpicker.MealPicker;
 import lielietea.mirai.plugin.core.messagehandler.responder.feastinghelper.dinnerpicker.PizzaPicker;

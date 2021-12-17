@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack;
 
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
-import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackPhase;

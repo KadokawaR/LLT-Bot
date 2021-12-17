@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.responder.autoreply;
+package lielietea.mirai.plugin.core.messagehandler.responder.basic;
 
 
 import lielietea.mirai.plugin.core.MessageChainPackage;
@@ -11,15 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Goodbye implements MessageResponder<MessageEvent> {
+public class AntiOverwatch implements MessageResponder<MessageEvent> {
     static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
+
     static final List<Pattern> REG_PATTERN = new ArrayList<>();
 
     static {
         {
-            REG_PATTERN.add(Pattern.compile(".*" + "下线了" + ".*"));
-            REG_PATTERN.add(Pattern.compile(".*" + "我走了" + ".*"));
-            REG_PATTERN.add(Pattern.compile(".*" + "拜拜" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "([Oo])verwatch" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "守望((先锋)|(屁股))" + ".*"));
+            REG_PATTERN.add(Pattern.compile(".*" + "([玩打])((OW)|(ow))" + ".*"));
         }
     }
 
@@ -35,7 +36,7 @@ public class Goodbye implements MessageResponder<MessageEvent> {
 
     @Override
     public MessageChainPackage handle(MessageEvent event) {
-        return MessageChainPackage.getDefaultImpl(event, AutoReplyLinesCluster.reply(AutoReplyLinesCluster.ReplyType.GOODBYE), this);
+        return MessageChainPackage.getDefaultImpl(event, AutoReplyLinesCluster.reply(AutoReplyLinesCluster.ReplyType.ANTI_OVERWATCH_GAME), this);
     }
 
     @NotNull
@@ -47,6 +48,6 @@ public class Goodbye implements MessageResponder<MessageEvent> {
 
     @Override
     public String getName() {
-        return "自动回复：告别";
+        return "自动回复：反OW";
     }
 }

@@ -1,21 +1,24 @@
 package lielietea.mirai.plugin.core.messagehandler.responder.overwatch;
 
 import com.google.common.collect.Multimap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.common.collect.MultimapBuilder;
+import com.google.gson.*;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 
 class HeroLinesCluster {
     Multimap<Hero, String> ultimateAbilityHeroLines;
-    //实际上普通台词我们压根就没写
-    //先放着吧，估计也用不上
+    // 实际上普通台词我们压根就没写
+    // 放着吧，估计也用不上
     Multimap<Hero, String> commonHeroLines;
 
     @SuppressWarnings("rawtypes")
@@ -63,5 +66,50 @@ class HeroLinesCluster {
     public static void reply(MessageEvent event, Hero hero) {
         //我们还没有加入英雄的普通台词，目前默认回复大招台词
         event.getSubject().sendMessage(pickUltimateAbilityHeroLine(hero));
+    }
+
+    static class HeroLinesMultimapTypeAdapter<K, V> implements JsonSerializer<Multimap<K, V>>, JsonDeserializer<Multimap<K, V>> {
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public JsonElement serialize(Multimap<K, V> heroStringMultimap, Type type, JsonSerializationContext jsonSerializationContext) {
+            JsonArray object = new JsonArray();
+            Map<K, Collection<V>> heroCollectionMap = heroStringMultimap.asMap();
+            for (Hero hero : Hero.values()) {
+                JsonObject jsonHeroLinesCollection = new JsonObject();
+                JsonArray jsonHeroLines = new JsonArray();
+                for (V v : heroCollectionMap.get((K) hero)) {
+                    jsonHeroLines.add((String) v);
+                }
+                jsonHeroLinesCollection.add(hero.name(), jsonHeroLines);
+                object.add(jsonHeroLinesCollection);
+            }
+            return object;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Multimap<K, V> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            Multimap<K, V> heroStringMultimap = MultimapBuilder.hashKeys().arrayListValues().build();
+            for (JsonElement element : jsonElement.getAsJsonArray()) {
+
+                JsonObject jsonHeroPack = (JsonObject) element;
+                Collection<String> heroLines = new ArrayList<>();
+                Hero hero = Hero.valueOf((String) jsonHeroPack.keySet().toArray()[0]);
+
+                for (JsonElement value : jsonHeroPack.get(hero.name()).getAsJsonArray()) {
+                    heroLines.add(value.getAsJsonPrimitive().getAsString());
+                }
+
+                for (String line : heroLines) {
+                    heroStringMultimap.put((K) hero, (V) line);
+                }
+
+            }
+
+            return heroStringMultimap;
+        }
+
+
     }
 }

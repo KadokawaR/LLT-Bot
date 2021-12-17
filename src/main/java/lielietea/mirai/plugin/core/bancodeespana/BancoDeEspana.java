@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.messagehandler.game.bancodeespana;
+package lielietea.mirai.plugin.core.bancodeespana;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
