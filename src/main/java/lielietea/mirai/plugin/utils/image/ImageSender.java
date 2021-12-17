@@ -37,6 +37,7 @@ public class ImageSender {
 
         try {
             externalResource.close();
+            output.close();
         } catch (IOException e) {
             e.printStackTrace();
             Logger.getGlobal().warning("资源关闭失败！");

@@ -104,13 +104,15 @@ public class MultiBotHandler {
     public static String rejectInformation(long ID){
         StringBuilder sb = new StringBuilder();
         sb.append("该账号已经停止接受加入新群组，请尝试如下账号：");
+        int count = 0;
         for(Bot bot:Bot.getInstances()){
             if(bot.getId()==ID) continue;
             if(getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(bot.getId())).acceptGroup){
                 sb.append("\n").append(bot.getId()).append(" ").append(bot.getNick());
+                count++;
             }
         }
-        if(Bot.getInstances().size()==1) sb.append("\n\n艹 我们没号了，你先别加群了。");
+        if(count==0) sb.append("\n\n艹 我们没号了，先别加群了。");
         return sb.toString();
     }
 

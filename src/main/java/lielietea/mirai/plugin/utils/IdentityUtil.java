@@ -2,6 +2,7 @@ package lielietea.mirai.plugin.utils;
 
 import com.google.common.collect.ImmutableSet;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.Set;
@@ -37,7 +38,9 @@ public class IdentityUtil {
 
     public static boolean containsUnusedBot(Group group){
         for(Long ID:unusedBotList){
-            if (group.getMembers().contains(ID)) return true;
+            for(NormalMember nm:group.getMembers()){
+                if(nm.getId()==ID) return true;
+            }
         }
         return false;
     }

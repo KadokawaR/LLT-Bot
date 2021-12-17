@@ -5,8 +5,6 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,9 +29,9 @@ public class GroupPolice {
             for (Bot bot : Bot.getInstances()) {
                 for (Group group : bot.getGroups()) {
                     if (IdentityUtil.DevGroup.DEFAULT.isDevGroup(group.getId())) continue;
-                    if (group.getMembers().getSize() <= 10) {
-                        group.sendMessage("ÆßÍ²Ä¿Ç°²»½ÓÊÜ¼ÓÈë10ÈËÒÔÏÂµÄÈºÁÄ£¬½«×Ô¶¯ÍËÈº£¬ÇëÔÚÆäËûÈºÖÐÊ¹ÓÃÆßÍ²¡£¸ÐÐ»ÄúÊ¹ÓÃÆßÍ²µÄ·þÎñ¡£");
-                        MessageUtil.notifyDevGroup("ÓÉÓÚÈºÁÄÈËÊý²»Âú10ÈË£¬ÆßÍ²ÒÑ¾­´Ó"+group.getName()+"("+group.getId()+")ÖÐÀë¿ª¡£");
+                    if (group.getMembers().getSize() < 7) {
+                        group.sendMessage("ä¸ƒç­’ç›®å‰ä¸æŽ¥å—åŠ å…¥7äººä»¥ä¸‹çš„ç¾¤èŠï¼Œå°†è‡ªåŠ¨é€€ç¾¤ï¼Œè¯·åœ¨å…¶ä»–ç¾¤ä¸­ä½¿ç”¨ä¸ƒç­’ã€‚æ„Ÿè°¢æ‚¨ä½¿ç”¨ä¸ƒç­’çš„æœåŠ¡ã€‚");
+                        MessageUtil.notifyDevGroup("ç”±äºŽç¾¤èŠäººæ•°ä¸æ»¡7äººï¼Œä¸ƒç­’å·²ç»ä»Ž"+group.getName()+"("+group.getId()+")ä¸­ç¦»å¼€ã€‚");
                         executor.schedule(() -> {
                             Objects.requireNonNull(bot.getGroup(group.getId())).quit();
                         }, 15, TimeUnit.SECONDS);
@@ -44,8 +42,8 @@ public class GroupPolice {
                             if (bot2.getId() == (bot.getId())) continue;
                             if (nm.getId() == bot2.getId()) {
                                 if(nm.getId()<bot.getId()) continue;
-                                group.sendMessage("¼ì²âµ½ÆäËûÔÚÏßÆßÍ²ÕË»§ÔÚ´ËÈºÁÄÖÐ£¬½«×Ô¶¯ÍËÈº¡£");
-                                MessageUtil.notifyDevGroup("ÓÉÓÚ¼ì²âµ½ÆäËûÆßÍ²£¬ÆßÍ²ÒÑ¾­´Ó"+group.getName()+"("+group.getId()+")ÖÐÀë¿ª¡£");
+                                group.sendMessage("æ£€æµ‹åˆ°å…¶ä»–åœ¨çº¿ä¸ƒç­’è´¦æˆ·åœ¨æ­¤ç¾¤èŠä¸­ï¼Œå°†è‡ªåŠ¨é€€ç¾¤ã€‚");
+                                MessageUtil.notifyDevGroup("ç”±äºŽæ£€æµ‹åˆ°å…¶ä»–ä¸ƒç­’ï¼Œä¸ƒç­’å·²ç»ä»Ž"+group.getName()+"("+group.getId()+")ä¸­ç¦»å¼€ã€‚");
                                 executor.schedule(() -> {
                                     Objects.requireNonNull(bot.getGroup(group.getId())).quit();
                                 }, 15, TimeUnit.SECONDS);

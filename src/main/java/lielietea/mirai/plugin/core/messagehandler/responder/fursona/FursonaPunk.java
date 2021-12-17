@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class FursonaPunk implements MessageResponder<GroupMessageEvent> {
+public class FursonaPunk implements MessageResponder<MessageEvent> {
     static final List<MessageResponder.MessageType> TYPES = new ArrayList<>(Collections.singletonList(MessageResponder.MessageType.GROUP));
     static final Fursona FURSONA_COMPONENTS;
     static final String FURSONA_PATH = "/cluster/fursona.json";
@@ -28,12 +28,12 @@ public class FursonaPunk implements MessageResponder<GroupMessageEvent> {
     }
 
     @Override
-    public boolean match(GroupMessageEvent event) {
+    public boolean match(MessageEvent event) {
         return event.getMessage().contentToString().equals("兽设");
     }
 
     @Override
-    public MessageChainPackage handle(GroupMessageEvent event) {
+    public MessageChainPackage handle(MessageEvent event) {
         return MessageChainPackage.getDefaultImpl(event, new At(event.getSender().getId()).plus(createFurryFucker(FURSONA_COMPONENTS, event)), this);
     }
 

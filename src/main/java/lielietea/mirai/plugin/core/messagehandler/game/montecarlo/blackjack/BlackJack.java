@@ -5,6 +5,7 @@ import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCou
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.blackjack.enums.BlackJackPhase;
+import lielietea.mirai.plugin.core.messagehandler.game.montecarlo.roulette.Roulette;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -12,13 +13,17 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class BlackJack extends BlackJackUtils {
 
     static final String BlackJackRules = "里格斯公司邀请您参与本局 Blackjack，请在60秒之内输入 /bet+数字 参与游戏。";
-    static final String BlackJackStops = "本局 Roulette 已经取消。";
+    static final String BlackJackStops = "本局 Blackjack 已经取消。";
     static final String NotRightBetNumber = "/bet 指令不正确，请重新再尝试";
     static final String YouDontHaveEnoughMoney = "操作失败，请检查您的南瓜比索数量。";
     static final String StartBetNotice = "Bet 阶段已经开始，预计在60秒之内结束。可以通过/bet+金额反复追加 bet。";
@@ -28,6 +33,7 @@ public class BlackJack extends BlackJackUtils {
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
 
     static final String BLACKJACK_INTRO_PATH = "/pics/casino/blackjack.png";
+    static final int GAP_SECONDS = 60;
 
     public List<BlackJackData> globalGroupData = new ArrayList<>();
     public List<BlackJackData> globalFriendData = new ArrayList<>();
@@ -38,7 +44,11 @@ public class BlackJack extends BlackJackUtils {
     public Map<Long,Timer> groupEndOperationTimer = new HashMap<>();
     public Map<Long,Timer> friendEndOperationTimer = new HashMap<>();
 
+    static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
     List<Long> isInBetProcess = new ArrayList<>();
+    List<Date> GroupResetMark = new ArrayList<>();
+    List<Date> FriendResetMark = new ArrayList<>();
 
     BlackJack() {
     }
@@ -90,12 +100,59 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.add(new BlackJackData(event.getSubject().getId()));
         }
 
+        //全局取消标记
+        Date gameStartTime = new Date();
+        if(isGroupMessage(event)){
+            while (getINSTANCE().GroupResetMark.contains(gameStartTime)) {
+                gameStartTime.setTime(gameStartTime.getTime() - 1);
+            }
+            getINSTANCE().GroupResetMark.add(gameStartTime);
+        } else {
+            while (getINSTANCE().FriendResetMark.contains(gameStartTime)) {
+                gameStartTime.setTime(gameStartTime.getTime() - 1);
+            }
+            getINSTANCE().FriendResetMark.add(gameStartTime);
+        }
+
+        //3.5个间隔时间之后，取消标记
+        executor.schedule(new CancelMarks(event,gameStartTime), (long) (GAP_SECONDS*3.5), TimeUnit.SECONDS);
+
         InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH);
         assert img != null;
         GameCenterCount.count(GameCenterCount.Functions.BlackjackStart);
         event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
-
+        try {
+            img.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         cancelInSixtySeconds(event);
+    }
+
+    //3.5个GAP_TIME之后取消所有标记的Runnable
+    static class CancelMarks implements Runnable{
+        MessageEvent event;
+        Date gameStartTime;
+
+        CancelMarks(MessageEvent event,Date gameStartTime){
+            this.event = event;
+            this.gameStartTime = gameStartTime;
+        }
+        @Override
+        public void run() {
+            if(isGroupMessage(event)){
+                if(getINSTANCE().GroupResetMark.contains(gameStartTime)){
+                    getINSTANCE().globalGroupData.remove((int)indexInTheList(event));
+                }
+                getINSTANCE().GroupResetMark.remove(gameStartTime);
+                getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
+            } else {
+                if(getINSTANCE().FriendResetMark.contains(gameStartTime)) {
+                    getINSTANCE().globalFriendData.remove((int)indexInTheList(event));
+                }
+                getINSTANCE().FriendResetMark.remove(gameStartTime);
+            }
+        }
     }
 
     //60秒之内如果没有进入下一阶段就自动取消
@@ -525,6 +582,16 @@ public class BlackJack extends BlackJackUtils {
 
     //返回是否可以操作
     public static boolean operationAvailabilityCheck(MessageEvent event) {
+        boolean containsUser = false;
+        for(BlackJackData bjd:getGlobalData(event)){
+            for(BlackJackPlayer bjp:bjd.getBlackJackPlayerList()){
+                if(event.getSender().getId()==bjp.getID()){
+                    containsUser = true;
+                    break;
+                }
+            }
+        }
+        if(!containsUser) return false;
         return (getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).isCanOperate());
     }
 

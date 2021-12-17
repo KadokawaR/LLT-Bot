@@ -107,7 +107,7 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
                 for(Bot bot : Bot.getInstances()){
                     boolean originalStatus = getINSTANCE().triggerBreakMap.get(bot.getId());
                     updateDataList(bot.getId());
-                    boolean newStatus = getINSTANCE().triggerBreakMap.get(bot.getId());
+                    boolean newStatus = triggeredBreaker(bot.getId());
                     getINSTANCE().triggerBreakMap.put(bot.getId(),newStatus);
                     if(originalStatus!=newStatus){
                         MessageUtil.notifyDevGroup("熔断机制状态发生变化，目前的熔断状况是 "+String.valueOf(newStatus),bot.getId());

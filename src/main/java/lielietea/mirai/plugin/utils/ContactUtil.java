@@ -52,26 +52,26 @@ public class ContactUtil {
     }
 
     // 处理加群事件
-    public static void handleJoinGroup(BotJoinGroupEvent event) {
+    public static void handleJoinGroup(BotJoinGroupEvent.Invite event) {
         if(IdentityUtil.DevGroup.DEFAULT.isDevGroup(event.getGroupId())){
             event.getGroup().sendMessage("反正是开发组，咱没话说。");
             return;
         }
         executor.schedule(() -> {
             //管理员判定
-            if(!IdentityUtil.isAdmin(((BotJoinGroupEvent.Invite) event).getInvitor().getId())) {
+            if(!IdentityUtil.isAdmin((event).getInvitor().getId())) {
                 if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
-                    ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                    (event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     event.getGroup().quit();
                     String content = "由于目前Bot不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
                     return;
                 }
 
-                if (event.getGroup().getMembers().getSize() <= 10) {
-                    ((BotJoinGroupEvent.Invite) event).getInvitor().sendMessage("七筒目前不接受加入10人以下的群聊。");
+                if (event.getGroup().getMembers().getSize() < 7) {
+                    (event).getInvitor().sendMessage("七筒目前不接受加入7人以下的群聊。");
                     event.getGroup().quit();
-                    String content = ((BotJoinGroupEvent.Invite) event).getInvitor().getNick() + "(" + ((BotJoinGroupEvent.Invite) event).getInvitor().getId() + ")尝试邀请七筒加入一个少于10人的群聊。";
+                    String content = (event).getInvitor().getNick() + "(" + (event).getInvitor().getId() + ")尝试邀请七筒加入一个少于7人的群聊。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
                     return;
                 }
@@ -91,8 +91,8 @@ public class ContactUtil {
             }
 
             // 正常通过群邀请加群
-            sendNoticeWhenJoinGroup(event,IdentityUtil.containsUnusedBot(event.getGroup()));
-            notifyDevWhenJoinGroup(event, JoinGroupSourceType.INVITE);
+            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()));
+            notifyDevWhenJoinGroup(event);
 
             event.getGroup().sendMessage(JOIN_GROUP);
             try {
@@ -101,12 +101,71 @@ public class ContactUtil {
                 e.printStackTrace();
             }
             DisclTemporary.send(event.getGroup());
-        },0,TimeUnit.SECONDS);
+        },10,TimeUnit.SECONDS);
+
+    }
+
+    // 处理加群事件
+    public static void handleJoinGroup(BotJoinGroupEvent.Active event) {
+        if(IdentityUtil.DevGroup.DEFAULT.isDevGroup(event.getGroupId())){
+            event.getGroup().sendMessage("反正是开发组，咱没话说。");
+            return;
+        }
+        executor.schedule(() -> {
+
+                if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
+                    event.getGroup().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                    event.getGroup().quit();
+                    String content = "由于目前Bot不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
+                    MessageUtil.notifyDevGroup(content, event.getBot().getId());
+                    return;
+                }
+
+                if (event.getGroup().getMembers().getSize() < 7) {
+                    event.getGroup().sendMessage("七筒目前不接受加入7人以下的群聊。");
+                    event.getGroup().quit();
+                    String content = "有人尝试尝试邀请七筒加入一个少于7人的群聊 "+event.getGroup().getName()+"("+event.getGroup().getId()+")，七筒已经离开";
+                    MessageUtil.notifyDevGroup(content, event.getBot().getId());
+                    return;
+                }
+
+
+            //检测是否有其他七筒
+            for(NormalMember nm:event.getGroup().getMembers()){
+                for(Bot bot:Bot.getInstances()){
+                    if (bot.getId()==(event.getBot().getId())) continue;
+                    if (nm.getId()==bot.getId()){
+                        if(nm.getId()<bot.getId()) continue;//很重要的判定！两个七筒只有一个退群！
+                        event.getGroup().sendMessage("检测到其他在线七筒账户在此群聊中，本机器人将自动退群。");
+                        executor.schedule(() -> event.getGroup().quit(),15,TimeUnit.SECONDS);
+                        return;
+                    }
+                }
+            }
+
+            // 正常通过群邀请加群
+            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()));
+            notifyDevWhenJoinGroup(event);
+
+            event.getGroup().sendMessage(JOIN_GROUP);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            DisclTemporary.send(event.getGroup());
+        },10,TimeUnit.SECONDS);
 
     }
 
     // 处理退群事件
-    public static void handleLeaveGroup(BotLeaveEvent event) {
+    public static void handleLeaveGroup(BotLeaveEvent.Kick event) {
+        // 通知开发者群
+        notifyDevWhenLeaveGroup(event);
+    }
+
+    // 处理退群事件
+    public static void handleLeaveGroup(BotLeaveEvent.Active event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
     }
@@ -144,24 +203,39 @@ public class ContactUtil {
     }
 
     // 加群后发送Bot提示
-    static void sendNoticeWhenJoinGroup(BotJoinGroupEvent event,boolean containsOldChitung) {
+    static void sendNoticeWhenJoinGroup(BotJoinGroupEvent.Active event,boolean containsOldChitung) {
         String message = "您好，七筒已经加入了您的群" + event.getGroup().getName() + " - " + event.getGroup().getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。";
         if(containsOldChitung) message+="\n\n检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。";
         event.getGroup().getOwner().sendMessage(message);
     }
 
+    static void sendNoticeWhenJoinGroup(Group group,boolean containsOldChitung) {
+        String message = "您好，七筒已经加入了您的群" + group.getName() + " - " + group.getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。";
+        if(containsOldChitung) message+="\n\n检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。";
+        group.getOwner().sendMessage(message);
+    }
+
     // 向开发者发送加群提醒
-    static void notifyDevWhenJoinGroup(BotJoinGroupEvent event, JoinGroupSourceType source) {
+    static void notifyDevWhenJoinGroup(BotJoinGroupEvent.Invite event) {
         MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）,邀请人为 "
                 + ((BotJoinGroupEvent.Invite) event).getInvitor().getNick() + "（" + ((BotJoinGroupEvent.Invite) event).getInvitor().getId() + "）。", event.getBot().getId());
     }
 
+    // 向开发者发送加群提醒
+    static void notifyDevWhenJoinGroup(BotJoinGroupEvent.Active event) {
+        MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）", event.getBot().getId());
+    }
+
     // 向开发者发送退群提醒
-    static void notifyDevWhenLeaveGroup(BotLeaveEvent event) {
+    static void notifyDevWhenLeaveGroup(BotLeaveEvent.Kick event) {
         //todo:Mirai开发者告知这个写法可能不稳定
-        if(event instanceof  BotLeaveEvent.Kick) {
-            MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "） 离开。", event.getBot().getId());
-        }
+        MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "）离开，由管理员操作。", event.getBot().getId());
+    }
+
+    // 向开发者发送退群提醒
+    static void notifyDevWhenLeaveGroup(BotLeaveEvent.Active event) {
+        //todo:Mirai开发者告知这个写法可能不稳定
+        MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "）主动离开。", event.getBot().getId());
     }
 
     enum JoinGroupSourceType {

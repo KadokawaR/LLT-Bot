@@ -134,20 +134,21 @@ public class FishingUtil {
         data[1] = (int)((timeSunrise-data[0])*60);
 
         data[2] = (int) Math.floor(timeSunset);
-        data[3] = (int)((timeSunset-data[1])*60);
+        data[3] = (int)((timeSunset-data[2])*60);
 
         return data;
     }
 
     //计算是否是白天
     public static boolean isInDaytime(){
-        Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat hourFormat = new SimpleDateFormat("HH");
-        SimpleDateFormat minuteFormat = new SimpleDateFormat("mm");
-        int nowHour = Integer.parseInt(hourFormat.format(date));
-        int nowMinute = Integer.parseInt(minuteFormat.format(date));
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
+        int nowHour = c.get(Calendar.HOUR_OF_DAY);
+        int nowMinute = c.get(Calendar.MINUTE);
         int[] data = calculateDayTime();
-        return (nowHour>=data[0]&&nowHour<=data[2])&&(nowMinute>=data[1]&&nowMinute<=data[3]);
+        int timeSunrise = data[0]*60+data[1];
+        int timeSunset = data[2]*60+data[3];
+        int timeNow = nowHour*60+nowMinute;
+        return (timeSunrise<=timeNow&&timeNow<timeSunset);
     }
 
     //获得是否有渔场信息
@@ -185,6 +186,7 @@ public class FishingUtil {
             try {
                 assert is != null;
                 img = ImageIO.read(is);
+                is.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -242,7 +244,9 @@ public class FishingUtil {
 
     static BufferedImage getHandbook(MessageEvent event) throws IOException {
         List<Boolean> hasCollectedList = getCollectedList(event);
-        BufferedImage handbookTemplate =  ImageIO.read(Objects.requireNonNull(FishingUtil.class.getResourceAsStream("/pics/fishing/handbookTemplate.png")));
+        InputStream is = FishingUtil.class.getResourceAsStream("/pics/fishing/handbookTemplate.png");
+        BufferedImage handbookTemplate =  ImageIO.read(Objects.requireNonNull(is));
+        is.close();
         BufferedImage handbook = new BufferedImage(32*8,32*9,BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d1 = handbookTemplate.createGraphics();
         Graphics2D g2d2 = handbook.createGraphics();

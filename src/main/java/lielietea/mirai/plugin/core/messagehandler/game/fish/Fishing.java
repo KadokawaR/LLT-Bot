@@ -5,8 +5,6 @@ import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.BancoDeEspana;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.Currency;
 import lielietea.mirai.plugin.core.messagehandler.game.bancodeespana.SenoritaCounter;
-import lielietea.mirai.plugin.core.messagehandler.game.jetpack.JetPackUtil;
-import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -24,7 +22,7 @@ import java.util.*;
 public class Fishing extends FishingUtil{
 
     public static final int FISHING_COST = 800;
-    public static final int MAX_COUNT_IN_ONE_HOUR = 40;
+    public static final int MAX_COUNT_IN_ONE_HOUR = 60;
 
     public enum Time{
         Day,
@@ -68,13 +66,18 @@ public class Fishing extends FishingUtil{
         loadedFishingList = new ArrayList<>();
         fishRecord = new ArrayList<>();
         String FISHINGLIST_PATH = "/fishing/FishingList.json";
-        InputStream is = JetPackUtil.class.getResourceAsStream(FISHINGLIST_PATH);
+        InputStream is = Fishing.class.getResourceAsStream(FISHINGLIST_PATH);
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         Gson gson = new Gson();
         FishingList fl = gson.fromJson(br,FishingList.class);
         loadedFishingList.addAll(fl.fishingList);
         touchRecord();
+        try {
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static final Fishing INSTANCE = new Fishing();
@@ -117,10 +120,11 @@ public class Fishing extends FishingUtil{
             mcb.append("您的图鉴完成度目前为").append(String.valueOf(handbookProportion(event.getSender().getId()))).append("%\n\n");
             try {
                 mcb.append(Contact.uploadImage(event.getSubject(),ImageSender.getBufferedImageAsSource(getHandbook(event))));
+                event.getSubject().sendMessage(mcb.asMessageChain());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            event.getSubject().sendMessage(mcb.asMessageChain());
+
             return;
         }
 
@@ -146,11 +150,7 @@ public class Fishing extends FishingUtil{
         MessageChainBuilder mcb = mcbProcessor(event);
         Random random = new Random();
         int recordInOneHour = fishInOneHour(updateRecord(getINSTANCE().fishRecord));
-        if(recordInOneHour>=MAX_COUNT_IN_ONE_HOUR){
-            mcb.append("已经触发熔断，请一个小时之后再尝试钓鱼。");
-            return;
-        }
-        int time = 3+random.nextInt(4)+(int)(recordInOneHour*0.5);//线性增加时间
+        int time = 3+random.nextInt(4)+recordInOneHour;//线性增加时间
         int itemNumber = 3+random.nextInt(2);
 
         getINSTANCE().fishRecord.add(new Date());
@@ -189,7 +189,8 @@ public class Fishing extends FishingUtil{
                     totalValue = totalValue + fish.price*entry.getValue();
                 }
 
-                mcb.append("\n共值").append(String.valueOf(totalValue)).append("南瓜比索。\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
+                totalValue = (int) (totalValue*(1F+recordInOneHour*0.05F));
+                mcb.append("\n时间等待的系统修正倍数为").append(String.valueOf(1F+recordInOneHour*0.05F)).append("，共值").append(String.valueOf(totalValue)).append("南瓜比索。\n\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
                 //向银行存钱
                 BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(),totalValue, Currency.PumpkinPesos);
                 //存储钓鱼信息
@@ -202,7 +203,7 @@ public class Fishing extends FishingUtil{
                 timer[0] = null;
 
             }
-        }, time*60*1000);
+        }, (long) time*60*1000);
     }
 
     public static Map<Integer,Integer> getItemIDRandomly(int amount,Waters waters){

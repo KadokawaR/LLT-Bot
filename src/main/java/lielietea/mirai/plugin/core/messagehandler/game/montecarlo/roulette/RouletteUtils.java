@@ -96,7 +96,13 @@ public class RouletteUtils extends IndicatorProcessor{
         for(int i=0;i<37;i++){
             tempTable.put(event.getSender().getId(),i,0);
         }
-        Roulette.getINSTANCE().GroupSettleAccount.put(event.getSubject().getId(),tempTable);
+        if(!Roulette.getINSTANCE().GroupSettleAccount.containsKey(event.getSubject().getId())) {
+            Roulette.getINSTANCE().GroupSettleAccount.put(event.getSubject().getId(), tempTable);
+            return;
+        }
+        for(int i=0;i<37;i++) {
+            Roulette.getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).put(event.getSender().getId(),i,0);
+        }
     }
 
     //根据下注往Table里面塞赌注 Friend
@@ -108,6 +114,7 @@ public class RouletteUtils extends IndicatorProcessor{
             someSet=getSet(rb.location,rb.indicator);
             for (int itNext : someSet) {
                 Integer originalValue = newTable.get(ID, itNext);
+                if(originalValue==null) originalValue=0;
                 newTable.put(ID, itNext, originalValue + rb.indicator.getTime());
             }
         }
@@ -120,6 +127,7 @@ public class RouletteUtils extends IndicatorProcessor{
             someSet=getSet(rb.location,rb.indicator);
             for (int itNext : someSet) {
                 Integer originalValue = Roulette.getINSTANCE().GroupSettleAccount.get(groupID).get(playerID, itNext);
+                if(originalValue==null) originalValue=0;
                 Roulette.getINSTANCE().GroupSettleAccount.get(groupID).put(playerID, itNext, rb.indicator.getTime() + originalValue);
             }
         }

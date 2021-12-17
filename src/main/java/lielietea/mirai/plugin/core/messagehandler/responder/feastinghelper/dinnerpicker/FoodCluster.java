@@ -43,6 +43,11 @@ public class FoodCluster {
             if (!food.contains("匹萨") && !food.contains("比萨"))
                 foodsWithoutPizza.add(food);
         }
+        try {
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     boolean reload() {

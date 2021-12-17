@@ -52,7 +52,7 @@ public class GameCenterCount {
 
     public static void getStatistics(MessageEvent event){
         if(!event.getMessage().contentToString().contains("/gamecenter")) return;
-        event.getSubject().sendMessage(getResult());
+        MessageUtil.notifyDevGroup(getResult(),Bot.getInstances().get(0).getId());
     }
 
     public enum Functions {

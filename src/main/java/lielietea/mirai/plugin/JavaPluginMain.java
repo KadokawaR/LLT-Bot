@@ -66,10 +66,16 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotInvitedJoinGroupRequestEvent.class, ContactUtil::handleGroupInvitation);
 
         // 加群后处理加群事件
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, ContactUtil::handleJoinGroup);
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.Invite.class, ContactUtil::handleJoinGroup);
+
+        // 加群后处理加群事件
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.Active.class, ContactUtil::handleJoinGroup);
+
+        // Bot被踢
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.Kick.class, ContactUtil::handleLeaveGroup);
 
         // Bot离群
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, ContactUtil::handleLeaveGroup);
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.Active.class, ContactUtil::handleLeaveGroup);
 
         // Bot获得权限
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
