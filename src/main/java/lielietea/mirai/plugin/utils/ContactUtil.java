@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.utils;
 
-import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
+import lielietea.mirai.plugin.core.responder.help.DisclTemporary;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Friend;
@@ -8,8 +8,6 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;

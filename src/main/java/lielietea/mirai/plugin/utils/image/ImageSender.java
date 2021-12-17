@@ -1,6 +1,5 @@
 package lielietea.mirai.plugin.utils.image;
 
-import lielietea.mirai.plugin.core.messagehandler.responder.help.DisclTemporary;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.utils.ExternalResource;

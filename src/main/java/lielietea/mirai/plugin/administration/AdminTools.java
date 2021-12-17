@@ -1,11 +1,10 @@
 package lielietea.mirai.plugin.administration;
 
-import lielietea.mirai.plugin.core.messagehandler.responder.ResponderManager;
+import lielietea.mirai.plugin.core.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 

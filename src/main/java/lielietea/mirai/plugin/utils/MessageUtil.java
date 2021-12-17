@@ -40,6 +40,14 @@ public class MessageUtil {
         }
     }
 
+    /**
+     * 指定某个Bot，向开发群发送消息通知
+     */
+    public static void notifyDevGroup(String content, Bot bot){
+        Group group = bot.getGroup(IdentityUtil.DevGroup.DEFAULT.getID());
+        if (group != null) group.sendMessage(content);
+    }
+
     public static void notifyDevGroup(MessageChain messageChain, long botID){
         List<Bot> bots = Bot.getInstances();
         for (Bot bot : bots) {
@@ -48,6 +56,11 @@ public class MessageUtil {
                 if (group != null) group.sendMessage(messageChain);
             }
         }
+    }
+
+    public static void notifyDevGroup(MessageChain messageChain, Bot bot){
+        Group group = bot.getGroup(IdentityUtil.DevGroup.DEFAULT.getID());
+        if (group != null) group.sendMessage(messageChain);
     }
 
 }

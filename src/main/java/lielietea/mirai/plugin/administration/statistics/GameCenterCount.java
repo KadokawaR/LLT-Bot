@@ -77,9 +77,6 @@ public class GameCenterCount {
         RouletteStart,
         RouletteBet,
         RouletteOperations,
-
-        FurryGameIndexSearch,
-        FurryGameIndexRandom
     }
 
 }
