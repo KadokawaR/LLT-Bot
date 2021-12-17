@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="dc1c83d6-28c9-4cb3-b784-8cba1a4a0121" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../../JavaPluginMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../JavaPluginMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../MessageDispatcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MessageDispatcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GameCenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../GameCenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GameHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bancodeespana/BancoDeEspana.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../bancodeespana/BancoDeEspana.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bancodeespana/BankAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../bancodeespana/BankAccount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bancodeespana/BankRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../bancodeespana/BankRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bancodeespana/Currency.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../bancodeespana/Currency.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bancodeespana/SenoritaCounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../bancodeespana/SenoritaCounter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fishing.java" beforeDir="false" afterPath="$PROJECT_DIR$/Fishing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../montecarlo/CasinoCroupier.java" beforeDir="false" afterPath="$PROJECT_DIR$/../montecarlo/CasinoCroupier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../montecarlo/blackjack/BlackJack.java" beforeDir="false" afterPath="$PROJECT_DIR$/../montecarlo/blackjack/BlackJack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../montecarlo/blackjack/BlackJackUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../montecarlo/blackjack/BlackJackUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../montecarlo/roulette/Roulette.java" beforeDir="false" afterPath="$PROJECT_DIR$/../montecarlo/roulette/Roulette.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/ResponderManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/ResponderManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/AntiDirtyWord.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/basic/AntiDirtyWord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/AntiOverwatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/basic/AntiOverwatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/AutoReplyLinesCluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/basic/AutoReplyLinesCluster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/FurryGamesIndex.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/basic/FurryGamesIndex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/Goodbye.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/basic/Goodbye.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/Greeting.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/basic/Greeting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/autoreply/Nudge.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../utils/Nudge.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/overwatch/HeroLinesCluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../responder/overwatch/HeroLinesCluster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../responder/overwatch/HeroLinesMultimapTypeAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../utils/multibot/MultiBotHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../utils/multibot/MultiBotHandler.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../../../../../../.." />
+  </component>
+  <component name="ProjectId" id="22PlSp9ma9fUJu5jDaJ3mWVNPAm" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <created>1639747109561</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1639747109561</updated>
+      <workItem from="1639747115197" duration="10000" />
+    </task>
+    <servers />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
