@@ -33,7 +33,7 @@ public class FursonaPunk implements MessageResponder<MessageEvent> {
     }
 
     @Override
-    public RespondTask handle(GroupMessageEvent event) {
+    public RespondTask handle(MessageEvent event) {
         return RespondTask.of(event, new At(event.getSender().getId()).plus(createFurryFucker(FURSONA_COMPONENTS, event)), this);
     }
 

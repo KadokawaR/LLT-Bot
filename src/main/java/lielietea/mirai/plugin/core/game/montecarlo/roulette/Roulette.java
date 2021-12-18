@@ -40,8 +40,8 @@ public class Roulette extends RouletteUtils{
 
     Table<Long,Integer,Integer> FriendSettleAccount = HashBasedTable.create();
     Map<Long,Table<Long,Integer,Integer>> GroupSettleAccount = new HashMap<>();
-    List<Date> GroupResetMark = new ArrayList<>();
-    List<Date> FriendResetMark = new ArrayList<>();
+    Map<Date,Long> GroupResetMark = new HashMap<>();
+    Map<Date,Long> FriendResetMark = new HashMap<>();
 
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
@@ -72,19 +72,17 @@ public class Roulette extends RouletteUtils{
         //全局取消标记
         Date gameStartTime = new Date();
         if(isGroupMessage(event)){
-            while (getINSTANCE().GroupResetMark.contains(gameStartTime)) {
+            while (getINSTANCE().GroupResetMark.containsKey(gameStartTime)) {
                 gameStartTime.setTime(gameStartTime.getTime() - 1);
             }
-            getINSTANCE().GroupResetMark.add(gameStartTime);
+            getINSTANCE().GroupResetMark.put(gameStartTime,event.getSubject().getId());
         } else {
-            while (getINSTANCE().FriendResetMark.contains(gameStartTime)) {
+            while (getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                 gameStartTime.setTime(gameStartTime.getTime() - 1);
             }
-            getINSTANCE().FriendResetMark.add(gameStartTime);
+            getINSTANCE().FriendResetMark.put(gameStartTime,event.getSubject().getId());
         }
 
-        //3.5个间隔时间之后，取消标记
-        executor.schedule(new CancelMarks(event,gameStartTime), (long) (GAP_SECONDS*3.5),TimeUnit.SECONDS);
 
         InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH);
         assert img != null;
@@ -102,6 +100,8 @@ public class Roulette extends RouletteUtils{
             getINSTANCE().FriendStatusMap.put(event.getSubject().getId(),StatusType.Callin);
         }
         executor.schedule(new CancelCallin(event),GAP_SECONDS, TimeUnit.SECONDS);
+        //3.5个间隔时间之后，取消标记
+        executor.schedule(new CancelMarks(event, gameStartTime),(GAP_SECONDS*3+2),TimeUnit.SECONDS);
     }
 
     //3个GAP_TIME之后取消所有标记的Runnable
@@ -116,25 +116,25 @@ public class Roulette extends RouletteUtils{
         @Override
         public void run() {
             if(isGroupMessage(event)){
-                if(getINSTANCE().GroupResetMark.contains(gameStartTime)){
+                if(getINSTANCE().GroupResetMark.containsKey(gameStartTime)){
                     //清除标记
                     for(Long playerID:getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()){
                         getINSTANCE().GroupBet.remove(event.getSubject().getId(),playerID);
                     }
                     getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
                     getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
+                    getINSTANCE().GroupResetMark.remove(gameStartTime);
                 }
-                getINSTANCE().GroupResetMark.remove(gameStartTime);
             } else {
-                if(getINSTANCE().FriendResetMark.contains(gameStartTime)) {
+                if(getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                     //清除标记
                     getINSTANCE().FriendBet.remove(event.getSubject().getId());
                     for (Integer integer : getINSTANCE().FriendSettleAccount.row(event.getSubject().getId()).keySet()) {
                         getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(), integer);
                     }
                     getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
+                    getINSTANCE().FriendResetMark.remove(gameStartTime);
                 }
-                getINSTANCE().FriendResetMark.remove(gameStartTime);
             }
         }
     }
@@ -209,7 +209,7 @@ public class Roulette extends RouletteUtils{
         if(isGroupMessage(event)){
             if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)||getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.End)) return;
         } else {
-            if(getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.PreBet)||getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.End)) return;
+            if(getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)||getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.End)) return;
         }
         GameCenterCount.count(GameCenterCount.Functions.RouletteBet);
 
@@ -392,6 +392,12 @@ public class Roulette extends RouletteUtils{
             }
             getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
             getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
+            for(Date date:getINSTANCE().GroupResetMark.keySet()) {
+                if (getINSTANCE().GroupResetMark.get(date) == event.getSubject().getId()) {
+                    getINSTANCE().GroupResetMark.remove(date);
+                    break;
+                }
+            }
 
         } else {
             MessageChainBuilder mcbf = new MessageChainBuilder();
@@ -406,6 +412,12 @@ public class Roulette extends RouletteUtils{
                 getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(),integer);
             }
             getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
+            for(Date date:getINSTANCE().FriendResetMark.keySet()) {
+                if (getINSTANCE().FriendResetMark.get(date) == event.getSubject().getId()) {
+                    getINSTANCE().FriendResetMark.remove(date);
+                    break;
+                }
+            }
         }
     }
 

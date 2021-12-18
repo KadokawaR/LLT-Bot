@@ -6,7 +6,6 @@ import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.bancodeespana.BancoDeEspana;
 import lielietea.mirai.plugin.core.bancodeespana.Currency;
 import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
-import lielietea.mirai.plugin.core.game.jetpack.JetPackUtil;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -20,6 +19,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Fishing extends FishingUtil{
 
@@ -59,8 +61,8 @@ public class Fishing extends FishingUtil{
         List<Fish> fishingList;
     }
 
+    static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
     static final List<Long> isInFishingProcessFlag = new ArrayList<>();
-
     final List<Fish> loadedFishingList;
     List<Date> fishRecord;
 
@@ -151,13 +153,12 @@ public class Fishing extends FishingUtil{
     public static void getFish(MessageEvent event,Waters waters){
         MessageChainBuilder mcb = mcbProcessor(event);
         Random random = new Random();
-        int recordInOneHour = fishInOneHour(updateRecord(getINSTANCE().fishRecord));
+        updateRecord();
+        int recordInOneHour = fishInOneHour(getINSTANCE().fishRecord);
         int time = 3+random.nextInt(4)+recordInOneHour;//线性增加时间
         int itemNumber = 3+random.nextInt(2);
 
         getINSTANCE().fishRecord.add(new Date());
-
-
 
         //非常规水域进行扣费
         if(!waters.equals(Waters.General)){
@@ -169,43 +170,11 @@ public class Fishing extends FishingUtil{
                 return;
             }
         }
+        mcb.append("本次钓鱼预计时间为").append(String.valueOf(time)).append("分钟。");
+        if(event instanceof GroupMessageEvent) mcb.append("\n\n请尽可能私聊七筒进行钓鱼，谢谢配合。");
+        event.getSubject().sendMessage(mcb.asMessageChain());
 
-        event.getSubject().sendMessage(mcb.append("本次钓鱼预计时间为").append(String.valueOf(time)).append("分钟。").asMessageChain());
-        final Timer[] timer = {new Timer()};
-        timer[0].schedule(new TimerTask() {
-            @Override
-            public void run() {
-                //随机生成包含鱼的code和数量的Map
-                Map<Integer,Integer> fishList = getItemIDRandomly(itemNumber,waters);
-                MessageChainBuilder mcb = new MessageChainBuilder();
-                if (event.getClass().equals(GroupMessageEvent.class)){
-                    mcb.append((new At(event.getSender().getId()))).append(" ");
-                }
-                mcb.append("您钓到了：\n\n");
-
-                int totalValue = 0;
-                for (Map.Entry<Integer, Integer> entry : fishList.entrySet()){
-                    Fish fish = getFishFromCode(entry.getKey());
-                    assert fish != null;
-                    mcb.append(fish.name).append("x").append(String.valueOf(entry.getValue())).append("，价值").append(String.valueOf(fish.price*entry.getValue())).append("南瓜比索\n");
-                    totalValue = totalValue + fish.price*entry.getValue();
-                }
-
-                totalValue = (int) (totalValue*(1F+recordInOneHour*0.05F));
-                mcb.append("\n时间等待的系统修正倍数为").append(String.valueOf(1F+recordInOneHour*0.05F)).append("，共值").append(String.valueOf(totalValue)).append("南瓜比索。\n\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
-                //向银行存钱
-                BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(),totalValue, Currency.PumpkinPesos);
-                //存储钓鱼信息
-                saveRecord(event.getSender().getId(),new ArrayList<>(fishList.keySet()));
-                //发送消息
-                event.getSubject().sendMessage(mcb.asMessageChain());
-                //解除正在钓鱼的flag
-                isInFishingProcessFlag.remove(event.getSender().getId());
-                timer[0].cancel();
-                timer[0] = null;
-
-            }
-        }, (long) time*60*1000);
+        executor.schedule(new fishRunnable(event,itemNumber,waters,recordInOneHour),time, TimeUnit.MINUTES);
     }
 
     public static Map<Integer,Integer> getItemIDRandomly(int amount,Waters waters){
@@ -281,5 +250,55 @@ public class Fishing extends FishingUtil{
             mcb.append((new At(event.getSender().getId()))).append(" ");
         }
         return mcb;
+    }
+
+    static class fishRunnable implements Runnable {
+
+        MessageEvent event;
+        int itemNumber;
+        Waters waters;
+        int recordInOneHour;
+
+        fishRunnable(MessageEvent event,int itemNumber,Waters waters,int recordInOneHour){
+            this.event=event;
+            this.itemNumber=itemNumber;
+            this.waters=waters;
+            this.recordInOneHour=recordInOneHour;
+        }
+
+        @Override
+        public void run(){
+            try {
+                //随机生成包含鱼的code和数量的Map
+                Map<Integer, Integer> fishList = getItemIDRandomly(itemNumber, waters);
+                MessageChainBuilder mcb = new MessageChainBuilder();
+                if (event.getClass().equals(GroupMessageEvent.class)) {
+                    mcb.append((new At(event.getSender().getId()))).append(" ");
+                }
+                mcb.append("您钓到了：\n\n");
+
+                int totalValue = 0;
+                for (Map.Entry<Integer, Integer> entry : fishList.entrySet()) {
+                    Fish fish = getFishFromCode(entry.getKey());
+                    assert fish != null;
+                    mcb.append(fish.name).append("x").append(String.valueOf(entry.getValue())).append("，价值").append(String.valueOf(fish.price * entry.getValue())).append("南瓜比索\n");
+                    totalValue = totalValue + fish.price * entry.getValue();
+                }
+
+                totalValue = (int) (totalValue * (1F + recordInOneHour * 0.05F));
+                mcb.append("\n时间等待的系统修正倍数为").append(String.valueOf(1F + recordInOneHour * 0.05F)).append("，共值").append(String.valueOf(totalValue)).append("南瓜比索。\n\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
+                //向银行存钱
+                BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(), totalValue, Currency.PumpkinPesos);
+                //存储钓鱼信息
+                saveRecord(event.getSender().getId(), new ArrayList<>(fishList.keySet()));
+                //发送消息
+                event.getSubject().sendMessage(mcb.asMessageChain());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                //解除正在钓鱼的flag
+                isInFishingProcessFlag.remove(event.getSender().getId());
+            }
+        }
     }
 }

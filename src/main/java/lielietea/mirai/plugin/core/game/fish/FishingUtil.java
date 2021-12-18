@@ -285,19 +285,24 @@ public class FishingUtil {
             }
         }
 
-        return (int)usersRecordList.size()*100/72;
+        return usersRecordList.size()*100/72;
     }
 
     //钓鱼人数统计
     static int fishInOneHour(List<Date> fishRecord){
-        return fishRecord.size();
+        Calendar calendar = Calendar.getInstance();
+        int index = 0;
+        for(Date date:fishRecord){
+            if(date.before(new Date(calendar.getTimeInMillis() - FISH_RECORD_IN_X_HOUR*60*60*1000))){ continue; }
+            index++;
+        }
+        return index;
     }
 
     //更新Map
-    static List<Date> updateRecord(List<Date> fishRecord){
-        Date date = new Date();
-        fishRecord.removeIf(d -> date.before(new Date(date.getTime() - FISH_RECORD_IN_X_HOUR * 60 * 60 * 1000)));
-        return fishRecord;
+    static void updateRecord(){
+        Date now = new Date();
+        Fishing.getINSTANCE().fishRecord.removeIf(d -> now.before(new Date(now.getTime() - FISH_RECORD_IN_X_HOUR * 60 * 60 * 1000)));
     }
 
 }

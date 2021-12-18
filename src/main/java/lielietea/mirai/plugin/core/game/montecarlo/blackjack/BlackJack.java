@@ -49,8 +49,7 @@ public class BlackJack extends BlackJackUtils {
     List<Date> GroupResetMark = new ArrayList<>();
     List<Date> FriendResetMark = new ArrayList<>();
 
-    BlackJack() {
-    }
+    BlackJack() { }
 
     private static final BlackJack INSTANCE;
 
@@ -142,14 +141,14 @@ public class BlackJack extends BlackJackUtils {
             if(isGroupMessage(event)){
                 if(getINSTANCE().GroupResetMark.contains(gameStartTime)){
                     getINSTANCE().globalGroupData.remove((int)indexInTheList(event));
+                    getINSTANCE().GroupResetMark.remove(gameStartTime);
+                    getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
                 }
-                getINSTANCE().GroupResetMark.remove(gameStartTime);
-                getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
             } else {
                 if(getINSTANCE().FriendResetMark.contains(gameStartTime)) {
                     getINSTANCE().globalFriendData.remove((int)indexInTheList(event));
+                    getINSTANCE().FriendResetMark.remove(gameStartTime);
                 }
-                getINSTANCE().FriendResetMark.remove(gameStartTime);
             }
         }
     }
