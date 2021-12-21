@@ -1,17 +1,16 @@
 package lielietea.mirai.plugin.core.responder.feedback;
 
+import com.google.common.collect.Lists;
 import lielietea.mirai.plugin.core.responder.MessageResponder;
 import lielietea.mirai.plugin.core.responder.RespondTask;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FeedBack implements MessageResponder<MessageEvent> {
-    static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
+    static final List<MessageType> TYPES = Lists.newArrayList(MessageType.FRIEND);
     static FeedBack INSTANCE = new FeedBack();
 
     public static FeedBack getINSTANCE() {
