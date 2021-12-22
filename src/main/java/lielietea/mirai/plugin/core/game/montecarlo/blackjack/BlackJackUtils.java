@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.game.montecarlo.blackjack;
 
-import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.enums.BlackJackOperation;
@@ -151,7 +151,7 @@ public class BlackJackUtils {
 
     //判定是否有钱
     public static boolean hasEnoughMoney(MessageEvent event, int bet){
-        return SenoritaCounter.hasEnoughMoney(event,bet);
+        return PumpkinPesoWindow.hasEnoughMoney(event,bet);
     }
 
     //查看用户在列表里第几个
