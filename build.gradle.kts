@@ -13,6 +13,9 @@ repositories {
     jcenter()
     mavenCentral()
     mavenLocal()
+    flatDir {
+        dirs("libs")
+    }
 }
 
 
@@ -40,6 +43,8 @@ dependencies{
     // implementation("org.reflections:reflections:0.9.12")
 
     implementation ("org.jsoup:jsoup:1.14.3")
+
+    implementation("love.marblegate:the-vault-north-kinchovsk:0.1.0")
 }
 
 tasks.test {
