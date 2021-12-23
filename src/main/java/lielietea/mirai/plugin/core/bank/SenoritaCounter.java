@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 public class SenoritaCounter {
     final static String BANK_RECORD_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "bankrecord.json";
-    private static Vault<Long, Currency> VAULT;
+    private static final Vault<Long, Currency> VAULT;
 
     static{
         // 临时代码，将原来的银行存档先备份为 bankrecord_backup.json
