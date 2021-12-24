@@ -9,9 +9,12 @@ import java.util.Set;
 
 public class IdentityUtil {
     static final Set<Long> botList = ImmutableSet.of(
-            3628496803L, // 欧洲测试服务
+            3628496803L, //七筒#2
+            2429465624L, //七筒#3
             3621269439L, //wymTbot 维护者 1875018140
-            736951095L //未知
+            736951095L, //未知
+            1528805494L, //啥龙龙
+            1661492751L // 贾维斯
     );
 
     static final Set<Long> adminList = ImmutableSet.of(

@@ -171,7 +171,8 @@ public class Fishing extends FishingUtil{
             }
         }
         mcb.append("本次钓鱼预计时间为").append(String.valueOf(time)).append("分钟。");
-        if(event instanceof GroupMessageEvent) mcb.append("\n\n请尽可能私聊七筒进行钓鱼，谢谢配合。");
+        if(event instanceof GroupMessageEvent) mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息，并请尽可能私聊七筒进行钓鱼，谢谢配合。");
+        else mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息。");
         event.getSubject().sendMessage(mcb.asMessageChain());
 
         executor.schedule(new fishRunnable(event,itemNumber,waters,recordInOneHour),time, TimeUnit.MINUTES);
@@ -285,8 +286,8 @@ public class Fishing extends FishingUtil{
                     totalValue = totalValue + fish.price * entry.getValue();
                 }
 
-                totalValue = (int) (totalValue * (1F + recordInOneHour * 0.05F));
-                mcb.append("\n时间等待的系统修正倍数为").append(String.valueOf(1F + recordInOneHour * 0.05F)).append("，共值").append(String.valueOf(totalValue)).append("南瓜比索。\n\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
+                totalValue = (int) (totalValue * (1F + (float)recordInOneHour * 0.05F));
+                mcb.append("\n时间修正系数为").append(String.valueOf(1F + (float)recordInOneHour * 0.05F)).append("，共值").append(String.valueOf(totalValue)).append("南瓜比索。\n\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
                 //向银行存钱
                 BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(), totalValue, Currency.PumpkinPesos);
                 //存储钓鱼信息

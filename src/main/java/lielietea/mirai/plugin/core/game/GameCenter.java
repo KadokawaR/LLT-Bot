@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.core.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.core.game.montecarlo.CasinoCroupier;
 import lielietea.mirai.plugin.core.game.jetpack.JetPack;
 import lielietea.mirai.plugin.utils.Nudge;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -19,10 +20,13 @@ public class GameCenter {
         }
 
         JetPack.start(event);
-        Fishing.go(event);
         SenoritaCounter.go(event);
         CasinoCroupier.handle(event);
         //Foodie.send(event);
+
+        if(event instanceof FriendMessageEvent){
+            Fishing.go(event);
+        }
 
     }
 

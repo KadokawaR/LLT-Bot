@@ -46,8 +46,8 @@ public class BlackJack extends BlackJackUtils {
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     List<Long> isInBetProcess = new ArrayList<>();
-    List<Date> GroupResetMark = new ArrayList<>();
-    List<Date> FriendResetMark = new ArrayList<>();
+    Map<Date,Long> GroupResetMark = new HashMap<>();
+    Map<Date,Long> FriendResetMark = new HashMap<>();
 
     BlackJack() { }
 
@@ -101,15 +101,15 @@ public class BlackJack extends BlackJackUtils {
         //全局取消标记
         Date gameStartTime = new Date();
         if(isGroupMessage(event)){
-            while (getINSTANCE().GroupResetMark.contains(gameStartTime)) {
+            while (getINSTANCE().GroupResetMark.containsKey(gameStartTime)) {
                 gameStartTime.setTime(gameStartTime.getTime() - 1);
             }
-            getINSTANCE().GroupResetMark.add(gameStartTime);
+            getINSTANCE().GroupResetMark.put(gameStartTime,event.getSubject().getId());
         } else {
-            while (getINSTANCE().FriendResetMark.contains(gameStartTime)) {
+            while (getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                 gameStartTime.setTime(gameStartTime.getTime() - 1);
             }
-            getINSTANCE().FriendResetMark.add(gameStartTime);
+            getINSTANCE().FriendResetMark.put(gameStartTime,event.getSubject().getId());
         }
 
         //3.5个间隔时间之后，取消标记
@@ -139,13 +139,13 @@ public class BlackJack extends BlackJackUtils {
         @Override
         public void run() {
             if(isGroupMessage(event)){
-                if(getINSTANCE().GroupResetMark.contains(gameStartTime)){
+                if(getINSTANCE().GroupResetMark.containsKey(gameStartTime)){
                     getINSTANCE().globalGroupData.remove((int)indexInTheList(event));
                     getINSTANCE().GroupResetMark.remove(gameStartTime);
                     getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
                 }
             } else {
-                if(getINSTANCE().FriendResetMark.contains(gameStartTime)) {
+                if(getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                     getINSTANCE().globalFriendData.remove((int)indexInTheList(event));
                     getINSTANCE().FriendResetMark.remove(gameStartTime);
                 }
@@ -211,7 +211,13 @@ public class BlackJack extends BlackJackUtils {
         GameCenterCount.count(GameCenterCount.Functions.BlackjackBet);
 
         //判定数值是否正确
-        Integer bet = getBet(event);
+        Integer bet = null;
+        try {
+            bet = getBet(event);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         if (bet == null) {
             MessageChainBuilder mcb = mcbProcessor(event);
             mcb.append(NotRightBetNumber);
@@ -914,8 +920,21 @@ public class BlackJack extends BlackJackUtils {
         //删除这副牌
         if (isGroupMessage(event)){
             getINSTANCE().globalGroupData.remove((int)indexInTheList(event));
+            getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
+            for(Date date:getINSTANCE().GroupResetMark.keySet()){
+                if(getINSTANCE().GroupResetMark.get(date)==event.getSubject().getId()){
+                    getINSTANCE().GroupResetMark.remove(date);
+                    break;
+                }
+            }
         } else {
             getINSTANCE().globalFriendData.remove((int)indexInTheList(event));
+            for(Date date:getINSTANCE().FriendResetMark.keySet()){
+                if(getINSTANCE().FriendResetMark.get(date)==event.getSubject().getId()){
+                    getINSTANCE().FriendResetMark.remove(date);
+                    break;
+                }
+            }
         }
     }
 

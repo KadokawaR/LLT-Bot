@@ -213,7 +213,13 @@ public class Roulette extends RouletteUtils{
         }
         GameCenterCount.count(GameCenterCount.Functions.RouletteBet);
 
-        Integer bet = getBet(event.getMessage().contentToString());
+        Integer bet = null;
+
+        try {
+            bet = getBet(event.getMessage().contentToString());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         if( bet == null){
             MessageChainBuilder mcb = mcbProcessor(event);
@@ -378,12 +384,15 @@ public class Roulette extends RouletteUtils{
             System.out.println("进入最终结算环节");
             MessageChainBuilder mcbg = new MessageChainBuilder();
             mcbg.append(EndGameNotice).append("\n");
-            for(Long playerID : getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).rowKeySet()){
-                mcbg.append("\n").append(new At(playerID)).append(" ").append("共获得了").append(String.valueOf(getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID,result)*getINSTANCE().GroupBet.get(event.getSubject().getId(),playerID))).append("南瓜比索");
-                SenoritaCounter.addMoney(playerID,getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID,result)*getINSTANCE().GroupBet.get(event.getSubject().getId(),playerID));
-                System.out.println(playerID+"的钱:"+getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID,result)*getINSTANCE().GroupBet.get(event.getSubject().getId(),playerID));
+            for(Long playerID : getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).rowKeySet()) {
+                try {
+                    mcbg.append("\n").append(new At(playerID)).append(" ").append("共获得了").append(String.valueOf(getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID))).append("南瓜比索");
+                    SenoritaCounter.addMoney(playerID, getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
+                    System.out.println(playerID + "的钱:" + getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
-
             event.getSubject().sendMessage(mcbg.asMessageChain());
 
             //清除标记

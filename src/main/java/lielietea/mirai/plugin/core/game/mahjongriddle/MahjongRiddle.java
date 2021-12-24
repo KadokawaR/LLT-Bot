@@ -42,7 +42,6 @@ public class MahjongRiddle {
     public static int[] getRandomNum(int num) {
         int[] randomNum = new int[num];
         for (int i = 0; i < num; i++) {
-            assert rand != null;
             randomNum[i] = rand.nextInt(108);
         }
         Arrays.sort(randomNum);
