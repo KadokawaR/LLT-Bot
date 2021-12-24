@@ -13,6 +13,9 @@ repositories {
     jcenter()
     mavenCentral()
     mavenLocal()
+    flatDir {
+        dirs("libs")
+    }
 }
 
 
@@ -21,17 +24,17 @@ dependencies{
     //runtimeOnly("net.mamoe:mirai-login-solver-selenium:1.0-dev-15")
 
     //需要用Gson来创建Json持久化数据，就用下面这个
-    implementation("com.google.code.gson:gson:2.8.7")
-    implementation("com.google.guava:guava:30.1.1-jre")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.guava:guava:31.0.1-jre")
 
     //Log4j2
-    implementation("org.apache.logging.log4j:log4j-api:2.14.1")
-    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
+    implementation("org.apache.logging.log4j:log4j-api:2.16.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.16.0")
     //implementation("org.slf4j:slf4j-api:1.7.31")
     //implementation("org.slf4j:slf4j-simple:1.7.31")
 
     //Junit
-    implementation("junit:junit:4.13.1")
+    implementation("junit:junit:4.13.2")
 
     //annotationProcessor("com.google.auto.service:auto-service:1.0")
     //implementation("com.google.auto.service:auto-service:1.0")
@@ -39,7 +42,9 @@ dependencies{
     // https://mvnrepository.com/artifact/org.reflections/reflections
     // implementation("org.reflections:reflections:0.9.12")
 
-    implementation ("org.jsoup:jsoup:1.11.3")
+    implementation ("org.jsoup:jsoup:1.14.3")
+
+    implementation("love.marblegate:the-vault-north-kinchovsk:0.1.0")
 }
 
 tasks.test {
