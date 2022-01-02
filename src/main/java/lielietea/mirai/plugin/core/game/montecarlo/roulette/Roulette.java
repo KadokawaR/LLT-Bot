@@ -3,7 +3,7 @@ package lielietea.mirai.plugin.core.game.montecarlo.roulette;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
-import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -182,7 +182,7 @@ public class Roulette extends RouletteUtils{
 
     //判定是否有钱
     public static boolean hasEnoughMoney(MessageEvent event, int bet){
-        return SenoritaCounter.hasEnoughMoney(event,bet);
+        return PumpkinPesoWindow.hasEnoughMoney(event,bet);
     }
 
     //是否在游戏里
@@ -413,7 +413,7 @@ public class Roulette extends RouletteUtils{
             mcbf.append(EndGameNotice).append("\n");
             mcbf.append("\n").append("您获得了").append(String.valueOf(getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(),result)*getINSTANCE().FriendBet.get(event.getSubject().getId()))).append("南瓜比索。");
 
-            SenoritaCounter.addMoney(event.getSubject().getId(),getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(),result)*getINSTANCE().FriendBet.get(event.getSubject().getId()));
+            PumpkinPesoWindow.addMoney(event.getSubject().getId(),getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(),result)*getINSTANCE().FriendBet.get(event.getSubject().getId()));
             event.getSubject().sendMessage(mcbf.asMessageChain());
             //清除标记
             getINSTANCE().FriendBet.remove(event.getSubject().getId());
@@ -478,7 +478,7 @@ public class Roulette extends RouletteUtils{
                 setNewMapForGroup(event);
             }
             updateMap(trueBetList,event.getSender().getId(),event.getSubject().getId());
-            SenoritaCounter.minusMoney(event.getSender().getId(),playersBet);
+            PumpkinPesoWindow.minusMoney(event.getSender().getId(),playersBet);
         } else {
             System.out.println("计算playersBet");
             int playersBet = getINSTANCE().FriendBet.get(event.getSubject().getId())*betAmount;
@@ -488,7 +488,7 @@ public class Roulette extends RouletteUtils{
                 setNewTableForFriend(event);
             }
             updateTable(trueBetList,event.getSubject().getId());
-            SenoritaCounter.minusMoney(event.getSender().getId(),playersBet);
+            PumpkinPesoWindow.minusMoney(event.getSender().getId(),playersBet);
         }
 
         MessageChainBuilder mcb = mcbProcessor(event);

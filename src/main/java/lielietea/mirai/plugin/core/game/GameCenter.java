@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.game;
 
-import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bank.SenoritaCounter;
 import lielietea.mirai.plugin.core.game.fish.Fishing;
 import lielietea.mirai.plugin.core.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.core.game.montecarlo.CasinoCroupier;

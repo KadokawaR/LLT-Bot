@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.core.game.montecarlo.blackjack;
 
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
-import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.enums.BlackJackPhase;
@@ -252,7 +252,7 @@ public class BlackJack extends BlackJackUtils {
             //将当前的Phase改为下注阶段Bet
             changePhase(event, BlackJackPhase.Bet);
             //扣钱
-            SenoritaCounter.minusMoney(event.getSender().getId(), bet);
+            PumpkinPesoWindow.minusMoney(event.getSender().getId(), bet);
             //如果已经有了则追加写入
             if (playerIsInTheList(event)) {
                 changeBet(event, bet);
@@ -285,7 +285,7 @@ public class BlackJack extends BlackJackUtils {
             //将当前的Phase改为下注阶段Bet
             changePhase(event, BlackJackPhase.Bet);
             //扣钱
-            SenoritaCounter.minusMoney(event.getSender().getId(), bet);
+            PumpkinPesoWindow.minusMoney(event.getSender().getId(), bet);
             //召唤庄家
             addBookmaker(event);
             //写入赌注
@@ -634,7 +634,7 @@ public class BlackJack extends BlackJackUtils {
             event.getSubject().sendMessage(mcbProcessor(event).append(YouDontHaveEnoughMoney).asMessageChain());
             return;
         }
-        SenoritaCounter.minusMoney(event.getSender().getId(), bet);
+        PumpkinPesoWindow.minusMoney(event.getSender().getId(), bet);
         getCardSendNotice(event,1);
         if(isGroupMessage(event)){
             getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setBet(bet * 2);
@@ -670,7 +670,7 @@ public class BlackJack extends BlackJackUtils {
             event.getSubject().sendMessage(mcbProcessor(event).append(YouDontHaveEnoughMoney).asMessageChain());
             return;
         }
-        SenoritaCounter.minusMoney(event.getSender().getId(), bet);
+        PumpkinPesoWindow.minusMoney(event.getSender().getId(), bet);
         if(isGroupMessage(event)){
             getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setBetPair(true);
         } else {
@@ -689,7 +689,7 @@ public class BlackJack extends BlackJackUtils {
             event.getSubject().sendMessage(mcbProcessor(event).append(YouDontHaveEnoughMoney).asMessageChain());
             return;
         }
-        SenoritaCounter.minusMoney(event.getSender().getId(), bet);
+        PumpkinPesoWindow.minusMoney(event.getSender().getId(), bet);
         if (isGroupMessage(event)){
             getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setCanOperate(false);
             getINSTANCE().globalGroupData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setHasSplit(true);
@@ -908,7 +908,7 @@ public class BlackJack extends BlackJackUtils {
         System.out.println("计算分值");
         //返回赌款
         for (Long ID : resultMap.keySet()) {
-            SenoritaCounter.addMoney(ID, (int) Math.round(resultMap.get(ID)));
+            PumpkinPesoWindow.addMoney(ID, (int) Math.round(resultMap.get(ID)));
         }
         System.out.println("返回赌款");
         //赌场进出帐
@@ -1088,9 +1088,9 @@ public class BlackJack extends BlackJackUtils {
             finalAmount += resultMap.get(ID);
         }
         if (finalAmount > 0) {
-            SenoritaCounter.addMoney(0, (int) Math.round(finalAmount));
+            PumpkinPesoWindow.addMoney(0, (int) Math.round(finalAmount));
         }
-        if (finalAmount < 0) SenoritaCounter.minusMoneyMaybeAllIn(0, -(int) Math.round(finalAmount));
+        if (finalAmount < 0) PumpkinPesoWindow.minusMoneyMaybeAllIn(0, -(int) Math.round(finalAmount));
     }
 
     //BlackJackData应该是哪个MessageEvent下的data

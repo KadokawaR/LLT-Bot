@@ -44,7 +44,7 @@ dependencies{
 
     implementation ("org.jsoup:jsoup:1.14.3")
 
-    implementation("love.marblegate:the-vault-north-kinchovsk:0.1.0")
+    implementation("love.marblegate:the-vault-north-kinchovsk:0.1.2")
 }
 
 tasks.test {

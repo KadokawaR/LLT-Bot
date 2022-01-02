@@ -3,9 +3,7 @@ package lielietea.mirai.plugin.core.game.fish;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 
-import lielietea.mirai.plugin.core.bancodeespana.BancoDeEspana;
-import lielietea.mirai.plugin.core.bancodeespana.Currency;
-import lielietea.mirai.plugin.core.bancodeespana.SenoritaCounter;
+import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -162,8 +160,8 @@ public class Fishing extends FishingUtil{
 
         //非常规水域进行扣费
         if(!waters.equals(Waters.General)){
-            if(SenoritaCounter.hasEnoughMoney(event,FISHING_COST)){
-                SenoritaCounter.minusMoney(event.getSender().getId(),FISHING_COST);
+            if(PumpkinPesoWindow.hasEnoughMoney(event,FISHING_COST)){
+                PumpkinPesoWindow.minusMoney(event.getSender().getId(),FISHING_COST);
                 mcb.append("已收到您的捕鱼费用").append(String.valueOf(FISHING_COST)).append("南瓜比索。");
             } else {
                 event.getSubject().sendMessage(mcb.append("您的南瓜比索数量不够，请检查。").asMessageChain());
@@ -289,7 +287,7 @@ public class Fishing extends FishingUtil{
                 totalValue = (int) (totalValue * (1F + (float)recordInOneHour * 0.05F));
                 mcb.append("\n时间修正系数为").append(String.valueOf(1F + (float)recordInOneHour * 0.05F)).append("，共值").append(String.valueOf(totalValue)).append("南瓜比索。\n\n").append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getImage(new ArrayList<>(fishList.keySet())))));
                 //向银行存钱
-                BancoDeEspana.getINSTANCE().addMoney(event.getSender().getId(), totalValue, Currency.PumpkinPesos);
+                PumpkinPesoWindow.addMoney(event.getSender().getId(), totalValue);
                 //存储钓鱼信息
                 saveRecord(event.getSender().getId(), new ArrayList<>(fishList.keySet()));
                 //发送消息
