@@ -151,12 +151,6 @@ public class Fishing extends FishingUtil{
     public static void getFish(MessageEvent event,Waters waters){
         MessageChainBuilder mcb = mcbProcessor(event);
         Random random = new Random();
-        updateRecord();
-        int recordInOneHour = fishInOneHour(getINSTANCE().fishRecord);
-        int time = 3+random.nextInt(4)+recordInOneHour;//线性增加时间
-        int itemNumber = 3+random.nextInt(2);
-
-        getINSTANCE().fishRecord.add(new Date());
 
         //非常规水域进行扣费
         if(!waters.equals(Waters.General)){
@@ -168,6 +162,14 @@ public class Fishing extends FishingUtil{
                 return;
             }
         }
+
+        updateRecord();
+        int recordInOneHour = fishInOneHour(getINSTANCE().fishRecord);
+        int time = 3+random.nextInt(4)+recordInOneHour;//线性增加时间
+        int itemNumber = 3+random.nextInt(2);
+
+        getINSTANCE().fishRecord.add(new Date());
+
         mcb.append("本次钓鱼预计时间为").append(String.valueOf(time)).append("分钟。");
         if(event instanceof GroupMessageEvent) mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息，并请尽可能私聊七筒进行钓鱼，谢谢配合。");
         else mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息。");

@@ -387,7 +387,7 @@ public class Roulette extends RouletteUtils{
             for(Long playerID : getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).rowKeySet()) {
                 try {
                     mcbg.append("\n").append(new At(playerID)).append(" ").append("共获得了").append(String.valueOf(getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID))).append("南瓜比索");
-                    SenoritaCounter.addMoney(playerID, getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
+                    PumpkinPesoWindow.addMoney(playerID, getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
                     System.out.println(playerID + "的钱:" + getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
                 } catch (Exception e){
                     e.printStackTrace();
