@@ -28,8 +28,8 @@ dependencies{
     implementation("com.google.guava:guava:31.0.1-jre")
 
     //Log4j2
-    implementation("org.apache.logging.log4j:log4j-api:2.16.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.16.0")
+    implementation("org.apache.logging.log4j:log4j-api:2.17.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.17.0")
     //implementation("org.slf4j:slf4j-api:1.7.31")
     //implementation("org.slf4j:slf4j-simple:1.7.31")
 
@@ -44,7 +44,7 @@ dependencies{
 
     implementation ("org.jsoup:jsoup:1.14.3")
 
-    implementation("love.marblegate:the-vault-north-kinchovsk:0.1.2")
+    implementation("love.marblegate:the-vault-north-kinchovsk:0.1.3")
 }
 
 tasks.test {
