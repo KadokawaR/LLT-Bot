@@ -14,7 +14,8 @@ public class IdentityUtil {
             3621269439L, //wymTbot 维护者 1875018140
             736951095L, //未知
             1528805494L, //啥龙龙
-            1661492751L // 贾维斯
+            1661492751L, // 贾维斯
+            3295045384L //完犊子BOT
     );
 
     static final Set<Long> adminList = ImmutableSet.of(

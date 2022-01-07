@@ -17,31 +17,37 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Roulette extends RouletteUtils{
+public class Roulette extends RouletteUtils {
 
-    Roulette() {}
+    Roulette() {
+    }
+
     private static final Roulette INSTANCE;
-    static { INSTANCE = new Roulette(); }
+
+    static {
+        INSTANCE = new Roulette();
+    }
+
     public static Roulette getINSTANCE() {
         return INSTANCE;
     }
 
-    public enum StatusType{
+    public enum StatusType {
         Callin,
         PreBet,
         Bet,
         End
     }
 
-    Map<Long,StatusType> GroupStatusMap = new HashMap<>();
-    Map<Long,StatusType> FriendStatusMap = new HashMap<>();
-    Table<Long,Long,Integer> GroupBet = HashBasedTable.create();
-    Map<Long,Integer> FriendBet = new HashMap<>();
+    Map<Long, StatusType> GroupStatusMap = new HashMap<>();
+    Map<Long, StatusType> FriendStatusMap = new HashMap<>();
+    Table<Long, Long, Integer> GroupBet = HashBasedTable.create();
+    Map<Long, Integer> FriendBet = new HashMap<>();
 
-    Table<Long,Integer,Integer> FriendSettleAccount = HashBasedTable.create();
-    Map<Long,Table<Long,Integer,Integer>> GroupSettleAccount = new HashMap<>();
-    Map<Date,Long> GroupResetMark = new HashMap<>();
-    Map<Date,Long> FriendResetMark = new HashMap<>();
+    Table<Long, Integer, Integer> FriendSettleAccount = HashBasedTable.create();
+    Map<Long, Table<Long, Integer, Integer>> GroupSettleAccount = new HashMap<>();
+    Map<Date, Long> GroupResetMark = new HashMap<>();
+    Map<Date, Long> FriendResetMark = new HashMap<>();
 
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
@@ -59,28 +65,28 @@ public class Roulette extends RouletteUtils{
     static final String ROULETTE_INTRO_PATH = "/pics/casino/roulette.png";
     static final String ROULETTE_INSTRUCTIONS_PATH = "/pics/casino/roulette_instructions.png";
 
-    public static void go(MessageEvent event){
+    public static void go(MessageEvent event) {
         start(event);
         preBet(event);
         bet(event);
     }
 
-    public static void start(MessageEvent event){
-        if(!isRoulette(event)) return;
-        if(isInGamingProcess(event)) return;
+    public static void start(MessageEvent event) {
+        if (!isRoulette(event)) return;
+        if (isInGamingProcess(event)) return;
 
         //全局取消标记
         Date gameStartTime = new Date();
-        if(isGroupMessage(event)){
+        if (isGroupMessage(event)) {
             while (getINSTANCE().GroupResetMark.containsKey(gameStartTime)) {
                 gameStartTime.setTime(gameStartTime.getTime() - 1);
             }
-            getINSTANCE().GroupResetMark.put(gameStartTime,event.getSubject().getId());
+            getINSTANCE().GroupResetMark.put(gameStartTime, event.getSubject().getId());
         } else {
             while (getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                 gameStartTime.setTime(gameStartTime.getTime() - 1);
             }
-            getINSTANCE().FriendResetMark.put(gameStartTime,event.getSubject().getId());
+            getINSTANCE().FriendResetMark.put(gameStartTime, event.getSubject().getId());
         }
 
 
@@ -94,39 +100,40 @@ public class Roulette extends RouletteUtils{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(isGroupMessage(event)){
-            getINSTANCE().GroupStatusMap.put(event.getSubject().getId(),StatusType.Callin);
+        if (isGroupMessage(event)) {
+            getINSTANCE().GroupStatusMap.put(event.getSubject().getId(), StatusType.Callin);
         } else {
-            getINSTANCE().FriendStatusMap.put(event.getSubject().getId(),StatusType.Callin);
+            getINSTANCE().FriendStatusMap.put(event.getSubject().getId(), StatusType.Callin);
         }
-        executor.schedule(new CancelCallin(event),GAP_SECONDS, TimeUnit.SECONDS);
+        executor.schedule(new CancelCallin(event), GAP_SECONDS, TimeUnit.SECONDS);
         //3.5个间隔时间之后，取消标记
-        executor.schedule(new CancelMarks(event, gameStartTime),(GAP_SECONDS*3+2),TimeUnit.SECONDS);
+        executor.schedule(new CancelMarks(event, gameStartTime), (GAP_SECONDS * 3 + 2), TimeUnit.SECONDS);
     }
 
     //3个GAP_TIME之后取消所有标记的Runnable
-    static class CancelMarks implements Runnable{
+    static class CancelMarks implements Runnable {
         MessageEvent event;
         Date gameStartTime;
 
-        CancelMarks(MessageEvent event,Date gameStartTime){
+        CancelMarks(MessageEvent event, Date gameStartTime) {
             this.event = event;
             this.gameStartTime = gameStartTime;
         }
+
         @Override
         public void run() {
-            if(isGroupMessage(event)){
-                if(getINSTANCE().GroupResetMark.containsKey(gameStartTime)){
+            if (isGroupMessage(event)) {
+                if (getINSTANCE().GroupResetMark.containsKey(gameStartTime)) {
                     //清除标记
-                    for(Long playerID:getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()){
-                        getINSTANCE().GroupBet.remove(event.getSubject().getId(),playerID);
+                    for (Long playerID : getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()) {
+                        getINSTANCE().GroupBet.remove(event.getSubject().getId(), playerID);
                     }
                     getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
                     getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
                     getINSTANCE().GroupResetMark.remove(gameStartTime);
                 }
             } else {
-                if(getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
+                if (getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                     //清除标记
                     getINSTANCE().FriendBet.remove(event.getSubject().getId());
                     for (Integer integer : getINSTANCE().FriendSettleAccount.row(event.getSubject().getId()).keySet()) {
@@ -141,24 +148,24 @@ public class Roulette extends RouletteUtils{
 
 
     //取消初始阶段的Runnable
-    static class CancelCallin implements Runnable{
+    static class CancelCallin implements Runnable {
         MessageEvent event;
 
-        CancelCallin(MessageEvent event){
+        CancelCallin(MessageEvent event) {
             this.event = event;
         }
 
         @Override
         public void run() {
             boolean isStillInCallin;
-            if(isGroupMessage(event)){
+            if (isGroupMessage(event)) {
                 isStillInCallin = getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Callin);
             } else {
                 isStillInCallin = getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Callin);
             }
-            if(!isStillInCallin) return;
+            if (!isStillInCallin) return;
             event.getSubject().sendMessage(RouletteStops);
-            if(isGroupMessage(event)){
+            if (isGroupMessage(event)) {
                 getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
             } else {
                 getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
@@ -167,29 +174,29 @@ public class Roulette extends RouletteUtils{
     }
 
     //是不是群聊
-    public static boolean isGroupMessage(MessageEvent event){
+    public static boolean isGroupMessage(MessageEvent event) {
         return (event.getClass().equals(GroupMessageEvent.class));
     }
 
     //给群聊的消息前面加AT
-    public static MessageChainBuilder mcbProcessor(MessageEvent event){
+    public static MessageChainBuilder mcbProcessor(MessageEvent event) {
         MessageChainBuilder mcb = new MessageChainBuilder();
-        if (isGroupMessage(event)){
+        if (isGroupMessage(event)) {
             mcb.append((new At(event.getSender().getId()))).append(" ");
         }
         return mcb;
     }
 
     //判定是否有钱
-    public static boolean hasEnoughMoney(MessageEvent event, int bet){
-        return PumpkinPesoWindow.hasEnoughMoney(event,bet);
+    public static boolean hasEnoughMoney(MessageEvent event, int bet) {
+        return PumpkinPesoWindow.hasEnoughMoney(event, bet);
     }
 
     //是否在游戏里
-    public static boolean isInGamingProcess(MessageEvent event){
-        if(isGroupMessage(event)){
+    public static boolean isInGamingProcess(MessageEvent event) {
+        if (isGroupMessage(event)) {
 
-            if(getINSTANCE().GroupStatusMap.containsKey(event.getSubject().getId())){
+            if (getINSTANCE().GroupStatusMap.containsKey(event.getSubject().getId())) {
                 return !getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.End);
             } else {
                 return false;
@@ -206,10 +213,12 @@ public class Roulette extends RouletteUtils{
     public static void preBet(MessageEvent event) {
         if (!isBet(event)) return;
         if (!isInGamingProcess(event)) return;
-        if(isGroupMessage(event)){
-            if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)||getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.End)) return;
+        if (isGroupMessage(event)) {
+            if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet) || getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.End))
+                return;
         } else {
-            if(getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)||getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.End)) return;
+            if (getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet) || getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.End))
+                return;
         }
         GameCenterCount.count(GameCenterCount.Functions.RouletteBet);
 
@@ -217,11 +226,11 @@ public class Roulette extends RouletteUtils{
 
         try {
             bet = getBet(event.getMessage().contentToString());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if( bet == null){
+        if (bet == null) {
             MessageChainBuilder mcb = mcbProcessor(event);
             event.getSubject().sendMessage(mcb.append(NotRightBetNumber).asMessageChain());
             return;
@@ -280,7 +289,7 @@ public class Roulette extends RouletteUtils{
         if (isGroupMessage(event)) {
             if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Callin)) {
                 getINSTANCE().GroupStatusMap.put(event.getSubject().getId(), StatusType.PreBet);
-                executor.schedule(new EndPreBet(event),  GAP_SECONDS, TimeUnit.SECONDS);
+                executor.schedule(new EndPreBet(event), GAP_SECONDS, TimeUnit.SECONDS);
                 event.getSubject().sendMessage(StartBetNotice);
             }
         } else {
@@ -291,47 +300,48 @@ public class Roulette extends RouletteUtils{
         }
 
         //第一次往账户里面加钱
-        if (isGroupMessage(event)){
-            if(!getINSTANCE().GroupBet.row(event.getSubject().getId()).containsKey(event.getSender().getId())){
+        if (isGroupMessage(event)) {
+            if (!getINSTANCE().GroupBet.row(event.getSubject().getId()).containsKey(event.getSender().getId())) {
                 System.out.println("第一次往账户里面加钱");
-                getINSTANCE().GroupBet.put(event.getSubject().getId(),event.getSender().getId(),bet);
+                getINSTANCE().GroupBet.put(event.getSubject().getId(), event.getSender().getId(), bet);
                 MessageChainBuilder mcb = mcbProcessor(event);
                 event.getSubject().sendMessage(mcb.append("已收到下注").append(String.valueOf(bet)).append("南瓜比索").asMessageChain());
             }
         } else {
-            if(!getINSTANCE().FriendBet.containsKey(event.getSubject().getId())){
+            if (!getINSTANCE().FriendBet.containsKey(event.getSubject().getId())) {
                 System.out.println("第一次往账户里面加钱");
-                getINSTANCE().FriendBet.put(event.getSubject().getId(),bet);
-                event.getSubject().sendMessage("已收到下注"+String.valueOf(bet)+"南瓜比索");
+                getINSTANCE().FriendBet.put(event.getSubject().getId(), bet);
+                event.getSubject().sendMessage("已收到下注" + String.valueOf(bet) + "南瓜比索");
             }
         }
     }
 
-    static class EndPreBet implements Runnable{
+    static class EndPreBet implements Runnable {
 
         private final MessageEvent event;
-        EndPreBet(MessageEvent event){
+
+        EndPreBet(MessageEvent event) {
             this.event = event;
         }
 
         @Override
         public void run() {
             System.out.println("EndPreBetRunnable开始");
-            if(isGroupMessage(event)){
-                if(getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)) return;
+            if (isGroupMessage(event)) {
+                if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)) return;
             } else {
-                if(getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)) return;
+                if (getINSTANCE().FriendStatusMap.get(event.getSubject().getId()).equals(StatusType.Bet)) return;
             }
             EndPreBetActivities(event);
         }
     }
 
-    static void EndPreBetActivities(MessageEvent event){
+    static void EndPreBetActivities(MessageEvent event) {
         System.out.println("EndPreBetActivities开始");
-        if(isGroupMessage(event)){
-            getINSTANCE().GroupStatusMap.put(event.getSubject().getId(),StatusType.Bet);
+        if (isGroupMessage(event)) {
+            getINSTANCE().GroupStatusMap.put(event.getSubject().getId(), StatusType.Bet);
         } else {
-            getINSTANCE().FriendStatusMap.put(event.getSubject().getId(),StatusType.Bet);
+            getINSTANCE().FriendStatusMap.put(event.getSubject().getId(), StatusType.Bet);
         }
         event.getSubject().sendMessage(new MessageChainBuilder().append(EndBetNotice).append(StartOperateNotice).asMessageChain());
 
@@ -342,14 +352,16 @@ public class Roulette extends RouletteUtils{
             e.printStackTrace();
         }
 
-        executor.schedule(new EndBet(event),GAP_SECONDS,TimeUnit.SECONDS);
+        executor.schedule(new EndBet(event), GAP_SECONDS, TimeUnit.SECONDS);
     }
 
-    static class EndBet implements Runnable{
+    static class EndBet implements Runnable {
         private final MessageEvent event;
-        EndBet(MessageEvent event){
+
+        EndBet(MessageEvent event) {
             this.event = event;
         }
+
         @Override
         public void run() {
             System.out.println("EndBetActivities开始");
@@ -362,88 +374,104 @@ public class Roulette extends RouletteUtils{
     }
 
     static void EndBetActivities(MessageEvent event) throws InterruptedException {
-        if(isGroupMessage(event)){
-            getINSTANCE().GroupStatusMap.put(event.getSubject().getId(),StatusType.End);
-        } else {
-            getINSTANCE().FriendStatusMap.put(event.getSubject().getId(),StatusType.End);
-        }
-        System.out.println("进入EndBetActivties");
-        event.getSubject().sendMessage("咚咚咚咚咚咚咚咚咚咚");
-        Thread.sleep(1000*6);
-        event.getSubject().sendMessage("咚—咚—咚—咚—咚—咚—");
-        Thread.sleep(1000*6);
-        event.getSubject().sendMessage("咚————咚————咚————");
-        Thread.sleep(1000*6);
-        Random random = new Random();
-        int result = random.nextInt(37);
-        MessageChainBuilder mcb = new MessageChainBuilder();
-        mcb.append("球他妈停在了").append(String.valueOf(result)).append("上！");
-        event.getSubject().sendMessage(mcb.asMessageChain());
+        try {
+            if (isGroupMessage(event)) {
+                getINSTANCE().GroupStatusMap.put(event.getSubject().getId(), StatusType.End);
+            } else {
+                getINSTANCE().FriendStatusMap.put(event.getSubject().getId(), StatusType.End);
+            }
+            System.out.println("进入EndBetActivties");
+            event.getSubject().sendMessage("咚咚咚咚咚咚咚咚咚咚");
+            Thread.sleep(1000 * 6);
+            event.getSubject().sendMessage("咚—咚—咚—咚—咚—咚—");
+            Thread.sleep(1000 * 6);
+            event.getSubject().sendMessage("咚————咚————咚————");
+            Thread.sleep(1000 * 6);
+            Random random = new Random();
+            int result = random.nextInt(37);
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            mcb.append("球他妈停在了").append(String.valueOf(result)).append("上！");
+            event.getSubject().sendMessage(mcb.asMessageChain());
 
-        if(isGroupMessage(event)){
-            System.out.println("进入最终结算环节");
-            MessageChainBuilder mcbg = new MessageChainBuilder();
-            mcbg.append(EndGameNotice).append("\n");
-            for(Long playerID : getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).rowKeySet()) {
+            if (isGroupMessage(event)) {
+                System.out.println("进入最终结算环节");
+                MessageChainBuilder mcbg = new MessageChainBuilder();
+                mcbg.append(EndGameNotice).append("\n");
+                for (Long playerID : getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).rowKeySet()) {
+                    try {
+                        mcbg.append("\n").append(new At(playerID)).append(" ").append("共获得了").append(String.valueOf(getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID))).append("南瓜比索");
+                        PumpkinPesoWindow.addMoney(playerID, getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
+                       } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                event.getSubject().sendMessage(mcbg.asMessageChain());
+
+            } else {
+                MessageChainBuilder mcbf = new MessageChainBuilder();
+                mcbf.append(EndGameNotice).append("\n");
+                mcbf.append("\n").append("您获得了").append(String.valueOf(getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(), result) * getINSTANCE().FriendBet.get(event.getSubject().getId()))).append("南瓜比索。");
+
+                PumpkinPesoWindow.addMoney(event.getSubject().getId(), getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(), result) * getINSTANCE().FriendBet.get(event.getSubject().getId()));
+                event.getSubject().sendMessage(mcbf.asMessageChain());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (isGroupMessage(event)) {
+                //清除标记
+                for (Date date : getINSTANCE().GroupResetMark.keySet()) {
+                    if (getINSTANCE().GroupResetMark.get(date) == event.getSubject().getId()) {
+                        getINSTANCE().GroupResetMark.remove(date);
+                        break;
+                    }
+                }
                 try {
-                    mcbg.append("\n").append(new At(playerID)).append(" ").append("共获得了").append(String.valueOf(getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID))).append("南瓜比索");
-                    PumpkinPesoWindow.addMoney(playerID, getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
-                    System.out.println(playerID + "的钱:" + getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
-                } catch (Exception e){
+                    for (Long playerID : getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()) {
+                        getINSTANCE().GroupBet.remove(event.getSubject().getId(), playerID);
+                    }
+                    getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
+                    getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            event.getSubject().sendMessage(mcbg.asMessageChain());
 
-            //清除标记
-            for(Long playerID:getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()){
-                getINSTANCE().GroupBet.remove(event.getSubject().getId(),playerID);
-            }
-            getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
-            getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
-            for(Date date:getINSTANCE().GroupResetMark.keySet()) {
-                if (getINSTANCE().GroupResetMark.get(date) == event.getSubject().getId()) {
-                    getINSTANCE().GroupResetMark.remove(date);
-                    break;
+            } else {
+                //清除标记
+                getINSTANCE().FriendBet.remove(event.getSubject().getId());
+                for (Integer integer : getINSTANCE().FriendSettleAccount.row(event.getSubject().getId()).keySet()) {
+                    getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(), integer);
                 }
-            }
+                try {
+                    for (Date date : getINSTANCE().FriendResetMark.keySet()) {
+                        if (getINSTANCE().FriendResetMark.get(date) == event.getSubject().getId()) {
+                            getINSTANCE().FriendResetMark.remove(date);
+                            break;
+                        }
+                    }
+                    getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
 
-        } else {
-            MessageChainBuilder mcbf = new MessageChainBuilder();
-            mcbf.append(EndGameNotice).append("\n");
-            mcbf.append("\n").append("您获得了").append(String.valueOf(getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(),result)*getINSTANCE().FriendBet.get(event.getSubject().getId()))).append("南瓜比索。");
-
-            PumpkinPesoWindow.addMoney(event.getSubject().getId(),getINSTANCE().FriendSettleAccount.get(event.getSubject().getId(),result)*getINSTANCE().FriendBet.get(event.getSubject().getId()));
-            event.getSubject().sendMessage(mcbf.asMessageChain());
-            //清除标记
-            getINSTANCE().FriendBet.remove(event.getSubject().getId());
-            for(Integer integer:getINSTANCE().FriendSettleAccount.row(event.getSubject().getId()).keySet()){
-                getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(),integer);
-            }
-            getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
-            for(Date date:getINSTANCE().FriendResetMark.keySet()) {
-                if (getINSTANCE().FriendResetMark.get(date) == event.getSubject().getId()) {
-                    getINSTANCE().FriendResetMark.remove(date);
-                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 
-    static void bet(MessageEvent event){
-        if(isGroupMessage(event)){
-            if(getINSTANCE().GroupStatusMap.get(event.getSubject().getId())!=StatusType.Bet) return;
+    static void bet(MessageEvent event) {
+        if (isGroupMessage(event)) {
+            if (getINSTANCE().GroupStatusMap.get(event.getSubject().getId()) != StatusType.Bet) return;
         } else {
-            if(getINSTANCE().FriendStatusMap.get(event.getSubject().getId())!=StatusType.Bet) return;
+            if (getINSTANCE().FriendStatusMap.get(event.getSubject().getId()) != StatusType.Bet) return;
         }
 
-        if(!hasIndicator(event.getMessage().contentToString())) return;
+        if (!hasIndicator(event.getMessage().contentToString())) return;
 
-        if(isGroupMessage(event)){
-            if(!getINSTANCE().GroupBet.rowKeySet().contains(event.getSubject().getId())) return;
-            if(!getINSTANCE().GroupBet.row(event.getSubject().getId()).containsKey(event.getSender().getId())) return;
+        if (isGroupMessage(event)) {
+            if (!getINSTANCE().GroupBet.rowKeySet().contains(event.getSubject().getId())) return;
+            if (!getINSTANCE().GroupBet.row(event.getSubject().getId()).containsKey(event.getSender().getId())) return;
         } else {
-            if(!getINSTANCE().FriendBet.containsKey(event.getSubject().getId())) return;
+            if (!getINSTANCE().FriendBet.containsKey(event.getSubject().getId())) return;
         }
 
         GameCenterCount.count(GameCenterCount.Functions.RouletteOperations);
@@ -453,42 +481,41 @@ public class Roulette extends RouletteUtils{
         int betAmount = getBetAmount(trueBetList);
 
         //要是没钱
-        if(isGroupMessage(event)){
-            int playersBet = getINSTANCE().GroupBet.get(event.getSubject().getId(),event.getSender().getId())*betAmount;
-            if(!hasEnoughMoney(event,playersBet)){
+        if (isGroupMessage(event)) {
+            int playersBet = getINSTANCE().GroupBet.get(event.getSubject().getId(), event.getSender().getId()) * betAmount;
+            if (!hasEnoughMoney(event, playersBet)) {
                 event.getSubject().sendMessage(YouDontHaveEnoughMoney);
                 return;
             }
         } else {
-            int playersBet = getINSTANCE().FriendBet.get(event.getSubject().getId())*betAmount;
-            if(!hasEnoughMoney(event,playersBet)){
+            int playersBet = getINSTANCE().FriendBet.get(event.getSubject().getId()) * betAmount;
+            if (!hasEnoughMoney(event, playersBet)) {
                 event.getSubject().sendMessage(YouDontHaveEnoughMoney);
                 return;
             }
         }
 
-        System.out.println("有钱就走账了哈");
         //有钱就走账了哈
-        if(isGroupMessage(event)){
+        if (isGroupMessage(event)) {
             System.out.println("计算playersBet");
-            int playersBet = getINSTANCE().GroupBet.get(event.getSubject().getId(),event.getSender().getId())*betAmount;
-            System.out.println("玩家赌注："+playersBet);
+            int playersBet = getINSTANCE().GroupBet.get(event.getSubject().getId(), event.getSender().getId()) * betAmount;
+            System.out.println("玩家赌注：" + playersBet);
             //如果是第一次下注则初始化
-            if(hasNeverGivenAnyIndicatorInGroup(event)){
+            if (hasNeverGivenAnyIndicatorInGroup(event)) {
                 setNewMapForGroup(event);
             }
-            updateMap(trueBetList,event.getSender().getId(),event.getSubject().getId());
-            PumpkinPesoWindow.minusMoney(event.getSender().getId(),playersBet);
+            updateMap(trueBetList, event.getSender().getId(), event.getSubject().getId());
+            PumpkinPesoWindow.minusMoney(event.getSender().getId(), playersBet);
         } else {
             System.out.println("计算playersBet");
-            int playersBet = getINSTANCE().FriendBet.get(event.getSubject().getId())*betAmount;
-            System.out.println("玩家赌注："+playersBet);
+            int playersBet = getINSTANCE().FriendBet.get(event.getSubject().getId()) * betAmount;
+            System.out.println("玩家赌注：" + playersBet);
             //如果是第一次下注则初始化
-            if(hasNeverGivenAnyIndicatorInFriend(event)){
+            if (hasNeverGivenAnyIndicatorInFriend(event)) {
                 setNewTableForFriend(event);
             }
-            updateTable(trueBetList,event.getSubject().getId());
-            PumpkinPesoWindow.minusMoney(event.getSender().getId(),playersBet);
+            updateTable(trueBetList, event.getSubject().getId());
+            PumpkinPesoWindow.minusMoney(event.getSender().getId(), playersBet);
         }
 
         MessageChainBuilder mcb = mcbProcessor(event);
@@ -496,12 +523,12 @@ public class Roulette extends RouletteUtils{
 
     }
 
-    static boolean hasNeverGivenAnyIndicatorInGroup(MessageEvent event){
-        return !getINSTANCE().GroupSettleAccount.containsKey(event.getSubject().getId())||
+    static boolean hasNeverGivenAnyIndicatorInGroup(MessageEvent event) {
+        return !getINSTANCE().GroupSettleAccount.containsKey(event.getSubject().getId()) ||
                 !getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).rowKeySet().contains(event.getSender().getId());
     }
 
-    static boolean hasNeverGivenAnyIndicatorInFriend(MessageEvent event){
+    static boolean hasNeverGivenAnyIndicatorInFriend(MessageEvent event) {
         return !getINSTANCE().FriendSettleAccount.rowKeySet().contains(event.getSubject().getId());
     }
 

@@ -77,6 +77,7 @@ public class Fishing extends FishingUtil{
         touchRecord();
         try {
             is.close();
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
