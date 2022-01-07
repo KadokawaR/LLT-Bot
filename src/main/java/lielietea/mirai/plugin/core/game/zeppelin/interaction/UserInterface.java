@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.game.zeppelin.interaction;
 
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
+import lielietea.mirai.plugin.core.game.zeppelin.aircraft.AircraftUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
@@ -69,6 +70,10 @@ public class UserInterface {
 
                 break;
             case ShowMap:
+
+                break;
+
+            case SetTrader:
 
                 break;
         }
@@ -153,7 +158,7 @@ public class UserInterface {
                 }
             }
         }
-        event.getSubject().sendMessage(mcb.append("您输入的名称不符合规范，请使用7位大写数字与字母混合命名。").asMessageChain());
+        event.getSubject().sendMessage(mcb.append(Notice.WRONG_NAME_CHANGING_FORMAT).asMessageChain());
     }
 
     public static void changeAircraft(MessageEvent event) {
@@ -185,7 +190,11 @@ public class UserInterface {
     }
 
     public static void setPirate(MessageEvent event){
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(true,event.getSender().getId())).asMessageChain());
+    }
 
+    public static void setTrader(MessageEvent event){
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(false,event.getSender().getId())).asMessageChain());
     }
 
     public static void startTravel(MessageEvent event){

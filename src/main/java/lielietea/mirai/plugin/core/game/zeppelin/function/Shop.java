@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.core.game.zeppelin.function;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.bank.SenoritaCounter;
+import lielietea.mirai.plugin.core.game.zeppelin.Config;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.AircraftUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
@@ -26,7 +27,7 @@ public class Shop {
 
     List<ModeInfo> modeInfoList;
 
-    static final int CHANGE_FEE = 5000;
+    static final int CHANGE_FEE = Config.CHANGE_FEE;
 
     static class modeList{
         List<ModeInfo> modes;

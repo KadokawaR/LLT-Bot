@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.game.zeppelin.map;
 
 import com.google.gson.Gson;
+import lielietea.mirai.plugin.core.game.zeppelin.Config;
 import lielietea.mirai.plugin.core.game.zeppelin.data.CityInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 
@@ -78,4 +79,16 @@ public class CityInfoUtils {
         }
         return false;
     }
+
+    public static double distance(Coordinate coord1,Coordinate coord2){
+        return Math.sqrt(Math.pow(coord1.x-coord2.x,2)+Math.pow(coord1.y-coord2.y,2));
+    }
+
+    public static boolean isInCityProtection(Coordinate coord){
+        for(CityInfo ci: getINSTANCE().cityInfoList){
+            if(distance(coord,ci.coordinate)<= Config.CITY_PROTECTION_DISTANCE) return true;
+        }
+        return false;
+    }
+
 }

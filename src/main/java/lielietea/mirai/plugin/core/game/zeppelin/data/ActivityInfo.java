@@ -1,6 +1,9 @@
 package lielietea.mirai.plugin.core.game.zeppelin.data;
 
 import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.Date;
 
@@ -9,19 +12,22 @@ public class ActivityInfo {
     private Coordinate destination;
     private long playerID;
     private long messageEventID; // 如果是好友私聊则为0
+    private MultiBotHandler.BotName botName;
     private long targetPlayerID;
     private int goodsValue;
-    private int goodsCode;
+    private String goodsName;
     private Date startTime;
 
-    public ActivityInfo(Coordinate departure, Coordinate destination, long playerID, long messageEventID){
+    public ActivityInfo(Coordinate departure, Coordinate destination, MessageEvent event){
         this.departure = departure;
         this.destination = destination;
-        this.playerID = playerID;
-        this.messageEventID = messageEventID;
+        this.playerID = event.getSender().getId();
+        if(event instanceof FriendMessageEvent) this.messageEventID = 0;
+        else this.messageEventID = event.getSubject().getId();
+        this.botName = MultiBotHandler.BotName.get(event.getBot().getId());
         this.targetPlayerID = 0;
         this.goodsValue = 0;
-        this.goodsCode = 0;
+        this.goodsName = "";
         this.startTime = new Date();
     }
 
@@ -32,7 +38,7 @@ public class ActivityInfo {
         this.messageEventID = 0;
         this.targetPlayerID = 0;
         this.goodsValue = 0;
-        this.goodsCode = 0;
+        this.goodsName = "";
         this.startTime = new Date();
     }
 
@@ -82,19 +88,27 @@ public class ActivityInfo {
         this.goodsValue = goodsValue;
     }
 
-    public int getGoodsCode() {
-        return goodsCode;
-    }
-
-    public void setGoodsCode(int goodsCode) {
-        this.goodsCode = goodsCode;
-    }
-
     public Date getStartTime() {
         return startTime;
     }
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
+
+    public MultiBotHandler.BotName getBotName() {
+        return botName;
+    }
+
+    public void setBotName(MultiBotHandler.BotName botName) {
+        this.botName = botName;
     }
 }

@@ -13,6 +13,7 @@ public enum Command {
 
     SetHomePort,
     SetPirate,
+    SetTrader,
 
     StartTravel,
     AbortTravel,

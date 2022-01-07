@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Aircraft {
     final static String AIRCRAFT_DIR = System.getProperty("user.dir") + File.separator + "Zeppelin";
@@ -99,8 +100,12 @@ public class Aircraft {
         readRecord();
     }
 
-    public static boolean exist(long playID){
-        return getIndexCode(playID)!=null;
+    public static boolean exist(long playerID){
+        return getIndexCode(playerID)!=null;
+    }
+
+    public static boolean isPirate(long playerID){
+        return Objects.requireNonNull(get(playerID)).isPirate();
     }
 
 }
