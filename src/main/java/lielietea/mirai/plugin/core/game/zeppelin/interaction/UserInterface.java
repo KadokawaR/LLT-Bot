@@ -2,8 +2,16 @@ package lielietea.mirai.plugin.core.game.zeppelin.interaction;
 
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.AircraftUtils;
+import lielietea.mirai.plugin.core.game.zeppelin.aircraft.ShipKind;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
+import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
+import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
+import lielietea.mirai.plugin.core.game.zeppelin.map.MapGenerator;
+import lielietea.mirai.plugin.core.game.zeppelin.processor.Activity;
+import lielietea.mirai.plugin.core.game.zeppelin.processor.ActivityUtils;
+import lielietea.mirai.plugin.core.game.zeppelin.processor.GoodsGenerator;
+import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -16,23 +24,28 @@ import java.util.Objects;
 
 public class UserInterface {
 
-    public static void zeppelinCommand(MessageEvent event){
+    public static void zeppelinCommand(MessageEvent event) {
         Command command = contentToCommand(event);
-        if(command == null) return;
-        switch(Objects.requireNonNull(command)){
+        if (command == null) return;
+        //除了注册以外，其他的内容都理应提前注册过
+        if (!Arrays.asList(Command.Instruction, Command.RegisterAircraft, Command.Shop, Command.ShowMap, Command.DailyTask).contains(command)) {
+            if (!Aircraft.exist(event.getSender().getId())) {
+                event.getSubject().sendMessage(mcb(event).append(Notice.NOT_REGISTERED).asMessageChain());
+            }
+        }
+        switch (Objects.requireNonNull(command)) {
             case RegisterAircraft:
-
+                registerAircraft(event);
                 break;
             case SetAircraftName:
-
+                setAircraftName(event);
                 break;
             case ChangeAircraft:
-
+                changeAircraft(event);
                 break;
             case Shop:
 
                 break;
-
             case RegisterGuild:
 
                 break;
@@ -47,22 +60,20 @@ public class UserInterface {
                 break;
 
             case SetHomePort:
-
+                setHomePort(event);
                 break;
             case SetPirate:
-
+                setPirate(event);
                 break;
-
             case StartTravel:
-
+                startTravel(event);
                 break;
             case AbortTravel:
-
+                abortTravel(event);
                 break;
             case StartStationed:
-
+                startStationed(event);
                 break;
-
             case Instruction:
 
                 break;
@@ -70,85 +81,89 @@ public class UserInterface {
 
                 break;
             case ShowMap:
-
+                showMap(event);
                 break;
 
             case SetTrader:
+                setTrader(event);
+                break;
 
+            case GoHome:
+                goHome(event);
                 break;
         }
     }
 
-    public static Command contentToCommand(MessageEvent event){
+    public static Command contentToCommand(MessageEvent event) {
         String content = event.getMessage().contentToString().toLowerCase();
-        if(content.equals("/register")||content.equals("注册飞艇")) return Command.RegisterAircraft;
-        if(content.contains("/setname")||content.contains("设置名称")) return Command.SetAircraftName;
-        if(content.equals("/changeship")||content.equals("更换飞艇")) return Command.ChangeAircraft;
-        if(content.equals("/shop")||content.equals("飞艇商店")) return Command.Shop;
+        if (content.equals("/register") || content.equals("注册飞艇")) return Command.RegisterAircraft;
+        if (content.contains("/setname") || content.contains("设置名称")) return Command.SetAircraftName;
+        if (content.equals("/changeship") || content.equals("更换飞艇")) return Command.ChangeAircraft;
+        if (content.equals("/shop") || content.equals("飞艇商店")) return Command.Shop;
 
-        if(content.equals("/registerguild")||content.equals("注册公会")||content.equals("注册工会")) return Command.RegisterGuild;
-        if(content.contains("/setguildname")||content.contains("设置公会名称")||content.contains("设置工会名称")) return Command.SetGuildName;
-        if(content.contains("/joinguild")||content.contains("加入公会")||content.contains("加入工会")) return Command.JoinGuild;
-        if(content.equals("/quitguild")||content.equals("退出公会")||content.equals("退出工会")) return Command.QuitGuild;
+        if (content.equals("/registerguild") || content.equals("注册公会") || content.equals("注册工会"))
+            return Command.RegisterGuild;
+        if (content.contains("/setguildname") || content.contains("设置公会名称") || content.contains("设置工会名称"))
+            return Command.SetGuildName;
+        if (content.contains("/joinguild") || content.contains("加入公会") || content.contains("加入工会"))
+            return Command.JoinGuild;
+        if (content.equals("/quitguild") || content.equals("退出公会") || content.equals("退出工会")) return Command.QuitGuild;
 
-        if(content.contains("/sethomeport")||content.contains("设置母港")) return Command.SetHomePort;
-        if(content.equals("/pirate")||content.equals("成为海盗")) return Command.SetPirate;
+        if (content.contains("/sethomeport") || content.contains("设置母港")) return Command.SetHomePort;
+        if (content.equals("/pirate") || content.equals("成为海盗")) return Command.SetPirate;
 
-        if(content.contains("/starttravel")||content.contains("启动飞艇")) return Command.StartTravel;
-        if(content.equals("/aborttravel")||content.equals("停止飞艇")) return Command.AbortTravel;
-        if(content.equals("/stationed")||content.equals("驻扎")) return Command.StartStationed;
+        if (content.contains("/starttravel") || content.contains("启动飞艇")) return Command.StartTravel;
+        if (content.equals("/aborttravel") || content.equals("停止飞艇")) return Command.AbortTravel;
+        if (content.equals("/stationed") || content.equals("驻扎飞艇")) return Command.StartStationed;
+        if (content.equals("/gohome") || content.equals("返回母港")) return Command.GoHome;
 
-        if(content.equals("/zeppelin")||content.contains("飞行指南")) return Command.Instruction;
-        if(content.equals("/dailytask")||content.equals("每日任务")) return Command.DailyTask;
-        if(content.equals("/map")||content.equals("显示地图")) return Command.ShowMap;
+        if (content.equals("/zeppelin") || content.equals("飞行指南") || content.equals("飞行帮助") || content.equals("空艇指南"))
+            return Command.Instruction;
+        if (content.equals("/dailytask") || content.equals("每日任务")) return Command.DailyTask;
+        if (content.equals("/map") || content.equals("显示地图")) return Command.ShowMap;
 
         return null;
     }
 
-    public static MessageChainBuilder mcb(MessageEvent event){
+    public static MessageChainBuilder mcb(MessageEvent event) {
         MessageChainBuilder mcb = new MessageChainBuilder();
-        if(event instanceof GroupMessageEvent) mcb.append(new At(event.getSender().getId())).append(" ");
+        if (event instanceof GroupMessageEvent) mcb.append(new At(event.getSender().getId())).append(" ");
         return mcb;
     }
 
-    public static void registerAircraft(MessageEvent event){
-        if(event instanceof FriendMessageEvent){
+    public static void registerAircraft(MessageEvent event) {
+        if (event instanceof FriendMessageEvent) {
             event.getSubject().sendMessage(Notice.REGISTRATION_IN_GROUP);
             return;
         }
 
         MessageChainBuilder mcb = mcb(event);
-        if(Aircraft.exist(event.getSender().getId())){
+        if (Aircraft.exist(event.getSender().getId())) {
             mcb.append(Notice.REPEATED_REGISTRATION);
             event.getSubject().sendMessage(mcb.asMessageChain());
             return;
         }
 
         String randomName = UIUtils.randomAircraftName();
-        Aircraft.register(randomName,event.getSender().getId(),UIUtils.getGroupHomePort(event.getSubject().getId()));
+        Aircraft.register(randomName, event.getSender().getId(), UIUtils.getGroupHomePort(event.getSubject().getId()));
         mcb.append("您已经成功注册飞艇").append(randomName).append(",可以输入/setname+空格+7位数字与字母混合名称来更改您的飞艇名称。");
         event.getSubject().sendMessage(mcb.asMessageChain());
     }
 
-    public static void setAircraftName(MessageEvent event){
+    public static void setAircraftName(MessageEvent event) {
         MessageChainBuilder mcb = mcb(event);
 
-        if(!Aircraft.exist(event.getSender().getId())){
-            event.getSubject().sendMessage(mcb.append(Notice.NOT_REGISTERED).asMessageChain());
-            return;
-        }
-
         String content = event.getMessage().contentToString().toUpperCase();
-        content = UIUtils.deleteKeywords(content, Arrays.asList("/SETNAME","设置名称"));
+        content = UIUtils.deleteKeywords(content, Arrays.asList("/SETNAME", "设置名称"));
 
-        if(!Aircraft.exist(event.getSender().getId())){
-            event.getSubject().sendMessage(mcb.append(Notice.NOT_REGISTERED).asMessageChain());
+        if (!UIUtils.notInNameList(content)) {
+            event.getSubject().sendMessage(mcb.append("该名称已经被使用，请尝试其他名称。").asMessageChain());
             return;
         }
 
-        if(content.length()==7) {
-            if (content.matches("[A-Z0-9]+")){
-                if(!UIUtils.containsBannedWords(content)){
+        if (content.length() == 7) {
+            if (content.matches("[A-Z0-9]+")) {
+                if (!UIUtils.containsBannedWords(content)) {
                     AircraftInfo ai = Aircraft.get(event.getSender().getId());
                     assert ai != null;
                     ai.setName(content);
@@ -165,60 +180,171 @@ public class UserInterface {
         event.getSubject().sendMessage(mcb(event).append(Shop.activity(event)).asMessageChain());
     }
 
-    public static void showShop(MessageEvent event){
+    public static void showShop(MessageEvent event) {
 
     }
 
-    public static void registerGuild(MessageEvent event){
+    public static void registerGuild(MessageEvent event) {
 
     }
 
-    public static void setGuildName(MessageEvent event){
+    public static void setGuildName(MessageEvent event) {
 
     }
 
-    public static void joinGuild(MessageEvent event){
+    public static void joinGuild(MessageEvent event) {
 
     }
 
-    public static void quitGuild(MessageEvent event){
+    public static void quitGuild(MessageEvent event) {
 
     }
 
-    public static void setHomePort(MessageEvent event){
+    public static void setHomePort(MessageEvent event) {
+        String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(),Arrays.asList("/SETHOMEPORT","/SETHOME","设置母港"));
+        if(!UIUtils.isLegalCityCode(indicator)||!CityInfoUtils.exist(indicator)){
+            event.getSubject().sendMessage(mcb(event).append(Notice.WRONG_CITY_CODE).asMessageChain());
+            return;
+        }
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changeHomePort(indicator,event.getSender().getId())).asMessageChain());
+    }
+
+    public static void setPirate(MessageEvent event) {
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.Pirate, event.getSender().getId())).asMessageChain());
+    }
+
+    public static void setTrader(MessageEvent event) {
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.NormalShip, event.getSender().getId())).asMessageChain());
+    }
+
+    public static void startTravel(MessageEvent event) {
+        MessageChainBuilder mcb = mcb(event);
+        if (Activity.exist(event.getSender().getId())) {
+            event.getSubject().sendMessage(mcb.append(Notice.IS_IN_ACTIVITY).asMessageChain());
+            return;
+        }
+
+        AircraftInfo ai = Aircraft.get(event.getSender().getId());
+
+        assert ai != null;
+        if (ai.getShipKind()== ShipKind.Pirate) {
+            String indicator = event.getMessage().contentToString();
+            UIUtils.pirateStartMode psm = UIUtils.getMode(indicator);
+            if(psm == null){
+                event.getSubject().sendMessage(mcb(event).append(Notice.WRONG_DESTINATION_INDICATOR).asMessageChain());
+                return;
+            }
+            switch (psm) {
+                case ToCity:
+                    indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel"));
+
+                    if (!CityInfoUtils.exist(indicator)) {
+                        event.getSubject().sendMessage(mcb.append(Notice.WRONG_CITY_CODE).asMessageChain());
+                        return;
+                    }
+
+                    if (CityInfoUtils.isInCity(ai.getCoordinate())) {
+                        String currentCity = CityInfoUtils.getCityCode(ai.getCoordinate());
+                        if (Objects.equals(currentCity, indicator)) {
+                            event.getSubject().sendMessage(mcb.append(Notice.SAME_CITY_WARNING).asMessageChain());
+                            return;
+                        }
+                    }
+
+                    ActivityUtils.startAsTrader(event,"",0,indicator);
+                    event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(CityInfoUtils.getCityNameCN(indicator)).append("，该操作消耗燃油费。").asMessageChain());
+
+                case ToPlayer:
+                    indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel"));
+
+                    if (Aircraft.getIDFromName(indicator) == null) {
+                        event.getSubject().sendMessage(mcb.append(Notice.SHIP_DOESNT_EXIST).asMessageChain());
+                        return;
+                    }
+                    ActivityUtils.startAsPirateChasingShip(event, indicator);
+                    event.getSubject().sendMessage(mcb.append("您的飞艇正在追踪").append(indicator).append("，该操作消耗燃油费。").asMessageChain());
+
+                case ToCoordinate:
+                    String[] indicatorSplit = indicator.split(" ");
+                    Coordinate coordinate = new Coordinate(Integer.parseInt(indicatorSplit[1]),Integer.parseInt(indicatorSplit[2]));
+
+                    if(!CityInfoUtils.isInMapRange(coordinate)){
+                        event.getSubject().sendMessage(mcb.append(Notice.NOT_IN_MAP_RANGE).asMessageChain());
+                        return;
+                    }
+
+                    ActivityUtils.startAsTrader(event,"",0,coordinate);
+                    event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(indicator).append("，该操作消耗燃油费。").asMessageChain());
+
+            }
+        } else {
+
+            String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel"));
+
+            if (indicator.equals("")) {
+                event.getSubject().sendMessage(mcb.append(Notice.EMPTY_INDICATOR).asMessageChain());
+                return;
+            }
+
+            if (!UIUtils.isLegalCityCode(indicator) || !CityInfoUtils.exist(indicator)) {
+                event.getSubject().sendMessage(mcb.append(Notice.WRONG_CITY_CODE).asMessageChain());
+                return;
+            }
+
+            if (CityInfoUtils.isInCity(ai.getCoordinate())) {
+                String currentCity = CityInfoUtils.getCityCode(ai.getCoordinate());
+                if (Objects.equals(currentCity, indicator)) {
+                    event.getSubject().sendMessage(mcb.append(Notice.SAME_CITY_WARNING).asMessageChain());
+                    return;
+                }
+            }
+
+            String goodsName = GoodsGenerator.name();
+            int goodsValue = GoodsGenerator.value(ai.getCoordinate(),CityInfoUtils.getCityCoords(indicator),ai.getPlayerID());
+
+            ActivityUtils.startAsTrader(event, goodsName, goodsValue, indicator);
+            event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(CityInfoUtils.getCityNameCN(indicator)).append("\n货物名称：").append(goodsName).append("\n货物价值为").append(String.valueOf(goodsValue)).append("南瓜比索").asMessageChain());
+
+        }
 
     }
 
-    public static void setPirate(MessageEvent event){
-        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(true,event.getSender().getId())).asMessageChain());
+    public static void abortTravel(MessageEvent event) {
+        if(Activity.exist(event.getSender().getId())){
+            event.getSubject().sendMessage(mcb(event).append(Notice.IS_NOT_IN_ACTIVITY).asMessageChain());
+            return;
+        }
+        ActivityUtils.abortFlight(event);
+        if(Aircraft.getShipKind(event.getSender().getId())==ShipKind.Pirate){
+            event.getSubject().sendMessage(mcb(event).append("您的飞艇已经停飞。").asMessageChain());
+        } else {
+            event.getSubject().sendMessage(mcb(event).append("您的飞艇已经不再执飞，将会返回出发地，本次航程无法获得酬劳。").asMessageChain());
+        }
     }
 
-    public static void setTrader(MessageEvent event){
-        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(false,event.getSender().getId())).asMessageChain());
+    public static void startStationed(MessageEvent event) {
+        if(Aircraft.getShipKind(event.getSender().getId())!=ShipKind.Pirate){
+            event.getSubject().sendMessage(mcb(event).append(Notice.NOT_PIRATE).asMessageChain());
+            return;
+        }
+        ActivityUtils.startAsPirateStationed(event, Objects.requireNonNull(Aircraft.get(event.getSender().getId())).getCoordinate());
+        event.getSubject().sendMessage(mcb(event).append("您的飞艇已经开始驻扎，将会消耗燃油费，如不手动取消则持续2小时。请注意不要驻扎太久时间，否则会耗尽您所有的南瓜比索。").asMessageChain());
     }
 
-    public static void startTravel(MessageEvent event){
-
+    public static void goHome(MessageEvent event){
+        event.getSubject().sendMessage(mcb(event).append(ActivityUtils.goHome(event)).asMessageChain());
     }
 
-    public static void abortTravel(MessageEvent event){
-
-    }
-
-    public static void startStationed(MessageEvent event){
-
-    }
-
-    public static void instruction(MessageEvent event){
+    public static void instruction(MessageEvent event) {
 
     }
 
-    public static void dailyTask(MessageEvent event){
+    public static void dailyTask(MessageEvent event) {
 
     }
 
-    public static void showMap(MessageEvent event){
-
+    public static void showMap(MessageEvent event) {
+        ImageSender.sendImageFromBufferedImage(event.getSubject(), MapGenerator.draw());
     }
 
 }

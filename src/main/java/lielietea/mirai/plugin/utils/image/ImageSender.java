@@ -61,6 +61,12 @@ public class ImageSender {
         }
         is = new ByteArrayInputStream(bs.toByteArray());
         contact.sendMessage(Contact.uploadImage(contact, is));
+        try {
+            is.close();
+            bs.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static InputStream getBufferedImageAsSource(BufferedImage image){

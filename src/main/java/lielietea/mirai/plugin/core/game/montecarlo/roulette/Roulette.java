@@ -89,6 +89,8 @@ public class Roulette extends RouletteUtils {
             getINSTANCE().FriendResetMark.put(gameStartTime, event.getSubject().getId());
         }
 
+        //清空一次数据
+        cancelMark(event);
 
         InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH);
         assert img != null;
@@ -125,7 +127,8 @@ public class Roulette extends RouletteUtils {
             if (isGroupMessage(event)) {
                 if (getINSTANCE().GroupResetMark.containsKey(gameStartTime)) {
                     //清除标记
-                    for (Long playerID : getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()) {
+                    Table<Long,Long,Integer> copyGroupBet = getINSTANCE().GroupBet;
+                    for (Long playerID : copyGroupBet.row(event.getSubject().getId()).keySet()) {
                         getINSTANCE().GroupBet.remove(event.getSubject().getId(), playerID);
                     }
                     getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
@@ -136,7 +139,8 @@ public class Roulette extends RouletteUtils {
                 if (getINSTANCE().FriendResetMark.containsKey(gameStartTime)) {
                     //清除标记
                     getINSTANCE().FriendBet.remove(event.getSubject().getId());
-                    for (Integer integer : getINSTANCE().FriendSettleAccount.row(event.getSubject().getId()).keySet()) {
+                    Table<Long,Integer,Integer> copyFriendSettleAccount = getINSTANCE().FriendSettleAccount;
+                    for (Integer integer : copyFriendSettleAccount.row(event.getSubject().getId()).keySet()) {
                         getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(), integer);
                     }
                     getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
@@ -146,6 +150,38 @@ public class Roulette extends RouletteUtils {
         }
     }
 
+    static void cancelMark(MessageEvent event) {
+        if (isGroupMessage(event)) {
+            //清除标记
+            if(getINSTANCE().GroupBet.rowKeySet().contains(event.getSubject().getId())) {
+                Table<Long,Long,Integer> copyGroupBet = getINSTANCE().GroupBet;
+                for (Long playerID : copyGroupBet.row(event.getSubject().getId()).keySet()) {
+                    getINSTANCE().GroupBet.remove(event.getSubject().getId(), playerID);
+                }
+            }
+            getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
+            getINSTANCE().GroupStatusMap.remove(event.getSubject().getId());
+
+            if(getINSTANCE().GroupResetMark.containsValue(event.getSubject().getId())){
+                for(Date date:getINSTANCE().GroupResetMark.keySet()){
+                    if (getINSTANCE().GroupResetMark.get(date).equals(event.getSubject().getId())){
+                        getINSTANCE().GroupResetMark.remove(date);
+                    }
+                }
+            }
+
+        } else {
+            //清除标记
+            getINSTANCE().FriendBet.remove(event.getSubject().getId());
+            Table<Long,Integer,Integer> copyFriendSettleAccount = getINSTANCE().FriendSettleAccount;
+            if(getINSTANCE().FriendSettleAccount.rowKeySet().contains(event.getSubject().getId())){
+                for (Integer integer : copyFriendSettleAccount.row(event.getSubject().getId()).keySet()) {
+                    getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(), integer);
+                }
+            }
+            getINSTANCE().FriendStatusMap.remove(event.getSubject().getId());
+        }
+    }
 
     //取消初始阶段的Runnable
     static class CancelCallin implements Runnable {
@@ -273,15 +309,13 @@ public class Roulette extends RouletteUtils {
                 //没有足够多的钱
                 if (!hasEnoughMoney(event, bet + beforeBet)) {
                     event.getSubject().sendMessage(YouDontHaveEnoughMoney);
-                    return;
                 } else {
                     System.out.println("有足够多的钱");
                     getINSTANCE().FriendBet.put(event.getSubject().getId(), beforeBet + bet);
                     MessageChainBuilder mcb = new MessageChainBuilder();
                     event.getSubject().sendMessage(mcb.append("共收到下注").append(String.valueOf(beforeBet + bet)).append("南瓜比索").asMessageChain());
-                    return;
                 }
-
+                return;
             }
         }
 
@@ -401,7 +435,7 @@ public class Roulette extends RouletteUtils {
                     try {
                         mcbg.append("\n").append(new At(playerID)).append(" ").append("共获得了").append(String.valueOf(getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID))).append("南瓜比索");
                         PumpkinPesoWindow.addMoney(playerID, getINSTANCE().GroupSettleAccount.get(event.getSubject().getId()).get(playerID, result) * getINSTANCE().GroupBet.get(event.getSubject().getId(), playerID));
-                       } catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -427,7 +461,8 @@ public class Roulette extends RouletteUtils {
                     }
                 }
                 try {
-                    for (Long playerID : getINSTANCE().GroupBet.row(event.getSubject().getId()).keySet()) {
+                    Table<Long,Long,Integer> copyGroupBet = getINSTANCE().GroupBet;
+                    for (Long playerID : copyGroupBet.row(event.getSubject().getId()).keySet()) {
                         getINSTANCE().GroupBet.remove(event.getSubject().getId(), playerID);
                     }
                     getINSTANCE().GroupSettleAccount.remove(event.getSubject().getId());
@@ -439,7 +474,8 @@ public class Roulette extends RouletteUtils {
             } else {
                 //清除标记
                 getINSTANCE().FriendBet.remove(event.getSubject().getId());
-                for (Integer integer : getINSTANCE().FriendSettleAccount.row(event.getSubject().getId()).keySet()) {
+                Table<Long,Integer,Integer> copyFriendSettleAccount = getINSTANCE().FriendSettleAccount;
+                for (Integer integer : copyFriendSettleAccount.row(event.getSubject().getId()).keySet()) {
                     getINSTANCE().FriendSettleAccount.remove(event.getSubject().getId(), integer);
                 }
                 try {

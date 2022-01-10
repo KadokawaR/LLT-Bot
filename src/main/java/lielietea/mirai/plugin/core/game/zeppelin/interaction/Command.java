@@ -18,8 +18,13 @@ public enum Command {
     StartTravel,
     AbortTravel,
     StartStationed,
+    GoHome,
 
     Instruction,
     DailyTask,
-    ShowMap
+    ShowMap,
+
+    CheckShip,
+    DeleteShip,
+    Statistics
 }

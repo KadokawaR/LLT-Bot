@@ -3,8 +3,13 @@ package lielietea.mirai.plugin.core.game.zeppelin.processor;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.data.ActivityInfo;
+import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
+import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
+import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
 import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
+import net.mamoe.mirai.event.events.MessageEvent;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +22,7 @@ public class Activity {
     final static String ACTIVITY_DIR = System.getProperty("user.dir") + File.separator + "Zeppelin";
     final static String ACTIVITY_FILE = ACTIVITY_DIR + File.separator + "Activity.json";
 
-    List<ActivityInfo> activities;
+    public List<ActivityInfo> activities;
 
     static class activityList{
         List<ActivityInfo> activityInfoList;
@@ -72,25 +77,55 @@ public class Activity {
         return null;
     }
 
-    public static boolean isInActivity(long playerID){
+    public static ActivityInfo get(long playerID){
+        for(ActivityInfo ai:getInstance().activities){
+            if(ai.getPlayerID()==playerID) return ai;
+        }
+        return null;
+    }
+
+    public static boolean exist(long playerID){
         return getIndexCode(playerID) != null;
     }
 
-    public static void eliminateActivity(long playerID){
+    public static void delete(long playerID){
         getInstance().activities.remove(Objects.requireNonNull(getIndexCode(playerID)).intValue());
     }
 
     public static void updateRecord(ActivityInfo activityInfo){
-        long playerID = activityInfo.getPlayerID();
-        if (!isInActivity(playerID)) return;
-        int originalIndex = getIndexCode(playerID);
-        eliminateActivity(playerID);
-        getInstance().activities.add(originalIndex, activityInfo);
+        if(exist(activityInfo)) {
+            long playerID = activityInfo.getPlayerID();
+            if (!exist(playerID)) return;
+            int originalIndex = Objects.requireNonNull(getIndexCode(playerID));
+            delete(playerID);
+            getInstance().activities.add(originalIndex, activityInfo);
+        } else {
+            add(activityInfo);
+        }
+        writeRecord();
     }
 
     public static void writeRecord(){
         Write.cover(new Gson().toJson(new activityList(getInstance().activities)),ACTIVITY_FILE);
         readRecord();
+    }
+
+    public static void add(ActivityInfo ai){
+        getInstance().activities.add(ai);
+    }
+
+    public static boolean exist(ActivityInfo ai){
+        for(ActivityInfo activityInfo: getInstance().activities){
+            if(ai.equals(activityInfo)) return true;
+        }
+        return false;
+    }
+
+    public static boolean exist(String shipName){
+        for(ActivityInfo activityInfo: getInstance().activities){
+            if(shipName.equals(Objects.requireNonNull(Aircraft.get(activityInfo.getPlayerID())).getName())) return true;
+        }
+        return false;
     }
 
 }

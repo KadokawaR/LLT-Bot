@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.core.game.zeppelin.aircraft;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
+import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
 import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 
@@ -17,7 +18,7 @@ public class Aircraft {
     final static String AIRCRAFT_DIR = System.getProperty("user.dir") + File.separator + "Zeppelin";
     final static String AIRCRAFT_FILE = AIRCRAFT_DIR + File.separator + "Aircraft.json";
 
-    List<AircraftInfo> aircrafts;
+    public List<AircraftInfo> aircrafts;
 
     static class aircraftList{
         List<AircraftInfo> aircrafts;
@@ -83,16 +84,26 @@ public class Aircraft {
     }
 
     public static void updateRecord(Map<Long, Coordinate> map){
-        for(Long playerID:map.keySet()){
-            int indexCode = getIndexCode(playerID);
-            getInstance().aircrafts.get(indexCode).setCoordinate(map.get(playerID));
+        try {
+            for (Long playerID : map.keySet()) {
+                int indexCode = getIndexCode(playerID);
+                getInstance().aircrafts.get(indexCode).setCoordinate(map.get(playerID));
+            }
+            writeRecord();
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
 
     public static void updateRecord(AircraftInfo ai){
-        long playerID = ai.getPlayerID();
-        int indexCode = getIndexCode(playerID);
-        getInstance().aircrafts.get(indexCode).set(ai);
+        try {
+            long playerID = ai.getPlayerID();
+            int indexCode = getIndexCode(playerID);
+            getInstance().aircrafts.get(indexCode).set(ai);
+            writeRecord();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static void writeRecord(){
@@ -100,12 +111,32 @@ public class Aircraft {
         readRecord();
     }
 
+    public static String getNameFromID(long playerID){
+        for(AircraftInfo ai: getInstance().aircrafts){
+            if(ai.getPlayerID()==playerID) return ai.getName();
+        }
+        return null;
+    }
+
+    public static Long getIDFromName(String name){
+        for(AircraftInfo ai: getInstance().aircrafts){
+            if(ai.getName().equals(name)) return ai.getPlayerID();
+        }
+        return null;
+    }
+
+    public static Coordinate getHomePortCoordinate(long playerID){
+        AircraftInfo ai = get(playerID);
+        assert ai != null;
+        return CityInfoUtils.getCityCoords(ai.getHomePortCode());
+    }
+
     public static boolean exist(long playerID){
         return getIndexCode(playerID)!=null;
     }
 
-    public static boolean isPirate(long playerID){
-        return Objects.requireNonNull(get(playerID)).isPirate();
+    public static ShipKind getShipKind(long playerID){
+        return Objects.requireNonNull(get(playerID)).getShipKind();
     }
 
 }

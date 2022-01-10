@@ -119,6 +119,9 @@ public class BlackJack extends BlackJackUtils {
         InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH);
         assert img != null;
         GameCenterCount.count(GameCenterCount.Functions.BlackjackStart);
+
+        //前置标记取消
+        cancelMark(event);
         event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
         try {
             img.close();
@@ -151,6 +154,36 @@ public class BlackJack extends BlackJackUtils {
                     getINSTANCE().globalFriendData.remove((int) indexInTheList(event));
                     getINSTANCE().FriendResetMark.remove(gameStartTime);
                 }
+            }
+        }
+    }
+
+    static void cancelMark(MessageEvent event) {
+        if (isGroupMessage(event)) {
+            for (Date date : getINSTANCE().GroupResetMark.keySet()) {
+                if (getINSTANCE().GroupResetMark.get(date) == event.getSubject().getId()) {
+                    getINSTANCE().GroupResetMark.remove(date);
+                    break;
+                }
+            }
+            try {
+                getINSTANCE().globalGroupData.remove((int) indexInTheList(event));
+                getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
+        } else {
+            for (Date date : getINSTANCE().FriendResetMark.keySet()) {
+                if (getINSTANCE().FriendResetMark.get(date) == event.getSubject().getId()) {
+                    getINSTANCE().FriendResetMark.remove(date);
+                    break;
+                }
+            }
+            try {
+                getINSTANCE().globalFriendData.remove((int) indexInTheList(event));
+            } catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

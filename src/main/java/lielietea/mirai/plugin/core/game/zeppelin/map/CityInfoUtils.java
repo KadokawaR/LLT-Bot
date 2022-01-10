@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CityInfoUtils {
 
@@ -52,9 +53,22 @@ public class CityInfoUtils {
         return null;
     }
 
+    public static Coordinate getRandomCoords(){
+        Random random = new Random();
+        int r = random.nextInt(getINSTANCE().cityInfoList.size());
+        return getINSTANCE().cityInfoList.get(r).coordinate;
+    }
+
     public static String getCityNameCN(String code){
         for(CityInfo ci:getINSTANCE().cityInfoList){
             if(ci.code.equals(code)) return ci.nameCN;
+        }
+        return null;
+    }
+
+    public static String getCityNameCN(Coordinate coord){
+        for(CityInfo ci:getINSTANCE().cityInfoList){
+            if(ci.coordinate.equals(coord)) return ci.nameCN;
         }
         return null;
     }
@@ -89,6 +103,20 @@ public class CityInfoUtils {
             if(distance(coord,ci.coordinate)<= Config.CITY_PROTECTION_DISTANCE) return true;
         }
         return false;
+    }
+
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
+    public static boolean exist(String name){
+        name = name.toUpperCase();
+        if(name.length() != 3 || !name.matches("[A-Z]+")) return false;
+        for(CityInfo ci: getINSTANCE().cityInfoList){
+            if(ci.code.equals(name)) return true;
+        }
+        return false;
+    }
+
+    public static boolean isInMapRange(Coordinate coord){
+        return coord.x<Config.MAX_X_POSITION&&coord.x>0&&coord.y<Config.MAX_Y_POSITION&&coord.y>0;
     }
 
 }

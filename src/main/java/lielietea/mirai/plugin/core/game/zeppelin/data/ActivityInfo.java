@@ -31,11 +31,25 @@ public class ActivityInfo {
         this.startTime = new Date();
     }
 
-    public ActivityInfo(){
+    public ActivityInfo(MessageEvent event){
         this.departure = CityInfoUtils.getCityCoords("VLA");
         this.destination = CityInfoUtils.getCityCoords("SGP");
+        this.playerID = event.getSender().getId();
+        if(event instanceof FriendMessageEvent) this.messageEventID = 0;
+        else this.messageEventID = event.getSubject().getId();
+        this.botName = MultiBotHandler.BotName.get(event.getBot().getId());
+        this.targetPlayerID = 0;
+        this.goodsValue = 0;
+        this.goodsName = "";
+        this.startTime = new Date();
+    }
+
+    public ActivityInfo(){
+        this.departure = null;
+        this.destination = null;
         this.playerID = 0;
         this.messageEventID = 0;
+        this.botName = null;
         this.targetPlayerID = 0;
         this.goodsValue = 0;
         this.goodsName = "";

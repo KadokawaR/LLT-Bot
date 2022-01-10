@@ -103,7 +103,6 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
         public void run() {
             try {
                 getINSTANCE().dataList = openData();
-                System.out.println("获得opendata");
                 for(Bot bot : Bot.getInstances()){
                     boolean originalStatus = getINSTANCE().triggerBreakMap.get(bot.getId());
                     updateDataList(bot.getId());
@@ -113,10 +112,9 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
                         MessageUtil.notifyDevGroup("熔断机制状态发生变化，目前的熔断状况是 "+String.valueOf(newStatus),bot.getId());
                     }
                 }
-                System.out.println("更新data");
                 writeData(getINSTANCE().dataList);
                 resetCount();
-                System.out.println("MPSE的主任务已经结束。");
+                System.out.println("MPSE已更新。");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -134,6 +132,7 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
     }
 
     public static boolean botHasTriggeredBreak(GroupMessageEvent event){
+        if(IdentityUtil.isAdmin(event)) return false;
         return getINSTANCE().triggerBreakMap.get(event.getBot().getId());
     }
 

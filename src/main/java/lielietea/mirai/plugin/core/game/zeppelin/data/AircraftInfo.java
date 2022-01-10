@@ -1,7 +1,12 @@
 package lielietea.mirai.plugin.core.game.zeppelin.data;
 
 import com.google.gson.annotations.SerializedName;
+import lielietea.mirai.plugin.core.game.zeppelin.aircraft.ShipKind;
+import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
+import lielietea.mirai.plugin.core.game.zeppelin.interaction.UIUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
+
+import java.util.Date;
 
 public class AircraftInfo {
     private String name;
@@ -16,9 +21,23 @@ public class AircraftInfo {
     @SerializedName("A")
     private int attackFactor;
     @SerializedName("P")
-    private boolean isPirate;
+    private ShipKind shipKind;
     @SerializedName("C")
     private Coordinate coordinate;
+
+    public AircraftInfo(ShipKind shipKind){
+        this.name= UIUtils.randomAircraftName();
+        //todo:可能存在隐患重复，后需更改
+        this.playerID = (new Date().getTime())*-1;
+        this.coordinate = CityInfoUtils.getRandomCoords();
+        this.homePortCode = CityInfoUtils.getCityCode(coordinate);
+        ModeInfo mi = Shop.getModeInfo(Shop.getRandomCode());
+        assert mi != null;
+        this.speedFactor=mi.getSpeed();
+        this.moneyFactor=mi.getMoney();
+        this.attackFactor=mi.getAttack();
+        this.shipKind=shipKind;
+    }
 
     public AircraftInfo(String name, long playerID, String homePortCode){
         this.name=name;
@@ -27,7 +46,7 @@ public class AircraftInfo {
         this.speedFactor=1;
         this.moneyFactor=1;
         this.attackFactor=1;
-        this.isPirate=false;
+        this.shipKind =ShipKind.NormalShip;
         this.coordinate= CityInfoUtils.getCityCoords(homePortCode);
     }
 
@@ -38,8 +57,12 @@ public class AircraftInfo {
         setSpeedFactor(ai.getSpeedFactor());
         setMoneyFactor(ai.getMoneyFactor());
         setAttackFactor(ai.getAttackFactor());
-        setPirate(ai.isPirate());
+        setShipKind(ai.getShipKind());
         setCoordinate(ai.getCoordinate());
+    }
+
+    public String getMode(){
+        return Shop.getShipMode(getSpeedFactor(),getAttackFactor(),getMoneyFactor());
     }
 
     public String getName() {
@@ -90,12 +113,12 @@ public class AircraftInfo {
         this.attackFactor = attackFactor;
     }
 
-    public boolean isPirate() {
-        return isPirate;
+    public ShipKind getShipKind() {
+        return shipKind;
     }
 
-    public void setPirate(boolean pirate) {
-        isPirate = pirate;
+    public void setShipKind(ShipKind pirate) {
+        shipKind = pirate;
     }
 
     public Coordinate getCoordinate() {
@@ -104,5 +127,9 @@ public class AircraftInfo {
 
     public void setCoordinate(Coordinate coordinate) {
         this.coordinate = coordinate;
+    }
+
+    public boolean isPirate() {
+        return getShipKind()==ShipKind.Pirate;
     }
 }

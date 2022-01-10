@@ -2,10 +2,8 @@ package lielietea.mirai.plugin.core.game.zeppelin.function;
 
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
-import lielietea.mirai.plugin.core.bank.SenoritaCounter;
 import lielietea.mirai.plugin.core.game.zeppelin.Config;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
-import lielietea.mirai.plugin.core.game.zeppelin.aircraft.AircraftUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 import lielietea.mirai.plugin.core.game.zeppelin.data.ModeInfo;
@@ -14,14 +12,10 @@ import lielietea.mirai.plugin.core.game.zeppelin.interaction.UIUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.processor.Activity;
 import net.mamoe.mirai.event.events.MessageEvent;
-import org.junit.Ignore;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Shop {
 
@@ -31,10 +25,6 @@ public class Shop {
 
     static class modeList{
         List<ModeInfo> modes;
-        modeList() {this.modes = new ArrayList<>(); }
-        modeList(List<ModeInfo> modes){
-            this.modes = modes;
-        }
     }
 
     Shop(){
@@ -77,6 +67,24 @@ public class Shop {
         return null;
     }
 
+    public static String getFullModeName(String mode){
+        for(ModeInfo mi:getInstance().modeInfoList){
+            if(mi.getCode().equals(mode)){
+                return mi.getCompany()+"-"+mi.getCode();
+            }
+        }
+        return null;
+    }
+
+    public static String getShipMode(int speed,int attack, int money){
+        for(ModeInfo mi: getInstance().modeInfoList){
+            if(mi.getMoney()==money&&mi.getAttack()==attack&&mi.getSpeed()==speed){
+                return mi.getCompany()+"-"+mi.getCode();
+            }
+        }
+        return "UNKNOWN";
+    }
+
     public static boolean isInCorrectTown(String mode, String cityCode){
         if(!existsMode(mode)) return false;
         String manufacturer = Objects.requireNonNull(getModeInfo(mode)).getCompany();
@@ -92,6 +100,13 @@ public class Shop {
         return false;
     }
 
+    public static String getRandomCode(){
+        Random random = new Random();
+        int r = random.nextInt(getInstance().modeInfoList.size());
+        return getInstance().modeInfoList.get(r).getCode();
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean existsMode(String mode){
         for(ModeInfo mi: getInstance().modeInfoList){
             if(mi.getCode().equals(mode)) return true;
@@ -101,7 +116,6 @@ public class Shop {
 
     public static String activity(MessageEvent event){
         long playerID = event.getSender().getId();
-        if(!Aircraft.exist(playerID)) return(Notice.NOT_REGISTERED);
 
         Coordinate coord = Objects.requireNonNull(Aircraft.get(playerID)).getCoordinate();
         if(!CityInfoUtils.isInCity(coord)) return Notice.NOT_IN_CITY;
@@ -113,7 +127,7 @@ public class Shop {
         String cityCode = CityInfoUtils.getCityCode(coord);
         if(!isInCorrectTown(mode,cityCode)) return Notice.NOT_IN_TARGET_CITY;
 
-        if(Activity.isInActivity(playerID)) return Notice.IS_IN_ACTIVITY;
+        if(Activity.exist(playerID)) return Notice.IS_IN_ACTIVITY;
 
         if(!PumpkinPesoWindow.hasEnoughMoney(event,CHANGE_FEE)) return Notice.DOESNT_HAVE_ENOUGH_MONEY;
 

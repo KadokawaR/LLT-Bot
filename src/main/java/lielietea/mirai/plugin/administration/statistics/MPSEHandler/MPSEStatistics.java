@@ -14,8 +14,8 @@ import java.util.TimerTask;
 
 public class MPSEStatistics extends MPSEProcessor{
 
-    final static int DAILY_THRESHOLD = 5000;
-    final static int HALF_DAY_THRESHOLD = 3000;
+    final static int DAILY_THRESHOLD = 4500;
+    final static int HALF_DAY_THRESHOLD = 2500;
     final static int SIX_HOUR_THRESHOLD = 1500;
     final static int THREE_HOUR_THRESHOLD = 1000;
     final static int ONE_HOUR_THRESHOLD = 500;
