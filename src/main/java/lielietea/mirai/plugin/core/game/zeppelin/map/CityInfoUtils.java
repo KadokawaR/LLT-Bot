@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.game.zeppelin.map;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import lielietea.mirai.plugin.core.game.zeppelin.Config;
 import lielietea.mirai.plugin.core.game.zeppelin.data.CityInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
@@ -16,35 +17,32 @@ import java.util.Random;
 
 public class CityInfoUtils {
 
+    static class CityList{
+        @SerializedName("CityList")
+        List<CityInfo> cityInfos;
+    }
+
     public List<CityInfo> cityInfoList;
 
     CityInfoUtils(){
         cityInfoList = new ArrayList<>();
-        cityInfoList.addAll(ini());
-    }
-
-    static class cityList{
-        List<CityInfo> cityInfoList;
-    }
-
-    static final CityInfoUtils INSTANCE = new CityInfoUtils();
-    public static CityInfoUtils getINSTANCE(){ return INSTANCE;}
-
-    public static List<CityInfo> ini(){
         Gson gson = new Gson();
         String PATH = "/zeppelin/CityCoords.json";
         InputStream is = CityInfoUtils.class.getResourceAsStream(PATH);
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        List<CityInfo> res = gson.fromJson(br, cityList.class).cityInfoList;
+        CityList res = gson.fromJson(br, CityList.class);
+        cityInfoList.addAll(res.cityInfos);
         try {
             is.close();
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return res;
     }
+
+    static final CityInfoUtils INSTANCE = new CityInfoUtils();
+    public static CityInfoUtils getINSTANCE(){ return INSTANCE;}
 
     public static Coordinate getCityCoords(String code){
         for(CityInfo ci: getINSTANCE().cityInfoList){
@@ -118,5 +116,7 @@ public class CityInfoUtils {
     public static boolean isInMapRange(Coordinate coord){
         return coord.x<Config.MAX_X_POSITION&&coord.x>0&&coord.y<Config.MAX_Y_POSITION&&coord.y>0;
     }
+
+    public void ini(){}
 
 }

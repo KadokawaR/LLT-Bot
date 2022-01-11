@@ -164,5 +164,4 @@ public class ActivityUtils {
         assert a != null;
         return a.getShipKind()==ShipKind.Pirate;
     }
-
 }

@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.game.zeppelin.aircraft;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
@@ -14,33 +15,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static lielietea.mirai.plugin.core.game.zeppelin.TestTools.printAircraftLocation;
+
 public class Aircraft {
-    final static String AIRCRAFT_DIR = System.getProperty("user.dir") + File.separator + "Zeppelin";
+    final static String AIRCRAFT_DIR = System.getProperty("user.dir") + File.separator + "data" + File.separator + "Zeppelin";
     final static String AIRCRAFT_FILE = AIRCRAFT_DIR + File.separator + "Aircraft.json";
 
-    public List<AircraftInfo> aircrafts;
-
-    static class aircraftList{
-        List<AircraftInfo> aircrafts;
-        aircraftList(){
-            this.aircrafts = new ArrayList<>();
+    static class aircraftList {
+        List<AircraftInfo> aircraftList;
+        aircraftList() {
+            this.aircraftList = new ArrayList<>();
         }
-        aircraftList(List<AircraftInfo> aircrafts){
-            this.aircrafts=aircrafts;
+        aircraftList(List<AircraftInfo> aircraftList) {
+            this.aircraftList = aircraftList;
         }
     }
 
-    Aircraft(){
+    public List<AircraftInfo> aircrafts;
+    static aircraftList empty = new aircraftList();
+
+    Aircraft() {
         aircrafts = new ArrayList<>();
-        if(!new File(AIRCRAFT_DIR).exists()) Touch.dir(AIRCRAFT_DIR);
-        if(!new File(AIRCRAFT_FILE).exists()) {
+        if (!new File(AIRCRAFT_DIR).exists()) Touch.dir(AIRCRAFT_DIR);
+        if (!new File(AIRCRAFT_FILE).exists()) {
             Touch.file(AIRCRAFT_FILE);
-            Write.cover(new Gson().toJson(new aircraftList(), aircraftList.class),AIRCRAFT_FILE);
+            Write.cover(new Gson().toJson(empty, aircraftList.class), AIRCRAFT_FILE);
         }
-        InputStream is = Aircraft.class.getResourceAsStream(AIRCRAFT_FILE);
+        InputStream is = null;
+        try {
+            is = new FileInputStream(AIRCRAFT_FILE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        aircrafts.addAll(new Gson().fromJson(br, aircraftList.class).aircrafts);
+        aircrafts.addAll(new Gson().fromJson(br, aircraftList.class).aircraftList);
         try {
             is.close();
             br.close();
@@ -50,93 +59,121 @@ public class Aircraft {
     }
 
     static final Aircraft INSTANCE = new Aircraft();
-    public static Aircraft getInstance(){ return INSTANCE;}
 
-    public static void register(String name, long playerID, String homePortCode){
-        getInstance().aircrafts.add(new AircraftInfo(name,playerID,homePortCode));
+    public static Aircraft getInstance() {
+        return INSTANCE;
     }
 
-    public static AircraftInfo get(long playerID){
-        for(AircraftInfo ai : getInstance().aircrafts){
-            if(ai.getPlayerID()==playerID) return ai;
+    public static void register(String name, long playerID, String homePortCode) {
+        getInstance().aircrafts.add(new AircraftInfo(name, playerID, homePortCode));
+        writeRecord();
+    }
+
+    public static AircraftInfo get(long playerID) {
+        for (AircraftInfo ai : getInstance().aircrafts) {
+            if (ai.getPlayerID() == playerID) return ai;
         }
         return null;
     }
 
-    public static void readRecord(){
-        InputStream is = Aircraft.class.getResourceAsStream(AIRCRAFT_FILE);
+    public static void readRecord() {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(AIRCRAFT_FILE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        getInstance().aircrafts = new Gson().fromJson(br, aircraftList.class).aircrafts;
+        getInstance().aircrafts = new Gson().fromJson(br, aircraftList.class).aircraftList;
         try {
             is.close();
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("========================> Aircraft readRecord");
+        printAircraftLocation();
     }
 
-    public static Integer getIndexCode(long playerID){
-        for(int i=0;i<getInstance().aircrafts.size();i++){
-            if(getInstance().aircrafts.get(i).getPlayerID()==playerID) return i;
-        }
-        return null;
-    }
+    public static void updateRecord(Map<Long, Coordinate> map) {
 
-    public static void updateRecord(Map<Long, Coordinate> map){
-        try {
-            for (Long playerID : map.keySet()) {
-                int indexCode = getIndexCode(playerID);
-                getInstance().aircrafts.get(indexCode).setCoordinate(map.get(playerID));
+        if(map.keySet().size()<=0) return;
+
+        List<AircraftInfo> deleteList = new ArrayList<>();
+        List<AircraftInfo> addList = new ArrayList<>();
+        for (Long playerID : map.keySet()) {
+            for(AircraftInfo ai: getInstance().aircrafts) {
+                if(ai.getPlayerID()==playerID){
+                    deleteList.add(ai);
+                    ai.setCoordinate(map.get(playerID));
+                    addList.add(ai);
+                }
             }
-            writeRecord();
-        } catch(Exception e){
-            e.printStackTrace();
         }
+
+        for(AircraftInfo ai:deleteList){
+            getInstance().aircrafts.remove(ai);
+        }
+        for(AircraftInfo ai:addList){
+            getInstance().aircrafts.add(ai);
+        }
+        writeRecord();
     }
 
-    public static void updateRecord(AircraftInfo ai){
-        try {
-            long playerID = ai.getPlayerID();
-            int indexCode = getIndexCode(playerID);
-            getInstance().aircrafts.get(indexCode).set(ai);
-            writeRecord();
-        } catch(Exception e){
-            e.printStackTrace();
+    public static void updateRecord(AircraftInfo aiInput) {
+        long playerID = aiInput.getPlayerID();
+        for(AircraftInfo ai: getInstance().aircrafts){
+            if (ai.getPlayerID()==playerID) {
+                getInstance().aircrafts.remove(ai);
+                getInstance().aircrafts.add(aiInput);
+                break;
+            }
         }
+        writeRecord();
     }
 
-    public static void writeRecord(){
-        Write.cover(new Gson().toJson(new aircraftList(getInstance().aircrafts)),AIRCRAFT_FILE);
+    public static void writeRecord() {
+        System.out.println("========================> Aircraft writeRecord");
+        Gson gs = new GsonBuilder().setPrettyPrinting().create();
+        aircraftList al = new aircraftList(getInstance().aircrafts);
+        printAircraftLocation();
+        Write.cover(gs.toJson(al), AIRCRAFT_FILE);
+        System.out.println("写入完毕");
         readRecord();
     }
 
-    public static String getNameFromID(long playerID){
-        for(AircraftInfo ai: getInstance().aircrafts){
-            if(ai.getPlayerID()==playerID) return ai.getName();
+    public static String getNameFromID(long playerID) {
+        for (AircraftInfo ai : getInstance().aircrafts) {
+            if (ai.getPlayerID() == playerID) return ai.getName();
         }
         return null;
     }
 
-    public static Long getIDFromName(String name){
-        for(AircraftInfo ai: getInstance().aircrafts){
-            if(ai.getName().equals(name)) return ai.getPlayerID();
+    public static Long getIDFromName(String name) {
+        for (AircraftInfo ai : getInstance().aircrafts) {
+            if (ai.getName().equals(name)) return ai.getPlayerID();
         }
         return null;
     }
 
-    public static Coordinate getHomePortCoordinate(long playerID){
+    public static Coordinate getHomePortCoordinate(long playerID) {
         AircraftInfo ai = get(playerID);
         assert ai != null;
         return CityInfoUtils.getCityCoords(ai.getHomePortCode());
     }
 
-    public static boolean exist(long playerID){
-        return getIndexCode(playerID)!=null;
+    public static boolean exist(long playerID) {
+        for(AircraftInfo ai:getInstance().aircrafts){
+            if(ai.getPlayerID()==playerID) return true;
+        }
+        return false;
     }
 
-    public static ShipKind getShipKind(long playerID){
+    public static ShipKind getShipKind(long playerID) {
         return Objects.requireNonNull(get(playerID)).getShipKind();
     }
+
+    public void ini(){}
 
 }

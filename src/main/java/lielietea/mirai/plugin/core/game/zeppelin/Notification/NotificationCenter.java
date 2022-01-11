@@ -4,7 +4,6 @@ import lielietea.mirai.plugin.core.game.zeppelin.Config;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.ShipKind;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Notification;
-import lielietea.mirai.plugin.core.game.zeppelin.processor.Activity;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
@@ -21,9 +20,13 @@ public class NotificationCenter {
     public List<Notification> notifications;
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
+    static{
+        System.out.println("Notification Center Task Arranged");
+        executor.scheduleAtFixedRate(new MainTask(), Config.NOTIFICATION_INITIAL_DELAY,1, TimeUnit.MINUTES);
+    }
+
     NotificationCenter(){
         notifications = new ArrayList<>();
-        executor.scheduleAtFixedRate(new MainTask(), Config.NOTIFICATION_INITIAL_DELAY,1, TimeUnit.MINUTES);
     }
 
     static final NotificationCenter INSTANCE = new NotificationCenter();
@@ -33,6 +36,7 @@ public class NotificationCenter {
     static class MainTask implements Runnable{
         @Override
         public void run() {
+            System.out.println("Notification Center Task");
             filter();
             send();
         }
@@ -52,6 +56,7 @@ public class NotificationCenter {
             } catch(Exception e){
                 e.printStackTrace();
             }
+            System.out.println(n.getMessage()+n.getMessageID()+n.getPlayerID());
         }
         getInstance().notifications.clear();
     }
@@ -85,5 +90,7 @@ public class NotificationCenter {
         }
         getInstance().notifications.removeAll(deleteList);
     }
+
+    public void ini(){}
 
 }

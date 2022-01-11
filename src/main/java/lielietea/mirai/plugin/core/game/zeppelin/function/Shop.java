@@ -29,27 +29,23 @@ public class Shop {
 
     Shop(){
         modeInfoList = new ArrayList<>();
-        modeInfoList.addAll(ini());
-    }
-
-    static final Shop INSTANCE = new Shop();
-    public static Shop getInstance(){return INSTANCE;}
-
-    public static List<ModeInfo> ini(){
         Gson gson = new Gson();
         String PATH = "/zeppelin/AircraftModes.json";
         InputStream is = Shop.class.getResourceAsStream(PATH);
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        List<ModeInfo> res = gson.fromJson(br, modeList.class).modes;
+        modeList res = gson.fromJson(br, modeList.class);
         try {
             is.close();
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return res;
+        modeInfoList.addAll(res.modes);
     }
+
+    static final Shop INSTANCE = new Shop();
+    public static Shop getInstance(){return INSTANCE;}
 
     public static void changeAircraft(ModeInfo newMode,long playerID){
         AircraftInfo ai = Aircraft.get(playerID);
@@ -135,5 +131,8 @@ public class Shop {
         changeAircraft(Objects.requireNonNull(getModeInfo(mode)),playerID);
         return "已成功切换您的飞艇至"+ Objects.requireNonNull(getModeInfo(mode)).getCompany()+"-"+mode+"，花费"+CHANGE_FEE+"南瓜比索。";
     }
+
+    public void ini(){}
+
 
 }

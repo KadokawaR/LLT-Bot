@@ -12,7 +12,7 @@
   {"Name":"吉隆坡","Code":"KLL","Coords":{"x":423,"y":1878}},
   {"Name":"马尼拉","Code":"MNL","Coords":{"x":893,"y":1584}},
   {"Name":"雅加达","Code":"JKT","Coords":{"x":547,"y":2095}},
-  {"Name":"曼谷","Code":"BKK","Coords":{"x":394,"y":1063}},
+  {"Name":"曼谷","Code":"BKK","Coords":{"x":394,"y":1603}},
   {"Name":"胡志明","Code":"HCM","Coords":{"x":544,"y":1680}},
   {"Name":"河内","Code":"HNO","Coords":{"x":523,"y":1420}},
   {"Name":"成都","Code":"CDU","Coords":{"x":457,"y":1151}},
@@ -27,6 +27,6 @@
   {"Name":"平壤","Code":"PYY","Coords":{"x":1007,"y":910}},
   {"Name":"海参崴","Code":"VLA","Coords":{"x":1160,"y":778}},
   {"Name":"北津州","Code":"NKC","Coords":{"x":1373,"y":407}},
-  {"Name":"哈巴罗夫斯克","Code":"KHA","Coords":{"x":1029,"y":687}}
+  {"Name":"哈巴罗夫斯克","Code":"KHA","Coords":{"x":1236,"y":591}}
 ]
 }

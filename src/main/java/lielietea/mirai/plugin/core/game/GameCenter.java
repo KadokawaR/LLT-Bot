@@ -5,6 +5,7 @@ import lielietea.mirai.plugin.core.game.fish.Fishing;
 import lielietea.mirai.plugin.core.game.mahjongriddle.MahjongRiddle;
 import lielietea.mirai.plugin.core.game.montecarlo.CasinoCroupier;
 import lielietea.mirai.plugin.core.game.jetpack.JetPack;
+import lielietea.mirai.plugin.core.game.zeppelin.Zeppelin;
 import lielietea.mirai.plugin.utils.Nudge;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -22,6 +23,8 @@ public class GameCenter {
         JetPack.start(event);
         SenoritaCounter.go(event);
         CasinoCroupier.handle(event);
+        Zeppelin.start(event);
+        Zeppelin.test(event);
         //Foodie.send(event);
 
         if(event instanceof FriendMessageEvent){

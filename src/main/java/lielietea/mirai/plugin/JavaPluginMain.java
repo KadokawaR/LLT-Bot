@@ -3,6 +3,13 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
+import lielietea.mirai.plugin.core.game.zeppelin.Notification.NotificationCenter;
+import lielietea.mirai.plugin.core.game.zeppelin.Zeppelin;
+import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
+import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
+import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
+import lielietea.mirai.plugin.core.game.zeppelin.processor.Activity;
+import lielietea.mirai.plugin.core.game.zeppelin.processor.Radar;
 import lielietea.mirai.plugin.core.responder.ResponderCenter;
 import lielietea.mirai.plugin.utils.Nudge;
 import lielietea.mirai.plugin.utils.ContactUtil;
@@ -50,6 +57,8 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GroupPolice.getINSTANCE().ini();
         ResponderManager.getINSTANCE().ini();
+
+        Zeppelin.ini();
 
         // 上线事件
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {

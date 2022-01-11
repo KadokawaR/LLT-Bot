@@ -201,12 +201,12 @@ public class UserInterface {
     }
 
     public static void setHomePort(MessageEvent event) {
-        String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(),Arrays.asList("/SETHOMEPORT","/SETHOME","设置母港"));
-        if(!UIUtils.isLegalCityCode(indicator)||!CityInfoUtils.exist(indicator)){
+        String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("/SETHOMEPORT", "/SETHOME", "设置母港"));
+        if (!UIUtils.isLegalCityCode(indicator) || !CityInfoUtils.exist(indicator)) {
             event.getSubject().sendMessage(mcb(event).append(Notice.WRONG_CITY_CODE).asMessageChain());
             return;
         }
-        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changeHomePort(indicator,event.getSender().getId())).asMessageChain());
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changeHomePort(indicator, event.getSender().getId())).asMessageChain());
     }
 
     public static void setPirate(MessageEvent event) {
@@ -227,10 +227,10 @@ public class UserInterface {
         AircraftInfo ai = Aircraft.get(event.getSender().getId());
 
         assert ai != null;
-        if (ai.getShipKind()== ShipKind.Pirate) {
+        if (ai.getShipKind() == ShipKind.Pirate) {
             String indicator = event.getMessage().contentToString();
             UIUtils.pirateStartMode psm = UIUtils.getMode(indicator);
-            if(psm == null){
+            if (psm == null) {
                 event.getSubject().sendMessage(mcb(event).append(Notice.WRONG_DESTINATION_INDICATOR).asMessageChain());
                 return;
             }
@@ -251,7 +251,7 @@ public class UserInterface {
                         }
                     }
 
-                    ActivityUtils.startAsTrader(event,"",0,indicator);
+                    ActivityUtils.startAsTrader(event, "", 0, indicator);
                     event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(CityInfoUtils.getCityNameCN(indicator)).append("，该操作消耗燃油费。").asMessageChain());
 
                 case ToPlayer:
@@ -266,14 +266,14 @@ public class UserInterface {
 
                 case ToCoordinate:
                     String[] indicatorSplit = indicator.split(" ");
-                    Coordinate coordinate = new Coordinate(Integer.parseInt(indicatorSplit[1]),Integer.parseInt(indicatorSplit[2]));
+                    Coordinate coordinate = new Coordinate(Integer.parseInt(indicatorSplit[1]), Integer.parseInt(indicatorSplit[2]));
 
-                    if(!CityInfoUtils.isInMapRange(coordinate)){
+                    if (!CityInfoUtils.isInMapRange(coordinate)) {
                         event.getSubject().sendMessage(mcb.append(Notice.NOT_IN_MAP_RANGE).asMessageChain());
                         return;
                     }
 
-                    ActivityUtils.startAsTrader(event,"",0,coordinate);
+                    ActivityUtils.startAsTrader(event, "", 0, coordinate);
                     event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(indicator).append("，该操作消耗燃油费。").asMessageChain());
 
             }
@@ -300,7 +300,7 @@ public class UserInterface {
             }
 
             String goodsName = GoodsGenerator.name();
-            int goodsValue = GoodsGenerator.value(ai.getCoordinate(),CityInfoUtils.getCityCoords(indicator),ai.getPlayerID());
+            int goodsValue = GoodsGenerator.value(ai.getCoordinate(), CityInfoUtils.getCityCoords(indicator), ai.getPlayerID());
 
             ActivityUtils.startAsTrader(event, goodsName, goodsValue, indicator);
             event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(CityInfoUtils.getCityNameCN(indicator)).append("\n货物名称：").append(goodsName).append("\n货物价值为").append(String.valueOf(goodsValue)).append("南瓜比索").asMessageChain());
@@ -310,12 +310,12 @@ public class UserInterface {
     }
 
     public static void abortTravel(MessageEvent event) {
-        if(Activity.exist(event.getSender().getId())){
+        if (!Activity.exist(event.getSender().getId())) {
             event.getSubject().sendMessage(mcb(event).append(Notice.IS_NOT_IN_ACTIVITY).asMessageChain());
             return;
         }
         ActivityUtils.abortFlight(event);
-        if(Aircraft.getShipKind(event.getSender().getId())==ShipKind.Pirate){
+        if (Aircraft.getShipKind(event.getSender().getId()) == ShipKind.Pirate) {
             event.getSubject().sendMessage(mcb(event).append("您的飞艇已经停飞。").asMessageChain());
         } else {
             event.getSubject().sendMessage(mcb(event).append("您的飞艇已经不再执飞，将会返回出发地，本次航程无法获得酬劳。").asMessageChain());
@@ -323,7 +323,7 @@ public class UserInterface {
     }
 
     public static void startStationed(MessageEvent event) {
-        if(Aircraft.getShipKind(event.getSender().getId())!=ShipKind.Pirate){
+        if (Aircraft.getShipKind(event.getSender().getId()) != ShipKind.Pirate) {
             event.getSubject().sendMessage(mcb(event).append(Notice.NOT_PIRATE).asMessageChain());
             return;
         }
@@ -331,7 +331,7 @@ public class UserInterface {
         event.getSubject().sendMessage(mcb(event).append("您的飞艇已经开始驻扎，将会消耗燃油费，如不手动取消则持续2小时。请注意不要驻扎太久时间，否则会耗尽您所有的南瓜比索。").asMessageChain());
     }
 
-    public static void goHome(MessageEvent event){
+    public static void goHome(MessageEvent event) {
         event.getSubject().sendMessage(mcb(event).append(ActivityUtils.goHome(event)).asMessageChain());
     }
 
