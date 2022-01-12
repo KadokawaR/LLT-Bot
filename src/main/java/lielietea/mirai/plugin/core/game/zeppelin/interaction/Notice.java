@@ -26,6 +26,7 @@ public class Notice {
     public static final String WRONG_CITY_CODE = "您输入的城市代码无效。";
     public static final String SAME_CITY_WARNING = "您已经在这座城市内。";
     public static final String NOT_IN_MAP_RANGE = "您输入的坐标不在地图范围内。";
+    public static final String NOT_IN_HOME_PORT = "您目前不在母港，无法操作。";
 
     public static final String NOT_PIRATE = "您并未携带海盗标记，所以无法驻扎。";
     public static final String NOT_ENOUGH_MONEY = "您的南瓜比索数量已经不足，将会自动停靠在当前地点。";

@@ -100,7 +100,7 @@ public class UserInterface {
 
                 break;
             case DeleteShip:
-
+                deleteShip(event);
                 break;
             case Statistics:
 
@@ -115,12 +115,9 @@ public class UserInterface {
         if (content.equals("/changeship") || content.equals("更换飞艇")) return Command.ChangeAircraft;
         if (content.equals("/shop") || content.equals("飞艇商店")) return Command.Shop;
 
-        if (content.equals("/registerguild") || content.equals("注册公会") || content.equals("注册工会"))
-            return Command.RegisterGuild;
-        if (content.contains("/setguildname") || content.contains("设置公会名称") || content.contains("设置工会名称"))
-            return Command.SetGuildName;
-        if (content.contains("/joinguild") || content.contains("加入公会") || content.contains("加入工会"))
-            return Command.JoinGuild;
+        if (content.equals("/registerguild") || content.equals("注册公会") || content.equals("注册工会")) return Command.RegisterGuild;
+        if (content.contains("/setguildname") || content.contains("设置公会名称") || content.contains("设置工会名称")) return Command.SetGuildName;
+        if (content.contains("/joinguild") || content.contains("加入公会") || content.contains("加入工会")) return Command.JoinGuild;
         if (content.equals("/quitguild") || content.equals("退出公会") || content.equals("退出工会")) return Command.QuitGuild;
 
         if (content.contains("/sethomeport") || content.contains("设置母港")) return Command.SetHomePort;
@@ -132,8 +129,7 @@ public class UserInterface {
         if (content.equals("/stationed") || content.equals("驻扎飞艇")) return Command.StartStationed;
         if (content.equals("/gohome") || content.equals("返回母港")) return Command.GoHome;
 
-        if (content.equals("/zeppelin") || content.equals("飞行指南") || content.equals("飞行帮助") || content.equals("空艇指南"))
-            return Command.Instruction;
+        if (content.equals("/zeppelin") || content.equals("飞行指南") || content.equals("飞行帮助") || content.equals("空艇指南")) return Command.Instruction;
         if (content.equals("/dailytask") || content.equals("每日任务")) return Command.DailyTask;
         if (content.equals("/map") || content.equals("显示地图")) return Command.ShowMap;
 
@@ -382,10 +378,10 @@ public class UserInterface {
         AircraftInfo ai = Aircraft.get(playerID);
         assert ai != null;
         Coordinate coordinate = ai.getCoordinate();
-        String res = "您的飞艇"+ai.getName()+"目前正在";
+        String res = "您的飞艇"+ai.getName()+"在";
 
         if(CityInfoUtils.isInCity(coordinate)){
-            res += CityInfoUtils.getCityNameCN(coordinate);
+            res += CityInfoUtils.getCityNameCN(coordinate)+"市内，";
         } else {
             res += "坐标x:"+coordinate.x+" y:"+coordinate.y+"，";
         }
@@ -399,13 +395,35 @@ public class UserInterface {
             } else {
                 res += "坐标x:"+coordinate.x+" y:"+coordinate.y;
             }
+        } else {
+            res += "没有执行飞行计划。";
         }
 
         event.getSubject().sendMessage(mcb(event).append(res).asMessageChain());
     }
 
     static void deleteShip(MessageEvent event){
-        
+        long playerID = event.getSender().getId();
+        if(!Aircraft.exist(playerID)){
+            event.getSubject().sendMessage(mcb(event).append(Notice.NOT_REGISTERED).asMessageChain());
+            return;
+        }
+        if(Activity.exist(playerID)){
+            event.getSubject().sendMessage(mcb(event).append(Notice.IS_IN_ACTIVITY).asMessageChain());
+            return;
+        }
+        AircraftInfo ai = Aircraft.get(playerID);
+        assert ai != null;
+        Coordinate homePort = CityInfoUtils.getCityCoords(ai.getHomePortCode());
+        Coordinate current = ai.getCoordinate();
+        assert homePort != null;
+        if(!current.equals(homePort)){
+            event.getSubject().sendMessage(mcb(event).append(Notice.NOT_IN_HOME_PORT).asMessageChain());
+            return;
+        }
+
+        Aircraft.delete(playerID);
+
     }
 
 }
