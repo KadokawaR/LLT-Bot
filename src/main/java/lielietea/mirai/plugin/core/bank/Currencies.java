@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.bank;
 
-import love.marblegate.thevaultnorthkinchovsk.vault.Currency;
+import lielietea.thevaultnorthkinchovsk.vault.Currency;
 
 public class Currencies {
     public static Currency PUMPKIN_PESO = Currency.of("pk");
