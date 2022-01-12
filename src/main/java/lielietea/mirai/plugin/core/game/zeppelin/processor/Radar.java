@@ -10,6 +10,7 @@ import lielietea.mirai.plugin.core.game.zeppelin.data.ActivityInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Notification;
+import lielietea.mirai.plugin.core.game.zeppelin.interaction.Notice;
 import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
 
 
@@ -53,6 +54,7 @@ public class Radar {
                 move();
                 collisionCheck();
                 arrivalCheck();
+                clean();
             } catch(Exception e){
                 e.printStackTrace();
             }
@@ -85,7 +87,6 @@ public class Radar {
             }
         }
     }
-
 
     static void collision(AircraftInfo ai1,AircraftInfo ai2){
         if(ai1.isPirate()&& ai2.isPirate()) {
@@ -254,23 +255,31 @@ public class Radar {
     static void moveShip(AircraftInfo ai){
         ActivityInfo ac = Activity.get(ai.getPlayerID());
         assert ac != null;
-        System.out.println("move "+ac.getPlayerID());
+
         Coordinate destination = ac.getDestination();
         Coordinate currentLoc = ai.getCoordinate();
+
         double speed = RadarUtils.speed(ac.getPlayerID());
+
         Coordinate direction = RadarUtils.direction(currentLoc,destination);
         Coordinate distance = new Coordinate(Math.abs(destination.x- currentLoc.x), Math.abs(destination.y- currentLoc.y));
         Coordinate speedCoord = new Coordinate(speed*direction.x,speed*direction.y);
         Coordinate speedCoordAbs = new Coordinate(Math.abs(speed*direction.x),Math.abs(speed* direction.y));
+
         //如果距离小于速度+2 则到终点
         //如果没到终点 则speed*direction.x 和 speed*direction.y
         Coordinate finalCoord = new Coordinate(currentLoc.x+speedCoord.x, currentLoc.y+speedCoord.y);
+
         if(distance.x-2<speedCoordAbs.x) finalCoord.x = destination.x;
         if(distance.x-2<speedCoordAbs.x) finalCoord.y = destination.y;
+
         getInstance().tempMap.put(ai.getPlayerID(),finalCoord);
+
+        //扣钱
+        if(ai.getShipKind()==ShipKind.Pirate) PumpkinPesoWindow.minusMoneyMaybeAllIn(ai.getPlayerID(), Config.FUEL_FEE);
     }
 
-    //跟丢目标判定和停止驻扎判定
+    //跟丢目标判定、停止驻扎判定、没有足够的钱判定
     static void pirateInfoCheck(){
         updateList();
         for(AircraftInfo ai: getInstance().pirates){
@@ -284,16 +293,21 @@ public class Radar {
                     NotificationCenter.add(new Notification(ac,message));
                     continue;
                 }
+
+                //超时
+                Date startTime = ac.getStartTime();
+                Date now = new Date();
+
+                if((now.getTime()-startTime.getTime())>60*2*1000){
+                    ActivityUtils.abortFlight(ac);
+                    String message = NotificationGenerator.get(NotificationGenerator.NotificationKind.PirateEndStationed,ac);
+                    NotificationCenter.add(new Notification(ac,message));
+                }
             }
 
-            //超时
-            Date startTime = ac.getStartTime();
-            Date now = new Date();
-
-            if((now.getTime()-startTime.getTime())>60*2*1000){
-                ActivityUtils.abortFlight(ac);
-                String message = NotificationGenerator.get(NotificationGenerator.NotificationKind.PirateEndStationed,ac);
-                NotificationCenter.add(new Notification(ac,message));
+            if(!PumpkinPesoWindow.hasEnoughMoney(ai.getPlayerID(),Config.FUEL_FEE)){
+                Activity.delete(ai.getPlayerID());
+                NotificationCenter.add(new Notification(ac, Notice.NOT_ENOUGH_MONEY));
             }
         }
     }
@@ -311,11 +325,8 @@ public class Radar {
         assert ac != null;
 
         if(ActivityUtils.isPirateStationed(ac)) return;
-        System.out.println("===================================>判定");
         if(ac.getDestination().equals(ai.getCoordinate())){
-            System.out.println("坐标一样");
             if(ai.getShipKind()==ShipKind.NormalShip){
-                System.out.println("是NormalShip");
                 if(ac.getGoodsValue()<=0|| ac.getGoodsName().equals("")){
                     Notification n = new Notification(ac,NotificationGenerator.get(NotificationGenerator.NotificationKind.ArriveDestination,ac));
                     NotificationCenter.add(n);
@@ -327,14 +338,26 @@ public class Radar {
             }
 
             if(ai.getShipKind()==ShipKind.Pirate){
-                System.out.println("是海盗");
                 Notification n = new Notification(ac,NotificationGenerator.get(NotificationGenerator.NotificationKind.ArriveDestination,ac));
                 NotificationCenter.add(n);
             }
-            System.out.println("delete Activity");
             Activity.delete(ai.getPlayerID());
             Activity.writeRecord();
         }
+    }
+
+    static void clean(){
+        updateList();
+        List<Long> deleteList = new ArrayList<>();
+        for(AircraftInfo ai: Aircraft.getInstance().aircrafts){
+            if(ai.getPlayerID()<=0){
+                if(!Activity.exist(ai.getPlayerID())){
+                    deleteList.add(ai.getPlayerID());
+                }
+            }
+        }
+
+        for(Long playerID:deleteList){ Aircraft.delete(playerID); }
     }
 
     static List<AircraftInfo> bigList(){

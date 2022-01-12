@@ -12,7 +12,7 @@ public class GoodsGenerator {
 
     public static int value(Coordinate departure, Coordinate destination, long playerID) {
         double time = RadarUtils.distance(departure,destination)/RadarUtils.speed(playerID);
-        return (int) (time* Config.MONEY_PER_MINUTE);
+        return (int) (time * Config.MONEY_PER_MINUTE);
     }
 
 }

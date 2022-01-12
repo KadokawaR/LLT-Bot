@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.core.game.zeppelin.interaction;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.AircraftUtils;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.ShipKind;
+import lielietea.mirai.plugin.core.game.zeppelin.data.ActivityInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.AircraftInfo;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
@@ -91,10 +92,23 @@ public class UserInterface {
             case GoHome:
                 goHome(event);
                 break;
+
+            case Location:
+                getLocation(event);
+                break;
+            case CheckShip:
+
+                break;
+            case DeleteShip:
+
+                break;
+            case Statistics:
+
+                break;
         }
     }
 
-    public static Command contentToCommand(MessageEvent event) {
+    static Command contentToCommand(MessageEvent event) {
         String content = event.getMessage().contentToString().toLowerCase();
         if (content.equals("/register") || content.equals("注册飞艇")) return Command.RegisterAircraft;
         if (content.contains("/setname") || content.contains("设置名称")) return Command.SetAircraftName;
@@ -111,6 +125,7 @@ public class UserInterface {
 
         if (content.contains("/sethomeport") || content.contains("设置母港")) return Command.SetHomePort;
         if (content.equals("/pirate") || content.equals("成为海盗")) return Command.SetPirate;
+        if (content.equals("/trader") || content.equals("成为商人")) return Command.SetTrader;
 
         if (content.contains("/starttravel") || content.contains("启动飞艇")) return Command.StartTravel;
         if (content.equals("/aborttravel") || content.equals("停止飞艇")) return Command.AbortTravel;
@@ -122,16 +137,19 @@ public class UserInterface {
         if (content.equals("/dailytask") || content.equals("每日任务")) return Command.DailyTask;
         if (content.equals("/map") || content.equals("显示地图")) return Command.ShowMap;
 
+        if (content.equals("/mylocation") || content.equals("我的位置") || content.equals("飞艇位置")) return Command.Location;
+        if (content.equals("/deleteship") || content.equals("删除飞艇") ) return Command.DeleteShip;
+
         return null;
     }
 
-    public static MessageChainBuilder mcb(MessageEvent event) {
+    static MessageChainBuilder mcb(MessageEvent event) {
         MessageChainBuilder mcb = new MessageChainBuilder();
         if (event instanceof GroupMessageEvent) mcb.append(new At(event.getSender().getId())).append(" ");
         return mcb;
     }
 
-    public static void registerAircraft(MessageEvent event) {
+    static void registerAircraft(MessageEvent event) {
         if (event instanceof FriendMessageEvent) {
             event.getSubject().sendMessage(Notice.REGISTRATION_IN_GROUP);
             return;
@@ -150,7 +168,7 @@ public class UserInterface {
         event.getSubject().sendMessage(mcb.asMessageChain());
     }
 
-    public static void setAircraftName(MessageEvent event) {
+    static void setAircraftName(MessageEvent event) {
         MessageChainBuilder mcb = mcb(event);
 
         String content = event.getMessage().contentToString().toUpperCase();
@@ -176,31 +194,31 @@ public class UserInterface {
         event.getSubject().sendMessage(mcb.append(Notice.WRONG_NAME_CHANGING_FORMAT).asMessageChain());
     }
 
-    public static void changeAircraft(MessageEvent event) {
+    static void changeAircraft(MessageEvent event) {
         event.getSubject().sendMessage(mcb(event).append(Shop.activity(event)).asMessageChain());
     }
 
-    public static void showShop(MessageEvent event) {
+    static void showShop(MessageEvent event) {
 
     }
 
-    public static void registerGuild(MessageEvent event) {
+    static void registerGuild(MessageEvent event) {
 
     }
 
-    public static void setGuildName(MessageEvent event) {
+    static void setGuildName(MessageEvent event) {
 
     }
 
-    public static void joinGuild(MessageEvent event) {
+    static void joinGuild(MessageEvent event) {
 
     }
 
-    public static void quitGuild(MessageEvent event) {
+    static void quitGuild(MessageEvent event) {
 
     }
 
-    public static void setHomePort(MessageEvent event) {
+    static void setHomePort(MessageEvent event) {
         String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("/SETHOMEPORT", "/SETHOME", "设置母港"));
         if (!UIUtils.isLegalCityCode(indicator) || !CityInfoUtils.exist(indicator)) {
             event.getSubject().sendMessage(mcb(event).append(Notice.WRONG_CITY_CODE).asMessageChain());
@@ -209,15 +227,15 @@ public class UserInterface {
         event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changeHomePort(indicator, event.getSender().getId())).asMessageChain());
     }
 
-    public static void setPirate(MessageEvent event) {
+    static void setPirate(MessageEvent event) {
         event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.Pirate, event.getSender().getId())).asMessageChain());
     }
 
-    public static void setTrader(MessageEvent event) {
+    static void setTrader(MessageEvent event) {
         event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.NormalShip, event.getSender().getId())).asMessageChain());
     }
 
-    public static void startTravel(MessageEvent event) {
+    static void startTravel(MessageEvent event) {
         MessageChainBuilder mcb = mcb(event);
         if (Activity.exist(event.getSender().getId())) {
             event.getSubject().sendMessage(mcb.append(Notice.IS_IN_ACTIVITY).asMessageChain());
@@ -228,7 +246,7 @@ public class UserInterface {
 
         assert ai != null;
         if (ai.getShipKind() == ShipKind.Pirate) {
-            String indicator = event.getMessage().contentToString();
+            String indicator = event.getMessage().contentToString().toUpperCase();
             UIUtils.pirateStartMode psm = UIUtils.getMode(indicator);
             if (psm == null) {
                 event.getSubject().sendMessage(mcb(event).append(Notice.WRONG_DESTINATION_INDICATOR).asMessageChain());
@@ -236,7 +254,7 @@ public class UserInterface {
             }
             switch (psm) {
                 case ToCity:
-                    indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel"));
+                    indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel","/STARTTRAVEL"));
 
                     if (!CityInfoUtils.exist(indicator)) {
                         event.getSubject().sendMessage(mcb.append(Notice.WRONG_CITY_CODE).asMessageChain());
@@ -254,8 +272,10 @@ public class UserInterface {
                     ActivityUtils.startAsTrader(event, "", 0, indicator);
                     event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(CityInfoUtils.getCityNameCN(indicator)).append("，该操作消耗燃油费。").asMessageChain());
 
+                    break;
+
                 case ToPlayer:
-                    indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel"));
+                    indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel","/STARTTRAVEL"));
 
                     if (Aircraft.getIDFromName(indicator) == null) {
                         event.getSubject().sendMessage(mcb.append(Notice.SHIP_DOESNT_EXIST).asMessageChain());
@@ -264,9 +284,11 @@ public class UserInterface {
                     ActivityUtils.startAsPirateChasingShip(event, indicator);
                     event.getSubject().sendMessage(mcb.append("您的飞艇正在追踪").append(indicator).append("，该操作消耗燃油费。").asMessageChain());
 
+                    break;
+
                 case ToCoordinate:
                     String[] indicatorSplit = indicator.split(" ");
-                    Coordinate coordinate = new Coordinate(Integer.parseInt(indicatorSplit[1]), Integer.parseInt(indicatorSplit[2]));
+                    Coordinate coordinate = new Coordinate(Integer.parseInt(indicatorSplit[1].replace("X","")), Integer.parseInt(indicatorSplit[2].replace("Y","")));
 
                     if (!CityInfoUtils.isInMapRange(coordinate)) {
                         event.getSubject().sendMessage(mcb.append(Notice.NOT_IN_MAP_RANGE).asMessageChain());
@@ -276,10 +298,12 @@ public class UserInterface {
                     ActivityUtils.startAsTrader(event, "", 0, coordinate);
                     event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(indicator).append("，该操作消耗燃油费。").asMessageChain());
 
+                    break;
+
             }
         } else {
 
-            String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel"));
+            String indicator = UIUtils.deleteKeywords(event.getMessage().contentToString(), Arrays.asList("启动飞艇", "/starttravel","STARTTRAVEL"));
 
             if (indicator.equals("")) {
                 event.getSubject().sendMessage(mcb.append(Notice.EMPTY_INDICATOR).asMessageChain());
@@ -309,7 +333,7 @@ public class UserInterface {
 
     }
 
-    public static void abortTravel(MessageEvent event) {
+    static void abortTravel(MessageEvent event) {
         if (!Activity.exist(event.getSender().getId())) {
             event.getSubject().sendMessage(mcb(event).append(Notice.IS_NOT_IN_ACTIVITY).asMessageChain());
             return;
@@ -322,7 +346,7 @@ public class UserInterface {
         }
     }
 
-    public static void startStationed(MessageEvent event) {
+    static void startStationed(MessageEvent event) {
         if (Aircraft.getShipKind(event.getSender().getId()) != ShipKind.Pirate) {
             event.getSubject().sendMessage(mcb(event).append(Notice.NOT_PIRATE).asMessageChain());
             return;
@@ -331,20 +355,57 @@ public class UserInterface {
         event.getSubject().sendMessage(mcb(event).append("您的飞艇已经开始驻扎，将会消耗燃油费，如不手动取消则持续2小时。请注意不要驻扎太久时间，否则会耗尽您所有的南瓜比索。").asMessageChain());
     }
 
-    public static void goHome(MessageEvent event) {
+    static void goHome(MessageEvent event) {
         event.getSubject().sendMessage(mcb(event).append(ActivityUtils.goHome(event)).asMessageChain());
     }
 
-    public static void instruction(MessageEvent event) {
+    static void instruction(MessageEvent event) {
 
     }
 
-    public static void dailyTask(MessageEvent event) {
+    static void dailyTask(MessageEvent event) {
 
     }
 
-    public static void showMap(MessageEvent event) {
+    static void showMap(MessageEvent event) {
         ImageSender.sendImageFromBufferedImage(event.getSubject(), MapGenerator.draw());
+    }
+
+    static void getLocation(MessageEvent event){
+        long playerID = event.getSender().getId();
+
+        if(!Aircraft.exist(playerID)){
+            event.getSubject().sendMessage(mcb(event).append(Notice.NOT_REGISTERED).asMessageChain());
+            return;
+        }
+
+        AircraftInfo ai = Aircraft.get(playerID);
+        assert ai != null;
+        Coordinate coordinate = ai.getCoordinate();
+        String res = "您的飞艇"+ai.getName()+"目前正在";
+
+        if(CityInfoUtils.isInCity(coordinate)){
+            res += CityInfoUtils.getCityNameCN(coordinate);
+        } else {
+            res += "坐标x:"+coordinate.x+" y:"+coordinate.y+"，";
+        }
+
+        if(Activity.exist(playerID)){
+            res += "目前正在前往";
+            ActivityInfo ac = Activity.get(playerID);
+            assert ac != null;
+            if(CityInfoUtils.isInCity(ac.getDestination())){
+                res += CityInfoUtils.getCityNameCN(coordinate);
+            } else {
+                res += "坐标x:"+coordinate.x+" y:"+coordinate.y;
+            }
+        }
+
+        event.getSubject().sendMessage(mcb(event).append(res).asMessageChain());
+    }
+
+    static void deleteShip(MessageEvent event){
+        
     }
 
 }

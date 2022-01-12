@@ -28,5 +28,6 @@ public class Notice {
     public static final String NOT_IN_MAP_RANGE = "您输入的坐标不在地图范围内。";
 
     public static final String NOT_PIRATE = "您并未携带海盗标记，所以无法驻扎。";
+    public static final String NOT_ENOUGH_MONEY = "您的南瓜比索数量已经不足，将会自动停靠在当前地点。";
 
 }

@@ -30,10 +30,17 @@ public class TestTools {
         }
     }
 
+    public static void generateNewPolice(MessageEvent event){
+        if(event.getMessage().contentToString().contains("/addpolice")){
+            ActivityUtils.generatePolice();
+        }
+    }
+
     public static void test(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         addNewNotification(event);
         generateNewShip(event);
+        generateNewPolice(event);
     }
 
     public static void printAircraftLocation(){

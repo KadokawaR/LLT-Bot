@@ -101,7 +101,9 @@ public class ActivityUtils {
         ac.setDeparture(ai.getCoordinate());
         ac.setDestination(CityInfoUtils.getCityCoords(ai.getHomePortCode()));
         Activity.updateRecord(ac);
-        return "您的飞艇正在前往母港"+CityInfoUtils.getCityNameCN(ai.getHomePortCode());
+        String res = "您的飞艇正在前往母港"+CityInfoUtils.getCityNameCN(ai.getHomePortCode());
+        if(ActivityUtils.isPirate(ac)) res+="，该操作消耗燃油费。";
+        return res;
     }
 
     public static void startAsTrader(MessageEvent event,String goodsName,int goodsValue,String destinationCode){
@@ -130,26 +132,43 @@ public class ActivityUtils {
 
     public static void generatePolice(){
         AircraftInfo ai = new AircraftInfo(ShipKind.Police);
-        Aircraft.updateRecord(ai);
         ActivityInfo ac = new ActivityInfo();
-        ac.setDeparture(CityInfoUtils.getRandomCoords());
-        ac.setDestination(CityInfoUtils.getRandomCoords());
-        Activity.updateRecord(ac);
-    }
 
-    public static void generatePhantomShip(){
-        AircraftInfo ai = new AircraftInfo(ShipKind.PhantomShip);
-        Aircraft.updateRecord(ai);
-        ActivityInfo ac = new ActivityInfo();
         Coordinate departure = CityInfoUtils.getRandomCoords();
         Coordinate destination = CityInfoUtils.getRandomCoords();
         while(departure==destination){
             destination = CityInfoUtils.getRandomCoords();
         }
+
+        ai.setCoordinate(departure);
+        Aircraft.updateRecord(ai);
+
+        ac.setPlayerID(ai.getPlayerID());
+        ac.setDeparture(departure);
+        ac.setDestination(destination);
+
+        Activity.updateRecord(ac);
+    }
+
+    public static void generatePhantomShip(){
+        AircraftInfo ai = new AircraftInfo(ShipKind.PhantomShip);
+        ActivityInfo ac = new ActivityInfo();
+
+        Coordinate departure = CityInfoUtils.getRandomCoords();
+        Coordinate destination = CityInfoUtils.getRandomCoords();
+        while(departure==destination){
+            destination = CityInfoUtils.getRandomCoords();
+        }
+
+        ai.setCoordinate(departure);
+        Aircraft.updateRecord(ai);
+
+        ac.setPlayerID(ai.getPlayerID());
         ac.setDeparture(departure);
         ac.setDestination(destination);
         ac.setGoodsName(GoodsGenerator.name());
         ac.setGoodsValue(GoodsGenerator.value(departure,destination,ai.getPlayerID()));
+
         Activity.updateRecord(ac);
     }
 

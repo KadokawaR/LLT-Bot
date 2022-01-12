@@ -24,6 +24,7 @@ public enum Command {
     DailyTask,
     ShowMap,
 
+    Location,
     CheckShip,
     DeleteShip,
     Statistics

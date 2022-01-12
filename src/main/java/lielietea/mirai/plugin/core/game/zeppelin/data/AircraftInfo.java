@@ -30,7 +30,7 @@ public class AircraftInfo {
         //todo:可能存在隐患重复，后需更改
         this.playerID = (new Date().getTime())*-1;
         this.coordinate = CityInfoUtils.getRandomCoords();
-        this.homePortCode = CityInfoUtils.getCityCode(coordinate);
+        this.homePortCode = CityInfoUtils.getCityCode(this.coordinate);
         ModeInfo mi = Shop.getModeInfo(Shop.getRandomCode());
         assert mi != null;
         this.speedFactor=mi.getSpeed();

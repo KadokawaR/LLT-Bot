@@ -56,6 +56,9 @@ public class Aircraft {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        for(AircraftInfo ai:aircrafts){
+            System.out.println(ai.getPlayerID()+" "+ai.getCoordinate().x+" "+ai.getCoordinate().y);
+        }
     }
 
     static final Aircraft INSTANCE = new Aircraft();
@@ -92,8 +95,6 @@ public class Aircraft {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("========================> Aircraft readRecord");
-        printAircraftLocation();
     }
 
     public static void updateRecord(Map<Long, Coordinate> map) {
@@ -123,11 +124,15 @@ public class Aircraft {
 
     public static void updateRecord(AircraftInfo aiInput) {
         long playerID = aiInput.getPlayerID();
-        for(AircraftInfo ai: getInstance().aircrafts){
-            if (ai.getPlayerID()==playerID) {
-                getInstance().aircrafts.remove(ai);
-                getInstance().aircrafts.add(aiInput);
-                break;
+        if(!exist(playerID)){
+            getInstance().aircrafts.add(aiInput);
+        } else {
+            for (AircraftInfo ai : getInstance().aircrafts) {
+                if (ai.getPlayerID() == playerID) {
+                    getInstance().aircrafts.remove(ai);
+                    getInstance().aircrafts.add(aiInput);
+                    break;
+                }
             }
         }
         writeRecord();
@@ -168,6 +173,18 @@ public class Aircraft {
             if(ai.getPlayerID()==playerID) return true;
         }
         return false;
+    }
+
+    public static void delete(long playerID){
+        List<AircraftInfo> deleteList = new ArrayList<>();
+        for(AircraftInfo ai:getInstance().aircrafts){
+            if(ai.getPlayerID()==playerID){
+                deleteList.add(ai);
+                break;
+            }
+        }
+        getInstance().aircrafts.removeAll(deleteList);
+        writeRecord();
     }
 
     public static ShipKind getShipKind(long playerID) {

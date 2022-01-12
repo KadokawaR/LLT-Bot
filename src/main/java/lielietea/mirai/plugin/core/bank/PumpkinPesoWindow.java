@@ -83,6 +83,11 @@ public class PumpkinPesoWindow {
         return amount.compareTo(money) >= 0;
     }
 
+    public static boolean hasEnoughMoney(long playerID, int money) {
+        BigDecimal amount = SenoritaCounter.getCertainNumber(playerID, Currencies.PUMPKIN_PESO);
+        return amount.compareTo(new BigDecimal(money)) >= 0;
+    }
+
     public static void setMoney(long ID, int money) {
         setMoney(ID, new BigDecimal(money));
     }

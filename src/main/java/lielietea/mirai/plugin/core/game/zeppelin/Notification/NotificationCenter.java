@@ -36,13 +36,12 @@ public class NotificationCenter {
     static class MainTask implements Runnable{
         @Override
         public void run() {
-            System.out.println("Notification Center Task");
             filter();
             send();
         }
     }
 
-    public static void send(){
+    static void send(){
         for(Notification n: getInstance().notifications){
             try {
                 if (n.getMessageID() == 0) {
@@ -56,7 +55,6 @@ public class NotificationCenter {
             } catch(Exception e){
                 e.printStackTrace();
             }
-            System.out.println(n.getMessage()+n.getMessageID()+n.getPlayerID());
         }
         getInstance().notifications.clear();
     }
@@ -65,7 +63,7 @@ public class NotificationCenter {
         getInstance().notifications.add(n);
     }
 
-    public static void filter(){
+    static void filter(){
         List<Notification> deleteList = new ArrayList<>();
         for(Notification n: getInstance().notifications){
 
