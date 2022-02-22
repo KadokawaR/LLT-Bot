@@ -131,6 +131,10 @@ public class MultiBotHandler {
         return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).answerFriend;
     }
 
+    public static boolean canSendNotice(Bot bot){
+        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(bot.getId())).sendNotice;
+    }
+
     public static void getCurrentBotConfig(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         if(!event.getMessage().contentToString().equals("/config")) return;
@@ -140,13 +144,14 @@ public class MultiBotHandler {
         mcb.append("acceptGroup: ").append(String.valueOf(bc.acceptGroup)).append("\n");
         mcb.append("answerFriend: ").append(String.valueOf(bc.answerFriend)).append("\n");
         mcb.append("answerGroup: ").append(String.valueOf(bc.answerGroup)).append("\n");
+        mcb.append("sendNotice: ").append(String.valueOf(bc.answerGroup)).append("\n");
         event.getSubject().sendMessage(mcb.asMessageChain());
     }
 
     public static void changeCurrentBotConfig(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         if(event.getMessage().contentToString().equals("/changeconfig")) {
-            event.getSubject().sendMessage("使用/config+空格+数字序号+空格+true/false来开关配置。\n\n1:acceptFriend\n2:acceptGroup\n3:answerFriend\n4:answerGroup");
+            event.getSubject().sendMessage("使用/config+空格+数字序号+空格+true/false来开关配置。\n\n1:acceptFriend\n2:acceptGroup\n3:answerFriend\n4:answerGroup\n5:sendNotive");
         }
         if(event.getMessage().contentToString().contains("/config")&&(event.getMessage().contentToString().contains("true")||event.getMessage().contentToString().contains("false"))){
             String[] messageSplit = event.getMessage().contentToString().split(" ");
@@ -183,6 +188,11 @@ public class MultiBotHandler {
                 case "4":{
                     getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerGroup为"+Boolean.parseBoolean(messageSplit[2]));
+                    break;
+                }
+                case "5":{
+                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setSendNotice(Boolean.parseBoolean(messageSplit[2]));
+                    event.getSubject().sendMessage("已设置sendNotice为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
             }

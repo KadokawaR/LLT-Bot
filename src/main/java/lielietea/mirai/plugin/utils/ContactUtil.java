@@ -89,7 +89,7 @@ public class ContactUtil {
             }
 
             // 正常通过群邀请加群
-            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()));
+            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()),event.getBot());
             notifyDevWhenJoinGroup(event);
 
             event.getGroup().sendMessage(JOIN_GROUP);
@@ -142,7 +142,7 @@ public class ContactUtil {
             }
 
             // 正常通过群邀请加群
-            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()));
+            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()),event.getBot());
             notifyDevWhenJoinGroup(event);
 
             event.getGroup().sendMessage(JOIN_GROUP);
@@ -170,6 +170,7 @@ public class ContactUtil {
 
     // 处理加为好友事件
     public static void handleAddFriend(FriendAddEvent event) {
+        if(!MultiBotHandler.canSendNotice(event.getBot())) return;
         executor.schedule(() -> {
             event.getFriend().sendMessage(JOIN_GROUP);
             DisclTemporary.send(event.getFriend());
@@ -202,12 +203,14 @@ public class ContactUtil {
 
     // 加群后发送Bot提示
     static void sendNoticeWhenJoinGroup(BotJoinGroupEvent.Active event,boolean containsOldChitung) {
+        if(!MultiBotHandler.canSendNotice(event.getBot())) return;
         String message = "您好，七筒已经加入了您的群" + event.getGroup().getName() + " - " + event.getGroup().getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。";
         if(containsOldChitung) message+="\n\n检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。";
         event.getGroup().getOwner().sendMessage(message);
     }
 
-    static void sendNoticeWhenJoinGroup(Group group,boolean containsOldChitung) {
+    static void sendNoticeWhenJoinGroup(Group group,boolean containsOldChitung, Bot bot) {
+        if(!MultiBotHandler.canSendNotice(bot)) return;
         String message = "您好，七筒已经加入了您的群" + group.getName() + " - " + group.getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。";
         if(containsOldChitung) message+="\n\n检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。";
         group.getOwner().sendMessage(message);

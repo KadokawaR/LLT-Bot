@@ -6,6 +6,7 @@ public class BotConfig {
     boolean acceptGroup;
     boolean answerFriend;
     boolean answerGroup;
+    boolean sendNotice;
 
     BotConfig(long ID){
         this.ID = ID;
@@ -13,6 +14,7 @@ public class BotConfig {
         this.acceptGroup=true;
         this.answerFriend=true;
         this.answerGroup=true;
+        this.sendNotice=false;
     }
 
     public long getID() {
@@ -53,5 +55,13 @@ public class BotConfig {
 
     public void setAnswerGroup(boolean answerGroup) {
         this.answerGroup = answerGroup;
+    }
+
+    public boolean isSendNotice() {
+        return sendNotice;
+    }
+
+    public void setSendNotice(boolean sendNotice) {
+        this.sendNotice = sendNotice;
     }
 }
