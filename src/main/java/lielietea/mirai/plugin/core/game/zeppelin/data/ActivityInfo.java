@@ -5,6 +5,9 @@ import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 
 public class ActivityInfo {
@@ -111,7 +114,13 @@ public class ActivityInfo {
     }
 
     public String getGoodsName() {
-        return goodsName;
+        String res = this.goodsName;
+        try {
+            res = URLDecoder.decode(this.goodsName,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     public void setGoodsName(String goodsName) {

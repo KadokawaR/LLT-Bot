@@ -23,13 +23,12 @@ public class GameCenter {
         JetPack.start(event);
         SenoritaCounter.go(event);
         CasinoCroupier.handle(event);
-        Zeppelin.start(event);
-        Zeppelin.test(event);
+        Fishing.go(event);
+
+        //Zeppelin.start(event);
+        //Zeppelin.test(event);
         //Foodie.send(event);
 
-        if(event instanceof FriendMessageEvent){
-            Fishing.go(event);
-        }
 
     }
 

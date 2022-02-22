@@ -18,9 +18,13 @@ import java.util.Objects;
 public class ActivityUtils {
 
     public static void startAsPirateChasingShip(MessageEvent event, String shipCode/*需判定shipCode是否存在*/){
-        ActivityInfo ai = new ActivityInfo(event);
-        ai.setTargetPlayerID(Objects.requireNonNull(Aircraft.getIDFromName(shipCode)));
-        Activity.updateRecord(ai);
+        ActivityInfo ac = new ActivityInfo(event);
+        AircraftInfo ai = Aircraft.get(event.getSender().getId());
+        assert ai != null;
+        ac.setTargetPlayerID(Objects.requireNonNull(Aircraft.getIDFromName(shipCode)));
+        ac.setDeparture(ai.getCoordinate());
+        ac.setDestination(null);
+        Activity.updateRecord(ac);
     }
 
     public static boolean isPirateChasingShip(ActivityInfo ai){
@@ -36,6 +40,7 @@ public class ActivityUtils {
     }
 
     public static boolean isPirateStationed(ActivityInfo ai){
+        if(ai.getDestination()==null||ai.getTargetPlayerID()!=0) return false;
         return ai.getDeparture().equals(ai.getDestination())&&Aircraft.getShipKind(ai.getPlayerID())== ShipKind.Pirate;
     }
 

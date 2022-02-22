@@ -57,10 +57,10 @@ public class Roulette extends RouletteUtils {
     static final String RouletteStops = "本局 Roulette 已经取消。";
     static final String NotRightBetNumber = "/bet 指令不正确，请重新再尝试";
     static final String YouDontHaveEnoughMoney = "操作失败，请检查您的南瓜比索数量。";
-    static final String StartBetNotice = "Bet 阶段已经开始，预计在60秒之内结束。可以通过/bet+金额反复追加 bet。\n在这一阶段银行不会向您收取南瓜比索。由于 Roulette 可以多重下注，因此不建议设置过大的 bet。";
+    static final String StartBetNotice = "Bet 阶段已经开始，预计在60秒之内结束。可以通过/bet+金额反复追加 bet。\n在这一阶段不会向您收取南瓜比索。由于 Roulette 可以多重下注，因此不建议设置过大的 bet。";
     static final String EndBetNotice = "Bet 阶段已经结束。";
     static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表请参考说明书。";
-    static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
+    static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家获得的南瓜比索：";
 
     static final String ROULETTE_INTRO_PATH = "/pics/casino/roulette.png";
     static final String ROULETTE_INSTRUCTIONS_PATH = "/pics/casino/roulette_instructions.png";

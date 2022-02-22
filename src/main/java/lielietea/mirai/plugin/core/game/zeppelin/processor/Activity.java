@@ -8,6 +8,7 @@ import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

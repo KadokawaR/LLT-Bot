@@ -29,7 +29,7 @@ public class BlackJack extends BlackJackUtils {
     static final String EndBetNotice = "Bet 阶段已经结束。";
     static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表请参考说明书。";
     static final String BustNotice = "您爆牌了。";
-    static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家的获得金额：";
+    static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家获得的南瓜比索：";
 
     static final String BLACKJACK_INTRO_PATH = "/pics/casino/blackjack.png";
     static final int GAP_SECONDS = 60;

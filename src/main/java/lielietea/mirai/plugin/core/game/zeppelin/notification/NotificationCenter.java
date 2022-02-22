@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.game.zeppelin.Notification;
+package lielietea.mirai.plugin.core.game.zeppelin.notification;
 
 import lielietea.mirai.plugin.core.game.zeppelin.Config;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;

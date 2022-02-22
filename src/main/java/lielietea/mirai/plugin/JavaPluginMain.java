@@ -3,13 +3,7 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
-import lielietea.mirai.plugin.core.game.zeppelin.Notification.NotificationCenter;
 import lielietea.mirai.plugin.core.game.zeppelin.Zeppelin;
-import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
-import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
-import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
-import lielietea.mirai.plugin.core.game.zeppelin.processor.Activity;
-import lielietea.mirai.plugin.core.game.zeppelin.processor.Radar;
 import lielietea.mirai.plugin.core.responder.ResponderCenter;
 import lielietea.mirai.plugin.utils.Nudge;
 import lielietea.mirai.plugin.utils.ContactUtil;
@@ -121,6 +115,10 @@ public final class JavaPluginMain extends JavaPlugin {
         //计数
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
+
+        //临时消息
+        GlobalEventChannel.INSTANCE.subscribeAlways(StrangerMessageEvent.class, event -> {return;});
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupTempMessageEvent.class, event -> {return;});
 
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {

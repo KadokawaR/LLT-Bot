@@ -2,8 +2,8 @@ package lielietea.mirai.plugin.core.game.zeppelin.processor;
 
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.game.zeppelin.Config;
-import lielietea.mirai.plugin.core.game.zeppelin.Notification.NotificationCenter;
-import lielietea.mirai.plugin.core.game.zeppelin.Notification.NotificationGenerator;
+import lielietea.mirai.plugin.core.game.zeppelin.notification.NotificationCenter;
+import lielietea.mirai.plugin.core.game.zeppelin.notification.NotificationGenerator;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.ShipKind;
 import lielietea.mirai.plugin.core.game.zeppelin.data.ActivityInfo;
@@ -12,6 +12,7 @@ import lielietea.mirai.plugin.core.game.zeppelin.data.Coordinate;
 import lielietea.mirai.plugin.core.game.zeppelin.data.Notification;
 import lielietea.mirai.plugin.core.game.zeppelin.interaction.Notice;
 import lielietea.mirai.plugin.core.game.zeppelin.map.CityInfoUtils;
+import lielietea.mirai.plugin.utils.StandardTimeUtil;
 
 
 import java.util.*;
@@ -247,7 +248,8 @@ public class Radar {
         updateList();
         System.out.println("===================================>移动");
         getInstance().tempMap.clear();
-        for(AircraftInfo ai: bigList()){ moveShip(ai); }
+        for(AircraftInfo ai: bigList(false)){ moveShip(ai); }
+        for(AircraftInfo ai: getInstance().pirates){ moveShip(ai); }
         Aircraft.updateRecord(getInstance().tempMap);
         getInstance().tempMap.clear();
     }
@@ -256,8 +258,13 @@ public class Radar {
         ActivityInfo ac = Activity.get(ai.getPlayerID());
         assert ac != null;
 
-        Coordinate destination = ac.getDestination();
         Coordinate currentLoc = ai.getCoordinate();
+        Coordinate destination = ac.getDestination();
+
+        if(ac.getDestination()==null|ac.getTargetPlayerID()!=0){
+            long targetPlayerID = ac.getTargetPlayerID();
+            destination = Objects.requireNonNull(Aircraft.get(targetPlayerID)).getCoordinate();
+        }
 
         double speed = RadarUtils.speed(ac.getPlayerID());
 
@@ -298,10 +305,13 @@ public class Radar {
                 Date startTime = ac.getStartTime();
                 Date now = new Date();
 
-                if((now.getTime()-startTime.getTime())>60*2*1000){
-                    ActivityUtils.abortFlight(ac);
-                    String message = NotificationGenerator.get(NotificationGenerator.NotificationKind.PirateEndStationed,ac);
-                    NotificationCenter.add(new Notification(ac,message));
+                if(ActivityUtils.isPirateStationed(ac)) {
+                    if ((now.getTime() - startTime.getTime()) >= StandardTimeUtil.getPeriodLengthInMS(0,2,0,0)) {
+                        ActivityUtils.abortFlight(ac);
+                        String message = NotificationGenerator.get(NotificationGenerator.NotificationKind.PirateEndStationed, ac);
+                        NotificationCenter.add(new Notification(ac, message));
+                        continue;
+                    }
                 }
             }
 
@@ -315,7 +325,7 @@ public class Radar {
     static void arrivalCheck(){
         updateList();
         System.out.println("===================================>arrivalCheck");
-        for(AircraftInfo ai: bigList()){
+        for(AircraftInfo ai: bigList(true)){
             arrive(ai);
         }
     }
@@ -324,7 +334,9 @@ public class Radar {
         ActivityInfo ac = Activity.get(ai.getPlayerID());
         assert ac != null;
 
+        if(ac.getDestination()==null) return;
         if(ActivityUtils.isPirateStationed(ac)) return;
+
         if(ac.getDestination().equals(ai.getCoordinate())){
             if(ai.getShipKind()==ShipKind.NormalShip){
                 if(ac.getGoodsValue()<=0|| ac.getGoodsName().equals("")){
@@ -360,12 +372,14 @@ public class Radar {
         for(Long playerID:deleteList){ Aircraft.delete(playerID); }
     }
 
-    static List<AircraftInfo> bigList(){
+    static List<AircraftInfo> bigList(boolean containPirate){
         List<AircraftInfo> allInList = new ArrayList<>();
         allInList.addAll(getInstance().phantoms);
         allInList.addAll(getInstance().traders);
         allInList.addAll(getInstance().polices);
-        allInList.addAll(getInstance().pirates);
+        if(containPirate) {
+            allInList.addAll(getInstance().pirates);
+        }
         return allInList;
     }
 

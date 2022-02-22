@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.game.zeppelin;
 
-import lielietea.mirai.plugin.core.game.zeppelin.Notification.NotificationCenter;
+import lielietea.mirai.plugin.core.game.zeppelin.notification.NotificationCenter;
 import lielietea.mirai.plugin.core.game.zeppelin.aircraft.Aircraft;
 import lielietea.mirai.plugin.core.game.zeppelin.function.Shop;
 import lielietea.mirai.plugin.core.game.zeppelin.interaction.UserInterface;

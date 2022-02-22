@@ -19,6 +19,8 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -224,11 +226,11 @@ public class UserInterface {
     }
 
     static void setPirate(MessageEvent event) {
-        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.Pirate, event.getSender().getId())).asMessageChain());
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.Pirate, event)).asMessageChain());
     }
 
     static void setTrader(MessageEvent event) {
-        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.NormalShip, event.getSender().getId())).asMessageChain());
+        event.getSubject().sendMessage(mcb(event).append(AircraftUtils.changePirateStatus(ShipKind.NormalShip, event)).asMessageChain());
     }
 
     static void startTravel(MessageEvent event) {
@@ -323,6 +325,11 @@ public class UserInterface {
             int goodsValue = GoodsGenerator.value(ai.getCoordinate(), CityInfoUtils.getCityCoords(indicator), ai.getPlayerID());
 
             ActivityUtils.startAsTrader(event, goodsName, goodsValue, indicator);
+            try {
+                goodsName = URLDecoder.decode(goodsName,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             event.getSubject().sendMessage(mcb.append("您的飞艇正在前往").append(CityInfoUtils.getCityNameCN(indicator)).append("\n货物名称：").append(goodsName).append("\n货物价值为").append(String.valueOf(goodsValue)).append("南瓜比索").asMessageChain());
 
         }
@@ -378,7 +385,7 @@ public class UserInterface {
         AircraftInfo ai = Aircraft.get(playerID);
         assert ai != null;
         Coordinate coordinate = ai.getCoordinate();
-        String res = "您的飞艇"+ai.getName()+"在";
+        String res = "您的飞艇"+ai.getName()+"在 ";
 
         if(CityInfoUtils.isInCity(coordinate)){
             res += CityInfoUtils.getCityNameCN(coordinate)+"市内，";
@@ -387,14 +394,23 @@ public class UserInterface {
         }
 
         if(Activity.exist(playerID)){
-            res += "目前正在前往";
+
             ActivityInfo ac = Activity.get(playerID);
             assert ac != null;
+
+            if(ac.getDestination()==null||ac.getTargetPlayerID()!=0){
+                res += "目前正在追踪";
+                res += Objects.requireNonNull(Aircraft.get(ac.getTargetPlayerID())).getName();
+            }
+
+            res += "目前正在前往";
+
             if(CityInfoUtils.isInCity(ac.getDestination())){
                 res += CityInfoUtils.getCityNameCN(coordinate);
             } else {
-                res += "坐标x:"+coordinate.x+" y:"+coordinate.y;
+                res += "坐标x:"+ac.getDestination().x+" y:"+ac.getDestination().y;
             }
+
         } else {
             res += "没有执行飞行计划。";
         }
