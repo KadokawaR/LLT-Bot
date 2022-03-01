@@ -147,6 +147,19 @@ public class Fishing extends FishingUtil{
             }
         }
 
+        if(event.getMessage().contentToString().equals("/endfish")){
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            if (event.getClass().equals(GroupMessageEvent.class)){
+                mcb.append((new At(event.getSender().getId()))).append(" ");
+            }
+            if(isInFishingProcessFlag.contains(event.getSender().getId())) {
+                isInFishingProcessFlag.remove(event.getSender().getId());
+                event.getSubject().sendMessage(mcb.append("已经停止钓鱼。").asMessageChain());
+            } else {
+                event.getSubject().sendMessage(mcb.append("您未在钓鱼中。").asMessageChain());
+            }
+        }
+
     }
 
     public static void getFish(MessageEvent event,Waters waters){
@@ -172,8 +185,8 @@ public class Fishing extends FishingUtil{
         getINSTANCE().fishRecord.add(new Date());
 
         mcb.append("本次钓鱼预计时间为").append(String.valueOf(time)).append("分钟。");
-        if(event instanceof GroupMessageEvent) mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息，并请尽可能私聊七筒进行钓鱼，谢谢配合。");
-        else mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息。");
+        if(event instanceof GroupMessageEvent) mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息，如果长时间钓鱼未收杆，请使用/endfish 强制停止钓鱼。");
+        else mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息，如果长时间钓鱼未收杆，请使用/endfish 强制停止钓鱼。");
         event.getSubject().sendMessage(mcb.asMessageChain());
 
         executor.schedule(new fishRunnable(event,itemNumber,waters,recordInOneHour),time, TimeUnit.MINUTES);
@@ -272,6 +285,8 @@ public class Fishing extends FishingUtil{
         public void run(){
             try {
                 //随机生成包含鱼的code和数量的Map
+                if(!isInFishingProcessFlag.contains(event.getSender().getId())) return;
+
                 Map<Integer, Integer> fishList = getItemIDRandomly(itemNumber, waters);
                 MessageChainBuilder mcb = new MessageChainBuilder();
                 if (event.getClass().equals(GroupMessageEvent.class)) {
