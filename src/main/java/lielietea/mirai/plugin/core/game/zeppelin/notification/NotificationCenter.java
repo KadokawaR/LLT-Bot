@@ -21,7 +21,6 @@ public class NotificationCenter {
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     static{
-        System.out.println("Notification Center Task Arranged");
         executor.scheduleAtFixedRate(new MainTask(), Config.NOTIFICATION_INITIAL_DELAY,1, TimeUnit.MINUTES);
     }
 

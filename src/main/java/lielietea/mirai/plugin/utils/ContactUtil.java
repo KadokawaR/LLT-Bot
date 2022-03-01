@@ -31,7 +31,9 @@ public class ContactUtil {
             return;
         }
         if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
-            event.getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+            if(MultiBotHandler.canSendNotice(event.getBot())) {
+                event.getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+            }
             event.ignore();
         } else {
             event.accept();
@@ -59,7 +61,9 @@ public class ContactUtil {
             //管理员判定
             if(!IdentityUtil.isAdmin((event).getInvitor().getId())) {
                 if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
-                    (event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                    if(MultiBotHandler.canSendNotice(event.getBot())) {
+                        (event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                    }
                     event.getGroup().quit();
                     String content = "由于目前Bot不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
@@ -67,7 +71,9 @@ public class ContactUtil {
                 }
 
                 if (event.getGroup().getMembers().getSize() < 7) {
-                    (event).getInvitor().sendMessage("七筒目前不接受加入7人以下的群聊。");
+                    if(MultiBotHandler.canSendNotice(event.getBot())) {
+                        (event).getInvitor().sendMessage("七筒目前不接受加入7人以下的群聊。");
+                    }
                     event.getGroup().quit();
                     String content = (event).getInvitor().getNick() + "(" + (event).getInvitor().getId() + ")尝试邀请七筒加入一个少于7人的群聊。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());

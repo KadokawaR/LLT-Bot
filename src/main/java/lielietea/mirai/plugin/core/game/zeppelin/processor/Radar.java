@@ -31,7 +31,6 @@ public class Radar {
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     static{
-        System.out.println("Radar Task Arranged");
         executor.scheduleAtFixedRate(new RadarTask(),Config.NOTIFICATION_INITIAL_DELAY,1, TimeUnit.MINUTES);
     }
 
@@ -49,7 +48,6 @@ public class Radar {
     static class RadarTask implements Runnable{
         @Override
         public void run() {
-            System.out.println("===================================>Radar Task");
             try {
                 pirateInfoCheck();
                 move();
@@ -246,7 +244,6 @@ public class Radar {
 
     static void move(){
         updateList();
-        System.out.println("===================================>移动");
         getInstance().tempMap.clear();
         for(AircraftInfo ai: bigList(false)){ moveShip(ai); }
         for(AircraftInfo ai: getInstance().pirates){ moveShip(ai); }
@@ -324,7 +321,6 @@ public class Radar {
 
     static void arrivalCheck(){
         updateList();
-        System.out.println("===================================>arrivalCheck");
         for(AircraftInfo ai: bigList(true)){
             arrive(ai);
         }

@@ -113,7 +113,6 @@ public class Activity {
     }
 
     public static void writeRecord(){
-        System.out.println("Activity writeRecord");
         Gson gs = new GsonBuilder().setPrettyPrinting().create();
         Write.cover(gs.toJson(new activityList(getInstance().activities)),ACTIVITY_FILE);
         readRecord();

@@ -151,7 +151,7 @@ public class MultiBotHandler {
     public static void changeCurrentBotConfig(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         if(event.getMessage().contentToString().equals("/changeconfig")) {
-            event.getSubject().sendMessage("使用/config+空格+数字序号+空格+true/false来开关配置。\n\n1:acceptFriend\n2:acceptGroup\n3:answerFriend\n4:answerGroup\n5:sendNotive");
+            event.getSubject().sendMessage("使用/config+空格+数字序号+空格+true/false来开关配置。\n\n1:acceptFriend\n2:acceptGroup\n3:answerFriend\n4:answerGroup\n5:sendNotice");
         }
         if(event.getMessage().contentToString().contains("/config")&&(event.getMessage().contentToString().contains("true")||event.getMessage().contentToString().contains("false"))){
             String[] messageSplit = event.getMessage().contentToString().split(" ");

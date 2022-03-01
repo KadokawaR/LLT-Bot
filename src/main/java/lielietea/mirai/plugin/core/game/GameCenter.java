@@ -22,7 +22,7 @@ public class GameCenter {
 
         JetPack.start(event);
         SenoritaCounter.go(event);
-        CasinoCroupier.handle(event);
+        //CasinoCroupier.handle(event);
         Fishing.go(event);
 
         //Zeppelin.start(event);
