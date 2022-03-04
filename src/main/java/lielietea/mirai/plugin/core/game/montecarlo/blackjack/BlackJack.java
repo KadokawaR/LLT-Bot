@@ -239,10 +239,13 @@ public class BlackJack extends BlackJackUtils {
 
     //对话框中输入/bet或者下注
     public static void checkBet(MessageEvent event) {
+        System.out.println("Check Bet Activity");
         if (!isBet(event)) return;
+        System.out.println("Is Bet Event");
         if (!isInGamingProcess(event)) return;
+        System.out.println("Is in gaming process");
         if (getGlobalData(event).get(indexInTheList(event)).getPhase() == BlackJackPhase.Operation) return;
-
+        System.out.println("count");
         GameCenterCount.count(GameCenterCount.Functions.BlackjackBet);
 
         //判定数值是否正确
