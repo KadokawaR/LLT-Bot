@@ -93,11 +93,7 @@ public class BlackJack extends BlackJackUtils {
         if (!isBlackJack(event)) return;
         if (isInTheList(event, getGlobalData(event))) return;
 
-        if (isGroupMessage(event)) {
-            getINSTANCE().globalGroupData.add(new BlackJackData(event.getSubject().getId()));
-        } else {
-            getINSTANCE().globalFriendData.add(new BlackJackData(event.getSubject().getId()));
-        }
+
 
         //全局取消标记
         Date gameStartTime = new Date();
@@ -129,6 +125,12 @@ public class BlackJack extends BlackJackUtils {
             e.printStackTrace();
         }
         cancelInSixtySeconds(event);
+
+        if (isGroupMessage(event)) {
+            getINSTANCE().globalGroupData.add(new BlackJackData(event.getSubject().getId()));
+        } else {
+            getINSTANCE().globalFriendData.add(new BlackJackData(event.getSubject().getId()));
+        }
     }
 
     //3.5个GAP_TIME之后取消所有标记的Runnable

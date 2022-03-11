@@ -61,6 +61,7 @@ public class ContactUtil {
             //管理员判定
             if(!IdentityUtil.isAdmin((event).getInvitor().getId())) {
                 if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
+                    event.getGroup().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     if(MultiBotHandler.canSendNotice(event.getBot())) {
                         (event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     }
@@ -71,8 +72,9 @@ public class ContactUtil {
                 }
 
                 if (event.getGroup().getMembers().getSize() < 7) {
+                    event.getGroup().sendMessage("七筒目前不接受加入7人以下的群聊，将会自动退群。");
                     if(MultiBotHandler.canSendNotice(event.getBot())) {
-                        (event).getInvitor().sendMessage("七筒目前不接受加入7人以下的群聊。");
+                        (event).getInvitor().sendMessage("七筒目前不接受加入7人以下的群聊，将会自动退群。");
                     }
                     event.getGroup().quit();
                     String content = (event).getInvitor().getNick() + "(" + (event).getInvitor().getId() + ")尝试邀请七筒加入一个少于7人的群聊。";
@@ -86,7 +88,7 @@ public class ContactUtil {
                 for(Bot bot:Bot.getInstances()){
                     if (bot.getId()==(event.getBot().getId())) continue;
                     if (nm.getId()==bot.getId()){
-                        if(nm.getId()<bot.getId()) continue;//很重要的判定！两个七筒只有一个退群！
+                        if(MultiBotHandler.BotName.get(nm.getId()).ordinal()<MultiBotHandler.BotName.get(bot.getId()).ordinal()) continue;//很重要的判定！两个七筒只有一个退群！
                         event.getGroup().sendMessage("检测到其他在线七筒账户在此群聊中，本机器人将自动退群。");
                         executor.schedule(() -> event.getGroup().quit(),15,TimeUnit.SECONDS);
                         return;
@@ -139,7 +141,7 @@ public class ContactUtil {
                 for(Bot bot:Bot.getInstances()){
                     if (bot.getId()==(event.getBot().getId())) continue;
                     if (nm.getId()==bot.getId()){
-                        if(nm.getId()<bot.getId()) continue;//很重要的判定！两个七筒只有一个退群！
+                        if(MultiBotHandler.BotName.get(nm.getId()).ordinal()<MultiBotHandler.BotName.get(bot.getId()).ordinal()) continue;//很重要的判定！两个七筒只有一个退群！
                         event.getGroup().sendMessage("检测到其他在线七筒账户在此群聊中，本机器人将自动退群。");
                         executor.schedule(() -> event.getGroup().quit(),15,TimeUnit.SECONDS);
                         return;

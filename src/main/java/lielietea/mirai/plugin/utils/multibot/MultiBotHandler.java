@@ -144,7 +144,7 @@ public class MultiBotHandler {
         mcb.append("acceptGroup: ").append(String.valueOf(bc.acceptGroup)).append("\n");
         mcb.append("answerFriend: ").append(String.valueOf(bc.answerFriend)).append("\n");
         mcb.append("answerGroup: ").append(String.valueOf(bc.answerGroup)).append("\n");
-        mcb.append("sendNotice: ").append(String.valueOf(bc.answerGroup)).append("\n");
+        mcb.append("sendNotice: ").append(String.valueOf(bc.sendNotice)).append("\n");
         event.getSubject().sendMessage(mcb.asMessageChain());
     }
 
