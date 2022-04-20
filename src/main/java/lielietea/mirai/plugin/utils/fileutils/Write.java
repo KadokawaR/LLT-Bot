@@ -3,29 +3,27 @@ package lielietea.mirai.plugin.utils.fileutils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Write {
     //追加写入
     public static void append(String content, String PATH) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(PATH, true));
-            out.write(content);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(Paths.get(PATH)), StandardCharsets.UTF_8)) {
+            writer.append(content);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     //覆盖写入
     public static void cover(String content, String PATH) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(PATH));
-            out.write(content);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(Paths.get(PATH)), StandardCharsets.UTF_8)) {
+            writer.write(content);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

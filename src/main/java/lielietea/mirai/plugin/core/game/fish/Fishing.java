@@ -1,9 +1,12 @@
 package lielietea.mirai.plugin.core.game.fish;
 
-import com.google.gson.Gson;
+import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
-
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
+import com.google.gson.Gson;
+
+import lielietea.mirai.plugin.core.groupconfig.GroupConfigManager;
+import lielietea.mirai.plugin.core.harbor.Harbor;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -40,7 +43,7 @@ public class Fishing extends FishingUtil{
 
         private final int code;
 
-        private Waters(int code) { this.code = code; }
+        Waters(int code) { this.code = code; }
 
         public int getCode(){
             return this.code;
@@ -93,9 +96,15 @@ public class Fishing extends FishingUtil{
     static final String HANDBOOK_PATH = "/pics/fishing/handbook.png";
 
     public static void go(MessageEvent event){
+
+        if(event instanceof GroupMessageEvent) {
+            if (!GroupConfigManager.fishConfig((GroupMessageEvent) event) || !ConfigHandler.getINSTANCE().config.getGroupFC().isFish()) return;
+        } else {
+            if(!ConfigHandler.getINSTANCE().config.getFriendFC().isFish()) return;
+        }
+
         if(event.getMessage().contentToString().equals("/fishhelp")){
 
-            GameCenterCount.count(GameCenterCount.Functions.FishingInfo);
             try (InputStream img = Fishing.class.getResourceAsStream(FISH_INFO_PATH)) {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
@@ -103,47 +112,65 @@ public class Fishing extends FishingUtil{
                 e.printStackTrace();
             }
 
+            Harbor.count(event);
+            GameCenterCount.count(GameCenterCount.Functions.FishingInfo);
+
             return;
         }
 
         if(event.getMessage().contentToString().equals("/handbook")){
-            GameCenterCount.count(GameCenterCount.Functions.FishingHandbook);
             try (InputStream img = Fishing.class.getResourceAsStream(HANDBOOK_PATH)) {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Harbor.count(event);
+            GameCenterCount.count(GameCenterCount.Functions.FishingHandbook);
+
             return;
         }
 
         if(event.getMessage().contentToString().equals("/collection")){
-            GameCenterCount.count(GameCenterCount.Functions.FishingCollection);
             MessageChainBuilder mcb = mcbProcessor(event);
             mcb.append("您的图鉴完成度目前为").append(String.valueOf(handbookProportion(event.getSender().getId()))).append("%\n\n");
             try {
-                mcb.append(Contact.uploadImage(event.getSubject(),ImageSender.getBufferedImageAsSource(getHandbook(event))));
+                mcb.append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getHandbook(event))));
                 event.getSubject().sendMessage(mcb.asMessageChain());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            Harbor.count(event);
+            GameCenterCount.count(GameCenterCount.Functions.FishingCollection);
+
             return;
         }
 
-        if (event.getMessage().contentToString().contains("/fish")){
+        if (event.getMessage().contentToString().toLowerCase().contains("/fish")){
             if (!isInFishingProcessFlag.contains(event.getSender().getId())){
+
                 isInFishingProcessFlag.add(event.getSender().getId());
-                GameCenterCount.count(GameCenterCount.Functions.FishingGo);
                 getFish(event,getWater(event.getMessage().contentToString()));
+
+                Harbor.count(event);
+
+                return;
+
             } else {
                 MessageChainBuilder mcb = new MessageChainBuilder();
+
                 if (event.getClass().equals(GroupMessageEvent.class)){
                     mcb.append((new At(event.getSender().getId()))).append(" ");
                 }
+
                 mcb.append("上次抛竿还在进行中。");
-                GameCenterCount.count(GameCenterCount.Functions.FishingNotReadyYet);
                 event.getSubject().sendMessage(mcb.asMessageChain());
+                Harbor.count(event);
+                GameCenterCount.count(GameCenterCount.Functions.FishingNotReadyYet);
+                return;
+
             }
         }
 
@@ -158,6 +185,9 @@ public class Fishing extends FishingUtil{
             } else {
                 event.getSubject().sendMessage(mcb.append("您未在钓鱼中。").asMessageChain());
             }
+
+            Harbor.count(event);
+
         }
 
     }
@@ -190,6 +220,7 @@ public class Fishing extends FishingUtil{
         event.getSubject().sendMessage(mcb.asMessageChain());
 
         executor.schedule(new fishRunnable(event,itemNumber,waters,recordInOneHour),time, TimeUnit.MINUTES);
+        GameCenterCount.count(GameCenterCount.Functions.FishingGo);
     }
 
     public static Map<Integer,Integer> getItemIDRandomly(int amount,Waters waters){

@@ -1,107 +1,240 @@
 package lielietea.mirai.plugin.core.broadcast;
 
 import lielietea.mirai.plugin.utils.IdentityUtil;
-import net.mamoe.mirai.contact.ContactList;
-import net.mamoe.mirai.contact.Friend;
-import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.*;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class BroadcastSystem {
 
-    public static void handle(FriendMessageEvent event){
+    enum BroadcastType{
+        Friend,
+        Group
+    }
+
+    static class AdminContact{
+        Contact contact;
+        Long adminID;
+        AdminContact(Contact contact,Long adminID){
+            this.contact = contact;
+            this.adminID = adminID;
+        }
+    }
+
+    static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    Map<AdminContact,BroadcastType> BroadcastModeList = new HashMap<>();
+
+    BroadcastSystem() {}
+    private static final BroadcastSystem INSTANCE;
+    static { INSTANCE = new BroadcastSystem(); }
+
+    public static BroadcastSystem getINSTANCE() {
+        return INSTANCE;
+    }
+
+    public static void handle(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
-        BroadcastSystem.sendToAllGroups(event);
-        BroadcastSystem.directlySendToGroup(event);
-        BroadcastSystem.directlySendToFriend(event);
-        BroadcastSystem.sendToAllFriends(event);
-        BroadcastSystem.broadcastHelper(event);
+        broadcast(event);
     }
 
-    public static void sendToAllGroups(MessageEvent event, String message){
-        try {
-            sendToCertainGroups(event, message, event.getBot().getGroups());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    static BroadcastType getBT(MessageEvent event){
+        for(AdminContact ac:getINSTANCE().BroadcastModeList.keySet()){
+            if(ac.adminID==event.getSender().getId()){
+                return getINSTANCE().BroadcastModeList.get(ac);
+            }
         }
+        return null;
     }
 
-    public static void sendToCertainGroups(MessageEvent event, String message, ContactList<Group> groupContactList) throws InterruptedException {
-        for (Group group : groupContactList) {
-            Objects.requireNonNull(event.getBot().getGroup(group.getId())).sendMessage(message);
-            Thread.sleep(3000);
+    static boolean isInBroadcastMode(MessageEvent event){
+        for(AdminContact adminContact:getINSTANCE().BroadcastModeList.keySet()){
+            if(adminContact.contact.equals(event.getSubject())&&adminContact.adminID==event.getSender().getId()) return true;
         }
+        return false;
     }
 
-    //测试广播消息
-    public static void sendToAllGroups(FriendMessageEvent event){
-        String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast2g ") && IdentityUtil.isAdmin(event)) {
-            message = message.replace("/broadcast2g ", "");
-            sendToAllGroups(event, message);
-            Objects.requireNonNull(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).sendMessage("群广播已完成。");
-        }
-    }
-
-    public static void directlySendToGroup(FriendMessageEvent event) {
-        String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast ") && IdentityUtil.isAdmin(event)) {
-            String[] splitMessage = message.split(" ");
-            if (splitMessage.length != 3) {
-                event.getSubject().sendMessage("请使用空格分割/broadcast指示器、群号和消息");
+    static void quitBroadcastMode(MessageEvent event){
+        List<AdminContact> clonedKeySet = new ArrayList<AdminContact>(){{addAll(getINSTANCE().BroadcastModeList.keySet());}};
+        for(AdminContact ac:clonedKeySet){
+            if(ac.contact.equals(event.getSubject())&&ac.adminID==event.getSender().getId()) {
+                getINSTANCE().BroadcastModeList.remove(ac);
                 return;
             }
-            if (!splitMessage[0].equals("/broadcast")) {
-                event.getSubject().sendMessage("/broadcast指示器使用不正确");
+        }
+    }
+
+    static void broadcast(MessageEvent event){
+        if(!IdentityUtil.isAdmin(event)) return;
+
+        //在广播模式中
+        if(isInBroadcastMode(event)){
+
+            BroadcastType bt = getBT(event);
+
+            if(bt==null){
+                event.getSubject().sendMessage("请检查是否进入广播模式。");
+                quitBroadcastMode(event);
                 return;
             }
-            Objects.requireNonNull(event.getBot().getGroup(Long.parseLong(splitMessage[1]))).sendMessage(splitMessage[2]);
+
+            switch(bt){
+                case Group:
+                    executor.schedule(new SendMessage<>(event.getBot().getGroups(), event.getMessage(),new AdminContact(event.getSubject(), event.getSender().getId())),1, TimeUnit.SECONDS);
+                    break;
+                case Friend:
+                    executor.schedule(new SendMessage<>(event.getBot().getFriends(),event.getMessage(),new AdminContact(event.getSubject(), event.getSender().getId())),1,TimeUnit.SECONDS);
+                    break;
+            }
+
+            quitBroadcastMode(event);
+
+        } else {
+
+            if(event.getMessage().contentToString().toLowerCase().contains("/broadcast")){
+                enterBroadcastMode(event);
+            }
+
         }
+
     }
 
-    public static void directlySendToFriend(FriendMessageEvent event) {
-        String message = event.getMessage().contentToString();
-        if (message.contains("/broadcastf ") && IdentityUtil.isAdmin(event)) {
-            String[] splitMessage = message.split(" ");
-            if (splitMessage.length != 3) {
-                event.getSubject().sendMessage("请使用空格分割/broadcastf指示器、群号和消息");
+    static MessageChain addAt(Group group, SingleMessage message){
+        MessageChainBuilder result = new MessageChainBuilder();
+        String[] splitMessage = message.contentToString().split("@");
+        for(String s:splitMessage){
+            if(s.startsWith("Admin")||s.startsWith("admin")){
+                for(NormalMember nm:group.getMembers()){
+                    if(nm.getPermission().equals(MemberPermission.ADMINISTRATOR)||nm.getPermission().equals(MemberPermission.OWNER)){
+                        result.add(new At(nm.getId()));
+                    }
+                }
+                s = s.replaceFirst("Admin|admin","");
+            }
+
+            if(s.startsWith("Owner")||s.startsWith("owner")){
+                result.add(new At(group.getOwner().getId()));
+                s = s.replaceFirst("Owner|owner","");
+            }
+
+            result.add(s);
+        }
+        return result.asMessageChain();
+    }
+
+    static MessageChain processAt(Group group, MessageChain rawMessage){
+        MessageChainBuilder result = new MessageChainBuilder();
+        for(SingleMessage sm:rawMessage){
+            if(sm instanceof PlainText){
+                if(sm.contentToString().toLowerCase().contains("@admin")||sm.contentToString().toLowerCase().contains("@owner")){
+                    result.add(addAt(group,sm));
+                    continue;
+                }
+            }
+            result.add(sm);
+        }
+        return result.asMessageChain();
+    }
+
+    static void enterBroadcastMode(MessageEvent event){
+
+        String rawString = event.getMessage().contentToString().toLowerCase().replace("/broadcast", "").replace(" ", "").replace("-", "");
+
+        switch (rawString) {
+            case "f":
+            case "friend":
+                getINSTANCE().BroadcastModeList.put(new AdminContact(event.getSubject(), event.getSender().getId()), BroadcastType.Friend);
+                break;
+            case "g":
+            case "group":
+                getINSTANCE().BroadcastModeList.put(new AdminContact(event.getSubject(), event.getSender().getId()), BroadcastType.Group);
+                break;
+            default:
+                event.getSubject().sendMessage("广播功能指示器使用错误，请输入/broadcast 加 -f 或者 -g 进入广播模式。");
                 return;
+        }
+
+        event.getSubject().sendMessage("已进入广播模式。请注意，您在该消息窗口内发送的下一条消息将进行广播。可以在消息中加入 @owner @admin 来提及群主或者管理员。");
+
+        //90秒内关闭窗口模式以防止误触
+        executor.schedule(new quitBroadcastModeAutomatically(event),90, TimeUnit.SECONDS);
+
+    }
+
+    static class quitBroadcastModeAutomatically implements Runnable{
+
+        MessageEvent event;
+
+        public quitBroadcastModeAutomatically(MessageEvent event){
+            this.event = event;
+        }
+
+        @Override
+        public void run(){
+            if(isInBroadcastMode(event)) {
+                quitBroadcastMode(event);
             }
-            if (!splitMessage[0].equals("/broadcastf")) {
-                event.getSubject().sendMessage("/broadcastf指示器使用不正确");
-                return;
+        }
+    }
+
+    static class SendMessage<T extends Contact> implements Runnable{
+
+        ContactList<T> contactList;
+        MessageChain mc;
+        AdminContact ac;
+
+        public SendMessage(ContactList<T> contactList,MessageChain mc,AdminContact ac){
+            this.contactList=contactList;
+            this.mc=mc;
+            this.ac=ac;
+        }
+
+        @Override
+        public void run(){
+
+            boolean isGroup = false;
+            boolean hasJudged = false;
+
+            for(Contact c:contactList){
+
+                MessageChain temp = mc;
+
+                if(!hasJudged){
+                    if(c instanceof Group) isGroup=true;
+                    hasJudged = true;
+                }
+
+                if(c instanceof Group){
+                    temp = processAt((Group) c,mc);
+                }
+
+                c.sendMessage(temp);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
-            Objects.requireNonNull(event.getBot().getFriend(Long.parseLong(splitMessage[1]))).sendMessage(splitMessage[2]);
-        }
-    }
 
+            String notification = "已经成功通知所有";
 
-    public static void sendToAllFriends(FriendMessageEvent event){
-        String message = event.getMessage().contentToString();
-        if (message.contains("/broadcast2f ") && IdentityUtil.isAdmin(event)) {
-            message = message.replace("/broadcast2f ", "");
-            try {
-                sendToCertainFriends(event, message, event.getBot().getFriends());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(isGroup){
+                notification+="群聊。";
+            } else {
+                notification+="好友。";
             }
-            Objects.requireNonNull(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).sendMessage("好友广播已完成。");
+
+            ac.contact.sendMessage(notification);
+
         }
     }
 
-    public static void sendToCertainFriends(MessageEvent event, String message, ContactList<Friend> friendContactList) throws InterruptedException {
-        for (Friend friend : friendContactList) {
-            Objects.requireNonNull(event.getBot().getFriend(friend.getId())).sendMessage(message);
-            Thread.sleep(3000);
-        }
-    }
 
-    //broadcast helper
-    public static void broadcastHelper(MessageEvent event) {
-        if (event.getMessage().contentToString().contains("/broadcasthelper") && IdentityUtil.isAdmin(event)) {
-            event.getSubject().sendMessage("/broadcast2f+空格+消息，发送给所有好友\n/broadcast2g+空格+消息，发送给所有群\n/broadcast+空格+群号+空格+消息，发送给指定群\n/broadcastf+空格+好友+空格+消息，发送给指定好友");
-        }
-    }
 }

@@ -10,6 +10,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -60,7 +63,7 @@ public class FishingUtil {
 
     public static FishingRecord openRecord() throws IOException {
         touchRecord();
-        InputStreamReader is = new InputStreamReader(new FileInputStream(FISHING_RECORD_PATH));
+        InputStreamReader is =  new InputStreamReader(Files.newInputStream(Paths.get(FISHING_RECORD_PATH)), StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(is);
         Gson gson = new Gson();
         return gson.fromJson(Read.fromReader(br), FishingRecord.class);
@@ -177,7 +180,7 @@ public class FishingUtil {
         g2d.fillRect(0,32+20-3,32*fishList.size()+20,3);
 
         for(Integer code:fishList){
-            InputStream is = FishingUtil.class.getResourceAsStream(PATH+String.valueOf(code)+".png");
+            InputStream is = FishingUtil.class.getResourceAsStream(PATH+code+".png");
             BufferedImage img = null;
             try {
                 assert is != null;
@@ -251,7 +254,7 @@ public class FishingUtil {
         int verticalCount = 0;
         int horizontalCount = 0;
         for(int index=0;index<hasCollectedList.size();index++){
-            String path = path(hasCollectedList.get(index))+String.valueOf(Fishing.getINSTANCE().loadedFishingList.get(index).code)+".png";
+            String path = path(hasCollectedList.get(index))+Fishing.getINSTANCE().loadedFishingList.get(index).code+".png";
             BufferedImage fishImg = ImageIO.read(Objects.requireNonNull(FishingUtil.class.getResourceAsStream(path)));
             g2d2.drawImage(fishImg,verticalCount*32,horizontalCount*32,null);
             verticalCount++;

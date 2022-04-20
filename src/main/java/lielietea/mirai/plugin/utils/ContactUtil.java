@@ -192,7 +192,6 @@ public class ContactUtil {
         List<Bot> bots = Bot.getInstances();
         for (Bot bot : bots) {
             Group group = bot.getGroup(id);
-            //  TODO 问题来了，退群要给群内发通知吗?
             if (group != null) group.quit();
         }
     }
@@ -204,7 +203,6 @@ public class ContactUtil {
         List<Bot> bots = Bot.getInstances();
         for (Bot bot : bots) {
             Friend friend = bot.getFriend(id);
-            //  TODO 问题来了，删除好友需要告知被删除对象吗？
             if (friend != null) friend.delete();
         }
     }
@@ -237,13 +235,11 @@ public class ContactUtil {
 
     // 向开发者发送退群提醒
     static void notifyDevWhenLeaveGroup(BotLeaveEvent.Kick event) {
-        //todo:Mirai开发者告知这个写法可能不稳定
         MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "）离开，由管理员操作。", event.getBot().getId());
     }
 
     // 向开发者发送退群提醒
     static void notifyDevWhenLeaveGroup(BotLeaveEvent.Active event) {
-        //todo:Mirai开发者告知这个写法可能不稳定
         MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "）主动离开。", event.getBot().getId());
     }
 
