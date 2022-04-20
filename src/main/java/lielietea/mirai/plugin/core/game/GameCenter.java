@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.game;
 
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import lielietea.mirai.plugin.core.bank.SenoritaCounter;
 import lielietea.mirai.plugin.core.game.mahjongriddle.MahjongRiddle;
@@ -16,10 +17,10 @@ public class GameCenter {
 
 
         if(event instanceof GroupMessageEvent){
-            if(GroupConfigManager.gameConfig((GroupMessageEvent) event) && ConfigHandler.getINSTANCE().config.getGroupFC().isGame()) {
+            if(GroupConfigManager.gameConfig((GroupMessageEvent) event) && ConfigHandler.getConfig(event).getGroupFC().isGame()) {
                 MahjongRiddle.riddleStart((GroupMessageEvent) event);
                 JetPack.start(event);
-                if(GroupConfigManager.casinoConfig((GroupMessageEvent) event)&&ConfigHandler.getINSTANCE().config.getGroupFC().isCasino()){
+                if(GroupConfigManager.casinoConfig((GroupMessageEvent) event)&&ConfigHandler.getConfig(event).getGroupFC().isCasino()){
                     CasinoCroupier.handle(event);
                     SenoritaCounter.go(event);
                 }
@@ -27,18 +28,15 @@ public class GameCenter {
         }
 
         if(event instanceof FriendMessageEvent){
-            if(ConfigHandler.getINSTANCE().config.getFriendFC().isGame()) {
+            if(ConfigHandler.getConfig(event).getFriendFC().isGame()) {
                 JetPack.start(event);
-                if(ConfigHandler.getINSTANCE().config.getFriendFC().isCasino()){
+                if(ConfigHandler.getConfig(event).getFriendFC().isCasino()){
                     SenoritaCounter.go(event);
                     CasinoCroupier.handle(event);
                 }
             }
         }
 
-        //todo fish因为特殊不算做game算作responder
-
-        //todo fish 需要加入计数（有好几个类都需要加）
 
         //Zeppelin.start(event);
         //Zeppelin.test(event);

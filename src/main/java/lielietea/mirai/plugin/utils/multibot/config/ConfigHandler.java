@@ -6,6 +6,8 @@ import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
+import lielietea.mirai.plugin.utils.multibot.BotConfigList;
+import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.BotJoinGroupEvent;
 import net.mamoe.mirai.event.events.BotLeaveEvent;
@@ -13,62 +15,37 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.*;
+import java.util.Map;
 
 public class ConfigHandler {
 
-    static String BASIC_CONFIGURATION_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "Chitung" + File.separator + "Config.json";
+    static Map<MultiBotHandler.BotName,Config> config = MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs();
 
-    ConfigHandler(){}
+    static BotConfigList readRecord(){ return MultiBotHandler.readRecord(); }
 
-    private static final ConfigHandler INSTANCE;
+    static void writeRecord(){ MultiBotHandler.writeRecord(); }
 
-    static {
-        INSTANCE = new ConfigHandler();
-        initialize();
+    public static Config getConfig(Bot bot){
+        return config.get(MultiBotHandler.BotName.get(bot.getId()));
     }
 
-    public Config config;
-
-    public static ConfigHandler getINSTANCE() {
-        return INSTANCE;
+    public static Config getConfig(long botID){
+        return config.get(MultiBotHandler.BotName.get(botID));
     }
 
-    static void initialize(){
-        getINSTANCE().config = new Config();
-        if(Touch.file(BASIC_CONFIGURATION_PATH)){
-            try {
-                getINSTANCE().config = new Gson().fromJson(Read.fromFile(BASIC_CONFIGURATION_PATH), Config.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            writeRecord();
-        }
-    }
-
-    static Config readRecord(){
-        try {
-            return new Gson().fromJson(Read.fromFile(BASIC_CONFIGURATION_PATH), Config.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    static void writeRecord(){
-        String jsonString =  new GsonBuilder().setPrettyPrinting().create().toJson(getINSTANCE().config);
-        Write.cover(jsonString, BASIC_CONFIGURATION_PATH);
+    public static Config getConfig(MessageEvent event){
+        return config.get(MultiBotHandler.BotName.get(event.getBot().getId()));
     }
 
     static void getCurrentBotConfig(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         if(!event.getMessage().contentToString().equalsIgnoreCase("/config")) return;
         MessageChainBuilder mcb = new MessageChainBuilder();
-        mcb.append("addFriend: ").append(String.valueOf(getINSTANCE().config.getRc().isAddFriend())).append("\n");
-        mcb.append("addGroup: ").append(String.valueOf(getINSTANCE().config.getRc().isAddGroup())).append("\n");
-        mcb.append("answerFriend: ").append(String.valueOf(getINSTANCE().config.getRc().isAnswerFriend())).append("\n");
-        mcb.append("answerGroup: ").append(String.valueOf(getINSTANCE().config.getRc().isAnswerGroup())).append("\n");
-        mcb.append("autoAnswer: ").append(String.valueOf(getINSTANCE().config.getRc().isAutoAnswer())).append("\n");
+        mcb.append("addFriend: ").append(String.valueOf(getConfig(event).getRc().isAddFriend())).append("\n");
+        mcb.append("addGroup: ").append(String.valueOf(getConfig(event).getRc().isAddGroup())).append("\n");
+        mcb.append("answerFriend: ").append(String.valueOf(getConfig(event).getRc().isAnswerFriend())).append("\n");
+        mcb.append("answerGroup: ").append(String.valueOf(getConfig(event).getRc().isAnswerGroup())).append("\n");
+        mcb.append("autoAnswer: ").append(String.valueOf(getConfig(event).getRc().isAutoAnswer())).append("\n");
         event.getSubject().sendMessage(mcb.asMessageChain());
     }
 
@@ -92,31 +69,32 @@ public class ConfigHandler {
                 return;
             }
 
-            getINSTANCE().config = readRecord();
-            assert getINSTANCE().config != null;
+            //todo:事否更改到了？
+            config = readRecord().getBotConfigs();
+            assert config != null;
             switch(messageSplit[1]){
                 case "1":{
-                    getINSTANCE().config.setAddFriend(Boolean.parseBoolean(messageSplit[2]));
+                    getConfig(event).setAddFriend(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置acceptFriend为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "2":{
-                    getINSTANCE().config.setAddGroup(Boolean.parseBoolean(messageSplit[2]));
+                    getConfig(event).setAddGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置acceptGroup为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "3":{
-                    getINSTANCE().config.setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
+                    getConfig(event).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerFriend为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "4":{
-                    getINSTANCE().config.setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
+                    getConfig(event).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerGroup为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "5":{
-                    getINSTANCE().config.setAutoAnswer(Boolean.parseBoolean(messageSplit[2]));
+                    getConfig(event).setAutoAnswer(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置sendNotice为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
@@ -125,31 +103,29 @@ public class ConfigHandler {
         }
     }
 
-    public static boolean canAddFriend(){
-        return getINSTANCE().config.getRc().isAddFriend();
+    public static boolean canAddFriend(Bot bot){
+        return getConfig(bot).getRc().isAddFriend();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean canAddGroup(){
-        return getINSTANCE().config.getRc().isAddGroup();
+    public static boolean canAddGroup(Bot bot){ return getConfig(bot).getRc().isAddGroup(); }
+
+    public static boolean canAnswerFriend(Bot bot){
+        return getConfig(bot).getRc().isAnswerFriend();
     }
 
-    public static boolean canAnswerFriend(){
-        return getINSTANCE().config.getRc().isAnswerFriend();
+    public static boolean canAnswerGroup(Bot bot){
+        return getConfig(bot).getRc().isAnswerGroup();
     }
 
-    public static boolean canAnswerGroup(){
-        return getINSTANCE().config.getRc().isAnswerGroup();
-    }
-
-    public static boolean canAutoAnswer(){
-        return getINSTANCE().config.getRc().isAutoAnswer();
+    public static boolean canAutoAnswer(Bot bot){
+        return getConfig(bot).getRc().isAutoAnswer();
     }
 
     static void reset(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         if(event.getMessage().contentToString().toLowerCase().contains("/reset")&&(event.getMessage().contentToString().toLowerCase().contains("config"))){
-            getINSTANCE().config=readRecord();
+            config=readRecord().getBotConfigs();
             event.getSubject().sendMessage("已经重置 Config 配置文件。");
         }
 
@@ -160,22 +136,6 @@ public class ConfigHandler {
         changeCurrentBotConfig(event);
         reset(event);
     }
-
-    public static String getName(BotJoinGroupEvent event){
-        if(getINSTANCE().config.getBotName().equals("")) return event.getBot().getNick();
-        return getINSTANCE().config.getBotName();
-    }
-
-    public static String getName(Bot bot){
-        if(getINSTANCE().config.getBotName().equals("")) return bot.getNick();
-        return getINSTANCE().config.getBotName();
-    }
-
-    public static String getName(BotLeaveEvent event){
-        if(getINSTANCE().config.getBotName().equals("")) return event.getBot().getNick();
-        return getINSTANCE().config.getBotName();
-    }
-
 
     public void ini(){
         System.out.println("Initialize Config Handler");

@@ -3,8 +3,14 @@ package lielietea.mirai.plugin;
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
+import lielietea.mirai.plugin.core.game.fish.Fishing;
 import lielietea.mirai.plugin.core.game.zeppelin.Zeppelin;
+import lielietea.mirai.plugin.core.groupconfig.GroupConfigManager;
+import lielietea.mirai.plugin.core.harbor.Harbor;
+import lielietea.mirai.plugin.core.responder.Blacklist;
 import lielietea.mirai.plugin.core.responder.ResponderCenter;
+import lielietea.mirai.plugin.core.responder.imageresponder.ImageResponder;
+import lielietea.mirai.plugin.core.responder.universalrespond.URManager;
 import lielietea.mirai.plugin.utils.Nudge;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
@@ -13,6 +19,7 @@ import lielietea.mirai.plugin.core.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.GroupPolice;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.MemberPermission;
@@ -92,16 +99,42 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
-            if(!MultiBotHandler.canAnswerGroup(event)) return;
-            if(IdentityUtil.isBot(event)) return;
-            if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
-
-            //ResponderCenter
-            ResponderCenter.getINSTANCE().handleMessage(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
+            //广播
+            BroadcastSystem.handle(event);
+
+            if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
+
+            if(!ConfigHandler.canAnswerGroup(event.getBot())) return;
+
+            if(IdentityUtil.isBot(event)) return;
+
+            if(!GroupConfigManager.globalConfig(event)) return;
+            if(GroupConfigManager.isBlockedUser(event)) return;
+
+            if(Blacklist.isBlocked(event.getSender().getId(), Blacklist.BlockKind.Friend)) return;
+            if(Blacklist.isBlocked(event.getGroup().getId(), Blacklist.BlockKind.Group)) return;
+
             //GameCenter
             GameCenter.handle(event);
+
+            if(Harbor.isReachingPortLimit(event)) return;
+
+            //ResponderCenter
+            if(GroupConfigManager.responderConfig(event) && ConfigHandler.getConfig(event).getGroupFC().isResponder()){
+
+                Nudge.mentionNudge(event);
+                ResponderCenter.getINSTANCE().handleMessage(event);
+                ImageResponder.handle(event);
+
+                //钓鱼
+                Fishing.go(event);
+                //Universal Responder
+                URManager.handle(event);
+                //群管理功能
+                GroupConfigManager.handle(event);
+            }
 
         });
 
@@ -109,7 +142,7 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(NudgeEvent.class, Nudge::returnNudge);
 
         //群成员入群自动欢迎
-        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎。"));
+        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎入群。"));
 
 
         //计数

@@ -1,4 +1,4 @@
-package mirai.chitung.plugin.core.responder.imageresponder;
+package lielietea.mirai.plugin.core.responder.imageresponder;
 
 import java.util.ArrayList;
 import java.util.List;

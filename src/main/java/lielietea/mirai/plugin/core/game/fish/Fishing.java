@@ -98,9 +98,9 @@ public class Fishing extends FishingUtil{
     public static void go(MessageEvent event){
 
         if(event instanceof GroupMessageEvent) {
-            if (!GroupConfigManager.fishConfig((GroupMessageEvent) event) || !ConfigHandler.getINSTANCE().config.getGroupFC().isFish()) return;
+            if (!GroupConfigManager.fishConfig((GroupMessageEvent) event) || !ConfigHandler.getConfig(event).getGroupFC().isFish()) return;
         } else {
-            if(!ConfigHandler.getINSTANCE().config.getFriendFC().isFish()) return;
+            if(!ConfigHandler.getConfig(event).getFriendFC().isFish()) return;
         }
 
         if(event.getMessage().contentToString().equals("/fishhelp")){

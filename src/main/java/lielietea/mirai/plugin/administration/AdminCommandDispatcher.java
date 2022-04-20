@@ -2,8 +2,10 @@ package lielietea.mirai.plugin.administration;
 
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
+import lielietea.mirai.plugin.core.responder.Blacklist;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,10 +31,17 @@ public class AdminCommandDispatcher {
         //MPSE 消息统计
         MessagePostSendEventHandler.getMPSEStatistics(event);
         MessagePostSendEventHandler.checkBreaker(event);
-        //多账户管理
-        MultiBotHandler.react(event);
+
         //GameCenter统计
         GameCenterCount.getStatistics(event);
+        //黑名单
+        Blacklist.operation(event);
+        //设置管理
+        ConfigHandler.react(event);
+        //管理帮助
+        AdminHelp.send(event);
+
+
     }
 
     public void close() {

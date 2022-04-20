@@ -21,48 +21,23 @@ public class AdminTools {
     }
 
     public void handleAdminCommand(MessageEvent event) {
-        if (event.getMessage().contentToString().contains("/group")) {
-            try {
-                getGroupList(event);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
-        if (event.getMessage().contentToString().contains("/friend")) {
-            try {
-                getFriendList(event);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if (event.getMessage().contentToString().contains("/reload")) {
-            reloadManually(event);
-        }
-        if (event.getMessage().contentToString().contains("/optimize")) {
+        if (event.getMessage().contentToString().equalsIgnoreCase("/optimize")) {
             optimizeManually(event);
         }
 
-        if (event.getMessage().contentToString().contains("/coverage")) {
+        if (event.getMessage().contentToString().equalsIgnoreCase("/coverage")) {
             getCoverage(event);
         }
-        if (event.getMessage().contentToString().contains("/numf")) {
+
+        if (event.getMessage().contentToString().equalsIgnoreCase("/num -f")) {
             getFriendNum(event);
         }
-        if (event.getMessage().contentToString().contains("/numg")) {
+
+        if (event.getMessage().contentToString().equalsIgnoreCase("/num -g")) {
             getGroupNum(event);
         }
-        if (event.getMessage().contentToString().contains("/adminhelper")) {
-            event.getSubject().sendMessage("/group\n/friend\n/reload\n/optimize\n/coverage覆盖人数\n/numf好友人数\n/numg群聊人数\n");
-        }
-    }
 
-    void reloadManually(MessageEvent event) {
-        // TODO 资源重载管理器已经被移除了
-        //  - 这里需要新方法
-        MessageChainBuilder messages = new MessageChainBuilder();
-        messages.append("该功能正在重写中");
-        event.getSubject().sendMessage(messages.build());
     }
 
     void optimizeManually(MessageEvent event) {
@@ -70,66 +45,6 @@ public class AdminTools {
         String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(false);
         messages.append(result);
         event.getSubject().sendMessage(messages.build());
-    }
-
-    String addGroupInfo(Iterator<Group> listIter, String allGroupInfo) {
-        Group next = listIter.next();
-        String allGroupInfo2 = allGroupInfo + "\n群ID " + next.getId() + "\n群名称 " + next.getName() + "\n群主ID " + next.getOwner().getId() + "\n群主昵称 " + next.getOwner().getNick() + "\n机器人权限 " + next.getBotPermission().name() + "\n";
-        allGroupInfo2 = allGroupInfo2 + "----------\n";
-        return allGroupInfo2;
-    }
-
-    void getGroupList(MessageEvent event) throws InterruptedException {
-        if (IdentityUtil.isAdmin(event)) {
-            Iterator<Group> listIter = event.getBot().getGroups().stream().iterator();
-            int size = event.getBot().getGroups().getSize();
-            String[] allGroupInfo = new String[size / 20 + 1];
-            Arrays.fill(allGroupInfo, "");
-            int count = 0;
-            int countString = 0;
-            while (listIter.hasNext()) {
-                if (count > 19) {
-                    count = 0;
-                    countString += 1;
-                }
-                allGroupInfo[countString] = addGroupInfo(listIter, allGroupInfo[countString]);
-                count += 1;
-            }
-            for (int i = 0; i <= countString; i++) {
-                event.getSubject().sendMessage(allGroupInfo[i]);
-                Thread.sleep(1000);
-            }
-            event.getSubject().sendMessage("七筒目前的群数量是：" + size);
-        }
-    }
-
-    String addFriendInfo(Iterator<Friend> listIter, String allFriendInfo) {
-        Friend next = listIter.next();
-        return allFriendInfo + "\n好友ID " + next.getId() + "\n好友名称 " + next.getNick() + "\n";
-    }
-
-    void getFriendList(MessageEvent event) throws InterruptedException {
-        if (IdentityUtil.isAdmin(event)) {
-            Iterator<Friend> listIter = event.getBot().getFriends().stream().iterator();
-            int size = event.getBot().getFriends().getSize();
-            String[] allFriendInfo = new String[size / 30 + 1];
-            Arrays.fill(allFriendInfo, "");
-            int count = 0;
-            int countString = 0;
-            while (listIter.hasNext()) {
-                if (count > 29) {
-                    count = 0;
-                    countString += 1;
-                }
-                allFriendInfo[countString] = addFriendInfo(listIter, allFriendInfo[countString]);
-                count += 1;
-            }
-            for (int i = 0; i <= countString; i++) {
-                event.getSubject().sendMessage(allFriendInfo[i]);
-                Thread.sleep(1000);
-            }
-            event.getSubject().sendMessage("七筒目前的好友数量是：" + size);
-        }
     }
 
     void getFriendNum(MessageEvent event) {

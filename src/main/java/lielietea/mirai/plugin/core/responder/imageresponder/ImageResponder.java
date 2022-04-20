@@ -1,14 +1,14 @@
-package mirai.chitung.plugin.core.responder.imageresponder;
+package lielietea.mirai.plugin.core.responder.imageresponder;
 
-import mirai.chitung.plugin.core.harbor.Harbor;
-import mirai.chitung.plugin.core.responder.universalrespond.URManager;
-import mirai.chitung.plugin.utils.fileutils.Copy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mirai.chitung.plugin.utils.IdentityUtil;
-import mirai.chitung.plugin.utils.fileutils.Read;
-import mirai.chitung.plugin.utils.fileutils.Touch;
-import mirai.chitung.plugin.utils.fileutils.Write;
+
+import lielietea.mirai.plugin.core.harbor.Harbor;
+import lielietea.mirai.plugin.utils.IdentityUtil;
+import lielietea.mirai.plugin.utils.fileutils.Copy;
+import lielietea.mirai.plugin.utils.fileutils.Read;
+import lielietea.mirai.plugin.utils.fileutils.Touch;
+import lielietea.mirai.plugin.utils.fileutils.Write;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -17,9 +17,7 @@ import net.mamoe.mirai.utils.ExternalResource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

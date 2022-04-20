@@ -372,7 +372,7 @@ public class GroupConfigManager {
                 for(Long ID:blockedGroupAdminMember){
                     mcb.append(new At(ID));
                 }
-                mcb.append("？不要把").append(ConfigHandler.getName(event.getBot())).append("卷入勾心斗角的宫廷争斗！");
+                mcb.append("？不要把七筒卷入勾心斗角的宫廷争斗！");
                 event.getSubject().sendMessage(mcb.asMessageChain());
                 try {
                     Thread.sleep(1000);
@@ -382,7 +382,7 @@ public class GroupConfigManager {
             }
 
             if(blockedAdminMember.size()>0){
-                MessageChainBuilder mcb = new MessageChainBuilder().append("抱歉，").append(ConfigHandler.getName(event.getBot())).append("的运营者");
+                MessageChainBuilder mcb = new MessageChainBuilder().append("抱歉，七筒的运营者");
                 for(Long ID:blockedAdminMember){
                     mcb.append(new At(ID));
                 }

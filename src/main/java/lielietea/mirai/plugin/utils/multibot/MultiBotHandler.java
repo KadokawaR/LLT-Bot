@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
+import lielietea.mirai.plugin.utils.multibot.config.Config;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -70,7 +71,7 @@ public class MultiBotHandler {
             }
         } else {
             for (BotName bt : BotName.values()) {
-                getINSTANCE().botConfigList.botConfigs.add(new BotConfig(bt.getValue()));
+                getINSTANCE().botConfigList.botConfigs.put(bt,new Config());
             }
             writeRecord();
         }
@@ -92,8 +93,8 @@ public class MultiBotHandler {
 
     private Integer getIndexOfBot(long ID){
         int index=0;
-        for(BotConfig bc:getINSTANCE().botConfigList.botConfigs){
-            if(bc.ID==ID) return index;
+        for(BotName bt:getINSTANCE().botConfigList.botConfigs.keySet()){
+            if(bt.getValue()==ID) return index;
             index+=1;
         }
         return null;
@@ -105,7 +106,7 @@ public class MultiBotHandler {
         int count = 0;
         for(Bot bot:Bot.getInstances()){
             if(bot.getId()==ID) continue;
-            if(getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(bot.getId())).acceptGroup){
+            if(getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(bot.getId()))).getRc().isAddGroup()){
                 sb.append("\n").append(bot.getId()).append(" ").append(bot.getNick());
                 count++;
             }
@@ -115,94 +116,25 @@ public class MultiBotHandler {
     }
 
     public static boolean canAcceptGroup(long ID){
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(ID)).acceptGroup;
+        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(ID))).getRc().isAddGroup();
     }
 
     public static boolean canAcceptFriend(long ID){
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(ID)).acceptFriend;
+        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(ID))).getRc().isAddFriend();
     }
 
     public static boolean canAnswerGroup(GroupMessageEvent event){
         if(IdentityUtil.isAdmin(event)) return true;
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).answerGroup;
+        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(event.getBot().getId()))).getRc().isAnswerGroup();
     }
 
     public static boolean canAnswerFriend(FriendMessageEvent event){
         if(IdentityUtil.isAdmin(event)) return true;
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).answerFriend;
+        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(event.getBot().getId()))).getRc().isAnswerFriend();
     }
 
     public static boolean canSendNotice(Bot bot){
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(bot.getId())).sendNotice;
+        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(bot.getId()))).getRc().isAutoAnswer();
     }
 
-    public static void getCurrentBotConfig(MessageEvent event){
-        if(!IdentityUtil.isAdmin(event)) return;
-        if(!event.getMessage().contentToString().equals("/config")) return;
-        BotConfig bc = getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId()));
-        MessageChainBuilder mcb = new MessageChainBuilder();
-        mcb.append("acceptFriend: ").append(String.valueOf(bc.acceptFriend)).append("\n");
-        mcb.append("acceptGroup: ").append(String.valueOf(bc.acceptGroup)).append("\n");
-        mcb.append("answerFriend: ").append(String.valueOf(bc.answerFriend)).append("\n");
-        mcb.append("answerGroup: ").append(String.valueOf(bc.answerGroup)).append("\n");
-        mcb.append("sendNotice: ").append(String.valueOf(bc.sendNotice)).append("\n");
-        event.getSubject().sendMessage(mcb.asMessageChain());
-    }
-
-    public static void changeCurrentBotConfig(MessageEvent event){
-        if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().equals("/config -h")) {
-            event.getSubject().sendMessage("使用/config+空格+数字序号+空格+true/false来开关配置。\n\n1:acceptFriend\n2:acceptGroup\n3:answerFriend\n4:answerGroup\n5:sendNotice");
-        }
-        if(event.getMessage().contentToString().contains("/config")&&(event.getMessage().contentToString().contains("true")||event.getMessage().contentToString().contains("false"))){
-            String[] messageSplit = event.getMessage().contentToString().split(" ");
-            if(messageSplit.length!=3){
-                event.getSubject().sendMessage("/config指示器使用错误。");
-                return;
-            }
-            if(Boolean.parseBoolean(messageSplit[2]) &&!messageSplit[2].contains("r")){
-                event.getSubject().sendMessage("Boolean设置错误。");
-                return;
-            }
-            if(!Boolean.parseBoolean(messageSplit[2]) &&!messageSplit[2].contains("a")){
-                event.getSubject().sendMessage("Boolean设置错误。");
-                return;
-            }
-
-            getINSTANCE().botConfigList = readRecord();
-            switch(messageSplit[1]){
-                case "1":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAcceptFriend(Boolean.parseBoolean(messageSplit[2]));
-                    event.getSubject().sendMessage("已设置acceptFriend为"+Boolean.parseBoolean(messageSplit[2]));
-                    break;
-                }
-                case "2":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAcceptGroup(Boolean.parseBoolean(messageSplit[2]));
-                    event.getSubject().sendMessage("已设置acceptGroup为"+Boolean.parseBoolean(messageSplit[2]));
-                    break;
-                }
-                case "3":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
-                    event.getSubject().sendMessage("已设置answerFriend为"+Boolean.parseBoolean(messageSplit[2]));
-                    break;
-                }
-                case "4":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
-                    event.getSubject().sendMessage("已设置answerGroup为"+Boolean.parseBoolean(messageSplit[2]));
-                    break;
-                }
-                case "5":{
-                    getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().getIndexOfBot(event.getBot().getId())).setSendNotice(Boolean.parseBoolean(messageSplit[2]));
-                    event.getSubject().sendMessage("已设置sendNotice为"+Boolean.parseBoolean(messageSplit[2]));
-                    break;
-                }
-            }
-            writeRecord();
-        }
-    }
-
-    public static void react(MessageEvent event){
-        getCurrentBotConfig(event);
-        changeCurrentBotConfig(event);
-    }
 }
