@@ -17,14 +17,14 @@ public class DisclTemporary implements MessageResponder<MessageEvent> {
     static final List<MessageType> types = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
 
     @Override
-    public boolean match(MessageEvent event){
-        return event.getMessage().contentToString().contains("/discl")||event.getMessage().contentToString().contains("/免责协议");
+    public boolean match(String content){
+        return content.contains("/discl")|| content.contains("/免责协议");
     }
 
     @Override
     public RespondTask handle(MessageEvent event){
         RespondTask.Builder builder = new RespondTask.Builder(event, this);
-        if (match(event)){
+        if (match(event.getMessage().contentToString())){
             builder.addTask(()-> send(event.getSubject()));
         }
         return builder.build();

@@ -32,9 +32,9 @@ public class PlayDice implements MessageResponder<MessageEvent> {
     static final List<MessageType> type = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
 
     @Override
-    public boolean match(MessageEvent event) {
+    public boolean match(String content) {
         for (Pattern pattern : REG_PATTERN) {
-            if (pattern.matcher(event.getMessage().contentToString()).matches()) {
+            if (pattern.matcher(content).matches()) {
                 return true;
             }
         }

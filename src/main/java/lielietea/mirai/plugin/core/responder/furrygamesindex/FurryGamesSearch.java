@@ -16,8 +16,8 @@ public class FurryGamesSearch implements MessageResponder<MessageEvent> {
     static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
 
     @Override
-    public boolean match(MessageEvent event) {
-        return (event.getMessage().contentToString().contains("/fgi ")||event.getMessage().contentToString().contains("/FGI "))&&!event.getMessage().contentToString().toLowerCase().contains("/fgi random");
+    public boolean match(String content) {
+        return (content.contains("/fgi ")|| content.contains("/FGI "))&&!content.toLowerCase().contains("/fgi random");
     }
 
     @Override

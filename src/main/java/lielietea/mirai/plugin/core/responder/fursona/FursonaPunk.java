@@ -3,7 +3,6 @@ package lielietea.mirai.plugin.core.responder.fursona;
 import com.google.gson.Gson;
 import lielietea.mirai.plugin.core.responder.RespondTask;
 import lielietea.mirai.plugin.core.responder.MessageResponder;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +27,8 @@ public class FursonaPunk implements MessageResponder<MessageEvent> {
     }
 
     @Override
-    public boolean match(MessageEvent event) {
-        return event.getMessage().contentToString().equals("兽设");
+    public boolean match(String content) {
+        return content.equals("兽设");
     }
 
     @Override

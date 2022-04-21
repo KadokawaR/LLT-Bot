@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  *
  * <p>用{@link DrinkPicker#getPersonalizedHourlyDrink(MessageEvent)}来获取根据用户而变化的Hourly Random Drink</p>
  */
-@Deprecated
+
 public class DrinkPicker implements MessageResponder<MessageEvent> {
     static final List<MessageType> TYPES = new ArrayList<>(Arrays.asList(MessageType.FRIEND, MessageType.GROUP));
     static final List<Pattern> REG_PATTERN = new ArrayList<>();
@@ -113,9 +113,9 @@ public class DrinkPicker implements MessageResponder<MessageEvent> {
     }
 
     @Override
-    public boolean match(MessageEvent event) {
+    public boolean match(String content) {
         for (Pattern pattern : REG_PATTERN) {
-            if (pattern.matcher(event.getMessage().contentToString()).matches()) {
+            if (pattern.matcher(content).matches()) {
                 return true;
             }
         }

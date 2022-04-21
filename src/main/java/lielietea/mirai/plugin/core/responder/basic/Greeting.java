@@ -29,9 +29,9 @@ public class Greeting implements MessageResponder<GroupMessageEvent> {
     }
 
     @Override
-    public boolean match(GroupMessageEvent event) {
+    public boolean match(String content) {
         for (Pattern pattern : REG_PATTERN) {
-            if (pattern.matcher(event.getMessage().contentToString()).matches()) {
+            if (pattern.matcher(content).matches()) {
                 return true;
             }
         }

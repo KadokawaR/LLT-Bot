@@ -26,9 +26,9 @@ public class Help implements MessageResponder<MessageEvent> {
     }
 
     @Override
-    public boolean match(MessageEvent event) {
+    public boolean match(String content) {
         for (Predicate<MessageEvent> predicate : MAP.keySet()) {
-            if (predicate.test(event)) return true;
+            if (predicate.test(content)) return true;
         }
         return false;
     }

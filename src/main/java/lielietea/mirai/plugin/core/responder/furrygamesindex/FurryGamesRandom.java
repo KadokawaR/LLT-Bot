@@ -15,8 +15,8 @@ public class FurryGamesRandom implements MessageResponder<MessageEvent> {
 
 
     @Override
-    public boolean match(MessageEvent event) {
-        return event.getMessage().contentToString().toLowerCase().contains("/fgi random");
+    public boolean match(String content) {
+        return content.getMessage().contentToString().toLowerCase().contains("/fgi random");
     }
 
     @Override
