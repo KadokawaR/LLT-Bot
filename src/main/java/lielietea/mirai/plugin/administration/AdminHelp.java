@@ -24,7 +24,10 @@ public class AdminHelp {
             "Data：\n" +
             "/num -f：查看好友数量\n" +
             "/num -g：查看群聊数量\n" +
-            "/coverage：查看总覆盖人数";
+            "/coverage：查看总覆盖人数\n\n" +
+            "MessagePostSendEvent:\n" +
+            "/break：查看熔断状况\n" +
+            "/mpse：查看 MPSE 数据";
 
     public static void send(MessageEvent event){
         if(!IdentityUtil.isAdmin(event.getSender().getId())) return;

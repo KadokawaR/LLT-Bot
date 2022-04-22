@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.utils;
 
+import lielietea.mirai.plugin.core.harbor.Harbor;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -50,7 +51,7 @@ public class Nudge {
     }
 
     private static boolean overCount(long groupID){
-        if(!getINSTANCE().groupNudgeCount.containsKey(groupID)) return true;
+        if(!getINSTANCE().groupNudgeCount.containsKey(groupID)) return false;
         return getINSTANCE().groupNudgeCount.get(groupID)>MAX_COUNT;
     }
 
@@ -65,13 +66,13 @@ public class Nudge {
         }
     }
 
-    //todo 这里没塞进去
     public static void mentionNudge(GroupMessageEvent event){
         if(IdentityUtil.isBot(event.getSender().getId())) return;
         if(overCount(event.getGroup().getId())) return;
         if (event.getMessage().contentToString().contains(String.valueOf(event.getBot().getId()))){
             event.getSender().nudge().sendTo(event.getSubject());
             addCount(event.getSubject().getId());
+            Harbor.count(event);
         }
     }
 }

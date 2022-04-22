@@ -83,7 +83,7 @@ public class MPSEStatistics extends MPSEProcessor{
 
     public static void getMPSEStatistics(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().equals("/total")||event.getMessage().contentToString().equals("统计数据")){
+        if(event.getMessage().contentToString().equalsIgnoreCase("/mpse")||event.getMessage().contentToString().equals("统计数据")){
             event.getSubject().sendMessage(buildMPSEStatistics(event.getBot().getId()));
         }
     }

@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.event.events.MessagePostSendEvent;
@@ -58,9 +59,9 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
     }
 
     public static void count(MessagePostSendEvent event) {
+
         if (event.getReceipt() == null) {
             updateCount(MultiBotHandler.BotName.get(event.getBot().getId()),MessageKind.FailedMessage,1);
-            System.out.println("failedMessageCount++");
             MessageChainBuilder mcb = new MessageChainBuilder();
             mcb.append(Objects.requireNonNull(event.getException()).getMessage()).append("\n");
             mcb.append(String.valueOf(event.getTarget().getId()));
@@ -70,10 +71,8 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
 
         if (event.getReceipt().isToGroup()) {
             updateCount(MultiBotHandler.BotName.get(event.getBot().getId()),MessageKind.GroupMessage,1);
-            System.out.println("groupMessageCount++");
         } else {
             updateCount(MultiBotHandler.BotName.get(event.getBot().getId()),MessageKind.FriendMessage,1);
-            System.out.println("friendMessageCount++");
         }
     }
 
@@ -109,7 +108,7 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
                     boolean newStatus = triggeredBreaker(bot.getId());
                     getINSTANCE().triggerBreakMap.put(bot.getId(),newStatus);
                     if(originalStatus!=newStatus){
-                        MessageUtil.notifyDevGroup("熔断机制状态发生变化，目前的熔断状况是 "+String.valueOf(newStatus),bot.getId());
+                        MessageUtil.notifyDevGroup("熔断机制状态发生变化，目前的熔断状况是 "+newStatus,bot.getId());
                     }
                 }
                 writeData(getINSTANCE().dataList);
@@ -138,7 +137,7 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
 
     public static void checkBreaker(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().contains("/break")){
+        if(event.getMessage().contentToString().toLowerCase().contains("/break")){
             event.getSubject().sendMessage("目前的熔断情况是: "+getINSTANCE().triggerBreakMap.get(event.getBot().getId()));
         }
     }

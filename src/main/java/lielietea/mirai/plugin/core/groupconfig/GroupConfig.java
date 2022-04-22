@@ -98,4 +98,5 @@ public class GroupConfig {
     public void setLottery(boolean lottery) {
         this.lottery = lottery;
     }
+
 }

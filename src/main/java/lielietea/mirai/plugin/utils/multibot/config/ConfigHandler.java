@@ -74,27 +74,27 @@ public class ConfigHandler {
             assert config != null;
             switch(messageSplit[1]){
                 case "1":{
-                    getConfig(event).setAddFriend(Boolean.parseBoolean(messageSplit[2]));
+                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAddFriend(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置acceptFriend为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "2":{
-                    getConfig(event).setAddGroup(Boolean.parseBoolean(messageSplit[2]));
+                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAddGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置acceptGroup为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "3":{
-                    getConfig(event).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
+                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerFriend为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "4":{
-                    getConfig(event).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
+                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerGroup为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "5":{
-                    getConfig(event).setAutoAnswer(Boolean.parseBoolean(messageSplit[2]));
+                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAutoAnswer(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置sendNotice为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
@@ -137,7 +137,4 @@ public class ConfigHandler {
         reset(event);
     }
 
-    public void ini(){
-        System.out.println("Initialize Config Handler");
-    }
 }

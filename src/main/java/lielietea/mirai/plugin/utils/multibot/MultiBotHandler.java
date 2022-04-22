@@ -106,7 +106,7 @@ public class MultiBotHandler {
         int count = 0;
         for(Bot bot:Bot.getInstances()){
             if(bot.getId()==ID) continue;
-            if(getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(bot.getId()))).getRc().isAddGroup()){
+            if(getINSTANCE().botConfigList.botConfigs.get(BotName.get(bot.getId())).getRc().isAddGroup()){
                 sb.append("\n").append(bot.getId()).append(" ").append(bot.getNick());
                 count++;
             }
@@ -116,25 +116,25 @@ public class MultiBotHandler {
     }
 
     public static boolean canAcceptGroup(long ID){
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(ID))).getRc().isAddGroup();
+        return getINSTANCE().botConfigList.botConfigs.get(BotName.get(ID)).getRc().isAddGroup();
     }
 
     public static boolean canAcceptFriend(long ID){
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(ID))).getRc().isAddFriend();
+        return getINSTANCE().botConfigList.botConfigs.get(BotName.get(ID)).getRc().isAddFriend();
     }
 
     public static boolean canAnswerGroup(GroupMessageEvent event){
         if(IdentityUtil.isAdmin(event)) return true;
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(event.getBot().getId()))).getRc().isAnswerGroup();
+        return getINSTANCE().botConfigList.botConfigs.get(BotName.get(event.getBot().getId())).getRc().isAnswerGroup();
     }
 
     public static boolean canAnswerFriend(FriendMessageEvent event){
         if(IdentityUtil.isAdmin(event)) return true;
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(event.getBot().getId()))).getRc().isAnswerFriend();
+        return getINSTANCE().botConfigList.botConfigs.get(BotName.get(event.getBot().getId())).getRc().isAnswerFriend();
     }
 
     public static boolean canSendNotice(Bot bot){
-        return getINSTANCE().botConfigList.botConfigs.get(getINSTANCE().botConfigList.botConfigs.get(getBotName(bot.getId()))).getRc().isAutoAnswer();
+        return getINSTANCE().botConfigList.botConfigs.get(BotName.get(bot.getId())).getRc().isAutoAnswer();
     }
 
 }

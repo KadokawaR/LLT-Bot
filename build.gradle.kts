@@ -5,8 +5,8 @@ plugins {
     id("net.mamoe.mirai-console") version "2.7.0"
 }
 
-group = "org.example"
-version = "1.3.1"
+group = "dev.chitung"
+version = "1.4.0"
 
 repositories {
     maven{ url =uri("https://maven.aliyun.com/nexus/content/groups/public/")}

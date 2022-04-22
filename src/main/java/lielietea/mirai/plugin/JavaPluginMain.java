@@ -7,21 +7,20 @@ import lielietea.mirai.plugin.core.game.fish.Fishing;
 import lielietea.mirai.plugin.core.game.zeppelin.Zeppelin;
 import lielietea.mirai.plugin.core.groupconfig.GroupConfigManager;
 import lielietea.mirai.plugin.core.harbor.Harbor;
-import lielietea.mirai.plugin.core.responder.Blacklist;
+import lielietea.mirai.plugin.administration.blacklist.Blacklist;
 import lielietea.mirai.plugin.core.responder.ResponderCenter;
 import lielietea.mirai.plugin.core.responder.imageresponder.ImageResponder;
 import lielietea.mirai.plugin.core.responder.universalrespond.URManager;
-import lielietea.mirai.plugin.utils.Nudge;
-import lielietea.mirai.plugin.utils.ContactUtil;
+import lielietea.mirai.plugin.core.secretfunction.SecretFunctionHandler;
+import lielietea.mirai.plugin.core.secretfunction.antiwithdraw.AntiWithdraw;
+import lielietea.mirai.plugin.utils.*;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.game.GameCenter;
 import lielietea.mirai.plugin.core.responder.ResponderManager;
-import lielietea.mirai.plugin.utils.GroupPolice;
-import lielietea.mirai.plugin.utils.IdentityUtil;
-import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
+import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
@@ -56,10 +55,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public void onEnable() {
         getLogger().info("日志");
 
-        GroupPolice.getINSTANCE().ini();
-        ResponderManager.getINSTANCE().ini();
-
-        Zeppelin.ini();
+        InitializeUtil.initialize();
 
         // 上线事件
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
@@ -103,6 +99,8 @@ public final class JavaPluginMain extends JavaPlugin {
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //广播
             BroadcastSystem.handle(event);
+            //秘密功能
+            SecretFunctionHandler.go(event);
 
             if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
 
@@ -144,6 +142,8 @@ public final class JavaPluginMain extends JavaPlugin {
         //群成员入群自动欢迎
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎入群。"));
 
+        //撤回消息响应
+        GlobalEventChannel.INSTANCE.subscribeAlways(MessageRecallEvent.GroupRecall.class, AntiWithdraw::handle);
 
         //计数
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
@@ -156,17 +156,29 @@ public final class JavaPluginMain extends JavaPlugin {
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
 
-            if(!MultiBotHandler.canAnswerFriend(event)) return;
+            if(!ConfigHandler.canAnswerFriend(event.getBot())) return;
             if(IdentityUtil.isBot(event)) return;
 
-            //ResponderCenter
-            ResponderCenter.getINSTANCE().handleMessage(event);
+            if(Blacklist.isBlocked(event.getSender().getId(), Blacklist.BlockKind.Friend)) return;
+
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter
             GameCenter.handle(event);
             //广播
             BroadcastSystem.handle(event);
+
+            if(Harbor.isReachingPortLimit(event)) return;
+
+            //ResponderCenter
+            if(ConfigHandler.getConfig(event).getFriendFC().isResponder()) {
+                ResponderCenter.getINSTANCE().handleMessage(event);
+                URManager.handle(event);
+                ImageResponder.handle(event);
+                Fishing.go(event);
+            }
+
+
 
         });
     }

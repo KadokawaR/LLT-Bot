@@ -1,4 +1,4 @@
-package lielietea.mirai.plugin.core.responder;
+package lielietea.mirai.plugin.administration.blacklist;
 
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import com.google.gson.Gson;
@@ -207,9 +207,9 @@ public class Blacklist {
 
         switch(bk){
             case Friend:
-                event.getSubject().sendMessage("已屏蔽用户"+ID);
+                event.getSubject().sendMessage("已解除屏蔽用户"+ID);
             case Group:
-                event.getSubject().sendMessage("已屏蔽群聊"+ID);
+                event.getSubject().sendMessage("已解除屏蔽群聊"+ID);
         }
     }
 

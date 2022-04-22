@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
+import net.mamoe.mirai.Bot;
 
 import java.io.*;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class MPSEProcessor {
         DataList dataList = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(new FileInputStream(FILE_PATH)))), DataList.class);
         if(dataList == null){
             dataList = new DataList();
-            dataList.addDataIntoDatas(new Data(new Date(), MultiBotHandler.BotName.Chitung1));
+            dataList.addDataIntoDatas(new Data(new Date(), MultiBotHandler.BotName.get(Bot.getInstances().get(0).getId())));
         }
         return dataList;
     }

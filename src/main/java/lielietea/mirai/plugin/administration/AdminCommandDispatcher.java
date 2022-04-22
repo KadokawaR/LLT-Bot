@@ -1,10 +1,10 @@
 package lielietea.mirai.plugin.administration;
 
+import lielietea.mirai.plugin.administration.blacklist.Whitelist;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
-import lielietea.mirai.plugin.core.responder.Blacklist;
+import lielietea.mirai.plugin.administration.blacklist.Blacklist;
 import lielietea.mirai.plugin.utils.IdentityUtil;
-import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.event.events.MessageEvent;
 import java.util.concurrent.ExecutorService;
@@ -25,17 +25,16 @@ public class AdminCommandDispatcher {
 
 
     public void handleMessage(MessageEvent event){
-        //TODO 这个部分先临时丢这里，回头再改
         if(!IdentityUtil.isAdmin(event)) return;
         AdminTools.getINSTANCE().handleAdminCommand(event);
         //MPSE 消息统计
         MessagePostSendEventHandler.getMPSEStatistics(event);
         MessagePostSendEventHandler.checkBreaker(event);
-
         //GameCenter统计
         GameCenterCount.getStatistics(event);
         //黑名单
         Blacklist.operation(event);
+        Whitelist.operation(event);
         //设置管理
         ConfigHandler.react(event);
         //管理帮助
