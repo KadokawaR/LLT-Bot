@@ -97,13 +97,15 @@ public class Fishing extends FishingUtil{
 
     public static void go(MessageEvent event){
 
+        String message = event.getMessage().contentToString();
+
         if(event instanceof GroupMessageEvent) {
             if (!GroupConfigManager.fishConfig((GroupMessageEvent) event) || !ConfigHandler.getConfig(event).getGroupFC().isFish()) return;
         } else {
             if(!ConfigHandler.getConfig(event).getFriendFC().isFish()) return;
         }
 
-        if(event.getMessage().contentToString().equals("/fishhelp")){
+        if(message.equalsIgnoreCase("/fishhelp")){
 
             try (InputStream img = Fishing.class.getResourceAsStream(FISH_INFO_PATH)) {
                 assert img != null;
@@ -114,11 +116,10 @@ public class Fishing extends FishingUtil{
 
             Harbor.count(event);
             GameCenterCount.count(GameCenterCount.Functions.FishingInfo);
-
             return;
         }
 
-        if(event.getMessage().contentToString().equals("/handbook")){
+        if(message.equalsIgnoreCase("/handbook")){
             try (InputStream img = Fishing.class.getResourceAsStream(HANDBOOK_PATH)) {
                 assert img != null;
                 event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
@@ -128,15 +129,14 @@ public class Fishing extends FishingUtil{
 
             Harbor.count(event);
             GameCenterCount.count(GameCenterCount.Functions.FishingHandbook);
-
             return;
         }
 
-        if(event.getMessage().contentToString().equals("/collection")){
+        if(message.equalsIgnoreCase("/collection")){
             MessageChainBuilder mcb = mcbProcessor(event);
             mcb.append("您的图鉴完成度目前为").append(String.valueOf(handbookProportion(event.getSender().getId()))).append("%\n\n");
             try {
-                mcb.append(Contact.uploadImage(event.getSubject(), ImageSender.getBufferedImageAsSource(getHandbook(event))));
+                mcb.append(Contact.uploadImage(event.getSubject(),ImageSender.getBufferedImageAsSource(getHandbook(event))));
                 event.getSubject().sendMessage(mcb.asMessageChain());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -144,18 +144,15 @@ public class Fishing extends FishingUtil{
 
             Harbor.count(event);
             GameCenterCount.count(GameCenterCount.Functions.FishingCollection);
-
             return;
         }
 
-        if (event.getMessage().contentToString().toLowerCase().contains("/fish")){
+        if (message.toLowerCase().startsWith("/fish")){
             if (!isInFishingProcessFlag.contains(event.getSender().getId())){
 
-                isInFishingProcessFlag.add(event.getSender().getId());
-                getFish(event,getWater(event.getMessage().contentToString()));
+                getFish(event,getWater(message));
 
                 Harbor.count(event);
-
                 return;
 
             } else {
@@ -174,7 +171,7 @@ public class Fishing extends FishingUtil{
             }
         }
 
-        if(event.getMessage().contentToString().equals("/endfish")){
+        if(message.equalsIgnoreCase("/endfish")){
             MessageChainBuilder mcb = new MessageChainBuilder();
             if (event.getClass().equals(GroupMessageEvent.class)){
                 mcb.append((new At(event.getSender().getId()))).append(" ");
@@ -187,7 +184,7 @@ public class Fishing extends FishingUtil{
             }
 
             Harbor.count(event);
-
+            GameCenterCount.count(GameCenterCount.Functions.EndFishing);
         }
 
     }
@@ -213,6 +210,7 @@ public class Fishing extends FishingUtil{
         int itemNumber = 3+random.nextInt(2);
 
         getINSTANCE().fishRecord.add(new Date());
+        isInFishingProcessFlag.add(event.getSender().getId());
 
         mcb.append("本次钓鱼预计时间为").append(String.valueOf(time)).append("分钟。");
         if(event instanceof GroupMessageEvent) mcb.append("麦氏渔业公司提醒您使用/fishhelp查询钓鱼功能的相关信息，如果长时间钓鱼未收杆，请使用/endfish 强制停止钓鱼。");

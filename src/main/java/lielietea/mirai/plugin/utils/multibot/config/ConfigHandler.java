@@ -37,9 +37,9 @@ public class ConfigHandler {
         return config.get(MultiBotHandler.BotName.get(event.getBot().getId()));
     }
 
-    static void getCurrentBotConfig(MessageEvent event){
+    static void getCurrentBotConfig(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(!event.getMessage().contentToString().equalsIgnoreCase("/config")) return;
+        if(!message.equalsIgnoreCase("/config")) return;
         MessageChainBuilder mcb = new MessageChainBuilder();
         mcb.append("addFriend: ").append(String.valueOf(getConfig(event).getRc().isAddFriend())).append("\n");
         mcb.append("addGroup: ").append(String.valueOf(getConfig(event).getRc().isAddGroup())).append("\n");
@@ -49,13 +49,13 @@ public class ConfigHandler {
         event.getSubject().sendMessage(mcb.asMessageChain());
     }
 
-    static void changeCurrentBotConfig(MessageEvent event){
+    static void changeCurrentBotConfig(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().equalsIgnoreCase("/config -h")) {
+        if(message.equalsIgnoreCase("/config -h")) {
             event.getSubject().sendMessage("使用/config+空格+数字序号+空格+true/false来开关配置。\n\n1:addFriend\n2:addGroup\n3:answerFriend\n4:answerGroup\n5:autoAnswer");
         }
-        if(event.getMessage().contentToString().contains("/config")&&(event.getMessage().contentToString().contains("true")||event.getMessage().contentToString().contains("false"))){
-            String[] messageSplit = event.getMessage().contentToString().split(" ");
+        if(message.contains("/config")&&(message.contains("true")||message.contains("false"))){
+            String[] messageSplit = message.split(" ");
             if(messageSplit.length!=3){
                 event.getSubject().sendMessage("/config指示器使用错误。");
                 return;
@@ -122,9 +122,9 @@ public class ConfigHandler {
         return getConfig(bot).getRc().isAutoAnswer();
     }
 
-    static void reset(MessageEvent event){
+    static void reset(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().toLowerCase().contains("/reset")&&(event.getMessage().contentToString().toLowerCase().contains("config"))){
+        if(message.toLowerCase().contains("/reset")&&(message.toLowerCase().contains("config"))){
             config=readRecord().getBotConfigs();
             event.getSubject().sendMessage("已经重置 Config 配置文件。");
         }
@@ -132,9 +132,10 @@ public class ConfigHandler {
     }
 
     public static void react(MessageEvent event){
-        getCurrentBotConfig(event);
-        changeCurrentBotConfig(event);
-        reset(event);
+        String message = event.getMessage().contentToString();
+        getCurrentBotConfig(event,message);
+        changeCurrentBotConfig(event,message);
+        reset(event,message);
     }
 
 }

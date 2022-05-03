@@ -29,10 +29,13 @@ public class JetPack extends BaiduAPI {
 
 
     public static void start(MessageEvent event){
-        if(TEMP_SOLUTION_REG.matcher(event.getMessage().contentToString()).matches()) return;
-        if (event.getMessage().contentToString().contains("/jetpack") || event.getMessage().contentToString().equals("/yes") || event.getMessage().contentToString().equals("/no") || event.getMessage().contentToString().equals("/location") || event.getMessage().contentToString().equals("/abort") || event.getMessage().contentToString().equals("/landing") || event.getMessage().contentToString().equals("/record")) {
+
+        String message = event.getMessage().contentToString();
+
+        if(TEMP_SOLUTION_REG.matcher(message).matches()) return;
+        if (message.toLowerCase().contains("/jetpack") || message.equalsIgnoreCase("/yes") || message.equalsIgnoreCase("/no") || message.equalsIgnoreCase("/location") || message.equalsIgnoreCase("/abort") || message.equalsIgnoreCase("/landing") || message.equalsIgnoreCase("/record")) {
             //初始化的jetpack指令
-            if (event.getMessage().contentToString().equals("/jetpack") || event.getMessage().contentToString().equals("/jetpack ")) {
+            if (message.replace(" ","").equalsIgnoreCase("/jetpack")) {
                 GameCenterCount.count(GameCenterCount.Functions.JetpackInfo);
                 try (InputStream img = JetPack.class.getResourceAsStream(JETPACK_INTRO_PATH)) {
                     assert img != null;
@@ -59,7 +62,7 @@ public class JetPack extends BaiduAPI {
             Date dateNow = new Date();
 
             //用/location查询七筒目前所在的位置
-            if (event.getMessage().contentToString().contains("/location")) {
+            if (message.equalsIgnoreCase("/location")) {
                 GameCenterCount.count(GameCenterCount.Functions.JetpackLocation);
                 Location currentLocation = JetPackUtil.getCurrentLocation(loc1, loc2, recordMap.get(recordMap.size() - 1).departureTime);
                 String currentLocationStr = C2AToString(currentLocation);
@@ -79,9 +82,9 @@ public class JetPack extends BaiduAPI {
             }
 
             //用/jetpack + 地址来尝试构建新飞行
-            if (event.getMessage().contentToString().contains("/jetpack ")) {
+            if (message.toLowerCase().startsWith("/jetpack ")) {
                 if (dateNow.after(arrivalTime)) {
-                    String addressRough = event.getMessage().contentToString().replace("/jetpack", "");
+                    String addressRough = message.replace("/jetpack", "");
                     addressRough = addressRough.replace(" ","");
                     if (getCoord(addressRough) != null) {
                         GameCenterCount.count(GameCenterCount.Functions.JetpackStart);
@@ -114,7 +117,7 @@ public class JetPack extends BaiduAPI {
                 }
             }
 
-            if (event.getMessage().contentToString().contains("/yes") && isInLaunchProcess.containsKey(event.getSender().getId())) {
+            if (message.equalsIgnoreCase("/yes") && isInLaunchProcess.containsKey(event.getSender().getId())) {
                 GameCenterCount.count(GameCenterCount.Functions.JetpackConfirmation);
                 if (dateNow.after(arrivalTime)) {
                     Location loc3 = new Location(isInLaunchProcess.get(event.getSender().getId()).lng, isInLaunchProcess.get(event.getSender().getId()).lat);
@@ -141,7 +144,7 @@ public class JetPack extends BaiduAPI {
                 isInLaunchProcess.remove(event.getSender().getId());
             }
 
-            if (event.getMessage().contentToString().contains("/no") && isInLaunchProcess.containsKey(event.getSender().getId())) {
+            if (message.equalsIgnoreCase("/no") && isInLaunchProcess.containsKey(event.getSender().getId())) {
                 GameCenterCount.count(GameCenterCount.Functions.JetpackConfirmation);
                 isInLaunchProcess.remove(event.getSender().getId());
                 event.getSubject().sendMessage("已取消本次飞行。");
@@ -149,14 +152,14 @@ public class JetPack extends BaiduAPI {
 
             //后门
             //直接抵达 重新写入一遍最后一条记录
-            if (event.getMessage().contentToString().contains("/abort") && IdentityUtil.isAdmin(event)) {
+            if (message.equalsIgnoreCase("/abort") && IdentityUtil.isAdmin(event)) {
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(recordMap.get(recordMap.size() - 1).lng, recordMap.get(recordMap.size() - 1).lat, recordMap.get(recordMap.size() - 1).locationName, JetPackUtil.sdf.format(dateNow));
                 Write.append(JetPackUtil.convertLocationRecord(newRecord), TXT_PATH);
                 event.getSubject().sendMessage("飞行已经被终止，七筒提前抵达目的地。");
                 return;
             }
             //迫降在当地 写入两条记录
-            if (event.getMessage().contentToString().contains("/landing") && IdentityUtil.isAdmin(event)) {
+            if (message.equalsIgnoreCase("/landing") && IdentityUtil.isAdmin(event)) {
                 Location currentLocation = JetPackUtil.getCurrentLocation(loc1, loc2, recordMap.get(recordMap.size() - 1).departureTime);
                 JetPackUtil.locationRecord newRecord = new JetPackUtil.locationRecord(currentLocation.lng, currentLocation.lat, "迫降点", JetPackUtil.sdf.format(dateNow));
                 //写入两次
@@ -171,7 +174,7 @@ public class JetPack extends BaiduAPI {
                 return;
             }
             //获得最后25条飞行记录
-            if (event.getMessage().contentToString().contains("/record")) {
+            if (message.equalsIgnoreCase("/record")) {
                 GameCenterCount.count(GameCenterCount.Functions.JetpackRecord);
                 StringBuilder recordStr = new StringBuilder();
                 List<locationRecord> lrList = JetPackUtil.readRecord();

@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.game.montecarlo.blackjack;
 
+
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackData;
@@ -15,9 +16,7 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class BlackJack extends BlackJackUtils {
 
@@ -34,20 +33,20 @@ public class BlackJack extends BlackJackUtils {
     static final String BLACKJACK_INTRO_PATH = "/pics/casino/blackjack.png";
     static final int GAP_SECONDS = 60;
 
-    public List<BlackJackData> globalGroupData = new ArrayList<>();
-    public List<BlackJackData> globalFriendData = new ArrayList<>();
+    public CopyOnWriteArrayList<BlackJackData> globalGroupData = new CopyOnWriteArrayList<>();
+    public CopyOnWriteArrayList<BlackJackData> globalFriendData = new CopyOnWriteArrayList<>();
 
-    public Map<Long, Timer> groupBlackjackCancelTimer = new HashMap<>();
-    public Map<Long, Timer> friendBlackjackCancelTimer = new HashMap<>();
-    public Map<Long, Timer> groupEndBetTimer = new HashMap<>();
-    public Map<Long, Timer> groupEndOperationTimer = new HashMap<>();
-    public Map<Long, Timer> friendEndOperationTimer = new HashMap<>();
+    public ConcurrentHashMap<Long, Timer> groupBlackjackCancelTimer = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, Timer> friendBlackjackCancelTimer = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, Timer> groupEndBetTimer = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, Timer> groupEndOperationTimer = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, Timer> friendEndOperationTimer = new ConcurrentHashMap<>();
 
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-    List<Long> isInBetProcess = new ArrayList<>();
-    Map<Date, Long> GroupResetMark = new HashMap<>();
-    Map<Date, Long> FriendResetMark = new HashMap<>();
+    CopyOnWriteArrayList<Long> isInBetProcess = new CopyOnWriteArrayList<>();
+    ConcurrentHashMap<Date, Long> GroupResetMark = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Date, Long> FriendResetMark = new ConcurrentHashMap<>();
 
     BlackJack() {
     }
@@ -89,11 +88,9 @@ public class BlackJack extends BlackJackUtils {
 
 
     //对话框中输入/blackjack或者二十一点
-    public static void checkBlackJack(MessageEvent event) {
-        if (!isBlackJack(event)) return;
+    public static void checkBlackJack(MessageEvent event,String message) {
+        if (!isBlackJack(message)) return;
         if (isInTheList(event, getGlobalData(event))) return;
-
-
 
         //全局取消标记
         Date gameStartTime = new Date();
@@ -114,7 +111,6 @@ public class BlackJack extends BlackJackUtils {
 
         InputStream img = BlackJack.class.getResourceAsStream(BLACKJACK_INTRO_PATH);
         assert img != null;
-        GameCenterCount.count(GameCenterCount.Functions.BlackjackStart);
 
         //前置标记取消
         cancelMark(event);
@@ -125,6 +121,7 @@ public class BlackJack extends BlackJackUtils {
             e.printStackTrace();
         }
         cancelInSixtySeconds(event);
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackStart);
 
         if (isGroupMessage(event)) {
             getINSTANCE().globalGroupData.add(new BlackJackData(event.getSubject().getId()));
@@ -160,9 +157,10 @@ public class BlackJack extends BlackJackUtils {
         }
     }
 
-    static void cancelMark(MessageEvent event) {
+    public static void cancelMark(MessageEvent event) {
         if (isGroupMessage(event)) {
-            for (Date date : getINSTANCE().GroupResetMark.keySet()) {
+            List<Date> clonedKeyset = new ArrayList<>(getINSTANCE().GroupResetMark.keySet());
+            for (Date date : clonedKeyset) {
                 if (getINSTANCE().GroupResetMark.get(date) == event.getSubject().getId()) {
                     getINSTANCE().GroupResetMark.remove(date);
                     break;
@@ -178,7 +176,8 @@ public class BlackJack extends BlackJackUtils {
             }
 
         } else {
-            for (Date date : getINSTANCE().FriendResetMark.keySet()) {
+            List<Date> clonedKeyset = new ArrayList<>(getINSTANCE().FriendResetMark.keySet());
+            for (Date date : clonedKeyset) {
                 if (getINSTANCE().FriendResetMark.get(date) == event.getSubject().getId()) {
                     getINSTANCE().FriendResetMark.remove(date);
                     break;
@@ -244,20 +243,15 @@ public class BlackJack extends BlackJackUtils {
 
 
     //对话框中输入/bet或者下注
-    public static void checkBet(MessageEvent event) {
-        System.out.println("Check Bet Activity");
-        if (!isBet(event)) return;
-        System.out.println("Is Bet Event");
+    public static void checkBet(MessageEvent event,String message) {
+        if (!isBet(message)) return;
         if (!isInGamingProcess(event)) return;
-        System.out.println("Is in gaming process");
         if (getGlobalData(event).get(indexInTheList(event)).getPhase() == BlackJackPhase.Operation) return;
-        System.out.println("count");
-        GameCenterCount.count(GameCenterCount.Functions.BlackjackBet);
 
         //判定数值是否正确
         Integer bet = null;
         try {
-            bet = getBet(event);
+            bet = getBet(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -312,6 +306,9 @@ public class BlackJack extends BlackJackUtils {
                 MessageChainBuilder mcb = mcbProcessor(event);
                 event.getSubject().sendMessage(mcb.append("已收到下注").append(String.valueOf(bet)).append("南瓜比索。").asMessageChain());
             }
+
+            GameCenterCount.count(GameCenterCount.Functions.BlackjackBet);
+
             //如果没有第一次进入过下注阶段，那么给List加一个flag，设置定时关闭任务
             //下注阶段在第一个人下注后60秒关闭
             if (!getINSTANCE().isInBetProcess.contains(event.getSubject().getId())) {
@@ -372,9 +369,7 @@ public class BlackJack extends BlackJackUtils {
         changePhase(event, BlackJackPhase.Operation);
         //进入发牌操作
         cardShuffle(event);
-        System.out.println("洗完牌了");
         dealCards(event);
-        System.out.println("发完牌了");
         showTheCards(event);
         getINSTANCE().groupEndBetTimer.get(event.getSubject().getId()).cancel();
         getINSTANCE().groupEndBetTimer.remove(event.getSubject().getId());
@@ -580,13 +575,13 @@ public class BlackJack extends BlackJackUtils {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //开始玩家操作
-    public static void playerOperation(MessageEvent event) {
-        if (bjOperation(event) == null) return;
+    public static void playerOperation(MessageEvent event,String message) {
+        if (bjOperation(event,message) == null) return;
         if (!isInGamingProcess(event)) return;
         if (!operationAvailabilityCheck(event)) return;
 
         //主操作
-        startOperation(event);
+        startOperation(event,message);
         //操作完之后判定是否都fold
         if (!haveAllFolded(event)) return;
         endOperationTimer(event);
@@ -595,9 +590,8 @@ public class BlackJack extends BlackJackUtils {
     }
 
     //playOperation里面使用的Switch
-    public static void startOperation(MessageEvent event) {
-        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
-        switch (Objects.requireNonNull(bjOperation(event))) {
+    public static void startOperation(MessageEvent event,String message) {
+        switch (Objects.requireNonNull(bjOperation(event,message))) {
             case Assurance:
                 assurance(event);
                 break;
@@ -659,6 +653,7 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setHasAssurance(true);
         }
         event.getSubject().sendMessage(mcbProcessor(event).append("您已经购买保险。").asMessageChain());
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
 
     }
 
@@ -667,6 +662,7 @@ public class BlackJack extends BlackJackUtils {
         //塞牌进去，增加卡牌数量，判定是否爆牌，爆了就不能operate，
         getCardSendNotice(event, 1);
         bustThatMthrfckr(event);
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
     //双倍下注
@@ -692,6 +688,7 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setCanOperate(false);
         }
         event.getSubject().sendMessage(mcbProcessor(event).append("您已经双倍下注。").asMessageChain());
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
     //停牌
@@ -702,6 +699,7 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setCanOperate(false);
         }
         event.getSubject().sendMessage(mcbProcessor(event).append("您已经停牌。").asMessageChain());
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
     //下注对子
@@ -725,6 +723,7 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setBetPair(true);
         }
         event.getSubject().sendMessage(mcbProcessor(event).append("您已经下注对子。").asMessageChain());
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
     //分牌
@@ -771,6 +770,7 @@ public class BlackJack extends BlackJackUtils {
             secondPile.add(getCard(event));
         }
         splitGetCardSendNotice(event);
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
     //投降，改变flag且停牌
@@ -783,6 +783,7 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setCanOperate(false);
         }
         event.getSubject().sendMessage(mcbProcessor(event).append("您投降了，将会返还您一半的赌注。").asMessageChain());
+        GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -843,7 +844,6 @@ public class BlackJack extends BlackJackUtils {
             }
         }
 
-        System.out.println("点数计算结果是" + totalPoints);
         return totalPoints;
     }
 
@@ -950,24 +950,18 @@ public class BlackJack extends BlackJackUtils {
     //结算
     public static void resultCalculator(MessageEvent event) {
         try {
-            System.out.println("进入resultCalculator");
             //庄家先操作
             bookmakerDoesTheFinalMove(event);
-            System.out.println("庄家动完");
             //计算分值
             Map<Long, Double> resultMap = getFinalPoints(event);
-            System.out.println("计算分值");
             //返回赌款
             for (Long ID : resultMap.keySet()) {
                 PumpkinPesoWindow.addMoney(ID, (int) Math.round(resultMap.get(ID)));
             }
-            System.out.println("返回赌款");
             //赌场进出帐
             casinoHasItsFinalLaugh(resultMap);
-            System.out.println("赌场进出帐");
             //通知玩家
             sendFinalNotice(event, resultMap);
-            System.out.println("通知完毕");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1157,7 +1151,7 @@ public class BlackJack extends BlackJackUtils {
     }
 
     //BlackJackData应该是哪个MessageEvent下的data
-    public static List<BlackJackData> getGlobalData(MessageEvent event) {
+    static List<BlackJackData> getGlobalData(MessageEvent event) {
         if (isGroupMessage(event)) {
             return getINSTANCE().globalGroupData;
         }
@@ -1174,9 +1168,10 @@ public class BlackJack extends BlackJackUtils {
 
     //主方法
     public static void go(MessageEvent event) {
-        checkBlackJack(event);
-        checkBet(event);
-        playerOperation(event);
-        adminToolsInBlackJack(event);
+        String message = event.getMessage().contentToString();
+        checkBlackJack(event,message);
+        checkBet(event,message);
+        playerOperation(event,message);
+        adminToolsInBlackJack(event,message);
     }
 }

@@ -182,18 +182,20 @@ public class GroupConfigManager {
     }
 
     @SuppressWarnings("RedundantIfStatement")
-    public static void changeGroupConfig(GroupMessageEvent event){
-        if(!event.getMessage().contentToString().toLowerCase().contains("/close")&&!event.getMessage().contentToString().toLowerCase().contains("/open")) return;
+    public static void changeGroupConfig(GroupMessageEvent event,String message){
+
+        if(!message.startsWith("/close")&&!message.startsWith("/open")) return;
         if(event.getSender().getPermission().equals(MemberPermission.MEMBER)&&(!IdentityUtil.isAdmin(event))) return;
         if(!containsGroup(event.getGroup().getId())) addGroupConfig(event.getGroup().getId());
+
         boolean operation;
-        if(event.getMessage().contentToString().contains("/close")){
+
+        if(message.startsWith("/close")){
             operation = false;
         } else {
             operation = true;
         }
-        String message = event.getMessage().contentToString();
-        message = message.toLowerCase();
+
         message = message.replace("/close","").replace("/open","").replace(" ","");
 
         Integer index = getGroupIndex(event.getGroup().getId());
@@ -225,7 +227,7 @@ public class GroupConfigManager {
                 event.getSubject().sendMessage("已设置C4和Bummer功能的响应状态为"+operation);
                 break;
             default:
-                event.getSubject().sendMessage("群设置指示词使用错误，请使用 /close 或者 /open 加上 空格 加上 global、game、casino、responder、fish 或者 lottery 来开关相应内容。");
+                event.getSubject().sendMessage("群设置指示词使用错误，使用/close或者/open加上空格加上global、game、casino、responder、fish或者lottery来开关相应内容。");
                 Harbor.count(event);
                 return;
         }
@@ -237,8 +239,8 @@ public class GroupConfigManager {
 
     }
 
-    public static void resetGroupConfig(GroupMessageEvent event){
-        if(!event.getMessage().contentToString().equals("/default")) return;
+    public static void resetGroupConfig(GroupMessageEvent event,String message){
+        if(!message.equalsIgnoreCase("/default")) return;
         if(event.getSender().getPermission().equals(MemberPermission.MEMBER)&&(!IdentityUtil.isAdmin(event))) return;
         if(containsGroup(event.getGroup().getId())){
             getINSTANCE().groupConfigs.groupConfigList.remove(Objects.requireNonNull(getGroupIndex(event.getGroup().getId())).intValue());
@@ -249,7 +251,8 @@ public class GroupConfigManager {
     public static boolean globalConfig(GroupMessageEvent event){
         if(readGroupConfig(event.getGroup().getId())==null) addGroupConfig(event.getGroup().getId());
         if(!getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(event.getGroup().getId())).isGlobal()){
-            return IdentityUtil.isAdmin(event);
+            if(IdentityUtil.isAdmin(event)) return true;
+            return !event.getSender().getPermission().equals(MemberPermission.MEMBER);
         }
         return true;
     }
@@ -280,9 +283,9 @@ public class GroupConfigManager {
         return getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(event.getGroup().getId())).isGame();
     }
 
-    static void addBlockedUser(GroupMessageEvent event){
+    static void addBlockedUser(GroupMessageEvent event,String message){
         if(event.getSender().getPermission().equals(MemberPermission.MEMBER)&&!IdentityUtil.isAdmin(event)) return;
-        if(!event.getMessage().contentToString().toLowerCase().startsWith("/blockmember")) return;
+        if(!message.startsWith("/blockmember")) return;
 
         executor.schedule(new BlockUserAndSendNotice(event),1, TimeUnit.SECONDS);
 
@@ -290,17 +293,18 @@ public class GroupConfigManager {
 
     }
 
-    static void deleteBlockedUser(GroupMessageEvent event){
+    static void deleteBlockedUser(GroupMessageEvent event,String message){
         if(event.getSender().getPermission().equals(MemberPermission.MEMBER)&&!IdentityUtil.isAdmin(event)) return;
-        if(!event.getMessage().contentToString().toLowerCase().startsWith("/unblockmember")) return;
+        if(!message.startsWith("/unblockmember")) return;
 
         List<Long> deletedUser = new ArrayList<>();
 
         for(SingleMessage sm:event.getMessage()){
 
-            if(sm.contentToString().startsWith("@")){
+            String SMM = sm.contentToString();
+            if(SMM.startsWith("@")){
 
-                Long ID = Long.parseLong(sm.contentToString().replace("@",""));
+                Long ID = Long.parseLong(SMM.replace("@",""));
 
                 if(isBlockedUser(event.getGroup().getId(),ID)){
                     getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(event.getGroup().getId())).getBlockedUser().remove(ID);
@@ -347,9 +351,11 @@ public class GroupConfigManager {
 
             for(SingleMessage sm:event.getMessage()){
 
-                if(sm.contentToString().startsWith("@")){
+                String SMM = sm.contentToString();
 
-                    Long ID = Long.parseLong(sm.contentToString().replace("@",""));
+                if(SMM.startsWith("@")){
+
+                    Long ID = Long.parseLong(SMM.replace("@",""));
 
                     if(event.getGroup().getOrFail(ID).getPermission().equals(MemberPermission.OWNER)||event.getGroup().getOrFail(ID).getPermission().equals(MemberPermission.ADMINISTRATOR)){
                         blockedGroupAdminMember.add(ID);
@@ -413,11 +419,77 @@ public class GroupConfigManager {
         return readGroupConfig(groupID).getBlockedUser().contains(memberID);
     }
 
+    public static GroupConfig getGroupConfig(long groupID){
+        return getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(groupID));
+    }
+
+    static void groupConfigCheck(GroupMessageEvent event, String message){
+        if(message.equalsIgnoreCase("/groupconfig -c")||message.equalsIgnoreCase("/gc -c")||message.equals("查看群设置")) {
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            GroupConfig gc = getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(event.getGroup().getId()));
+            mcb.append("本群的群设置状态为：")
+                    .append("\n全局：").append(String.valueOf(gc.isGlobal()))
+                    .append("\n关键词触发功能：").append(String.valueOf(gc.isResponder()))
+                    .append("\n游戏功能：").append(String.valueOf(gc.isGame()))
+                    .append("\nCasino功能：").append(String.valueOf(gc.isCasino()))
+                    .append("\n钓鱼功能：").append(String.valueOf(gc.isFish()))
+                    .append("\n群内抽奖功能：").append(String.valueOf(gc.isLottery()));
+            event.getSubject().sendMessage(mcb.asMessageChain());
+        }
+    }
+
+    static void groupConfigHelp(GroupMessageEvent event, String message){
+        if(message.equalsIgnoreCase("/groupconfig -h")||message.equalsIgnoreCase("/gc")||message.equals("群管理帮助")) {
+            event.getSubject().sendMessage("使用/close或者/open加上空格加上global（全局）、game（游戏）、casino、responder（关键词触发）、fish（钓鱼）或者lottery（群内抽奖）来开关相应内容。\n" +
+                    "使用/default恢复所有初始设置。" +
+                    "使用/blockmember并@成员来屏蔽该成员，使用/unblockmember并@成员来解除屏蔽。" +
+                    "使用/blocklist查询被屏蔽的用户列表，如果不需要返回结果@用户请使用/blocklist -m。");
+        }
+    }
+
+    static void getBlockList(GroupMessageEvent event, String message){
+
+        if(message.toLowerCase().startsWith("/blocklist -m")){
+            StringBuilder sb = new StringBuilder();
+            sb.append("本群的屏蔽名单有：");
+            for(long ID:getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(event.getGroup().getId())).getBlockedUser()){
+                if(event.getGroup().getMembers().contains(ID)){
+                    sb.append(ID).append(" ");
+                }
+
+            }
+            event.getSubject().sendMessage(sb.toString().trim());
+            return;
+        }
+
+        if(message.equalsIgnoreCase("/blocklist")){
+
+            List<Long> blocklist = getINSTANCE().groupConfigs.groupConfigList.get(getGroupIndex(event.getGroup().getId())).getBlockedUser();
+            if(blocklist.size()==0){
+                event.getGroup().sendMessage("本群暂无被屏蔽成员。");
+                return;
+            }
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            mcb.append("本群的屏蔽名单有：");
+            for(long ID:blocklist){
+                if(event.getGroup().getMembers().contains(ID)){
+                    mcb.append(new At(ID));
+                }
+            }
+            event.getSubject().sendMessage(mcb.asMessageChain());
+        }
+    }
+
     public static void handle(GroupMessageEvent event){
-        resetGroupConfig(event);
-        changeGroupConfig(event);
-        addBlockedUser(event);
-        deleteBlockedUser(event);
+        if(event.getSender().getPermission()==MemberPermission.MEMBER&&!IdentityUtil.isAdmin(event)) return;
+        String message = event.getMessage().contentToString().toLowerCase();
+        resetGroupConfig(event,message);
+        changeGroupConfig(event,message);
+        addBlockedUser(event,message);
+        deleteBlockedUser(event,message);
+        groupConfigCheck(event,message);
+        getBlockList(event,message);
+        groupConfigHelp(event,message);
     }
 
     public void ini(){

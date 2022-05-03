@@ -29,6 +29,7 @@ public class AdminHelp {
             "/break：查看熔断状况\n" +
             "/mpse：查看 MPSE 数据";
 
+    //todo 补充MPSE GameCenter WhiteList
     public static void send(MessageEvent event){
         if(!IdentityUtil.isAdmin(event.getSender().getId())) return;
         if(event.getMessage().contentToString().equalsIgnoreCase("/adminhelp")) {

@@ -9,6 +9,7 @@ import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -200,17 +201,17 @@ public class URManager {
         return false;
     }
 
-    static boolean kindMatch(MessageEvent event, UniversalResponder ur){
+    static boolean kindMatch(UniversalResponder ur){
         if(ur.getMessageKind().equals(MessageKind.Any)) return true;
         if(ur.getListResponceKind().equals(MessageKind.Any)) return true;
         return (ur.getMessageKind().equals(ur.getListResponceKind()));
     }
 
-    static void respond(MessageEvent event){
+    static void respond(MessageEvent event,String message){
         for(UniversalResponder ur:getINSTANCE().urList.universalRespondList) {
 
-            if(!kindMatch(event,ur)) continue;
-            if(!contentMatch(event.getMessage().contentToString(),ur)) continue;
+            if(!kindMatch(ur)) continue;
+            if(!contentMatch(message,ur)) continue;
             if(!IDMatch(event,ur)) continue;
 
             Random random = new Random();
@@ -222,17 +223,40 @@ public class URManager {
         }
     }
 
-    static void reset(MessageEvent event){
+    static void reset(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().toLowerCase().contains("/reset")&&(event.getMessage().contentToString().toLowerCase().contains("ur"))){
+        if(message.toLowerCase().contains("/reset")&&(message.toLowerCase().contains("ur"))){
             getINSTANCE().urList=readRecord();
             event.getSubject().sendMessage("已经重置 Universal Responder 的配置文件。");
         }
     }
 
+    public static void check(MessageEvent event,String message){
+        if(message.equalsIgnoreCase("/check ur")||message.equalsIgnoreCase("/check -ur")||message.equalsIgnoreCase("查看通用响应")){
+            MessageChainBuilder mcb = new MessageChainBuilder().append("通用响应关键词：\n");
+            for(int i=0;i<getINSTANCE().urList.universalRespondList.size();i++){
+                UniversalResponder ur = getINSTANCE().urList.universalRespondList.get(i);
+                mcb.append("关键词：");
+                StringBuilder sb = new StringBuilder();
+                for(String s:ur.getPattern()){
+                    sb.append(s);
+                    sb.append(" ");
+                }
+                mcb.append(sb.toString().trim()).append("\n").append("响应模式：").append(String.valueOf(ur.getTriggerKind())).append("\n");
+                mcb.append("当前环境响应状态：").append(String.valueOf(IDMatch(event,ur)));
+                if(i!=getINSTANCE().urList.universalRespondList.size()-1){
+                    mcb.append("\n\n");
+                }
+            }
+            event.getSubject().sendMessage(mcb.asMessageChain());
+        }
+    }
+
     public static void handle(MessageEvent event){
-        reset(event);
-        respond(event);
+        String message = event.getMessage().contentToString();
+        reset(event,message);
+        respond(event,message);
+        check(event,message);
     }
 
     public void ini(){

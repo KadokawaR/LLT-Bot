@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class FeedBack implements MessageResponder<MessageEvent> {
-    static final List<MessageType> TYPES = Lists.newArrayList(MessageType.FRIEND);
+    static final List<MessageType> TYPES = Lists.newArrayList(MessageType.FRIEND,MessageType.GROUP);
     static FeedBack INSTANCE = new FeedBack();
 
     public static FeedBack getINSTANCE() {
@@ -19,7 +19,7 @@ public class FeedBack implements MessageResponder<MessageEvent> {
 
     @Override
     public boolean match(String content) {
-        return content.contains("意见反馈");
+        return content.startsWith("意见反馈");
     }
 
     @Override

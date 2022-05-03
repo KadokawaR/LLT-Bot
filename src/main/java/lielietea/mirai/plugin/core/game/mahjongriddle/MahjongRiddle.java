@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.core.game.mahjongriddle;
 
+import lielietea.mirai.plugin.core.harbor.Harbor;
 import lielietea.mirai.plugin.core.responder.mahjong.FortuneTeller;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -20,7 +21,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MahjongRiddle {
     static final Logger logger = LogManager.getLogger(MahjongRiddle.class);
-    static final Lock lock = new ReentrantLock(true);
     static final int RIDDLE_LENGTH = 5;
 
     static final Random rand = new Random();
@@ -115,10 +115,10 @@ public class MahjongRiddle {
 
 
     //判定消息里面是否有答案
-    public static boolean gotAnswer(int[] answerNum, GroupMessageEvent event) {
+    public static boolean gotAnswer(int[] answerNum, String message) {
         String[] answer = transformAnswer(answerNum);
         for (String s : answer) {
-            if (event.getMessage().contentToString().equals(s)) {
+            if (message.equals(s)) {
                 return true;
             }
         }
@@ -126,10 +126,10 @@ public class MahjongRiddle {
     }
 
     //如果猜中了则改变rf里面的boolean数组
-    public static RiddleFactor setIsGuessed(RiddleFactor rf, GroupMessageEvent event) {
+    public static RiddleFactor setIsGuessed(RiddleFactor rf, String message) {
         String[] answer = transformAnswer(rf.answerNum);
         for (int i = 0; i < rf.answerNum.length; i++) {
-            if (event.getMessage().contentToString().contains(answer[i])) {
+            if (message.contains(answer[i])) {
                 rf.isGuessed[i] = true;
             }
         }
@@ -178,9 +178,8 @@ public class MahjongRiddle {
     }
 
     //临时性地检测是否是麻将牌用语
-    public static boolean isMahjongTile(GroupMessageEvent event) {
-        String str = event.getMessage().contentToString();
-        int sum = matchNumber(str,"风")+matchNumber(str,"万")+matchNumber(str,"筒")+matchNumber(str,"条");
+    public static boolean isMahjongTile(String message) {
+        int sum = matchNumber(message,"风")+matchNumber(message,"万")+matchNumber(message,"筒")+matchNumber(message,"条");
         //判断是否出现且只出现了一次
         return sum==1;
     }
@@ -199,9 +198,11 @@ public class MahjongRiddle {
 
     public static void riddleStart(GroupMessageEvent event){
 
-        //lock.lock();
-        //try{
-        if (event.getMessage().contentToString().contains("猜麻将")) {
+        String message = event.getMessage().contentToString();
+
+        if(!riddleSessionHolder.containsKey(event.getGroup().getId())&& Harbor.isReachingPortLimit(event)) return;
+
+        if (message.contains("猜麻将")) {
             event.getSubject().sendMessage("来猜麻将吧！\n\n七筒会随机生成5张麻将牌（只含筒牌、条牌和万字牌），猜中最后一张的会是赢家！" +
                     "\n请注意，只有形式诸如“三条”、“五筒”、“七万”的答案会触发判定。\n如果没有人猜中，本轮游戏会在180秒内自动关闭。");
 
@@ -231,10 +232,10 @@ public class MahjongRiddle {
             }
         }
 
-        if (isMahjongTile(event) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
-            riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), event).isGuessed;
+        if (isMahjongTile(message) && riddleSessionHolder.containsKey(event.getGroup().getId())) {
+            riddleSessionHolder.get(event.getGroup().getId()).isGuessed = setIsGuessed(riddleSessionHolder.get(event.getGroup().getId()), message).isGuessed;
             //
-            if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, event)) {
+            if (gotAnswer(riddleSessionHolder.get(event.getGroup().getId()).answerNum, message)) {
                 //检测这次结束之后是否全中，全中了则删除该flag
                 if (isAllTrue(riddleSessionHolder.get(event.getGroup().getId()).isGuessed)) {
                     event.getSubject().sendMessage((new At(event.getSender().getId())).plus("猜中了！恭喜！"));

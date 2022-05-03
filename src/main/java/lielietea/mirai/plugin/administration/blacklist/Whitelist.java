@@ -105,20 +105,20 @@ public class Whitelist {
         }
     }
 
-    static void TrustGroupInGroup(GroupMessageEvent event){
+    static void TrustGroupInGroup(GroupMessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().equalsIgnoreCase("/trust")) {
+        if(message.equalsIgnoreCase("/trust")) {
             addTrust(event.getGroup().getId(),TrustKind.Group);
         }
-        if(event.getMessage().contentToString().equalsIgnoreCase("/untrust")){
+        if(message.equalsIgnoreCase("/untrust")){
             deleteTrust(event.getGroup().getId(),TrustKind.Group);
         }
     }
 
-    static void Trust(MessageEvent event){
+    static void Trust(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(!event.getMessage().contentToString().toLowerCase().contains("/trust ")&&!event.getMessage().contentToString().toLowerCase().contains("/trust-")) return;
-        String rawString = event.getMessage().contentToString().toLowerCase().replace("/trust","").replace(" ","").replace("-","");
+        if(!message.toLowerCase().contains("/trust ")&&!message.toLowerCase().contains("/trust-")) return;
+        String rawString = message.toLowerCase().replace("/trust","").replace(" ","").replace("-","");
         String strID = Pattern.compile("[^0-9]").matcher(rawString).replaceAll(" ").trim();
 
         Long ID=null;
@@ -164,10 +164,10 @@ public class Whitelist {
 
     }
 
-    static void unTrust(MessageEvent event){
+    static void unTrust(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(!event.getMessage().contentToString().toLowerCase().contains("/untrust ")&&!event.getMessage().contentToString().toLowerCase().contains("/untrust-")) return;
-        String rawString = event.getMessage().contentToString().toLowerCase().replace("/untrust","").replace(" ","").replace("-","");
+        if(!message.toLowerCase().contains("/untrust ")&&!message.toLowerCase().contains("/untrust-")) return;
+        String rawString = message.toLowerCase().replace("/untrust","").replace(" ","").replace("-","");
         String strID = Pattern.compile("[^0-9]").matcher(rawString).replaceAll(" ").trim();
 
         Long ID=null;
@@ -232,11 +232,12 @@ public class Whitelist {
     }
 
     public static void operation(MessageEvent event){
+        String message = event.getMessage().contentToString();
         if(event instanceof GroupMessageEvent){
-            TrustGroupInGroup((GroupMessageEvent) event);
+            TrustGroupInGroup((GroupMessageEvent) event,message);
         }
-        Trust(event);
-        unTrust(event);
+        Trust(event,message);
+        unTrust(event,message);
     }
 
     public void ini(){

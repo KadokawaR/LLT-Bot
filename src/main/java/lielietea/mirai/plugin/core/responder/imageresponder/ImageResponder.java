@@ -12,6 +12,7 @@ import lielietea.mirai.plugin.utils.fileutils.Write;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import javax.imageio.ImageIO;
@@ -145,15 +146,15 @@ public class ImageResponder {
         return images[new Random().nextInt(images.length)];
     }
 
-    public static ImageResponderData triggeredWordData(MessageEvent event){
+    public static ImageResponderData triggeredWordData(String message){
         for(ImageResponderData ird:getINSTANCE().dataListClass.dataList){
             for(String keyword: ird.keyword){
                 switch(ird.triggerType){
                     case Contain:
-                        if(event.getMessage().contentToString().contains(keyword)) return ird;
+                        if(message.contains(keyword)) return ird;
                         break;
                     case Equal:
-                        if(event.getMessage().contentToString().equals(keyword)) return ird;
+                        if(message.equals(keyword)) return ird;
                         break;
                 }
             }
@@ -176,19 +177,44 @@ public class ImageResponder {
         return false;
     }
 
-    static void reset(MessageEvent event){
+    static void reset(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(event.getMessage().contentToString().toLowerCase().contains("/reset ir")){
+        if(message.toLowerCase().contains("/reset ir")){
             getINSTANCE().dataListClass=readRecord();
             event.getSubject().sendMessage("已经重置 Image Responder 的配置文件。");
         }
     }
 
+    public static void check(MessageEvent event,String message){
+        if(message.equalsIgnoreCase("/check ir")||message.equalsIgnoreCase("/check -ir")||message.equalsIgnoreCase("查看图库响应")){
+            MessageChainBuilder mcb = new MessageChainBuilder().append("图库响应关键词：\n");
+            for(int i=0;i<getINSTANCE().dataListClass.dataList.size();i++){
+                ImageResponderData ird = getINSTANCE().dataListClass.dataList.get(i);
+                mcb.append("关键词：");
+                StringBuilder sb = new StringBuilder();
+                for(String s:ird.keyword){
+                    sb.append(s);
+                    sb.append(" ");
+                }
+                mcb.append(sb.toString().trim()).append("\n").append("响应模式：").append(String.valueOf(ird.triggerType)).append("\n");
+                mcb.append("当前环境响应状态：").append(String.valueOf(isTriggered(ird,event)));
+                if(i!=getINSTANCE().dataListClass.dataList.size()-1){
+                    mcb.append("\n\n");
+                }
+            }
+            event.getSubject().sendMessage(mcb.asMessageChain());
+        }
+    }
+
     public static void handle(MessageEvent event){
-        ImageResponderData ird = triggeredWordData(event);
+
+        String message = event.getMessage().contentToString();
+        ImageResponderData ird = triggeredWordData(message);
 
         //管理员入口
-        reset(event);
+        reset(event,message);
+        //检查入口
+        check(event,message);
 
         if(!isTriggered(ird,event)) return;
 
@@ -236,7 +262,6 @@ public class ImageResponder {
 
         if(!ird.text.equals("")){
             event.getSubject().sendMessage(ird.text);
-            Harbor.count(event);
         }
 
         ExternalResource er = ExternalResource.create(image);
@@ -250,4 +275,5 @@ public class ImageResponder {
     public void ini(){
         System.out.println("Initialize Universal Image Responder");
     }
+
 }

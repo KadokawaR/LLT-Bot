@@ -40,7 +40,8 @@ public class BroadcastSystem {
 
     public static void handle(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
-        broadcast(event);
+        String message = event.getMessage().contentToString();
+        broadcast(event,message);
     }
 
     static BroadcastType getBT(MessageEvent event){
@@ -69,7 +70,7 @@ public class BroadcastSystem {
         }
     }
 
-    static void broadcast(MessageEvent event){
+    static void broadcast(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
 
         //在广播模式中
@@ -96,8 +97,8 @@ public class BroadcastSystem {
 
         } else {
 
-            if(event.getMessage().contentToString().toLowerCase().contains("/broadcast")){
-                enterBroadcastMode(event);
+            if(message.toLowerCase().contains("/broadcast")){
+                enterBroadcastMode(event,message);
             }
 
         }
@@ -141,9 +142,9 @@ public class BroadcastSystem {
         return result.asMessageChain();
     }
 
-    static void enterBroadcastMode(MessageEvent event){
+    static void enterBroadcastMode(MessageEvent event, String message){
 
-        String rawString = event.getMessage().contentToString().toLowerCase().replace("/broadcast", "").replace(" ", "").replace("-", "");
+        String rawString = message.toLowerCase().replace("/broadcast", "").replace(" ", "").replace("-", "");
 
         switch (rawString) {
             case "f":

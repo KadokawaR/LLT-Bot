@@ -67,6 +67,7 @@ public class GameCenterCount {
         FishingGo,
         FishingCollection,
         FishingNotReadyYet,
+        EndFishing,
 
         BankCheck,
 

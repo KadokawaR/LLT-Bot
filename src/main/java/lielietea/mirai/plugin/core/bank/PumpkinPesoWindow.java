@@ -11,31 +11,29 @@ import net.mamoe.mirai.message.data.SingleMessage;
 import java.math.BigDecimal;
 
 public class PumpkinPesoWindow {
-    public static void checkMoney(MessageEvent event) {
-        if (event.getMessage().contentToString().equals("/bank") || event.getMessage().contentToString().equals("查询余额")) {
+    public static void checkMoney(MessageEvent event,String message) {
+        if (message.equals("/bank") || message.equals("查询余额")) {
             MessageChainBuilder mcb = new MessageChainBuilder();
-
-            GameCenterCount.count(GameCenterCount.Functions.BankCheck);
 
             if (event.getClass().equals(GroupMessageEvent.class)) {
                 mcb.append((new At(event.getSender().getId())));
             }
 
+            GameCenterCount.count(GameCenterCount.Functions.BankCheck);
+
             mcb.append("您的余额为");
             mcb.append(" ").append(String.valueOf(SenoritaCounter.getDisplayNumber(event.getSender().getId(), Currencies.PUMPKIN_PESO))).append(" 南瓜比索");
-            //mcb.append("Akaoni：").append(String.valueOf(getDisplayNumber(event.getSender().getId(), Currencies.AKAONI))).append("\n");
-            //mcb.append("Antoninianus：").append(String.valueOf(getDisplayNumber(event.getSender().getId(), Currencies.ANTONINIANUS))).append("\n");
-            //mcb.append("Adventurer's：").append(String.valueOf(getDisplayNumber(event.getSender().getId(), Currencies.ADVENTURER_S)));
             event.getSubject().sendMessage(mcb.asMessageChain());
             return;
         }
 
-        if(event instanceof GroupMessageEvent) {
-            if (event.getMessage().contentToString().toLowerCase().startsWith("/bank") && event.getMessage().contentToString().contains("@")) {
+        if (event instanceof GroupMessageEvent) {
+            if (message.toLowerCase().startsWith("/bank") && message.contains("@")) {
                 if (IdentityUtil.isAdmin(event)) {
                     for (SingleMessage sm : event.getMessage()) {
-                        if (sm.contentToString().startsWith("@")) {
-                            long ID = Long.parseLong(sm.contentToString().replace("@", ""));
+                        String SMM = sm.contentToString();
+                        if (SMM.startsWith("@")) {
+                            long ID = Long.parseLong(SMM.replace("@", ""));
                             String money = SenoritaCounter.getDisplayNumber(ID, Currencies.PUMPKIN_PESO);
                             if (money == null) {
                                 event.getSubject().sendMessage("未能查询该用户");
@@ -53,8 +51,7 @@ public class PumpkinPesoWindow {
             }
         }
 
-        if (IdentityUtil.isAdmin(event) && event.getMessage().contentToString().startsWith("/bank ")) {
-            String message = event.getMessage().contentToString();
+        if (IdentityUtil.isAdmin(event) && message.toLowerCase().startsWith("/bank ")) {
             String[] messageSplit = message.split(" ");
             if (messageSplit.length != 2) {
                 event.getSubject().sendMessage("查询格式错误。");
@@ -64,34 +61,46 @@ public class PumpkinPesoWindow {
             if (money == null) {
                 event.getSubject().sendMessage("未能查询该用户");
             } else {
-                event.getSubject().sendMessage("该用户的银行余额是" + money + "南瓜比索。");
+                event.getSubject().sendMessage("该用户的余额是" + money + "南瓜比索。");
             }
         }
     }
 
-    public static void moneyLaundry(MessageEvent event) {
+    public static void moneyLaundry(MessageEvent event,String message) {
         if (!IdentityUtil.isAdmin(event)) return;
-        if (event.getMessage().contentToString().contains("/laundry ")) {
+
+        if (message.startsWith("/laundry ")) {
             //如果有负号就是扣钱了
-            if (event.getMessage().contentToString().contains("-")) {
-                String amount = event.getMessage().contentToString().replace("/laundry -", "");
+            if (message.contains("-")) {
+                String amount = message.replace("/laundry -", "");
                 BigDecimal amountBD = new BigDecimal(amount);
                 minusMoney(event.getSender().getId(), amountBD);
                 //不然就是加钱
             } else {
-                String amount = event.getMessage().contentToString().replace("/laundry ", "");
+                String amount = message.replace("/laundry ", "");
                 BigDecimal amountBD = new BigDecimal(amount);
                 addMoney(event.getSender().getId(), amountBD);
             }
+            return;
         }
 
-        if (event.getMessage().contentToString().contains("/set ")) {
-            String message = event.getMessage().contentToString();
-            String[] messageSplit = message.split(" ");
+        if (message.toLowerCase().startsWith("/set")) {
+
+            if(message.contains(" @")) message = message.replace(" @","@");
+
+            String[] messageSplit = message.split(" |@");
+
             if (messageSplit.length != 3) {
                 event.getSubject().sendMessage("设置金额失败。");
                 return;
             }
+
+            if (event instanceof GroupMessageEvent) {
+                if (message.contains("@")) {
+                    setMoney(Long.parseLong(messageSplit[1].replace("@","")), new BigDecimal(messageSplit[2]));
+                }
+            }
+
             setMoney(Long.parseLong(messageSplit[1]), new BigDecimal(messageSplit[2]));
             event.getSubject().sendMessage("已设置成功。");
         }
