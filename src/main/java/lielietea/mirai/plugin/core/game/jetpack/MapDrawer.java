@@ -64,12 +64,7 @@ public class MapDrawer extends BaiduAPI {
     }
 
     public static BufferedImage drawAvatar(BufferedImage originImage){
-        try {
-            return ImageCreater.addImageAtCenter(originImage, ImageCreater.getImageFromResource("/pics/jetpack/avatar-circle-100-100.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return ImageCreater.addImageAtCenter(originImage, ImageCreater.getImageFromResource("/pics/jetpack/avatar-circle-100-100.png"));
     }
 
     public static BufferedImage drawTrack(Location loc1, Location loc2, Location currentLocation, int zoomLevel, BufferedImage ground){

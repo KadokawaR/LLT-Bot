@@ -1,8 +1,8 @@
 package lielietea.mirai.plugin.core.game.montecarlo.taisai;
 
 import com.google.common.collect.ImmutableSet;
-import mirai.chitung.plugin.core.game.montecarlo.MonteCarloUtil;
-import mirai.chitung.plugin.utils.image.ImageCreater;
+import lielietea.mirai.plugin.core.game.montecarlo.MonteCarloUtil;
+import lielietea.mirai.plugin.utils.image.ImageCreater;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.MessageEvent;
 

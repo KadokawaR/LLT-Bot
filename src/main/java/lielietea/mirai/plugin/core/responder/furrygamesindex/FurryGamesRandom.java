@@ -16,7 +16,7 @@ public class FurryGamesRandom implements MessageResponder<MessageEvent> {
 
     @Override
     public boolean match(String content) {
-        return content.getMessage().contentToString().toLowerCase().contains("/fgi random");
+        return content.toLowerCase().contains("/fgi random");
     }
 
     @Override
@@ -24,6 +24,7 @@ public class FurryGamesRandom implements MessageResponder<MessageEvent> {
         RespondTask.Builder builder = new RespondTask.Builder(event,this);
         StringBuilder sb = new StringBuilder();
         String[] gameInfo = FurryGamesIndex.getGameInfo("",true);
+        assert gameInfo != null;
         sb.append(gameInfo[0])
                 .append("\n\n")
                 .append(gameInfo[2])

@@ -21,6 +21,7 @@ public class ImageCreater {
         InputStream is1 = JsonFile.getInputStream(winner.getAvatarUrl());
         BufferedImage img1 = ImageIO.read(is1);
         InputStream is2 = ImageCreater.class.getResourceAsStream("/pics/winner/wanted.jpg");
+        assert is2 != null;
         BufferedImage img2 = ImageIO.read(is2);
         BufferedImage img0;
         //头像变形
@@ -52,10 +53,15 @@ public class ImageCreater {
         return imgNew;
     }
 
-    public static BufferedImage getImageFromResource(String filepath) throws IOException {
-        InputStream is2 = ImageCreater.class.getResourceAsStream(filepath);
-        assert is2 != null;
-        return ImageIO.read(is2);
+    //从内部包获得图片
+    public static BufferedImage getImageFromResource(String path){
+        try(InputStream is = ImageCreater.class.getResourceAsStream(path)){
+            if(is==null) return null;
+            return ImageIO.read(is);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //裁剪图片
@@ -140,6 +146,57 @@ public class ImageCreater {
         imgNew.setRGB(wL, 0, wR, hL, imgRightArray, 0, wR);
         return imgNew;
     }
+
+    //水平方向并列加图
+    public static BufferedImage addImagesVertically(BufferedImage[] images) {
+
+        int maxHeight = 0;
+        int totalWidth = 0;
+
+        for (BufferedImage bufferedImage : images) {
+            if (bufferedImage.getHeight() > maxHeight) maxHeight = bufferedImage.getHeight();
+            totalWidth += bufferedImage.getWidth();
+        }
+
+        BufferedImage newImage = new BufferedImage(totalWidth, maxHeight, BufferedImage.TYPE_INT_RGB);
+
+        int accumulatedWidth = 0;
+
+        for(BufferedImage image:images){
+            int[] imageArray = new int[image.getWidth()*image.getHeight()];
+            imageArray = image.getRGB(0, 0, image.getWidth(), image.getHeight(), imageArray, 0, image.getWidth());
+            newImage.setRGB(accumulatedWidth,0,image.getWidth(),image.getHeight(),imageArray,0,image.getWidth());
+            accumulatedWidth += image.getWidth();
+        }
+
+        return newImage;
+    }
+
+    //垂直方向并列加图
+    public static BufferedImage addImagesHorizontally(BufferedImage[] images) {
+
+        int maxWidth = 0;
+        int totalHeight = 0;
+
+        for (BufferedImage bufferedImage : images) {
+            if (bufferedImage.getWidth() > maxWidth) maxWidth = bufferedImage.getHeight();
+            totalHeight += bufferedImage.getHeight();
+        }
+
+        BufferedImage newImage = new BufferedImage(maxWidth, totalHeight, BufferedImage.TYPE_INT_RGB);
+
+        int accumulatedHeight = 0;
+
+        for(BufferedImage image:images){
+            int[] imageArray = new int[image.getWidth()*image.getHeight()];
+            imageArray = image.getRGB(0, 0, image.getWidth(), image.getHeight(), imageArray, 0, image.getWidth());
+            newImage.setRGB(0,accumulatedHeight,image.getWidth(),image.getHeight(),imageArray,0,image.getWidth());
+            accumulatedHeight += image.getHeight();
+        }
+
+        return newImage;
+    }
+
 
     //在原图的下边加上一张等宽的新图片
     public static BufferedImage addImageAtBottom(BufferedImage imgUp, BufferedImage imgBottom) {

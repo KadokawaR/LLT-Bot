@@ -30,12 +30,7 @@ public class GardenMap extends GardenUtils {
         } else {
             ps = PlantSeed.values()[i].toString();
         }
-        try {
-            return ImageCreater.getImageFromResource("/pics/garden/seed/" + ps + ".png");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return ImageCreater.getImageFromResource("/pics/garden/seed/" + ps + ".png");
     }
 
     public static BufferedImage assembleImage(GardenWorld gw, long groupID) {

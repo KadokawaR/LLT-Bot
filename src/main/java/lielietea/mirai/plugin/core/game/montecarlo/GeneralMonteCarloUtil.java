@@ -1,6 +1,6 @@
 package lielietea.mirai.plugin.core.game.montecarlo;
 
-import mirai.chitung.plugin.core.bank.PumpkinPesoWindow;
+import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;

@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.core.game.montecarlo.minesweeper;
 
 import com.google.common.collect.ImmutableSet;
-import mirai.chitung.plugin.core.game.montecarlo.MonteCarloUtil;
+import lielietea.mirai.plugin.core.game.montecarlo.MonteCarloUtil;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.MessageEvent;
 
