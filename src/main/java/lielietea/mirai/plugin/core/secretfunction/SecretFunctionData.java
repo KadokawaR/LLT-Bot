@@ -19,6 +19,10 @@ public class SecretFunctionData {
         return this.repeater.contains(event.getGroup().getId());
     }
 
+    public boolean canDoRepeater(long groupID){
+        return this.repeater.contains(groupID);
+    }
+
     public boolean canDoAntiWithdraw(GroupMessageEvent event){
         return this.antiWithdraw.contains(event.getGroup().getId());
     }

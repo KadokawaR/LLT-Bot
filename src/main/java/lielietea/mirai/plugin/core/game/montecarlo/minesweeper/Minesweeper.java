@@ -180,6 +180,11 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
                     continue;
                 }
 
+                if(integer>MineUtil.RandomLimit){
+                    illegalIndicator++;
+                    continue;
+                }
+
                 //random 会覆盖额外的下注
                 int[][] randomPosition = MineFactory.randomMine(mineSetting.x, mineSetting.y, integer);
                 mineUtil.getData(event.getSender()).addBet(MineUtil.dataConvert(randomPosition,mineSetting.x,mineSetting.y));

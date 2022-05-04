@@ -225,6 +225,7 @@ public class TaiSai implements MonteCarloGame<MessageEvent> {
         if(startBetList.contains(event.getSubject())){
             event.getSubject().sendMessage(TaiSaiUtil.StartBetNotice);
             executorService.schedule(new EndBet(event.getSubject()), TaiSaiUtil.GapTime, TimeUnit.SECONDS);
+            TaiSai.executorService.schedule(new EndFunction(event.getSubject()), TaiSaiUtil.GapTime*2,TimeUnit.SECONDS);
             startBetList.remove(event.getSubject());
             isInBetList.add(event.getSubject());
         }
@@ -304,10 +305,9 @@ public class TaiSai implements MonteCarloGame<MessageEvent> {
 
         @Override
         public void run(){
-            TaiSai.isInBetList.remove(subject);
-            TaiSai.isInFunctionList.add(subject);
+            isInBetList.remove(subject);
+            isInFunctionList.add(subject);
             subject.sendMessage(TaiSaiUtil.EndBetNotice + TaiSaiUtil.StartOperateNotice);
-            TaiSai.executorService.schedule(new EndFunction(subject), TaiSaiUtil.GapTime,TimeUnit.SECONDS);
         }
     }
 

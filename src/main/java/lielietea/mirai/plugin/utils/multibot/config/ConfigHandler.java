@@ -69,7 +69,6 @@ public class ConfigHandler {
                 return;
             }
 
-            //todo:事否更改到了？
             config = readRecord().getBotConfigs();
             assert config != null;
             switch(messageSplit[1]){

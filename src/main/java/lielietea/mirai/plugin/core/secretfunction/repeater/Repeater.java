@@ -39,6 +39,7 @@ public class Repeater {
 
     // 一旦机器人说话就清空记录
     public static void flush(Group group) {
+        if(!SecretFunctionDatabase.getINSTANCE().secretFunctionData.canDoRepeater(group.getId())) return;
         messageContainer.remove(group.getId());
     }
 
@@ -53,7 +54,6 @@ public class Repeater {
         }
         return true;
     }
-
 
     static class MessageHolder {
         MessageChain messages;

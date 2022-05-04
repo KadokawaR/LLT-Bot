@@ -15,7 +15,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ContactUtil {
-    public static final String JOIN_GROUP = "七爷来了！这里是七筒，很高兴为您服务。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。";
+    public static final String JOIN_GROUP = "七爷来了！这里是七筒，很高兴为您服务。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。"+
+            "如需要联系七筒的开发者和体验七筒功能，请添加公众聊天群：932617537。\n" +
+            "如需要获得七筒的最新消息，请添加通知群：948979109。";
     public static final String DISCLAIMER = "本项目仅限学习使用，不涉及到任何商业或者金钱用途，禁止用于非法行为。您的使用行为将被视为对本声明全部内容的认可。本声明在您邀请该账号（QQ账号：340865180）进入任何腾讯QQ群聊时生效。\n" +
             "\n" +
             "本项目在运作时，不可避免地会使用到您的QQ号、QQ昵称、群号、群昵称等信息。后台不会收集具体的聊天内容，如果您对此有所疑问，请停止使用本项目。基于维持互联网秩序的考量，请勿恶意使用本项目。本项目有权停止对任何对象的服务，任何解释权均归本项目开发组所有。\n" +

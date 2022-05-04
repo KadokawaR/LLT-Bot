@@ -19,6 +19,7 @@ public class AdminHelp {
             "/block 空格 -g 或者 -f 空格 QQ号：屏蔽该号码的群聊或者用户\n" +
             "/unblock 空格 -g 或者 -f 空格 QQ号：解除屏蔽该号码的群聊或者用户\n\n" +
             "Config：\n" +
+            "/config：查看 config\n" +
             "/config -h：查看 config 的帮助\n" +
             "/config 空格 数字序号 空格 true/false：开关相应配置\n\n" +
             "Data：\n" +
