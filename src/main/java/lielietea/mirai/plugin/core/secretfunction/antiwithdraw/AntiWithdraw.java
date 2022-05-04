@@ -6,7 +6,7 @@ import lielietea.mirai.plugin.core.secretfunction.SecretFunctionData;
 import lielietea.mirai.plugin.core.secretfunction.SecretFunctionDatabase;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageRecallEvent;
-import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.*;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -30,14 +30,29 @@ public class AntiWithdraw {
         if(SecretFunctionDatabase.getINSTANCE().secretFunctionData.canDoAntiWithdraw(event.getGroup().getId())) {
             MessageChain mc = dataInTwoMinutes.get(event.getGroup().getId(), event.getMessageTime());
             if (mc != null) {
-                event.getGroup().sendMessage(mc);
+                MessageChainBuilder mcb = new MessageChainBuilder();
+                mcb.append(new At(event.getAuthorId())).append(" 刚刚撤回了：").append(mc);
+                event.getGroup().sendMessage(mcb.asMessageChain());
             }
         }
 
     }
 
+    private static boolean isValidMessage(MessageChain chain) {
+        if (chain.contains(QuoteReply.Key)) {
+            return false;
+        }
+        for (Message message : chain) {
+            if (!(message instanceof MessageSource || message instanceof PlainText || message instanceof At || message instanceof Image))
+                return false;
+        }
+        return true;
+    }
+
     public static void save(GroupMessageEvent event){
-        dataInTwoMinutes.put(event.getGroup().getId(), event.getTime(),event.getMessage());
+        if(isValidMessage(event.getMessage())) {
+            dataInTwoMinutes.put(event.getGroup().getId(), event.getTime(), event.getMessage());
+        }
     }
 
     static class Update implements Runnable{

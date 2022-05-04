@@ -27,7 +27,9 @@ public class AdminHelp {
             "/coverage：查看总覆盖人数\n\n" +
             "MessagePostSendEvent:\n" +
             "/break：查看熔断状况\n" +
-            "/mpse：查看 MPSE 数据";
+            "/mpse：查看 MPSE 数据\n\n"+
+            "GameCenter:\n" +
+            "/gamecenter：查看游戏情况";
 
     //todo 补充MPSE GameCenter WhiteList
     public static void send(MessageEvent event){

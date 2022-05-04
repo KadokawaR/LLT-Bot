@@ -12,10 +12,15 @@ import java.nio.file.StandardOpenOption;
 public class Write {
     //追加写入
     public static void append(String content, String PATH) {
-        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(Paths.get(PATH), StandardOpenOption.APPEND), StandardCharsets.UTF_8)) {
-            writer.write(content);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+
+        BufferedWriter out;
+        try {
+            out = new BufferedWriter(new FileWriter(PATH, true));
+            out.write(content);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+
         }
     }
 

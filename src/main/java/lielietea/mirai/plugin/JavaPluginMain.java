@@ -13,6 +13,7 @@ import lielietea.mirai.plugin.core.responder.imageresponder.ImageResponder;
 import lielietea.mirai.plugin.core.responder.universalrespond.URManager;
 import lielietea.mirai.plugin.core.secretfunction.SecretFunctionHandler;
 import lielietea.mirai.plugin.core.secretfunction.antiwithdraw.AntiWithdraw;
+import lielietea.mirai.plugin.core.secretfunction.repeater.Repeater;
 import lielietea.mirai.plugin.utils.*;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.game.GameCenter;
@@ -146,7 +147,11 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(MessageRecallEvent.GroupRecall.class, AntiWithdraw::handle);
 
         //计数
-        GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, event ->{
+            MessagePostSendEventHandler.handle(event);
+            Repeater.flush(event.getTarget());
+        });
+
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, MessagePostSendEventHandler::handle);
 
         //临时消息

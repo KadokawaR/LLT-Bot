@@ -19,6 +19,7 @@ public class FeedBack implements MessageResponder<MessageEvent> {
 
     @Override
     public boolean match(String content) {
+        if(content.equals("意见反馈")) return false;
         return content.startsWith("意见反馈");
     }
 

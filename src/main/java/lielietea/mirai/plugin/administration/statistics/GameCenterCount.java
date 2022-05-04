@@ -51,7 +51,7 @@ public class GameCenterCount {
     }
 
     public static void getStatistics(MessageEvent event){
-        if(!event.getMessage().contentToString().contains("/gamecenter")) return;
+        if(!event.getMessage().contentToString().equalsIgnoreCase("/gamecenter")) return;
         MessageUtil.notifyDevGroup(getResult(),Bot.getInstances().get(0).getId());
     }
 
