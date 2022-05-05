@@ -28,7 +28,7 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
     static CopyOnWriteArrayList<MineUserData> data = new CopyOnWriteArrayList<>();
     static ConcurrentHashMap<Contact,MineSetting> mines = new ConcurrentHashMap<>();
 
-    static MineUtil mineUtil = new MineUtil();
+    public static MineUtil mineUtil = new MineUtil();
     
     @Override
     public void handle(MessageEvent event) {
@@ -159,6 +159,7 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
 
         String[] elements = message.toLowerCase().split(" ");
         int illegalIndicator = 0;
+        int repeatedValue = 0;
 
         MineSetting mineSetting = mines.get(event.getSubject());
 
@@ -213,7 +214,29 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
             }
 
             if(x!=-1&&y!=-1){
-                positions.add(new MineData(x,y));
+
+                boolean hasRepeatedValue = false;
+
+                for(MineData md:positions){
+                    if(md.x==x&&md.y==y){
+                        hasRepeatedValue=true;
+                        break;
+                    }
+                }
+
+                for(MineData md:mineUtil.getData(event.getSender()).betList){
+                    if(md.x==x&&md.y==y){
+                        hasRepeatedValue=true;
+                        break;
+                    }
+                }
+
+                if(!hasRepeatedValue){
+                    positions.add(new MineData(x,y));
+                } else {
+                    repeatedValue++;
+                }
+
             } else {
                 illegalIndicator++;
             }
@@ -221,6 +244,13 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
         }
 
         MessageChainBuilder mcb = GeneralMonteCarloUtil.mcbProcessor(event);
+
+        if(positions.size()==0 && randomCount == 0 &&repeatedValue>0){
+            mcb.append("未收到任何有效下注。请仔细阅读说明书。");
+            mcb.append("\n存在").append(String.valueOf(repeatedValue)).append("处重复下注。");
+            event.getSubject().sendMessage(mcb.asMessageChain());
+            return;
+        }
 
         if(positions.size()==0 && illegalIndicator==0 && randomCount == 0){
             mcb.append("未收到任何有效下注。请仔细阅读说明书。");
@@ -257,6 +287,10 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
 
         if(illegalIndicator>0) {
             mcb.append("\n存在").append(String.valueOf(illegalIndicator)).append("处指示器使用错误，请仔细阅读说明书。");
+        }
+
+        if(repeatedValue>0) {
+            mcb.append("\n存在").append(String.valueOf(repeatedValue)).append("处重复下注。");
         }
 
         event.getSubject().sendMessage(mcb.asMessageChain());

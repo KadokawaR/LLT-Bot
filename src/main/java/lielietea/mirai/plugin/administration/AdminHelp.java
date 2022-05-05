@@ -15,6 +15,8 @@ public class AdminHelp {
             "/reset 空格 ur：重置通用响应的配置文件\n" +
             "/reset 空格 ir：重置通用图库响应的配置文件\n" +
             "/reset 空格 config：重置 Config 配置文件\n\n" +
+            "UniversalResponder：\n" +
+            "/check 空格 ur：查看 UR 的配置文件\n\n" +
             "Blacklist：\n" +
             "/block 空格 -g 或者 -f 空格 QQ号：屏蔽该号码的群聊或者用户\n" +
             "/unblock 空格 -g 或者 -f 空格 QQ号：解除屏蔽该号码的群聊或者用户\n\n" +

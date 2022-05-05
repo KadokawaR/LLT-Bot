@@ -29,7 +29,7 @@ public class TaiSai implements MonteCarloGame<MessageEvent> {
     static CopyOnWriteArrayList<Contact> isInFunctionList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<TaiSaiUserData> data = new CopyOnWriteArrayList<>();
     
-    static TaiSaiUtil util = new TaiSaiUtil();
+    public static TaiSaiUtil util = new TaiSaiUtil();
 
     static final String TAISAI_PATH = "/pics/casino/taisai.png";
 

@@ -19,7 +19,7 @@ public class FunctTemporary implements MessageResponder<MessageEvent> {
 
     @Override
     public boolean match(String content){
-        return content.equals("/funct")|| content.equals("查看功能");
+        return content.equals("/oldfunct")|| content.equals("查看旧功能");
     }
 
     @Override
