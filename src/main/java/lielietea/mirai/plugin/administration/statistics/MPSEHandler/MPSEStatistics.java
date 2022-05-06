@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.administration.statistics.MPSEHandler;
 
+import lielietea.mirai.plugin.NotificationSetting;
 import lielietea.mirai.plugin.core.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.MessageUtil;
@@ -25,8 +26,10 @@ public class MPSEStatistics extends MPSEProcessor{
         TIMER.schedule(new TimerTask() {
                            @Override
                            public void run() {
-                               for(Bot bot: Bot.getInstances()){
-                                   MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()), bot);
+                               if(NotificationSetting.MPSENotification) {
+                                   for (Bot bot : Bot.getInstances()) {
+                                       MessageUtil.notifyDevGroup(MPSEStatistics.buildMPSEStatistics(bot.getId()), bot);
+                                   }
                                }
 
                            }

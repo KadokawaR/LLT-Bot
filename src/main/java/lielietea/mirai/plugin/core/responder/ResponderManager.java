@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.core.responder;
 
 
+import lielietea.mirai.plugin.NotificationSetting;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MPSEStatistics;
 import lielietea.mirai.plugin.core.responder.basic.AntiDirtyWord;
 import lielietea.mirai.plugin.core.responder.basic.AntiOverwatch;
@@ -17,6 +18,7 @@ import lielietea.mirai.plugin.core.responder.fursona.FursonaPunk;
 import lielietea.mirai.plugin.core.responder.help.DisclTemporary;
 import lielietea.mirai.plugin.core.responder.help.FunctTemporary;
 import lielietea.mirai.plugin.core.responder.help.Help;
+import lielietea.mirai.plugin.core.responder.help.NewFunct;
 import lielietea.mirai.plugin.core.responder.lotterywinner.LotteryBummerMessageHandler;
 import lielietea.mirai.plugin.core.responder.lotterywinner.LotteryC4MessageHandler;
 import lielietea.mirai.plugin.core.responder.lotterywinner.LotteryWinnerMessageHandler;
@@ -50,9 +52,11 @@ public class ResponderManager {
         TIMER.schedule(new TimerTask() {
                            @Override
                            public void run() {
-                               String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
-                               for(Bot bot: Bot.getInstances()){
-                                   MessageUtil.notifyDevGroup(result, bot);
+                               if(NotificationSetting.NewlyOptimizedSequenceNotification) {
+                                   String result = ResponderManager.getINSTANCE().optimizeHandlerSequence(true);
+                                   for (Bot bot : Bot.getInstances()) {
+                                       MessageUtil.notifyDevGroup(result, bot);
+                                   }
                                }
                            }
                        },
@@ -134,6 +138,7 @@ public class ResponderManager {
         register(FurryGamesRandom::new);
         register(FurryGamesSearch::new);
         register(FeedBack::new);
+        register(NewFunct::new);
     }
 
     /**

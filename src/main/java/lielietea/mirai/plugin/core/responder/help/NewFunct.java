@@ -14,6 +14,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class NewFunct implements MessageResponder<MessageEvent> {
         positions[Index.Responder.code] = new Position(25,333); //responder 1->1
         positions[Index.GroupConfig.code] = new Position(226 ,184); //groupconfig 4->2
         positions[Index.Casino.code] = new Position(226,727); //casino 6->3
-        positions[Index.Fish.code] = new Position(226,1038); //fish 7->4
+        positions[Index.Fish.code] = new Position(226,1221); //fish 7->4
         positions[Index.Lottery.code] = new Position(426,184); //lottery 5->5
         positions[Index.Responder2.code] = new Position(426,508); //responder part2 3->6
         positions[Index.Mahjong.code] = new Position(25,1201); //mahjong 2->7
@@ -158,12 +159,16 @@ public class NewFunct implements MessageResponder<MessageEvent> {
             images[i] = getImage(paths[i]);
         }
 
-        BufferedImage result = images[0];
+        BufferedImage result = new BufferedImage(images[0].getWidth(),images[0].getHeight(),BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = result.createGraphics();
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0,0,images[0].getWidth(),images[0].getHeight());
+        g2d.drawImage(images[0],0,0,null);
 
         for(int i=1;i<images.length;i++){
             assert images[0] != null;
             assert images[i] != null;
-            result = ImageCreater.addImage(result, images[i], positions[i].X * images[0].getWidth()/positions[0].X, positions[i].Y * images[0].getHeight()/positions[0].Y);
+            g2d.drawImage(images[i],(int)((double)positions[i].X * (double)images[0].getWidth()/ (double)positions[0].X), (int)((double) positions[i].Y * (double) images[0].getHeight()/ (double)positions[0].Y),null);
         }
 
         return result;
@@ -172,7 +177,7 @@ public class NewFunct implements MessageResponder<MessageEvent> {
 
     @Override
     public boolean match(String content){
-        return content.equals("/funct")|| content.equals("查看功能");
+        return content.equalsIgnoreCase("/funct")|| content.equals("查看功能");
     }
 
     @Override

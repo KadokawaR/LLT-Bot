@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.administration.statistics;
 
+import lielietea.mirai.plugin.NotificationSetting;
 import lielietea.mirai.plugin.utils.MessageUtil;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -31,7 +32,9 @@ public class GameCenterCount {
     class AutoClear implements Runnable{
         @Override
         public void run() {
-            MessageUtil.notifyDevGroup(getResult(), Bot.getInstances().get(0).getId());
+            if(NotificationSetting.GameCenterNotification) {
+                MessageUtil.notifyDevGroup(getResult(), Bot.getInstances().get(0).getId());
+            }
             for(Functions funct:Functions.values()){
                 countMap.put(funct,0);
             }

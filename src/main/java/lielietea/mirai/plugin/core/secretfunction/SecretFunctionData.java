@@ -9,10 +9,12 @@ public class SecretFunctionData {
 
     List<Long> antiWithdraw;
     List<Long> repeater;
+    List<Long> secretFunction;
 
     SecretFunctionData(){
         this.antiWithdraw = new ArrayList<>();
         this.repeater = new ArrayList<>();
+        this.secretFunction = new ArrayList<>();
     }
 
     public boolean canDoRepeater(GroupMessageEvent event){
@@ -29,6 +31,14 @@ public class SecretFunctionData {
 
     public boolean canDoAntiWithdraw(long groupID){
         return this.antiWithdraw.contains(groupID);
+    }
+
+    public boolean canDoSecretFunction(long groupID){
+        return this.secretFunction.contains(groupID);
+    }
+
+    public boolean canDoSecretFunction(GroupMessageEvent event){
+        return this.secretFunction.contains(event.getGroup().getId());
     }
 
 }

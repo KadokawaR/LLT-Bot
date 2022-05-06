@@ -15,7 +15,10 @@ public class MessageUtil {
         List<Bot> bots = Bot.getInstances();
         for (Bot bot : bots) {
             Group group = bot.getGroup(IdentityUtil.DevGroup.DEFAULT.getID());
-            if (group != null) group.sendMessage(content);
+            if (group != null){
+                group.sendMessage(content);
+                return;
+            }
         }
     }
 
@@ -23,7 +26,10 @@ public class MessageUtil {
         List<Bot> bots = Bot.getInstances();
         for (Bot bot : bots) {
             Group group = bot.getGroup(IdentityUtil.DevGroup.DEFAULT.getID());
-            if (group != null) group.sendMessage(messageChain);
+            if (group != null){
+                group.sendMessage(messageChain);
+                return;
+            }
         }
     }
 

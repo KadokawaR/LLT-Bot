@@ -89,6 +89,7 @@ public class MultiBotHandler {
     public static void writeRecord(){
         String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(getINSTANCE().botConfigList);
         Write.cover(jsonString, BOT_CONFIGURATION_PATH);
+        getINSTANCE().botConfigList=readRecord();
     }
 
     private Integer getIndexOfBot(long ID){
@@ -111,7 +112,7 @@ public class MultiBotHandler {
                 count++;
             }
         }
-        if(count==0) sb.append("\n\n艹 我们没号了，先别加群了。");
+        if(count==0) sb.append("\n\n目前暂无账号，请联系开发者。");
         return sb.toString();
     }
 

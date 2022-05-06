@@ -5,7 +5,11 @@ import lielietea.mirai.plugin.core.game.montecarlo.minesweeper.Minesweeper;
 import lielietea.mirai.plugin.core.game.montecarlo.roulette.Roulette;
 import lielietea.mirai.plugin.core.game.montecarlo.taisai.TaiSai;
 import lielietea.mirai.plugin.core.harbor.Harbor;
+import lielietea.mirai.plugin.core.secretfunction.SecretFunctionData;
+import lielietea.mirai.plugin.core.secretfunction.SecretFunctionDatabase;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.io.InputStream;
@@ -27,7 +31,11 @@ public class CasinoCroupier {
                 BlackJack.go(event);
                 Roulette.go(event);
                 taisai.handle(event);
-                minesweeper.handle(event);
+                if(event instanceof GroupMessageEvent) {
+                    if (SecretFunctionDatabase.getINSTANCE().secretFunctionData.canDoSecretFunction((GroupMessageEvent) event)) {
+                        minesweeper.handle(event);
+                    }
+                }
                 return;
 
             case 1:
@@ -43,7 +51,12 @@ public class CasinoCroupier {
                 return;
 
             case 4:
-                minesweeper.handle(event);
+                if(event instanceof GroupMessageEvent) {
+                    if (SecretFunctionDatabase.getINSTANCE().secretFunctionData.canDoSecretFunction((GroupMessageEvent) event)) {
+                        minesweeper.handle(event);
+                    }
+                }
+
                 return;
 
         }

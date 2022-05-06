@@ -19,22 +19,20 @@ import java.util.Map;
 
 public class ConfigHandler {
 
-    static Map<MultiBotHandler.BotName,Config> config = MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs();
-
     static BotConfigList readRecord(){ return MultiBotHandler.readRecord(); }
 
     static void writeRecord(){ MultiBotHandler.writeRecord(); }
 
     public static Config getConfig(Bot bot){
-        return config.get(MultiBotHandler.BotName.get(bot.getId()));
+        return MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(bot.getId()));
     }
 
     public static Config getConfig(long botID){
-        return config.get(MultiBotHandler.BotName.get(botID));
+        return MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(botID));
     }
 
     public static Config getConfig(MessageEvent event){
-        return config.get(MultiBotHandler.BotName.get(event.getBot().getId()));
+        return MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(event.getBot().getId()));
     }
 
     static void getCurrentBotConfig(MessageEvent event,String message){
@@ -69,36 +67,35 @@ public class ConfigHandler {
                 return;
             }
 
-            config = readRecord().getBotConfigs();
-            assert config != null;
+
             switch(messageSplit[1]){
                 case "1":{
-                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAddFriend(Boolean.parseBoolean(messageSplit[2]));
+                    MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(event.getBot().getId())).setAddFriend(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置acceptFriend为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "2":{
-                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAddGroup(Boolean.parseBoolean(messageSplit[2]));
+                    MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(event.getBot().getId())).setAddGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置acceptGroup为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "3":{
-                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
+                    MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(event.getBot().getId())).setAnswerFriend(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerFriend为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "4":{
-                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
+                    MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(event.getBot().getId())).setAnswerGroup(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置answerGroup为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
                 case "5":{
-                    config.get(MultiBotHandler.BotName.get(event.getBot().getId())).setAutoAnswer(Boolean.parseBoolean(messageSplit[2]));
+                    MultiBotHandler.getINSTANCE().botConfigList.getBotConfigs().get(MultiBotHandler.BotName.get(event.getBot().getId())).setAutoAnswer(Boolean.parseBoolean(messageSplit[2]));
                     event.getSubject().sendMessage("已设置sendNotice为"+Boolean.parseBoolean(messageSplit[2]));
                     break;
                 }
             }
-            writeRecord();
+            MultiBotHandler.writeRecord();
         }
     }
 
@@ -123,8 +120,8 @@ public class ConfigHandler {
 
     static void reset(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(message.toLowerCase().contains("/reset")&&(message.toLowerCase().contains("config"))){
-            config=readRecord().getBotConfigs();
+        if(message.equalsIgnoreCase("/reset config")){
+            MultiBotHandler.getINSTANCE().botConfigList=MultiBotHandler.readRecord();
             event.getSubject().sendMessage("已经重置 Config 配置文件。");
         }
 

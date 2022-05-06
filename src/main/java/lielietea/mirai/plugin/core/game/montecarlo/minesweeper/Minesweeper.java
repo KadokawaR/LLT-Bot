@@ -84,10 +84,7 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
 
             String[] undefined = rawString.split(" ");
 
-            if(undefined.length!=3){
-                event.getSubject().sendMessage(MineUtil.WrongStartNotice);
-                return;
-            }
+            if(undefined.length!=3) return;
 
             int x = 0;
             int y = 0;
@@ -103,10 +100,7 @@ public class Minesweeper implements MonteCarloGame<MessageEvent> {
                 e.printStackTrace();
             }
 
-            if(x*y*mine==0){
-                event.getSubject().sendMessage(MineUtil.WrongStartNotice);
-                return;
-            }
+            if(x*y*mine==0) return;
 
             if(x<8||x>30||y<8||y>16||!MineUtil.minesNumberCheck(x,y,mine)){
                 event.getSubject().sendMessage(MineUtil.OutOfBoundaryNotice);

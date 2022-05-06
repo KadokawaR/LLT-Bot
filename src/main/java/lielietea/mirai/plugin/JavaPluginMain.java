@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /*
 使用java请把
@@ -44,10 +45,9 @@ build.gradle.kts里改依赖库和插件版本
 
 public final class JavaPluginMain extends JavaPlugin {
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
-    static final Logger logger = LogManager.getLogger(JavaPluginMain.class);
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "1.1.1")
+        super(new JvmPluginDescriptionBuilder("lielietea.lielietea-bot", "2.0.1")
                 .info("LieLieTea QQ Group Bot")
                 .build());
     }
@@ -61,6 +61,7 @@ public final class JavaPluginMain extends JavaPlugin {
         // 上线事件
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
+            GroupPolice.executor.schedule(new GroupPolice.BotAutoClear(event.getBot()),30, TimeUnit.SECONDS);
         });
 
         // 处理好友请求

@@ -52,6 +52,22 @@ public class SecretFunctionHandler {
             }
         }
 
+        if(message.equalsIgnoreCase("/open secretfunction")||message.equals("打开秘密功能")){
+            SecretFunctionDatabase.getINSTANCE().secretFunctionData.repeater.add(event.getGroup().getId());
+            event.getSubject().sendMessage("已开启秘密功能。");
+            hasChanged = true;
+        }
+
+        if(message.equalsIgnoreCase("/close secretfunction")||message.equals("关闭秘密功能")){
+            if(SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.contains(event.getGroup().getId())) {
+                SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.remove(event.getGroup().getId());
+                event.getSubject().sendMessage("已关闭秘密功能。");
+                hasChanged = true;
+            } else {
+                event.getSubject().sendMessage("该群未开启秘密功能。");
+            }
+        }
+
         if(hasChanged){
             SecretFunctionDatabase.writeRecord();
             SecretFunctionDatabase.readRecord();

@@ -179,6 +179,7 @@ public class BroadcastSystem {
         public void run(){
             if(isInBroadcastMode(event)) {
                 quitBroadcastMode(event);
+                event.getSubject().sendMessage("已退出广播模式。");
             }
         }
     }
