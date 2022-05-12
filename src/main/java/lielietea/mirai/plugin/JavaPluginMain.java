@@ -124,7 +124,7 @@ public final class JavaPluginMain extends JavaPlugin {
             //ResponderCenter
             if(GroupConfigManager.responderConfig(event) && ConfigHandler.getConfig(event).getGroupFC().isResponder()){
 
-                Nudge.mentionNudge(event);
+                //Nudge.mentionNudge(event);
                 ResponderCenter.getINSTANCE().handleMessage(event);
                 ImageResponder.handle(event);
 
@@ -139,7 +139,18 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         //被人戳一戳了
-        GlobalEventChannel.INSTANCE.subscribeAlways(NudgeEvent.class, Nudge::returnNudge);
+        GlobalEventChannel.INSTANCE.subscribeAlways(NudgeEvent.class, event->{
+
+            if(MessagePostSendEventHandler.botHasTriggeredBreak(event.getBot(),event.getFrom().getId())) return;
+
+            if(!ConfigHandler.canAnswerGroup(event.getBot())) return;
+            if(IdentityUtil.isBot(event.getFrom().getId())) return;
+
+            if(Blacklist.isBlocked(event.getFrom().getId(), Blacklist.BlockKind.Friend)) return;
+
+            //Nudge.returnNudge(event);
+
+        });
 
         //群成员入群自动欢迎
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎入群。"));

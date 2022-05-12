@@ -135,6 +135,11 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
         return getINSTANCE().triggerBreakMap.get(event.getBot().getId());
     }
 
+    public static boolean botHasTriggeredBreak(Bot bot,long userID){
+        if(IdentityUtil.isAdmin(userID)) return false;
+        return getINSTANCE().triggerBreakMap.get(bot);
+    }
+
     public static void checkBreaker(MessageEvent event){
         if(!IdentityUtil.isAdmin(event)) return;
         if(event.getMessage().contentToString().toLowerCase().contains("/break")){

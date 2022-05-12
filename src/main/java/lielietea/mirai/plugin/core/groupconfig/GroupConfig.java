@@ -19,7 +19,7 @@ public class GroupConfig {
         this.fish = true;
         this.casino = true;
         this.responder = true;
-        this.lottery = true;
+        this.lottery = false;
         this.game = true;
         this.blockedUser = new ArrayList<>();
     }
@@ -28,7 +28,7 @@ public class GroupConfig {
         this.groupID = groupID;
         this.global = true;
         this.fish = true;
-        this.casino = true;
+        this.casino = false;
         this.responder = true;
         this.lottery = true;
         this.game = true;
