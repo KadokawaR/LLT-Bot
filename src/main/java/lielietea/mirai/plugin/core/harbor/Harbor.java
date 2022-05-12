@@ -3,6 +3,8 @@ package lielietea.mirai.plugin.core.harbor;
 import com.google.common.collect.Maps;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
+import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
@@ -66,6 +68,11 @@ public class Harbor {
         count(PortRequestInfos.TOTAL_DAILY,0);
     }
 
+    public static void count(Group group) {
+        count(PortRequestInfos.GROUP_MINUTE,group.getId());
+        count(PortRequestInfos.TOTAL_DAILY,0);
+    }
+
     public static int getMinutePortRecordById(PortRequestInfo requestInfo, long id) {
         return acquire(requestInfo)[0].get(id);
     }
@@ -98,6 +105,12 @@ public class Harbor {
             return isReachingPortLimit(PortRequestInfos.PERSONAL,event.getSender().getId());
         }
     }
+
+    public static boolean isReachingPortLimit(Group group){
+        if(isReachingPortLimit(PortRequestInfos.TOTAL_DAILY, 0)) return true;
+        return isReachingPortLimit(PortRequestInfos.GROUP_MINUTE,group.getId());
+    }
+
 
 
 }

@@ -20,44 +20,44 @@ public class NotificationSetting {
         if(!IdentityUtil.isAdmin(event)) return;
         String message = event.getMessage().contentToString();
 
-        if(message.equalsIgnoreCase("/open gamecenter")){
+        if(message.equalsIgnoreCase(".open gamecenter")){
             GameCenterNotification=true;
             return;
         }
 
-        if(message.equalsIgnoreCase("/open mpse")){
+        if(message.equalsIgnoreCase(".open mpse")){
             MPSENotification=true;
             return;
         }
 
-        if(message.equalsIgnoreCase("/open sequence")){
+        if(message.equalsIgnoreCase(".open sequence")){
             NewlyOptimizedSequenceNotification=true;
             return;
         }
 
-        if(message.equalsIgnoreCase("/close gamecenter")){
+        if(message.equalsIgnoreCase(".close gamecenter")){
             GameCenterNotification=false;
             return;
         }
 
-        if(message.equalsIgnoreCase("/close mpse")){
+        if(message.equalsIgnoreCase(".close mpse")){
             MPSENotification=false;
             return;
         }
 
-        if(message.equalsIgnoreCase("/close sequence")){
+        if(message.equalsIgnoreCase(".close sequence")){
             NewlyOptimizedSequenceNotification=false;
             return;
         }
 
-        if(message.equalsIgnoreCase("/open notification")){
+        if(message.equalsIgnoreCase(".open notification")){
             GameCenterNotification=true;
             MPSENotification=true;
             NewlyOptimizedSequenceNotification=true;
             return;
         }
 
-        if(message.equalsIgnoreCase("/close notification")){
+        if(message.equalsIgnoreCase(".close notification")){
             GameCenterNotification=false;
             MPSENotification=false;
             NewlyOptimizedSequenceNotification=false;

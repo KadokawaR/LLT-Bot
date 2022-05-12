@@ -1,12 +1,16 @@
 package lielietea.mirai.plugin.utils;
 
 import lielietea.mirai.plugin.core.responder.help.DisclTemporary;
+import lielietea.mirai.plugin.utils.activation.ActivationDatabase;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,14 +19,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ContactUtil {
-    public static final String JOIN_GROUP = "七爷来了！这里是七筒，很高兴为您服务。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。"+
+    public static final String JOIN_GROUP = "七筒来了！很高兴为您服务。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。"+
             "如需要联系七筒的开发者和体验七筒功能，请添加公众聊天群：932617537。\n" +
-            "如需要获得七筒的最新消息，请添加通知群：948979109。";
-    public static final String DISCLAIMER = "本项目仅限学习使用，不涉及到任何商业或者金钱用途，禁止用于非法行为。您的使用行为将被视为对本声明全部内容的认可。本声明在您邀请该账号（QQ账号：340865180）进入任何腾讯QQ群聊时生效。\n" +
-            "\n" +
-            "本项目在运作时，不可避免地会使用到您的QQ号、QQ昵称、群号、群昵称等信息。后台不会收集具体的聊天内容，如果您对此有所疑问，请停止使用本项目。基于维持互联网秩序的考量，请勿恶意使用本项目。本项目有权停止对任何对象的服务，任何解释权均归本项目开发组所有。\n" +
-            "\n" +
-            "本项目涉及或使用到的开源项目有：基于 AGPLv3 协议的 Mirai (https://github.com/mamoe/mirai) ，基于 Apache License 2.0 协议的谷歌 Gson (https://github.com/google/gson) ，清华大学开放中文词库 (http://thuocl.thunlp.org/) ，动物图片来自互联网开源动物图片API Shibe.online(shibes as a service)、Dog.ceo (The internet's biggest collection of open source dog pictures.)、random.dog (Hello World, This Is Dog)。\n";
+            "如需要获得七筒的最新消息，防止在封号后与七筒走丢，请添加通知群：948979109。";
 
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
@@ -34,7 +33,7 @@ public class ContactUtil {
         }
         if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
             if(MultiBotHandler.canSendNotice(event.getBot())) {
-                event.getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                Objects.requireNonNull(event.getInvitor()).sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
             }
             event.ignore();
         } else {
@@ -68,7 +67,7 @@ public class ContactUtil {
                         (event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     }
                     event.getGroup().quit();
-                    String content = "由于目前Bot不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
+                    String content = "由于目前七筒不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
                     return;
                 }
@@ -99,16 +98,11 @@ public class ContactUtil {
             }
 
             // 正常通过群邀请加群
-            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()),event.getBot());
-            notifyDevWhenJoinGroup(event);
+            boolean containsOldCitung = IdentityUtil.containsUnusedBot(event.getGroup());
 
-            event.getGroup().sendMessage(JOIN_GROUP);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            DisclTemporary.send(event.getGroup());
+            notifyDevWhenJoinGroup(event);
+            sendJoinGroupNotice(event,containsOldCitung);
+
         },10,TimeUnit.SECONDS);
 
     }
@@ -124,7 +118,7 @@ public class ContactUtil {
                 if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
                     event.getGroup().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     event.getGroup().quit();
-                    String content = "由于目前Bot不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
+                    String content = "由于目前七筒不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
                     return;
                 }
@@ -152,16 +146,11 @@ public class ContactUtil {
             }
 
             // 正常通过群邀请加群
-            sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()),event.getBot());
-            notifyDevWhenJoinGroup(event);
+            boolean containsOldCitung = IdentityUtil.containsUnusedBot(event.getGroup());
 
-            event.getGroup().sendMessage(JOIN_GROUP);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            DisclTemporary.send(event.getGroup());
+            notifyDevWhenJoinGroup(event);
+            sendJoinGroupNotice(event,containsOldCitung);
+
         },10,TimeUnit.SECONDS);
 
     }
@@ -170,12 +159,14 @@ public class ContactUtil {
     public static void handleLeaveGroup(BotLeaveEvent.Kick event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
+        ActivationDatabase.deleteGroup(event.getGroupId());
     }
 
     // 处理退群事件
     public static void handleLeaveGroup(BotLeaveEvent.Active event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
+        ActivationDatabase.deleteGroup(event.getGroupId());
     }
 
     // 处理加为好友事件
@@ -194,7 +185,9 @@ public class ContactUtil {
         List<Bot> bots = Bot.getInstances();
         for (Bot bot : bots) {
             Group group = bot.getGroup(id);
-            if (group != null) group.quit();
+            if (group != null){
+                group.quit();
+            }
         }
     }
 
@@ -217,7 +210,7 @@ public class ContactUtil {
         event.getGroup().getOwner().sendMessage(message);
     }
 
-    static void sendNoticeWhenJoinGroup(Group group,boolean containsOldChitung, Bot bot) {
+    static void sendNoticeWhenJoinGroup(Group group, boolean containsOldChitung, Bot bot) {
         if(!MultiBotHandler.canSendNotice(bot)) return;
         String message = "您好，七筒已经加入了您的群" + group.getName() + " - " + group.getId() + "，请在群聊中输入/help 以获取相关信息。如果七筒过于干扰群内秩序，请将七筒从您的群中移除。";
         if(containsOldChitung) message+="\n\n检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。";
@@ -245,6 +238,57 @@ public class ContactUtil {
         MessageUtil.notifyDevGroup("七筒已经从 " + event.getGroup().getName() + "（" + event.getGroupId() + "）主动离开。", event.getBot().getId());
     }
 
+    // 激活之后发送消息
+    public static void handlePostActivation(GroupMessageEvent event){
+        executor.schedule(new PostActivation(event),2,TimeUnit.SECONDS);
+
+    }
+
+    static class PostActivation implements Runnable{
+
+        private final GroupMessageEvent event;
+
+        PostActivation(GroupMessageEvent event){
+            this.event=event;
+        }
+
+        @Override
+        public void run(){
+
+            //sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()),event.getBot());
+            event.getGroup().sendMessage(JOIN_GROUP);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            DisclTemporary.send(event.getGroup());
+
+        }
+    }
+
+    // 新的入群发言
+    static void sendJoinGroupNotice(BotJoinGroupEvent.Invite event, boolean containsOldChitung){
+        MessageChainBuilder mcb = new MessageChainBuilder();
+
+        mcb.append("您好，受").append(new At(event.getInvitor().getId())).append("邀请。七筒已经加入本群聊，如果过于干扰群内秩序，请群主");
+        if(event.getInvitor().getPermission()!= MemberPermission.OWNER) mcb.append(new At(event.getGroup().getOwner().getId()));
+        mcb.append("移除。");
+        if(containsOldChitung) mcb.append("检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。\n\n");
+        mcb.append("目前七筒还没有激活，请任意群成员添加公众聊天群 932617537 并按照提示激活。七筒在被激活前不会响应任何消息。\n如需要获得七筒的最新消息，请添加通知群：948979109。");
+
+        event.getGroup().sendMessage(mcb.asMessageChain());
+    }
+
+    static void sendJoinGroupNotice(BotJoinGroupEvent.Active event,boolean containsOldChitung){
+        MessageChainBuilder mcb = new MessageChainBuilder();
+        mcb.append("您好，").append("邀请，七筒已经加入本群聊。如果过于干扰群内秩序，请群主移除。");
+        if(containsOldChitung) mcb.append("检测到您的群聊中有已经不再投入使用的七筒账号，可以移除。\n\n");
+        mcb.append("目前七筒还没有激活，请任意群成员添加公众聊天群 932617537 并按照提示激活。七筒在被激活前不会响应任何消息。");
+        event.getGroup().sendMessage(mcb.asMessageChain());
+    }
     enum JoinGroupSourceType {
         INVITE,
         RETRIEVE,

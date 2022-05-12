@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.administration;
 
+import lielietea.mirai.plugin.NotificationSetting;
 import lielietea.mirai.plugin.administration.blacklist.Whitelist;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
@@ -39,7 +40,8 @@ public class AdminCommandDispatcher {
         ConfigHandler.react(event);
         //管理帮助
         AdminHelp.send(event);
-
+        //通知管理
+        NotificationSetting.change(event);
 
     }
 

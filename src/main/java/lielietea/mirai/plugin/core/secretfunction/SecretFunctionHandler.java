@@ -20,13 +20,13 @@ public class SecretFunctionHandler {
         String message = event.getMessage().contentToString();
         boolean hasChanged = false;
 
-        if(message.equalsIgnoreCase("/open antiwithdraw")||message.equals("打开防撤回")){
+        if(message.equalsIgnoreCase(".open antiwithdraw")||message.equals("打开防撤回")){
             SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.add(event.getGroup().getId());
             event.getSubject().sendMessage("已开启防撤回。");
             hasChanged = true;
         }
 
-        if(message.equalsIgnoreCase("/close antiwithdraw")||message.equals("关闭防撤回")){
+        if(message.equalsIgnoreCase(".close antiwithdraw")||message.equals("关闭防撤回")){
             if(SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.contains(event.getGroup().getId())) {
                 SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.remove(event.getGroup().getId());
                 event.getSubject().sendMessage("已关闭防撤回。");
@@ -36,13 +36,13 @@ public class SecretFunctionHandler {
             }
         }
 
-        if(message.equalsIgnoreCase("/open repeater")||message.equals("打开复读")){
+        if(message.equalsIgnoreCase(".open repeater")||message.equals("打开复读")){
             SecretFunctionDatabase.getINSTANCE().secretFunctionData.repeater.add(event.getGroup().getId());
             event.getSubject().sendMessage("已开启复读。");
             hasChanged = true;
         }
 
-        if(message.equalsIgnoreCase("/close repeater")||message.equals("关闭复读")){
+        if(message.equalsIgnoreCase(".close repeater")||message.equals("关闭复读")){
             if(SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.contains(event.getGroup().getId())) {
                 SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.remove(event.getGroup().getId());
                 event.getSubject().sendMessage("已关闭复读。");
@@ -52,13 +52,13 @@ public class SecretFunctionHandler {
             }
         }
 
-        if(message.equalsIgnoreCase("/open secretfunction")||message.equals("打开秘密功能")){
+        if(message.equalsIgnoreCase(".open secretfunction")||message.equals("打开秘密功能")){
             SecretFunctionDatabase.getINSTANCE().secretFunctionData.repeater.add(event.getGroup().getId());
             event.getSubject().sendMessage("已开启秘密功能。");
             hasChanged = true;
         }
 
-        if(message.equalsIgnoreCase("/close secretfunction")||message.equals("关闭秘密功能")){
+        if(message.equalsIgnoreCase(".close secretfunction")||message.equals("关闭秘密功能")){
             if(SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.contains(event.getGroup().getId())) {
                 SecretFunctionDatabase.getINSTANCE().secretFunctionData.antiWithdraw.remove(event.getGroup().getId());
                 event.getSubject().sendMessage("已关闭秘密功能。");

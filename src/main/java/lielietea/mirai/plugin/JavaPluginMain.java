@@ -18,6 +18,8 @@ import lielietea.mirai.plugin.utils.*;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.game.GameCenter;
 import lielietea.mirai.plugin.core.responder.ResponderManager;
+import lielietea.mirai.plugin.utils.activation.ActivationDatabase;
+import lielietea.mirai.plugin.utils.activation.ActivationHandler;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -88,12 +90,24 @@ public final class JavaPluginMain extends JavaPlugin {
         // Bot获得权限
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER) || (event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))) {
-                event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
+                if(ActivationDatabase.isActivated(event.getGroupId())) {
+                    if(Harbor.isReachingPortLimit(event.getGroup())) {
+                        event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
+                        Harbor.count(event.getGroup());
+                    }
+                }
             }
         });
 
         // 群名改变之后发送消息
-        GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event -> event.getGroup().sendMessage("好名字。"));
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event -> {
+            if(ActivationDatabase.isActivated(event.getGroupId())) {
+                if(Harbor.isReachingPortLimit(event.getGroup())){
+                    event.getGroup().sendMessage("好名字。");
+                    Harbor.count(event.getGroup());
+                }
+            }
+        });
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
@@ -104,17 +118,25 @@ public final class JavaPluginMain extends JavaPlugin {
             //秘密功能
             SecretFunctionHandler.go(event);
 
+            if(IdentityUtil.isBot(event)) return;
+
+            if(!ActivationHandler.match(event)) return;
+
+            //激活
+            ActivationHandler.handle(event);
+
             if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
 
             if(!ConfigHandler.canAnswerGroup(event.getBot())) return;
-
-            if(IdentityUtil.isBot(event)) return;
 
             if(!GroupConfigManager.globalConfig(event)) return;
             if(GroupConfigManager.isBlockedUser(event)) return;
 
             if(Blacklist.isBlocked(event.getSender().getId(), Blacklist.BlockKind.Friend)) return;
-            if(Blacklist.isBlocked(event.getGroup().getId(), Blacklist.BlockKind.Group)) return;
+            if(Blacklist.isBlocked(event.getGroup().getId(), Blacklist.BlockKind.Group)){
+                ContactUtil.tryQuitGroup(event.getGroup().getId());
+                return;
+            }
 
             //GameCenter
             GameCenter.handle(event);
@@ -153,7 +175,14 @@ public final class JavaPluginMain extends JavaPlugin {
         });
 
         //群成员入群自动欢迎
-        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> memberJoinEvent.getGroup().sendMessage("欢迎入群。"));
+        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, event -> {
+            if(ActivationDatabase.isActivated(event.getGroupId())) {
+                if(Harbor.isReachingPortLimit(event.getGroup())){
+                    event.getGroup().sendMessage("欢迎入群。");
+                    Harbor.count(event.getGroup());
+                }
+            }
+        });
 
         //撤回消息响应
         GlobalEventChannel.INSTANCE.subscribeAlways(MessageRecallEvent.GroupRecall.class, AntiWithdraw::handle);
@@ -194,8 +223,6 @@ public final class JavaPluginMain extends JavaPlugin {
                 ImageResponder.handle(event);
                 Fishing.go(event);
             }
-
-
 
         });
     }
