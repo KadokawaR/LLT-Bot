@@ -56,7 +56,7 @@ public class ActivationHandler {
 
         ActivationDatabase.addUser(userID);
         MessageChainBuilder mcb = new MessageChainBuilder();
-        mcb.append("已授权账号");
+        mcb.append("已授权");
         if(isAt) {
             mcb.append(new At(userID));
         } else {
@@ -90,9 +90,7 @@ public class ActivationHandler {
             }
         }
 
-        ActivationDatabase.addGroup(event.getGroup().getId());
-        ActivationDatabase.deleteUser(event.getSender().getId());
-        ActivationDatabase.addRecord(event.getGroup().getId(),event.getSender().getId());
+        ActivationDatabase.combineOperation(event.getGroup().getId(),event.getSender().getId());
 
         ContactUtil.handlePostActivation(event);
 
@@ -119,6 +117,68 @@ public class ActivationHandler {
 
     }
 
+    static void deactivateByAdmin(MessageEvent event, String message){
+        if(!IdentityUtil.isAdmin(event)) return;
+        if(!message.toLowerCase().startsWith("/deactivate")) return;
+
+        String strID = Pattern.compile("[^0-9]").matcher(message.replace("/deactivate","").replaceAll(" ","")).replaceAll(" ").trim();
+
+        long groupID = 0L;
+
+        try{
+            groupID = Long.parseLong(strID);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if(groupID!=0L){
+
+            if(ActivationDatabase.isActivated(groupID)){
+                ActivationDatabase.deleteGroup(groupID);
+                event.getSubject().sendMessage("已经停止激活群聊"+groupID);
+            } else {
+                event.getSubject().sendMessage("该群组并未在激活列表内。");
+            }
+
+        } else {
+
+            event.getSubject().sendMessage("输入账号格式错误，请检查。");
+
+        }
+
+    }
+
+    static void activateByAdmin(MessageEvent event, String message){
+        if(!IdentityUtil.isAdmin(event)) return;
+        if(!message.toLowerCase().startsWith("/activate")) return;
+
+        String strID = Pattern.compile("[^0-9]").matcher(message.replace("/activate","").replaceAll(" ","")).replaceAll(" ").trim();
+
+        long groupID = 0L;
+
+        try{
+            groupID = Long.parseLong(strID);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if(groupID!=0L){
+
+            if(!ActivationDatabase.isActivated(groupID)){
+                ActivationDatabase.addGroup(groupID);
+                event.getSubject().sendMessage("已经激活群聊"+groupID);
+            } else {
+                event.getSubject().sendMessage("该群组已经被激活。");
+            }
+
+        } else {
+
+            event.getSubject().sendMessage("输入账号格式错误，请检查。");
+
+        }
+
+    }
+
     public static boolean match(GroupMessageEvent event){
         String message = event.getMessage().contentToString();
         return IdentityUtil.isAdmin(event)||ActivationDatabase.isActivated(event)||message.equals("激活七筒");
@@ -128,6 +188,8 @@ public class ActivationHandler {
         String message = event.getMessage().contentToString();
         register(event,message);
         align(event,message);
+        deactivateByAdmin(event,message);
+        activateByAdmin(event,message);
         if(event instanceof GroupMessageEvent) activate((GroupMessageEvent) event,message);
     }
 

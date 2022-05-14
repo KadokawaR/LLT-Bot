@@ -14,12 +14,13 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ContactUtil {
-    public static final String JOIN_GROUP = "七筒来了！很高兴为您服务。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。"+
+    public static final String JOIN_GROUP = "七筒来了！很高兴为您服务。\n\n在使用本 bot 之前，请仔细阅读下方的免责协议，如有任何问题请与开发者联系。\n\n"+
             "如需要联系七筒的开发者和体验七筒功能，请添加公众聊天群：932617537。\n" +
             "如需要获得七筒的最新消息，防止在封号后与七筒走丢，请添加通知群：948979109。";
 
@@ -27,29 +28,59 @@ public class ContactUtil {
 
     // 决定是否接收加群邀请
     public static void handleGroupInvitation(BotInvitedJoinGroupRequestEvent event) {
-        if(IdentityUtil.isAdmin(Objects.requireNonNull(event.getInvitor()).getId())) {
-            event.accept();
-            return;
-        }
-        if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
-            if(MultiBotHandler.canSendNotice(event.getBot())) {
-                Objects.requireNonNull(event.getInvitor()).sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
-            }
-            event.ignore();
-        } else {
-            event.accept();
-        }
+        int minute = new Random().nextInt(3)+1;
+        executor.schedule(new AddGroup(event),minute,TimeUnit.MINUTES);
+    }
 
+    // 加群Runnable
+
+    static class AddGroup implements Runnable{
+
+        private final BotInvitedJoinGroupRequestEvent event;
+        AddGroup(BotInvitedJoinGroupRequestEvent event){
+            this.event = event;
+        }
+        @Override
+        public void run() {
+
+            if(IdentityUtil.isAdmin(Objects.requireNonNull(event.getInvitor()).getId())) {
+                event.accept();
+                return;
+            }
+
+            if (!MultiBotHandler.canAcceptGroup(event.getBot().getId())) {
+                if(MultiBotHandler.canSendNotice(event.getBot())) {
+                    Objects.requireNonNull(event.getInvitor()).sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
+                }
+                event.ignore();
+            } else {
+                event.accept();
+            }
+        }
     }
 
     // 决定是否接收好友请求
     public static void handleFriendRequest(NewFriendRequestEvent event) {
-        if(IdentityUtil.isAdmin(event.getFromId())) event.accept();
-        if (!MultiBotHandler.canAcceptFriend(event.getBot().getId())) {
-            event.reject(false);
-            return;
+        int minute = new Random().nextInt(3)+5;
+        executor.schedule(new AddFriend(event),minute,TimeUnit.MINUTES);
+    }
+
+    // 加好友Runnable
+    static class AddFriend implements Runnable{
+        private final NewFriendRequestEvent event;
+        AddFriend(NewFriendRequestEvent event){
+            this.event=event;
         }
-        event.accept();
+
+        @Override
+        public void run(){
+            if(IdentityUtil.isAdmin(event.getFromId())) event.accept();
+            if (!MultiBotHandler.canAcceptFriend(event.getBot().getId())) {
+                event.reject(false);
+                return;
+            }
+            event.accept();
+        }
     }
 
     // 处理加群事件
@@ -103,7 +134,7 @@ public class ContactUtil {
             notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
 
-        },10,TimeUnit.SECONDS);
+        },15,TimeUnit.SECONDS);
 
     }
 

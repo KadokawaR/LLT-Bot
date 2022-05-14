@@ -78,9 +78,8 @@ public class ActivationDatabase {
         return getINSTANCE().data.activatedGroupID.contains(groupID);
     }
 
-    public static void addGroup(long groupID){
+    static void addGroup(long groupID){
         if(!getINSTANCE().data.activatedGroupID.contains(groupID)) getINSTANCE().data.activatedGroupID.add(groupID);
-        writeRecord();
     }
 
     public static void addGroup(List<Long> groupIDList){
@@ -100,13 +99,18 @@ public class ActivationDatabase {
         writeRecord();
     }
 
-    public static void deleteUser(long userID){
+    static void deleteUser(long userID){
         getINSTANCE().data.userPermissionList.remove(userID);
-        writeRecord();
     }
 
-    public static void addRecord(long groupID, long userID){
+    static void addRecord(long groupID, long userID){
         getINSTANCE().data.recordList.add(new ActivationRecord(groupID,userID));
+    }
+
+    public static void combineOperation(long groupID, long userID){
+        addGroup(groupID);
+        deleteUser(userID);
+        addRecord(groupID,userID);
         writeRecord();
     }
 
