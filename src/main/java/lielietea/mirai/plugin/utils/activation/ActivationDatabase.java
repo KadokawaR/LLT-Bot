@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -51,7 +52,7 @@ public class ActivationDatabase {
         }
     }
 
-    static void readRecord(){
+    static synchronized void readRecord(){
         try {
             getINSTANCE().data = new Gson().fromJson(Read.fromReader(new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(ACTIVATION_PATH)), StandardCharsets.UTF_8))), ActivationData.class);
         } catch (IOException e) {
@@ -59,51 +60,54 @@ public class ActivationDatabase {
         }
     }
 
-    public static void writeRecord(){
+    public static synchronized void writeRecord(){
         String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(getINSTANCE().data);
         Write.cover(jsonString, ACTIVATION_PATH);
         readRecord();
     }
 
     public static boolean containUser(long userID){
-        for(Long ID:getINSTANCE().data.userPermissionList){
-            if(ID.equals(userID)) return true;
-        }
-        return false;
+        return getINSTANCE().data.userPermissionList.contains(userID);
     }
 
     public static boolean isActivated(GroupMessageEvent event){
-        for(Long ID:getINSTANCE().data.activatedGroupID){
-            if(ID.equals(event.getGroup().getId())) return true;
-        }
-        return false;
+        return getINSTANCE().data.activatedGroupID.contains(event.getGroup().getId());
     }
 
     public static boolean isActivated(long groupID){
-        for(Long ID:getINSTANCE().data.activatedGroupID){
-            if(ID.equals(groupID)) return true;
-        }
-        return false;
+        return getINSTANCE().data.activatedGroupID.contains(groupID);
     }
 
     public static void addGroup(long groupID){
         if(!getINSTANCE().data.activatedGroupID.contains(groupID)) getINSTANCE().data.activatedGroupID.add(groupID);
+        writeRecord();
+    }
+
+    public static void addGroup(List<Long> groupIDList){
+        for(long groupID:groupIDList){
+            if(!getINSTANCE().data.activatedGroupID.contains(groupID)) getINSTANCE().data.activatedGroupID.add(groupID);
+        }
+        writeRecord();
     }
 
     public static void addUser(long userID){
-        if(!getINSTANCE().data.activatedGroupID.contains(userID)) getINSTANCE().data.activatedGroupID.add(userID);
+        if(!getINSTANCE().data.userPermissionList.contains(userID)) getINSTANCE().data.userPermissionList.add(userID);
+        writeRecord();
     }
 
     public static void deleteGroup(long groupID){
         getINSTANCE().data.activatedGroupID.remove(groupID);
+        writeRecord();
     }
 
     public static void deleteUser(long userID){
         getINSTANCE().data.userPermissionList.remove(userID);
+        writeRecord();
     }
 
     public static void addRecord(long groupID, long userID){
         getINSTANCE().data.recordList.add(new ActivationRecord(groupID,userID));
+        writeRecord();
     }
 
     public void ini(){}

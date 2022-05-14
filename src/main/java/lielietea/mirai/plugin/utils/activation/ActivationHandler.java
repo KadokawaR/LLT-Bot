@@ -4,12 +4,16 @@ import lielietea.mirai.plugin.core.harbor.Harbor;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.MessageUtil;
+import net.mamoe.mirai.contact.ContactList;
+import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.SingleMessage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ActivationHandler {
@@ -67,20 +71,23 @@ public class ActivationHandler {
     static void activate(GroupMessageEvent event,String message){
 
         if(!message.equals("激活七筒")) return;
-        if(!ActivationDatabase.containUser(event.getSender().getId())) {
-            if(!ActivationDatabase.isActivated(event.getGroup().getId())){
-                MessageChainBuilder mcb = new MessageChainBuilder().append(new At(event.getSender().getId()))
-                        .append("您不在授权列表内，请添加公众聊天群 932617537 并按照提示激活。七筒在被激活前不会响应任何消息。");
-                event.getSubject().sendMessage(mcb.asMessageChain());
+
+        if(!IdentityUtil.isAdmin(event)) {
+            if (!ActivationDatabase.containUser(event.getSender().getId())) {
+                if (!ActivationDatabase.isActivated(event.getGroup().getId())) {
+                    MessageChainBuilder mcb = new MessageChainBuilder().append(new At(event.getSender().getId()))
+                            .append("您不在授权列表内，请添加公众聊天群 932617537 并按照提示激活。七筒在被激活前不会响应任何消息。");
+                    event.getSubject().sendMessage(mcb.asMessageChain());
+                    return;
+                }
+            }
+
+            if (ActivationDatabase.isActivated(event.getGroup().getId())) {
+                if (Harbor.isReachingPortLimit(event)) return;
+                event.getSubject().sendMessage("该群已经激活，请勿重复激活。");
+                Harbor.count(event);
                 return;
             }
-        }
-
-        if(ActivationDatabase.isActivated(event.getGroup().getId())){
-            if(Harbor.isReachingPortLimit(event)) return;
-            event.getSubject().sendMessage("该群已经激活，请勿重复激活。");
-            Harbor.count(event);
-            return;
         }
 
         ActivationDatabase.addGroup(event.getGroup().getId());
@@ -95,6 +102,23 @@ public class ActivationHandler {
 
     }
 
+    static void align(MessageEvent event, String message){
+        if(!IdentityUtil.isAdmin(event)) return;
+        if(!message.equalsIgnoreCase("/align -g")) return;
+
+        ContactList<Group> currentGroups = event.getBot().getGroups();
+        List<Long> currentGroupID = new ArrayList<>();
+
+        for(Group group:currentGroups){
+            currentGroupID.add(group.getId());
+        }
+
+        ActivationDatabase.addGroup(currentGroupID);
+
+        event.getSubject().sendMessage("激活数据库已经与目前的群聊列表同步。");
+
+    }
+
     public static boolean match(GroupMessageEvent event){
         String message = event.getMessage().contentToString();
         return IdentityUtil.isAdmin(event)||ActivationDatabase.isActivated(event)||message.equals("激活七筒");
@@ -103,6 +127,7 @@ public class ActivationHandler {
     public static void handle(MessageEvent event){
         String message = event.getMessage().contentToString();
         register(event,message);
+        align(event,message);
         if(event instanceof GroupMessageEvent) activate((GroupMessageEvent) event,message);
     }
 
