@@ -5,6 +5,8 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.MessageEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class IdentityUtil {
@@ -67,8 +69,18 @@ public class IdentityUtil {
         return isAdmin(event.getSender().getId());
     }
 
+    public static List<Long> getDevGroupList(){
+        List<Long> result = new ArrayList<>();
+        for(DevGroup devGroup:DevGroup.values()){
+            result.add(devGroup.getID());
+        }
+        return result;
+    }
+
     public enum DevGroup{
-        DEFAULT(578984285L);
+        DEFAULT(578984285L),
+        PUBLIC(932617537L),
+        NOTICE(948979109L);
 
         long groupId;
 

@@ -5,7 +5,10 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class MessageUtil {
     /**
@@ -67,6 +70,32 @@ public class MessageUtil {
     public static void notifyDevGroup(MessageChain messageChain, Bot bot){
         Group group = bot.getGroup(IdentityUtil.DevGroup.DEFAULT.getID());
         if (group != null) group.sendMessage(messageChain);
+    }
+
+    /**
+     * 向开发组里的所有群聊发送消息
+     */
+    public static void notifyAllGroup(String content){
+
+        List<Long> devGroupList = IdentityUtil.getDevGroupList();
+        Map<Long,Boolean> tempMap = new HashMap<>();
+
+        for(Long groupID:devGroupList){
+            tempMap.put(groupID,false);
+        }
+
+        for(Bot bot:Bot.getInstances()){
+            for(Long groupID:devGroupList){
+
+                if(tempMap.get(groupID)) continue;
+
+                if(bot.getGroup(groupID)!=null){
+                    bot.getGroup(groupID).sendMessage(content);
+                    tempMap.remove(groupID);
+                    tempMap.put(groupID,true);
+                }
+            }
+        }
     }
 
 }
