@@ -55,6 +55,7 @@ public class ContactUtil {
                 event.ignore();
             } else {
                 event.accept();
+                notifyDevWhenJoinGroup(event);
             }
         }
     }
@@ -98,7 +99,7 @@ public class ContactUtil {
                         (event).getInvitor().sendMessage(MultiBotHandler.rejectInformation(event.getBot().getId()));
                     }
                     event.getGroup().quit();
-                    String content = "由于目前七筒不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "出逃。";
+                    String content = "由于目前七筒不接受添加群聊，已经从 " + event.getGroup().getName() + "(" + event.getGroup().getId() + ")" + "离开。";
                     MessageUtil.notifyDevGroup(content, event.getBot().getId());
                     return;
                 }
@@ -133,7 +134,7 @@ public class ContactUtil {
 
             notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
-            ActivationDatabase.addRecord(event.getGroupId());
+            ActivationDatabase.addRecord(event.getGroupId(),event.getBot());
 
         },15,TimeUnit.SECONDS);
 
@@ -180,9 +181,8 @@ public class ContactUtil {
             // 正常通过群邀请加群
             boolean containsOldCitung = IdentityUtil.containsUnusedBot(event.getGroup());
 
-            notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
-            ActivationDatabase.addRecord(event.getGroupId());
+            ActivationDatabase.addRecord(event.getGroupId(),event.getBot());
 
         },10,TimeUnit.SECONDS);
 
@@ -192,14 +192,14 @@ public class ContactUtil {
     public static void handleLeaveGroup(BotLeaveEvent.Kick event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
-        ActivationDatabase.deleteGroup(event.getGroupId());
+        ActivationDatabase.deleteGroup(event.getGroupId(),event.getBot());
     }
 
     // 处理退群事件
     public static void handleLeaveGroup(BotLeaveEvent.Active event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
-        ActivationDatabase.deleteGroup(event.getGroupId());
+        ActivationDatabase.deleteGroup(event.getGroupId(),event.getBot());
     }
 
     // 处理加为好友事件
@@ -254,12 +254,19 @@ public class ContactUtil {
     // 向开发者发送加群提醒
     static void notifyDevWhenJoinGroup(BotJoinGroupEvent.Invite event) {
         MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）,邀请人为 "
-                + ((BotJoinGroupEvent.Invite) event).getInvitor().getNick() + "（" + ((BotJoinGroupEvent.Invite) event).getInvitor().getId() + "）。", event.getBot().getId());
+                + event.getInvitor().getNick() + "（" + event.getInvitor().getId() + "）。", event.getBot().getId());
     }
 
     // 向开发者发送加群提醒
-    static void notifyDevWhenJoinGroup(BotJoinGroupEvent.Active event) {
-        MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroup().getName() + "（" + event.getGroupId() + "）", event.getBot().getId());
+    static void notifyDevWhenJoinGroup(BotInvitedJoinGroupRequestEvent event) {
+        String content = "七筒已加入 " + event.getGroupName()+ "（" + event.getGroupId() + "）";
+
+        try {
+            MessageUtil.notifyDevGroup("七筒已加入 " + event.getGroupName() + "（" + event.getGroupId() + "）,邀请人为 "
+                    + Objects.requireNonNull(event.getInvitor()).getNick() + "（" + event.getInvitor().getId() + "）。", event.getBot().getId());
+        } catch(NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     // 向开发者发送退群提醒

@@ -16,7 +16,7 @@ public class GroupPolice {
     final static GroupPolice INSTANCE = new GroupPolice();
 
     GroupPolice() {
-        executor.scheduleAtFixedRate(new AutoClear(), (long)0.5, 3, TimeUnit.HOURS);
+        executor.scheduleAtFixedRate(new AutoClear(), 5, 3*60, TimeUnit.MINUTES);
     }
 
     static public GroupPolice getINSTANCE() {
