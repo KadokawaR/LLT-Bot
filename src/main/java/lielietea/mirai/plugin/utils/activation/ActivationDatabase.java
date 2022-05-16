@@ -16,9 +16,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 
 public class ActivationDatabase {
 
@@ -100,18 +100,26 @@ public class ActivationDatabase {
     }
 
     static void deleteUser(long userID){
-        getINSTANCE().data.userPermissionList.remove(userID);
+        if(userID!=0) getINSTANCE().data.userPermissionList.remove(userID);
     }
 
-    static void addRecord(long groupID, long userID){
-        getINSTANCE().data.recordList.add(new ActivationRecord(groupID,userID));
-    }
-
-    public static void combineOperation(long groupID, long userID){
+    public static void combinedActivationOperation(long groupID, long userID){
         addGroup(groupID);
         deleteUser(userID);
-        addRecord(groupID,userID);
         writeRecord();
+    }
+
+    public static void addRecord(long groupID){
+        getINSTANCE().data.enterGroupRecords.add(new EnterGroupRecord(groupID));
+    }
+
+    public static List<Long> getOutOfDateGroupIDList(){
+        List<Long> result = new ArrayList<>();
+        List<EnterGroupRecord> recordList = getINSTANCE().data.enterGroupRecords.stream().filter(EnterGroupRecord::outOfDate).collect(Collectors.toList());
+        for(EnterGroupRecord egr:recordList){
+            result.add(egr.groupID);
+        }
+        return result;
     }
 
     public void ini(){}

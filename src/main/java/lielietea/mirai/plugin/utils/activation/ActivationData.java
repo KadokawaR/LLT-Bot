@@ -9,11 +9,11 @@ import java.util.List;
 public class ActivationData {
     List<Long> activatedGroupID;
     List<Long> userPermissionList;
-    List<ActivationRecord> recordList;
+    List<EnterGroupRecord> enterGroupRecords;
 
     ActivationData(){
         this.activatedGroupID = new ArrayList<>();
         this.userPermissionList = new ArrayList<>();
-        this.recordList = new ArrayList<>();
+        this.enterGroupRecords = new ArrayList<>();
     }
 }

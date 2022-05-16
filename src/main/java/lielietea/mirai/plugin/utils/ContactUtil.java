@@ -133,6 +133,7 @@ public class ContactUtil {
 
             notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
+            ActivationDatabase.addRecord(event.getGroupId());
 
         },15,TimeUnit.SECONDS);
 
@@ -181,6 +182,7 @@ public class ContactUtil {
 
             notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
+            ActivationDatabase.addRecord(event.getGroupId());
 
         },10,TimeUnit.SECONDS);
 
@@ -218,6 +220,7 @@ public class ContactUtil {
             Group group = bot.getGroup(id);
             if (group != null){
                 group.quit();
+                return;
             }
         }
     }
@@ -270,24 +273,23 @@ public class ContactUtil {
     }
 
     // 激活之后发送消息
-    public static void handlePostActivation(GroupMessageEvent event){
-        executor.schedule(new PostActivation(event),2,TimeUnit.SECONDS);
+    public static void handlePostActivation(Group group){
+        executor.schedule(new PostActivation(group),2,TimeUnit.SECONDS);
 
     }
 
     static class PostActivation implements Runnable{
 
-        private final GroupMessageEvent event;
+        private final Group group;
 
-        PostActivation(GroupMessageEvent event){
-            this.event=event;
+        PostActivation(Group group){
+            this.group = group;
         }
 
         @Override
         public void run(){
 
-            //sendNoticeWhenJoinGroup(event.getGroup(),IdentityUtil.containsUnusedBot(event.getGroup()),event.getBot());
-            event.getGroup().sendMessage(JOIN_GROUP);
+            group.sendMessage(JOIN_GROUP);
 
             try {
                 Thread.sleep(2000);
@@ -295,7 +297,7 @@ public class ContactUtil {
                 e.printStackTrace();
             }
 
-            DisclTemporary.send(event.getGroup());
+            DisclTemporary.send(group);
 
         }
     }

@@ -1,5 +1,6 @@
 package lielietea.mirai.plugin.utils.activation;
 
+import lielietea.mirai.plugin.administration.blacklist.Blacklist;
 import lielietea.mirai.plugin.core.harbor.Harbor;
 import lielietea.mirai.plugin.utils.ContactUtil;
 import lielietea.mirai.plugin.utils.IdentityUtil;
@@ -14,11 +15,31 @@ import net.mamoe.mirai.message.data.SingleMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class ActivationHandler {
 
-    static void register(MessageEvent event,String message){
+    static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    static QuitGroup quitGroup = new QuitGroup();
+
+    static{
+        executor.scheduleAtFixedRate(quitGroup, 1, 6, TimeUnit.HOURS);
+    }
+
+    static class QuitGroup implements Runnable{
+        @Override
+        public void run(){
+            for(long groupID:ActivationDatabase.getOutOfDateGroupIDList()){
+                ContactUtil.tryQuitGroup(groupID);
+            }
+        }
+    }
+
+    static void permit(MessageEvent event,String message){
 
         if(!IdentityUtil.isAdmin(event)) return;
 
@@ -54,6 +75,11 @@ public class ActivationHandler {
             return;
         }
 
+        if(Blacklist.isBlocked(userID, Blacklist.BlockKind.Friend)){
+            event.getSubject().sendMessage("该账号已经被拉黑。");
+            return;
+        }
+
         ActivationDatabase.addUser(userID);
         MessageChainBuilder mcb = new MessageChainBuilder();
         mcb.append("已授权");
@@ -75,9 +101,11 @@ public class ActivationHandler {
         if(!IdentityUtil.isAdmin(event)) {
             if (!ActivationDatabase.containUser(event.getSender().getId())) {
                 if (!ActivationDatabase.isActivated(event.getGroup().getId())) {
+                    if (Harbor.isReachingPortLimit(event)) return;
                     MessageChainBuilder mcb = new MessageChainBuilder().append(new At(event.getSender().getId()))
                             .append("您不在授权列表内，请添加公众聊天群 932617537 并按照提示激活。七筒在被激活前不会响应任何消息。");
                     event.getSubject().sendMessage(mcb.asMessageChain());
+                    Harbor.count(event);
                     return;
                 }
             }
@@ -90,14 +118,34 @@ public class ActivationHandler {
             }
         }
 
-        ActivationDatabase.combineOperation(event.getGroup().getId(),event.getSender().getId());
+        activateActions(event);
 
-        ContactUtil.handlePostActivation(event);
+    }
+
+    //由人来激活
+    static void activateActions(GroupMessageEvent event){
+        ActivationDatabase.combinedActivationOperation(event.getGroup().getId(),event.getSender().getId());
+
+        ContactUtil.handlePostActivation(event.getGroup());
 
         MessageUtil.notifyDevGroup("七筒已经在群组"+event.getGroup().getName()+
                 "（"+event.getGroup().getId()+")被激活，激活人为"+
                 event.getSender().getNick()+"("+event.getSender().getId()+")。");
+    }
 
+    static void activateActions(Group group){
+        ActivationDatabase.combinedActivationOperation(group.getId(),0L);
+
+        ContactUtil.handlePostActivation(group);
+
+        MessageUtil.notifyDevGroup("七筒已经在群组"+group.getName()+
+                "（"+group.getId()+")被激活。");
+    }
+
+    static void deactivateAction(Group group){
+        ActivationDatabase.deleteGroup(group.getId());
+        group.sendMessage("该群已经被取消激活，将会自动退群。如有问题请联系开发者。");
+        ContactUtil.tryQuitGroup(group.getId());
     }
 
     static void align(MessageEvent event, String message){
@@ -108,7 +156,7 @@ public class ActivationHandler {
         List<Long> currentGroupID = new ArrayList<>();
 
         for(Group group:currentGroups){
-            currentGroupID.add(group.getId());
+            if(!ActivationDatabase.getINSTANCE().data.activatedGroupID.contains(group.getId())) currentGroupID.add(group.getId());
         }
 
         ActivationDatabase.addGroup(currentGroupID);
@@ -133,8 +181,16 @@ public class ActivationHandler {
 
         if(groupID!=0L){
 
+            if(event.getBot().getGroup(groupID)==null){
+                event.getSubject().sendMessage("该七筒没有添加进此群聊。");
+                return;
+            }
+
             if(ActivationDatabase.isActivated(groupID)){
                 ActivationDatabase.deleteGroup(groupID);
+
+                deactivateAction(Objects.requireNonNull(event.getBot().getGroup(groupID)));
+
                 event.getSubject().sendMessage("已经停止激活群聊"+groupID);
             } else {
                 event.getSubject().sendMessage("该群组并未在激活列表内。");
@@ -164,11 +220,19 @@ public class ActivationHandler {
 
         if(groupID!=0L){
 
+            if(event.getBot().getGroup(groupID)==null){
+                event.getSubject().sendMessage("该七筒没有添加进此群聊。");
+                return;
+            }
+
             if(!ActivationDatabase.isActivated(groupID)){
                 ActivationDatabase.addGroup(groupID);
+                activateActions(Objects.requireNonNull(event.getBot().getGroup(groupID)));
                 event.getSubject().sendMessage("已经激活群聊"+groupID);
+
             } else {
                 event.getSubject().sendMessage("该群组已经被激活。");
+
             }
 
         } else {
@@ -186,7 +250,7 @@ public class ActivationHandler {
 
     public static void handle(MessageEvent event){
         String message = event.getMessage().contentToString();
-        register(event,message);
+        permit(event,message);
         align(event,message);
         deactivateByAdmin(event,message);
         activateByAdmin(event,message);
