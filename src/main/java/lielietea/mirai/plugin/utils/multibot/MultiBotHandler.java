@@ -37,6 +37,16 @@ public class MultiBotHandler {
             }
             return null;
         }
+
+        public static BotName get(Bot bot){
+            for(BotName bn:BotName.values()){
+                if(bn.getValue()==bot.getId()) return bn;
+            }
+            return null;
+        }
+        public boolean equalsBot(Bot bot){
+            return this.value == bot.getId();
+        }
     }
 
     public static BotName getBotName(long ID){
