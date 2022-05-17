@@ -207,8 +207,6 @@ public final class JavaPluginMain extends JavaPlugin {
 
             if(Blacklist.isBlocked(event.getSender().getId(), Blacklist.BlockKind.Friend)) return;
 
-            //激活系统
-            ActivationHandler.handle(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter
