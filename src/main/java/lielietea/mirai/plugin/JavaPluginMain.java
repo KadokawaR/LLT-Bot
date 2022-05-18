@@ -20,6 +20,8 @@ import lielietea.mirai.plugin.core.game.GameCenter;
 import lielietea.mirai.plugin.core.responder.ResponderManager;
 import lielietea.mirai.plugin.utils.activation.ActivationDatabase;
 import lielietea.mirai.plugin.utils.activation.ActivationHandler;
+import lielietea.mirai.plugin.utils.activation.handler.ActivationDatabase;
+import lielietea.mirai.plugin.utils.activation.handler.ActivationOperation;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -64,6 +66,11 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
             GroupPolice.executor.schedule(new GroupPolice.BotAutoClear(event.getBot()),30, TimeUnit.SECONDS);
+            if(!BotOnlineUtil.hasInitialized(event.getBot())){
+                // 上线之后开始进行Activation System的数据整理
+                ActivationOperation.autoClear(event);
+                BotOnlineUtil.setInitialized(event.getBot());
+            }
         });
 
         // 处理好友请求
@@ -90,7 +97,7 @@ public final class JavaPluginMain extends JavaPlugin {
         // Bot获得权限
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER) || (event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))) {
-                if(ActivationDatabase.isActivated(event.getGroupId())) {
+                if(ActivationDatabase.isActivated(event.getGroupId(),event.getBot())) {
                     if(Harbor.isReachingPortLimit(event.getGroup())) {
                         event.getGroup().sendMessage("谢谢，各位将获得更多的乐趣。");
                         Harbor.count(event.getGroup());
@@ -101,7 +108,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
         // 群名改变之后发送消息
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event -> {
-            if(ActivationDatabase.isActivated(event.getGroupId())) {
+            if(ActivationDatabase.isActivated(event.getGroupId(),event.getBot())) {
                 if(Harbor.isReachingPortLimit(event.getGroup())){
                     event.getGroup().sendMessage("好名字。");
                     Harbor.count(event.getGroup());
@@ -120,10 +127,10 @@ public final class JavaPluginMain extends JavaPlugin {
 
             if(IdentityUtil.isBot(event)) return;
 
-            if(!ActivationHandler.match(event)) return;
+            if(!ActivationOperation.match(event)) return;
 
             //激活
-            ActivationHandler.handle(event);
+            ActivationOperation.handle(event);
 
             if(MessagePostSendEventHandler.botHasTriggeredBreak(event)) return;
 
@@ -176,7 +183,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
         //群成员入群自动欢迎
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, event -> {
-            if(ActivationDatabase.isActivated(event.getGroupId())) {
+            if(ActivationDatabase.isActivated(event.getGroupId(),event.getBot())) {
                 if(Harbor.isReachingPortLimit(event.getGroup())){
                     event.getGroup().sendMessage("欢迎入群。");
                     Harbor.count(event.getGroup());
@@ -208,7 +215,7 @@ public final class JavaPluginMain extends JavaPlugin {
             if(Blacklist.isBlocked(event.getSender().getId(), Blacklist.BlockKind.Friend)) return;
 
             //激活系统
-            ActivationHandler.handle(event);
+            ActivationOperation.handle(event);
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //GameCenter

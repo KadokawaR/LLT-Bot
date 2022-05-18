@@ -1,7 +1,7 @@
 package lielietea.mirai.plugin.utils;
 
 import lielietea.mirai.plugin.core.responder.help.DisclTemporary;
-import lielietea.mirai.plugin.utils.activation.ActivationDatabase;
+import lielietea.mirai.plugin.utils.activation.handler.ActivationDatabase;
 import lielietea.mirai.plugin.utils.multibot.MultiBotHandler;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Friend;
@@ -56,6 +56,7 @@ public class ContactUtil {
             } else {
                 event.accept();
                 notifyDevWhenJoinGroup(event);
+                ActivationDatabase.addRecord(event.getGroupId(),event.getInvitorId(),event.getBot());
             }
         }
     }
@@ -134,7 +135,7 @@ public class ContactUtil {
 
             notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
-            ActivationDatabase.addRecord(event.getGroupId(),event.getBot());
+            ActivationDatabase.addRecord(event.getGroupId(),event.getInvitor().getId(),event.getBot());
 
         },15,TimeUnit.SECONDS);
 
@@ -183,8 +184,6 @@ public class ContactUtil {
 
             notifyDevWhenJoinGroup(event);
             sendJoinGroupNotice(event,containsOldCitung);
-            ActivationDatabase.addRecord(event.getGroupId());
-            ActivationDatabase.addRecord(event.getGroupId(),event.getBot());
 
         },10,TimeUnit.SECONDS);
 
@@ -194,14 +193,14 @@ public class ContactUtil {
     public static void handleLeaveGroup(BotLeaveEvent.Kick event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
-        ActivationDatabase.deleteGroup(event.getGroupId());
+        ActivationDatabase.deleteGroup(event.getGroupId(),event.getBot());
     }
 
     // 处理退群事件
     public static void handleLeaveGroup(BotLeaveEvent.Active event) {
         // 通知开发者群
         notifyDevWhenLeaveGroup(event);
-        ActivationDatabase.deleteGroup(event.getGroupId());
+        ActivationDatabase.deleteGroup(event.getGroupId(),event.getBot());
     }
 
     // 处理加为好友事件
@@ -227,6 +226,11 @@ public class ContactUtil {
         }
     }
 
+    public static void tryQuitGroup(long id,Bot bot) {
+        Group group = bot.getGroup(id);
+        if (group != null) group.quit();
+    }
+
     /**
      * 尝试删除好友
      */
@@ -236,6 +240,11 @@ public class ContactUtil {
             Friend friend = bot.getFriend(id);
             if (friend != null) friend.delete();
         }
+    }
+
+    public static void tryDeleteFriend(long id, Bot bot) {
+        Friend friend = bot.getFriend(id);
+        if (friend != null) friend.delete();
     }
 
     // 加群后发送Bot提示
