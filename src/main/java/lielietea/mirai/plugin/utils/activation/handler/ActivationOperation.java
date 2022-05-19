@@ -278,7 +278,27 @@ public class ActivationOperation {
         align(event,message);
         deactivateByAdmin(event,message);
         activateByAdmin(event,message);
+        clearByAdmin(event,message);
         if(event instanceof GroupMessageEvent) activate((GroupMessageEvent) event,message);
+    }
+
+    public static void autoClearActions(Bot bot){
+        List<Long> currentGroupIDs = new ArrayList<>();
+
+        for(Group group:bot.getGroups()){
+            currentGroupIDs.add(group.getId());
+        }
+
+        ActivationDatabase.updateActivationDataGroupList(bot,currentGroupIDs);
+        ActivationDatabase.updateEntryRecordList(bot,currentGroupIDs);
+        ActivationDatabase.quitOutOfDateGroups(bot);
+    }
+
+    public static void clearByAdmin(MessageEvent event,String message){
+        if(!IdentityUtil.isAdmin(event)) return;
+        if(!message.equalsIgnoreCase("/reset activation")) return;
+        autoClearActions(event.getBot());
+        event.getSubject().sendMessage("已经重置Activation。");
     }
 
 }

@@ -32,7 +32,14 @@ public class AdminHelp {
             "/break：查看熔断状况\n" +
             "/mpse：查看 MPSE 数据\n\n"+
             "GameCenter:\n" +
-            "/gamecenter：查看游戏情况";
+            "/gamecenter：查看游戏情况\n\n"+
+            "Activation:\n" +
+            "/align -g：**慎重使用** 授权所有七筒在的群权限\n"+
+            "/permit @用户 或者 空格 用户账号：授权该用户进行一次激活\n"+
+            "/activate 空格 群号：激活该群聊\n"+
+            "/deactivate 空格 群号：取消激活该群聊，会连带删除邀请者好友\n"+
+            "/reset 空格 activation：手动重新刷新一次激活列表";
+
 
     //todo 补充MPSE GameCenter WhiteList
     public static void send(MessageEvent event){

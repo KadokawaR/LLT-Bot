@@ -18,19 +18,16 @@ import lielietea.mirai.plugin.utils.*;
 import lielietea.mirai.plugin.core.broadcast.BroadcastSystem;
 import lielietea.mirai.plugin.core.game.GameCenter;
 import lielietea.mirai.plugin.core.responder.ResponderManager;
-import lielietea.mirai.plugin.utils.activation.ActivationDatabase;
-import lielietea.mirai.plugin.utils.activation.ActivationHandler;
 import lielietea.mirai.plugin.utils.activation.handler.ActivationDatabase;
 import lielietea.mirai.plugin.utils.activation.handler.ActivationOperation;
 import lielietea.mirai.plugin.utils.multibot.config.ConfigHandler;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.contact.Group;
+
 import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
