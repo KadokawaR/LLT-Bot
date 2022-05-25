@@ -3,14 +3,17 @@ package lielietea.mirai.plugin.utils.activation.handler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lielietea.mirai.plugin.utils.ContactUtil;
+import lielietea.mirai.plugin.utils.IdentityUtil;
 import lielietea.mirai.plugin.utils.StandardTimeUtil;
 import lielietea.mirai.plugin.utils.activation.data.ActivationData;
+import lielietea.mirai.plugin.utils.activation.data.ActivationDataOfSingleBot;
 import lielietea.mirai.plugin.utils.activation.data.GroupEntryRecord;
 import lielietea.mirai.plugin.utils.fileutils.Read;
 import lielietea.mirai.plugin.utils.fileutils.Touch;
 import lielietea.mirai.plugin.utils.fileutils.Write;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.event.events.BotOnlineEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
@@ -42,7 +45,7 @@ public class ActivationDatabase {
 
     private ActivationData data;
 
-    private static ActivationDatabase getINSTANCE() {
+    public static ActivationDatabase getINSTANCE() {
         return INSTANCE;
     }
 
@@ -72,6 +75,12 @@ public class ActivationDatabase {
         Write.cover(jsonString, ACTIVATION_PATH);
     }
 
+    public static void initialize(BotOnlineEvent event){
+        if(getINSTANCE().data.getBotsData(event.getBot())==null){
+            getINSTANCE().data.activationDataList.add(new ActivationDataOfSingleBot(event.getBot()));
+        }
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +89,7 @@ public class ActivationDatabase {
     }
 
     public static boolean isActivated(long groupID,Bot bot){
+        if(IdentityUtil.DevGroup.isInOfficialGroupList(groupID)) return true;
         return getINSTANCE().data.getBotsData(bot).botActivationData.activatedGroupIDs.contains(groupID);
     }
 
@@ -223,6 +233,9 @@ public class ActivationDatabase {
 
             for (long groupID : currentGroupIDs) {
                 if (!getINSTANCE().data.getBotsData(bot).botActivationData.recordContainsGroup(groupID)) {
+
+                    if(IdentityUtil.DevGroup.isDevGroup(groupID)) continue;
+
                     addRecordWithoutSave(groupID, 0L, bot);
                     Group group = bot.getGroup(groupID);
 
@@ -258,6 +271,8 @@ public class ActivationDatabase {
         List<GroupEntryRecord> copiedList = new ArrayList<>(getINSTANCE().data.getBotsData(bot).botActivationData.groupEntryRecords);
 
         for(GroupEntryRecord ger:copiedList) {
+            if(IdentityUtil.DevGroup.isDevGroup(ger.groupID)) continue;
+
             if((currentTime- ger.date) >= LONGEST_TIME_GAP){
 
                 ContactUtil.tryQuitGroup(ger.groupID,bot);
@@ -281,4 +296,6 @@ public class ActivationDatabase {
             }
         }
     }
+
+    public void ini(){};
 }

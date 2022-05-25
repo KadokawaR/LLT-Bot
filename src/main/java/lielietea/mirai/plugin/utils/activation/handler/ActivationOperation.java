@@ -28,7 +28,7 @@ public class ActivationOperation {
     static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     public static void autoClear(BotOnlineEvent event){
-        executor.scheduleAtFixedRate(new ActivationRunnable.AutoClear(event.getBot()),1,3, TimeUnit.HOURS);
+        executor.scheduleAtFixedRate(new ActivationRunnable.AutoClear(event.getBot()),1,24, TimeUnit.HOURS);
     }
 
     static void permit(MessageEvent event,String message){
@@ -151,9 +151,7 @@ public class ActivationOperation {
     }
 
     static void deactivateAction(Group group){
-        ActivationDatabase.deleteGroup(group.getId(),group.getBot());
-        group.sendMessage("该群已经被取消激活，将会自动退群。如有问题请联系开发者。");
-        ContactUtil.tryQuitGroup(group.getId());
+        executor.schedule(new ActivationRunnable.QuitGroup(group),1,TimeUnit.SECONDS);
     }
 
     static void align(MessageEvent event, String message){

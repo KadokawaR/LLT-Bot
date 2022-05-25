@@ -7,7 +7,7 @@ public class ActivationDataOfSingleBot {
     public MultiBotHandler.BotName botName;
     public BotActivationData botActivationData;
 
-    ActivationDataOfSingleBot(Bot bot){
+    public ActivationDataOfSingleBot(Bot bot){
         this.botName = MultiBotHandler.BotName.get(bot);
         this.botActivationData = new BotActivationData();
     }
