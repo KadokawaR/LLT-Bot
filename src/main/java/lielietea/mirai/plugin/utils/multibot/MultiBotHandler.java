@@ -20,7 +20,7 @@ public class MultiBotHandler {
     final static String BOT_CONFIGURATION_PATH = System.getProperty("user.dir") + File.separator + "data" + File.separator + "botconfig.json";
     public enum BotName{
         //Chitung1(340865180L),     //七筒#1
-        //Chitung2(3628496803L),   //七筒#2
+        Chitung2(3628496803L),   //七筒#2
         Chitung3(2429465624L ),  //七筒#3
         Chitung4(3582637350L),    //七筒#4
         Chitung5(1256252623L);    //七筒#5

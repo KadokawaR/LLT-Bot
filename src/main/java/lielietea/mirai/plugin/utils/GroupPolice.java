@@ -1,6 +1,7 @@
 package lielietea.mirai.plugin.utils;
 
 
+import lielietea.mirai.plugin.administration.TestMode;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
@@ -75,6 +76,8 @@ public class GroupPolice {
 
         @Override
         public void run() {
+
+            if(TestMode.on()) return;
 
             for (Group group : bot.getGroups()) {
                 if (IdentityUtil.DevGroup.isDevGroup(group.getId())) continue;

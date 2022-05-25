@@ -2,6 +2,7 @@ package lielietea.mirai.plugin;
 
 
 import lielietea.mirai.plugin.administration.AdminCommandDispatcher;
+import lielietea.mirai.plugin.administration.TestMode;
 import lielietea.mirai.plugin.administration.statistics.MPSEHandler.MessagePostSendEventHandler;
 import lielietea.mirai.plugin.core.game.fish.Fishing;
 import lielietea.mirai.plugin.core.game.zeppelin.Zeppelin;
@@ -62,7 +63,11 @@ public final class JavaPluginMain extends JavaPlugin {
         // 上线事件
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
-            GroupPolice.executor.schedule(new GroupPolice.BotAutoClear(event.getBot()),30, TimeUnit.SECONDS);
+
+
+            if(!TestMode.on()) {
+                GroupPolice.executor.schedule(new GroupPolice.BotAutoClear(event.getBot()), 30, TimeUnit.SECONDS);
+            }
 
             //如果Bot从未注册过则这为第一次注册
             ActivationDatabase.initialize(event);
