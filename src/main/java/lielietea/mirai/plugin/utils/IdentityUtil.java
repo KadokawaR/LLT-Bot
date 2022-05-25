@@ -92,7 +92,14 @@ public class IdentityUtil {
             return groupId;
         }
 
-        public boolean isDevGroup(long ID){
+        public static boolean isDevGroup(long ID){
+            for(DevGroup dg:DevGroup.values()){
+                if (ID==dg.getID()) return true;
+            }
+            return false;
+        }
+
+        public static boolean isInOfficialGroupList(long ID){
             for(DevGroup dg:DevGroup.values()){
                 if (ID==dg.getID()) return true;
             }

@@ -63,6 +63,10 @@ public final class JavaPluginMain extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             Optional.ofNullable(event.getBot().getGroup(IdentityUtil.DevGroup.DEFAULT.getID())).ifPresent(group -> group.sendMessage("老子来了"));
             GroupPolice.executor.schedule(new GroupPolice.BotAutoClear(event.getBot()),30, TimeUnit.SECONDS);
+
+            //如果Bot从未注册过则这为第一次注册
+            ActivationDatabase.initialize(event);
+
             if(!BotOnlineUtil.hasInitialized(event.getBot())){
                 // 上线之后开始进行Activation System的数据整理
                 ActivationOperation.autoClear(event);
@@ -93,6 +97,9 @@ public final class JavaPluginMain extends JavaPlugin {
 
         // Bot获得权限
         GlobalEventChannel.INSTANCE.subscribeAlways(BotGroupPermissionChangeEvent.class, event -> {
+
+            if(MessagePostSendEventHandler.botHasTriggeredBreak(event.getBot(),0L)) return;
+
             if (event.getGroup().getBotPermission().equals(MemberPermission.OWNER) || (event.getGroup().getBotPermission().equals(MemberPermission.ADMINISTRATOR))) {
                 if(ActivationDatabase.isActivated(event.getGroupId(),event.getBot())) {
                     if(Harbor.isReachingPortLimit(event.getGroup())) {
@@ -105,6 +112,9 @@ public final class JavaPluginMain extends JavaPlugin {
 
         // 群名改变之后发送消息
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupNameChangeEvent.class, event -> {
+
+            if(MessagePostSendEventHandler.botHasTriggeredBreak(event.getBot(),0L)) return;
+
             if(ActivationDatabase.isActivated(event.getGroupId(),event.getBot())) {
                 if(Harbor.isReachingPortLimit(event.getGroup())){
                     event.getGroup().sendMessage("好名字。");

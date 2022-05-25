@@ -28,7 +28,7 @@ public class GroupPolice {
         public void run() {
             for (Bot bot : Bot.getInstances()) {
                 for (Group group : bot.getGroups()) {
-                    if (IdentityUtil.DevGroup.DEFAULT.isDevGroup(group.getId())) continue;
+                    if (IdentityUtil.DevGroup.isDevGroup(group.getId())) continue;
                     if (group.getMembers().getSize() < 7) {
                         group.sendMessage("七筒目前不接受加入7人以下的群聊，将自动退群，请在其他群中使用七筒。感谢您使用七筒的服务。");
                         MessageUtil.notifyDevGroup("由于群聊人数不满7人，七筒已经从"+group.getName()+"("+group.getId()+")中离开。");
@@ -77,7 +77,7 @@ public class GroupPolice {
         public void run() {
 
             for (Group group : bot.getGroups()) {
-                if (IdentityUtil.DevGroup.DEFAULT.isDevGroup(group.getId())) continue;
+                if (IdentityUtil.DevGroup.isDevGroup(group.getId())) continue;
                 if (group.getMembers().getSize() < 7) {
                     group.sendMessage("七筒目前不接受加入7人以下的群聊，将自动退群，请在其他群中使用七筒。感谢您使用七筒的服务。");
                     MessageUtil.notifyDevGroup("由于群聊人数不满7人，七筒已经从"+group.getName()+"("+group.getId()+")中离开。");

@@ -105,17 +105,18 @@ public class Whitelist {
         }
     }
 
-    static void TrustGroupInGroup(GroupMessageEvent event,String message){
+    static void trustGroupInGroup(GroupMessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
         if(message.equalsIgnoreCase("/trust")) {
             addTrust(event.getGroup().getId(),TrustKind.Group);
+            return;
         }
         if(message.equalsIgnoreCase("/untrust")){
             deleteTrust(event.getGroup().getId(),TrustKind.Group);
         }
     }
 
-    static void Trust(MessageEvent event,String message){
+    static void trust(MessageEvent event, String message){
         if(!IdentityUtil.isAdmin(event)) return;
         if(!message.toLowerCase().contains("/trust ")&&!message.toLowerCase().contains("/trust-")) return;
         String rawString = message.toLowerCase().replace("/trust","").replace(" ","").replace("-","");
@@ -158,8 +159,10 @@ public class Whitelist {
         switch(bk){
             case Friend:
                 event.getSubject().sendMessage("白名单已添加用户"+ID);
+                break;
             case Group:
                 event.getSubject().sendMessage("白名单已添加群聊"+ID);
+                break;
         }
 
     }
@@ -201,8 +204,10 @@ public class Whitelist {
             switch(bk){
                 case Friend:
                     event.getSubject().sendMessage("用户"+ID+"未被添加至白名单。");
+                    break;
                 case Group:
                     event.getSubject().sendMessage("群聊"+ID+"未被添加至白名单。");
+                    break;
             }
             return;
         }
@@ -212,8 +217,10 @@ public class Whitelist {
         switch(bk){
             case Friend:
                 event.getSubject().sendMessage("已将用户"+ID+"移出白名单。");
+                break;
             case Group:
                 event.getSubject().sendMessage("已将群聊"+ID+"移出白名单。");
+                break;
         }
     }
 
@@ -234,9 +241,9 @@ public class Whitelist {
     public static void operation(MessageEvent event){
         String message = event.getMessage().contentToString();
         if(event instanceof GroupMessageEvent){
-            TrustGroupInGroup((GroupMessageEvent) event,message);
+            trustGroupInGroup((GroupMessageEvent) event,message);
         }
-        Trust(event,message);
+        trust(event,message);
         unTrust(event,message);
     }
 

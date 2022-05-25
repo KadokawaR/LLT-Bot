@@ -38,7 +38,9 @@ public class AdminHelp {
             "/permit @用户 或者 空格 用户账号：授权该用户进行一次激活\n"+
             "/activate 空格 群号：激活该群聊\n"+
             "/deactivate 空格 群号：取消激活该群聊，会连带删除邀请者好友\n"+
-            "/reset 空格 activation：手动重新刷新一次激活列表";
+            "/reset 空格 activation：手动重新刷新一次激活列表\n\n"+
+            "Notification:\n"+
+            ".open 或者 .close 空格 mpse / gamecenter / sequence / notification";
 
 
     //todo 补充MPSE GameCenter WhiteList

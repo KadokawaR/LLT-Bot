@@ -31,11 +31,8 @@ public class CasinoCroupier {
                 BlackJack.go(event);
                 Roulette.go(event);
                 taisai.handle(event);
-                if(event instanceof GroupMessageEvent) {
-                    if (SecretFunctionDatabase.getINSTANCE().secretFunctionData.canDoSecretFunction((GroupMessageEvent) event)) {
-                        minesweeper.handle(event);
-                    }
-                }
+                minesweeper.handle(event);
+
                 return;
 
             case 1:
@@ -51,12 +48,8 @@ public class CasinoCroupier {
                 return;
 
             case 4:
-                if(event instanceof GroupMessageEvent) {
-                    if (SecretFunctionDatabase.getINSTANCE().secretFunctionData.canDoSecretFunction((GroupMessageEvent) event)) {
-                        minesweeper.handle(event);
-                    }
-                }
 
+                minesweeper.handle(event);
                 return;
 
         }

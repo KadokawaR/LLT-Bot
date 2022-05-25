@@ -108,12 +108,17 @@ public class Blacklist {
     //太奇怪了这个操作
     static void blockGroupInGroup(GroupMessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(message.equalsIgnoreCase("/block")) addBlock(event.getGroup().getId(),BlockKind.Group);
+        if(message.equalsIgnoreCase("/block")) {
+            addBlock(event.getGroup().getId(),BlockKind.Group);
+            return;
+        }
+
+        if(message.equalsIgnoreCase("unblock")) deleteBlock(event.getGroup().getId(),BlockKind.Group);
     }
 
     static void block(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(!message.toLowerCase().contains("/block ")||!message.toLowerCase().contains("/block-")) return;
+        if(!message.toLowerCase().contains("/block ")&&!message.toLowerCase().contains("/block-")) return;
         String rawString = message.toLowerCase().replace("/block","").replace(" ","").replace("-","");
         String strID = Pattern.compile("[^0-9]").matcher(rawString).replaceAll(" ").trim();
 
@@ -154,15 +159,17 @@ public class Blacklist {
         switch(bk){
             case Friend:
                 event.getSubject().sendMessage("已屏蔽用户"+ID);
+                break;
             case Group:
                 event.getSubject().sendMessage("已屏蔽群聊"+ID);
+                break;
         }
 
     }
 
     static void unblock(MessageEvent event,String message){
         if(!IdentityUtil.isAdmin(event)) return;
-        if(!message.toLowerCase().contains("/unblock ")||!message.toLowerCase().contains("/unblock-")) return;
+        if(!message.toLowerCase().contains("/unblock ")&&!message.toLowerCase().contains("/unblock-")) return;
         String rawString = message.toLowerCase().replace("/unblock","").replace(" ","").replace("-","");
         String strID = Pattern.compile("[^0-9]").matcher(rawString).replaceAll(" ").trim();
 
@@ -197,8 +204,10 @@ public class Blacklist {
             switch(bk){
                 case Friend:
                     event.getSubject().sendMessage("用户"+ID+"未被屏蔽。");
+                    break;
                 case Group:
                     event.getSubject().sendMessage("群聊"+ID+"未被屏蔽。");
+                    break;
             }
             return;
         }
@@ -208,8 +217,10 @@ public class Blacklist {
         switch(bk){
             case Friend:
                 event.getSubject().sendMessage("已解除屏蔽用户"+ID);
+                break;
             case Group:
                 event.getSubject().sendMessage("已解除屏蔽群聊"+ID);
+                break;
         }
     }
 

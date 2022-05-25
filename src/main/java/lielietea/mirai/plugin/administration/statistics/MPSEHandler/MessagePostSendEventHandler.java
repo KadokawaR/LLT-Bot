@@ -108,7 +108,7 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
                     boolean newStatus = triggeredBreaker(bot.getId());
                     getINSTANCE().triggerBreakMap.put(bot.getId(),newStatus);
                     if(originalStatus!=newStatus){
-                        MessageUtil.notifyDevGroup("熔断机制状态发生变化，目前的熔断状况是 "+newStatus,bot.getId());
+                        MessageUtil.notifyAllGroup("熔断机制状态发生变化，目前的熔断状况是 "+newStatus);
                     }
                 }
                 writeData(getINSTANCE().dataList);
@@ -137,7 +137,7 @@ public class MessagePostSendEventHandler extends MPSEStatistics {
 
     public static boolean botHasTriggeredBreak(Bot bot,long userID){
         if(IdentityUtil.isAdmin(userID)) return false;
-        return getINSTANCE().triggerBreakMap.get(bot);
+        return getINSTANCE().triggerBreakMap.get(bot.getId());
     }
 
     public static void checkBreaker(MessageEvent event){

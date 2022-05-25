@@ -87,7 +87,7 @@ public class ContactUtil {
 
     // 处理加群事件
     public static void handleJoinGroup(BotJoinGroupEvent.Invite event) {
-        if(IdentityUtil.DevGroup.DEFAULT.isDevGroup(event.getGroupId())){
+        if(IdentityUtil.DevGroup.isDevGroup(event.getGroupId())){
             event.getGroup().sendMessage("反正是开发组，咱没话说。");
             return;
         }
@@ -143,7 +143,7 @@ public class ContactUtil {
 
     // 处理加群事件
     public static void handleJoinGroup(BotJoinGroupEvent.Active event) {
-        if(IdentityUtil.DevGroup.DEFAULT.isDevGroup(event.getGroupId())){
+        if(IdentityUtil.DevGroup.isDevGroup(event.getGroupId())){
             event.getGroup().sendMessage("反正是开发组，咱没话说。");
             return;
         }
