@@ -6,6 +6,7 @@ import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackData;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.data.BlackJackPlayer;
 import lielietea.mirai.plugin.core.game.montecarlo.blackjack.enums.BlackJackPhase;
+import lielietea.mirai.plugin.utils.ForwardMessageUtil;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -114,7 +115,11 @@ public class BlackJack extends BlackJackUtils {
 
         //前置标记取消
         cancelMark(event);
-        event.getSubject().sendMessage(new MessageChainBuilder().append(BlackJackRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
+
+        MessageChainBuilder mcb = new MessageChainBuilder();
+        mcb.append(BlackJackRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain();
+        event.getSubject().sendMessage(ForwardMessageUtil.create(event.getBot(),mcb));
+
         try {
             img.close();
         } catch (IOException e) {

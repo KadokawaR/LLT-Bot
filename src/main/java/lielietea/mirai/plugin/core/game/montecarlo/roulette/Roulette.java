@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import lielietea.mirai.plugin.administration.statistics.GameCenterCount;
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
+import lielietea.mirai.plugin.utils.ForwardMessageUtil;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -96,7 +97,9 @@ public class Roulette extends RouletteUtils {
 
         InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INTRO_PATH);
         assert img != null;
-        event.getSubject().sendMessage(new MessageChainBuilder().append(RouletteRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img)).asMessageChain());
+
+        MessageChainBuilder mcb = new MessageChainBuilder().append(RouletteRules).append("\n\n").append(Contact.uploadImage(event.getSubject(), img));
+        event.getSubject().sendMessage(ForwardMessageUtil.create(event.getBot(),mcb));
 
         try {
             img.close();
@@ -399,11 +402,15 @@ public class Roulette extends RouletteUtils {
         } else {
             getINSTANCE().FriendStatusMap.put(event.getSubject().getId(), StatusType.Bet);
         }
-        event.getSubject().sendMessage(new MessageChainBuilder().append(EndBetNotice).append(StartOperateNotice).asMessageChain());
+        event.getSubject().sendMessage(EndBetNotice);
 
         try (InputStream img = Roulette.class.getResourceAsStream(ROULETTE_INSTRUCTIONS_PATH)) {
             assert img != null;
-            event.getSubject().sendMessage(Contact.uploadImage(event.getSubject(), img));
+
+            MessageChainBuilder mcb = new MessageChainBuilder();
+            mcb.append(StartBetNotice).append(Contact.uploadImage(event.getSubject(), img));
+            event.getSubject().sendMessage(ForwardMessageUtil.create(event.getBot(),mcb));
+
         } catch (IOException e) {
             e.printStackTrace();
         }

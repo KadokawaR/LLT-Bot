@@ -3,6 +3,7 @@ package lielietea.mirai.plugin.core.game.montecarlo.taisai;
 import lielietea.mirai.plugin.core.bank.PumpkinPesoWindow;
 import lielietea.mirai.plugin.core.game.montecarlo.GeneralMonteCarloUtil;
 import lielietea.mirai.plugin.core.game.montecarlo.MonteCarloGame;
+import lielietea.mirai.plugin.utils.ForwardMessageUtil;
 import lielietea.mirai.plugin.utils.image.ImageSender;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -62,7 +63,7 @@ public class TaiSai implements MonteCarloGame<MessageEvent> {
         assert img != null;
 
         mcb.append("\n\n").append(Contact.uploadImage(event.getSubject(), img));
-        event.getSubject().sendMessage(mcb.asMessageChain());
+        event.getSubject().sendMessage(ForwardMessageUtil.create(event.getBot(),mcb));
 
         startBetList.add(event.getSubject());
     }
