@@ -21,6 +21,7 @@ import java.util.concurrent.*;
 
 public class BlackJack extends BlackJackUtils {
 
+    /*
     static final String BlackJackRules = "里格斯公司邀请您参与本局 Blackjack，请在60秒之内输入 /bet+数字 参与游戏。";
     static final String BlackJackStops = "本局 Blackjack 已经取消。";
     static final String NotRightBetNumber = "/bet 指令不正确，请重新再尝试";
@@ -30,6 +31,19 @@ public class BlackJack extends BlackJackUtils {
     static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表请参考说明书。";
     static final String BustNotice = "您爆牌了。";
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家获得的南瓜比索：";
+
+     */
+
+    static final String BlackJackRules = "The Ligris Co. Kinchovsk has invited you to this round of Blackjack. Please input /bet plus number to join in the game."+
+            "\n Due to systematic faults, we appreciate your understanding of us using unofficial language instead of Mandarin to operate the game.";
+    static final String BlackJackStops = "The round has been cancelled.";
+    static final String NotRightBetNumber = "You didn't use /bet correctly. Please try again.";
+    static final String YouDontHaveEnoughMoney = "Operation failure due to invalid number of Pumpkin Pesos.";
+    static final String StartBetNotice = "We are now at the bet process, which will be ended within 60 seconds. You can use /bet plus number to add more bets.";
+    static final String EndBetNotice = "The bet process has now been ended.";
+    static final String StartOperateNotice = "You can operate now. All operations are available within 60 seconds. Feel free to check the introduction sheet.";
+    static final String BustNotice = "Busted!";
+    static final String EndGameNotice = "The Ligris Co. thanks you for your participation of this game. Here are the results:";
 
     static final String BLACKJACK_INTRO_PATH = "/pics/casino/blackjack.png";
     static final int GAP_SECONDS = 60;
@@ -301,7 +315,7 @@ public class BlackJack extends BlackJackUtils {
                 changeBet(event, bet);
                 int totalBet = getGlobalData(event).get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).getBet();
                 MessageChainBuilder mcb = mcbProcessor(event);
-                event.getSubject().sendMessage(mcb.append("共收到下注").append(String.valueOf(totalBet)).append("南瓜比索。").asMessageChain());
+                event.getSubject().sendMessage(mcb.append("共收到 bet").append(String.valueOf(totalBet)).append("南瓜比索。").asMessageChain());
             } else {
                 //写入赌注
                 if (indexOfTheBookMaker(event) == null) {
@@ -309,7 +323,7 @@ public class BlackJack extends BlackJackUtils {
                 }
                 addNewPlayer(event, bet);
                 MessageChainBuilder mcb = mcbProcessor(event);
-                event.getSubject().sendMessage(mcb.append("已收到下注").append(String.valueOf(bet)).append("南瓜比索。").asMessageChain());
+                event.getSubject().sendMessage(mcb.append("已收到 bet").append(String.valueOf(bet)).append("南瓜比索。").asMessageChain());
             }
 
             GameCenterCount.count(GameCenterCount.Functions.BlackjackBet);
@@ -367,7 +381,7 @@ public class BlackJack extends BlackJackUtils {
     //定时任务里的任务
 
     public static void endBetActivity(MessageEvent event) {
-        event.getSubject().sendMessage(EndBetNotice);
+        event.getSubject().sendMessage(EndBetNotice+"\n"+StartOperateNotice);
         //删除该flag
         getINSTANCE().isInBetProcess.remove(event.getSubject().getId());
         //更改状态
@@ -506,7 +520,7 @@ public class BlackJack extends BlackJackUtils {
     public static MessageChain groupMCBBuilder(BlackJackPlayer bjp, long ID) {
         MessageChainBuilder mcb = new MessageChainBuilder();
         if (bjp.isBookmaker()) {
-            mcb.append("\n庄家的牌是：\n");
+            mcb.append("\nBookmaker的牌是：\n");
             mcb.append(" ").append(getPoker(bjp.getCards().get(0))).append(" 暗牌");
         } else {
             mcb.append("\n\n").append((new At(ID))).append(" 的牌是：\n");
@@ -521,7 +535,7 @@ public class BlackJack extends BlackJackUtils {
     public static MessageChain friendMCBBuilder(BlackJackPlayer bjp) {
         MessageChainBuilder mcb = new MessageChainBuilder();
         if (bjp.getID() == 0) {
-            mcb.append("\n\n").append("庄家的牌是：");
+            mcb.append("\n\n").append("Bookmaker的牌是：");
             mcb.append("\n").append(getPoker(bjp.getCards().get(0))).append(" 暗牌");
         } else {
             mcb.append("\n\n").append("你的牌是：\n");
@@ -545,7 +559,6 @@ public class BlackJack extends BlackJackUtils {
             }
             index += 1;
         }
-        event.getSubject().sendMessage(StartOperateNotice);
     }
 
     //定时任务：60秒内把所有玩家全部fold掉，并强制进入结算模式
@@ -787,7 +800,7 @@ public class BlackJack extends BlackJackUtils {
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setHasSurrendered(true);
             getINSTANCE().globalFriendData.get(indexInTheList(event)).getBlackJackPlayerList().get(indexOfThePlayer(event)).setCanOperate(false);
         }
-        event.getSubject().sendMessage(mcbProcessor(event).append("您投降了，将会返还您一半的赌注。").asMessageChain());
+        event.getSubject().sendMessage(mcbProcessor(event).append("您投降了，将会返还您一半的 bet。").asMessageChain());
         GameCenterCount.count(GameCenterCount.Functions.BlackjackOperations);
     }
 
@@ -1011,7 +1024,7 @@ public class BlackJack extends BlackJackUtils {
             cardList.add(bookMakerGetCard(event));
         }
         MessageChainBuilder mcb = new MessageChainBuilder();
-        mcb.append("庄家开的牌组是：\n");
+        mcb.append("Bookmaker开的牌组是：\n");
 
         for (Integer card : cardList) {
             mcb.append(" ").append(getPoker(card));

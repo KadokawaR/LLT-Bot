@@ -130,6 +130,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
 
+
             //管理员功能
             AdminCommandDispatcher.getInstance().handleMessage(event);
             //广播

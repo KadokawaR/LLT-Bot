@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class TaiSaiUtil implements MonteCarloUtil<TaiSaiUserData> {
 
+    /*
     static final String TaiSaiRules = "里格斯公司邀请您参与本局骰宝，请在60秒之内输入 /bet+数字 参与游戏。";
     static final String TaiSaiStops = "本局骰宝已经取消。";
     static final String YouDontHaveEnoughMoney = "操作失败，请检查您的南瓜比索数量。";
@@ -21,6 +22,18 @@ public class TaiSaiUtil implements MonteCarloUtil<TaiSaiUserData> {
     static final String EndBetNotice = "Bet 阶段已经结束。";
     static final String StartOperateNotice = "现在可以进行操作，请在60秒之内完成。功能列表请参考说明书。如有多重下注，请使用空格隔开。";
     static final String EndGameNotice = "本局游戏已经结束，里格斯公司感谢您的参与。如下为本局玩家获得的南瓜比索：";
+
+     */
+
+    static final String TaiSaiRules = "The Ligris Co. Kinchovsk has invited you to this round of Sic Bo(Tai Sai). Please input /bet plus number to join in the game."+
+            "\n Due to systematic faults, we appreciate your understanding of us using unofficial language instead of Mandarin to operate the game.";
+    static final String TaiSaiStops = "The round has been cancelled.";
+    static final String YouDontHaveEnoughMoney = "You didn't use /bet correctly. Please try again.";
+    static final String StartBetNotice = "We are now at the bet process, which will be ended within 60 seconds. You can use /bet plus number to add more bets.\n"+
+            "Please be aware that you would not been charged at this point. Since you can make multiple guesses within the round, a relatively large amount of bet is not recommended.";
+    static final String EndBetNotice = "The bet process has now been ended.";
+    static final String StartOperateNotice = "You can operate now. All operations are available within 60 seconds. Feel free to check the introduction sheet.";
+    static final String EndGameNotice = "The Ligris Co. thanks you for your participation of this game. Here are the results:";
 
     static final int GapTime = 60;
 

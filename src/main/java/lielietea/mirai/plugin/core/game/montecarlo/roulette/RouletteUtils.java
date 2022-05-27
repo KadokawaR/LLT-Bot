@@ -58,7 +58,7 @@ public class RouletteUtils extends IndicatorProcessor{
 
     //告知下注情况
     static String feedbeckBetStatus(List<RouletteBet> betList){
-        if(isAllWrong(betList)) return "未获得有效下注。";
+        if(isAllWrong(betList)) return "未获得有效bet。";
         StringBuilder sb = new StringBuilder();
         sb.append("已收到：\n");
         boolean hasUsedWrongIndicator = false;
@@ -135,8 +135,6 @@ public class RouletteUtils extends IndicatorProcessor{
 
     static Set<Integer> getSet(Integer location,Indicator indicator){
         Set<Integer> someSet = new HashSet<>();
-        System.out.println("开始获得 Set<Integer>");
-        System.out.println("指示器是"+indicator+" 位置是"+location);
         switch(indicator){
             case Black: someSet.addAll(RouletteAreas.Black); break;
             case Red: someSet.addAll(RouletteAreas.Red); break;
